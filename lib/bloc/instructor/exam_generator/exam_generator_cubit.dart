@@ -43,12 +43,13 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
       return;
     }
     final list = courses.data!;
-    final selected = preferredCourseId != null &&
+    final selected =
+        preferredCourseId != null &&
             list.any((course) => course.courseId == preferredCourseId)
         ? preferredCourseId
         : list.isNotEmpty
-            ? list.first.courseId
-            : null;
+        ? list.first.courseId
+        : null;
     emitIfOpen(
       state.copyWith(
         teachingCourses: list,
@@ -123,7 +124,9 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
 
   Future<void> loadDrafts({bool refresh = false, int? page}) async {
     final nextPage = refresh ? 1 : page ?? state.draftPage;
-    emitIfOpen(state.copyWith(isLoading: nextPage == 1, isLoadingMore: nextPage > 1));
+    emitIfOpen(
+      state.copyWith(isLoading: nextPage == 1, isLoadingMore: nextPage > 1),
+    );
     final result = await _examGeneratorService.getDrafts(
       courseId: state.selectedCourseId,
       status: state.selectedDraftStatus,
@@ -159,7 +162,9 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
 
   Future<void> loadExams({bool refresh = false, int? page}) async {
     final nextPage = refresh ? 1 : page ?? state.examPage;
-    emitIfOpen(state.copyWith(isLoading: nextPage == 1, isLoadingMore: nextPage > 1));
+    emitIfOpen(
+      state.copyWith(isLoading: nextPage == 1, isLoadingMore: nextPage > 1),
+    );
     final result = await _examGeneratorService.getExams(
       courseId: state.selectedCourseId,
       status: state.selectedExamStatus,
@@ -200,9 +205,12 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
     List<ExamGenerationSectionModel> sections =
         const <ExamGenerationSectionModel>[],
     double? totalMarks,
-    ExamGroupSelectionMode groupSelectionMode = ExamGroupSelectionMode.independent,
+    ExamGroupSelectionMode groupSelectionMode =
+        ExamGroupSelectionMode.independent,
   }) async {
-    emitIfOpen(state.copyWith(isMutating: true, clearShortages: true, clearError: true));
+    emitIfOpen(
+      state.copyWith(isMutating: true, clearShortages: true, clearError: true),
+    );
     final result = await _examGeneratorService.generatePreview(
       courseId: courseId,
       title: title,
@@ -224,7 +232,9 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
       );
       return null;
     }
-    emitIfOpen(state.copyWith(isMutating: false, actionMessage: 'Draft generated'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Draft generated'),
+    );
     return result.data!.id;
   }
 }

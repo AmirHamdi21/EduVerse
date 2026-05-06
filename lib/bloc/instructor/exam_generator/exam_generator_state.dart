@@ -103,12 +103,15 @@ class ExamGeneratorState extends Equatable {
       exams: exams ?? this.exams,
       stats: stats ?? this.stats,
       readiness: readiness ?? this.readiness,
-      selectedCourseId: clearCourse ? null : selectedCourseId ?? this.selectedCourseId,
+      selectedCourseId: clearCourse
+          ? null
+          : selectedCourseId ?? this.selectedCourseId,
       selectedDraftStatus: clearDraftStatus
           ? null
           : selectedDraftStatus ?? this.selectedDraftStatus,
-      selectedExamStatus:
-          clearExamStatus ? null : selectedExamStatus ?? this.selectedExamStatus,
+      selectedExamStatus: clearExamStatus
+          ? null
+          : selectedExamStatus ?? this.selectedExamStatus,
       dateFrom: clearDates ? null : dateFrom ?? this.dateFrom,
       dateTo: clearDates ? null : dateTo ?? this.dateTo,
       draftPage: draftPage ?? this.draftPage,

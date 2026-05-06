@@ -34,15 +34,31 @@ class ExamGeneratorHeroHeader extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.auto_awesome_outlined, color: Colors.white),
+                child: const Icon(
+                  Icons.auto_awesome_outlined,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
-                    Text(subtitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -53,22 +69,39 @@ class ExamGeneratorHeroHeader extends StatelessWidget {
             spacing: 10,
             runSpacing: 10,
             children: stats.entries
-                .map((entry) => Container(
-                      width: 138,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.16),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(entry.value, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900)),
-                          Text(entry.key, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-                        ],
-                      ),
-                    ))
+                .map(
+                  (entry) => Container(
+                    width: 138,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          entry.value,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        Text(
+                          entry.key,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
                 .toList(),
           ),
         ],

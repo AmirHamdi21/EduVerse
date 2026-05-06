@@ -22,7 +22,10 @@ class ExamShortagePanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.examShortageTitle, style: const TextStyle(fontWeight: FontWeight.w900)),
+          Text(
+            l10n.examShortageTitle,
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
           const SizedBox(height: 8),
           for (final shortage in shortages)
             Padding(

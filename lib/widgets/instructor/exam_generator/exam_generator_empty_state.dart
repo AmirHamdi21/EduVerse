@@ -20,9 +20,16 @@ class ExamGeneratorEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.auto_awesome_outlined, size: 56, color: Color(0xFF2563EB)),
+            const Icon(
+              Icons.auto_awesome_outlined,
+              size: 56,
+              color: Color(0xFF2563EB),
+            ),
             const SizedBox(height: 14),
-            Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
             const SizedBox(height: 8),
             Text(message, textAlign: TextAlign.center),
             if (action != null) ...[const SizedBox(height: 16), action!],

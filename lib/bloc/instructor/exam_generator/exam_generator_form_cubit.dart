@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../common/bloc/route_request_controller.dart';
+
 import '../../../models/exams/exam_generation_form_model.dart';
 import '../../../models/exams/exam_generation_rule_model.dart';
 import '../../../models/exams/exam_generation_section_model.dart';
@@ -12,37 +14,44 @@ import '../../../services/api/exam_generator_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import 'exam_generator_form_state.dart';
 
-class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
+class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState>
+    with SafeRouteCubitMixin<ExamGeneratorFormState> {
   ExamGeneratorFormCubit({
     required ExamGeneratorService examGeneratorService,
     required QuestionBankService questionBankService,
     required EnrollmentService enrollmentService,
-  })  : _examGeneratorService = examGeneratorService,
-        _questionBankService = questionBankService,
-        _enrollmentService = enrollmentService,
-        super(const ExamGeneratorFormState());
+  }) : _examGeneratorService = examGeneratorService,
+       _questionBankService = questionBankService,
+       _enrollmentService = enrollmentService,
+       super(const ExamGeneratorFormState());
 
   final ExamGeneratorService _examGeneratorService;
   final QuestionBankService _questionBankService;
   final EnrollmentService _enrollmentService;
 
   Future<void> initialize() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final coursesResult = await _enrollmentService.getTeachingCourses();
     final courses = coursesResult.data ?? const [];
     final courseId = courses.isNotEmpty ? courses.first.courseId : null;
-    emit(state.copyWith(isLoading: false, courses: courses, courseId: courseId));
+    emitIfOpen(
+      state.copyWith(isLoading: false, courses: courses, courseId: courseId),
+    );
     if (courseId != null) await selectCourse(courseId);
   }
 
   Future<void> selectCourse(int? courseId) async {
-    emit(state.copyWith(courseId: courseId, clearCourse: courseId == null));
+    emitIfOpen(
+      state.copyWith(courseId: courseId, clearCourse: courseId == null),
+    );
     if (courseId == null) {
-      emit(state.copyWith(chapters: const [], groups: const []));
+      emitIfOpen(state.copyWith(chapters: const [], groups: const []));
       return;
     }
     final chaptersResult = await _questionBankService.getChapters(courseId);
-    final groupsResult = await _questionBankService.getGroups(courseId: courseId);
+    final groupsResult = await _questionBankService.getGroups(
+      courseId: courseId,
+    );
     final list = chaptersResult.data ?? const [];
     final groups = groupsResult.data ?? const [];
     final validChapterIds = list.map((chapter) => chapter.id).toSet();
@@ -70,14 +79,22 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
           ),
         ),
     ];
-    emit(state.copyWith(
-      chapters: list,
-      groups: groups,
-      rules: normalizedRules.isEmpty && fallbackChapterId != null
-          ? [ExamGenerationRuleModel(chapterId: fallbackChapterId, count: 10, weightPerQuestion: 1)]
-          : normalizedRules,
-      sections: normalizedSections,
-    ));
+    emitIfOpen(
+      state.copyWith(
+        chapters: list,
+        groups: groups,
+        rules: normalizedRules.isEmpty && fallbackChapterId != null
+            ? [
+                ExamGenerationRuleModel(
+                  chapterId: fallbackChapterId,
+                  count: 10,
+                  weightPerQuestion: 1,
+                ),
+              ]
+            : normalizedRules,
+        sections: normalizedSections,
+      ),
+    );
     await checkAvailability();
   }
 
@@ -90,12 +107,15 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
     return [
       for (final rule in rules)
         rule.copyWith(
-          chapterId:
-              validChapterIds.contains(rule.chapterId) ? rule.chapterId : fallbackChapterId,
+          chapterId: validChapterIds.contains(rule.chapterId)
+              ? rule.chapterId
+              : fallbackChapterId,
           chapterIds: rule.chapterIds
               .where(validChapterIds.contains)
               .toList(growable: false),
-          groupIds: rule.groupIds.where(validGroupIds.contains).toList(growable: false),
+          groupIds: rule.groupIds
+              .where(validGroupIds.contains)
+              .toList(growable: false),
         ),
     ];
   }
@@ -115,43 +135,49 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
     String? headerText,
     String? footerText,
   }) {
-    emit(state.copyWith(
-      title: title,
-      totalMarks: totalMarks,
-      clearTotalMarks: clearTotalMarks,
-      mode: mode,
-      markDistributionMode: markDistributionMode,
-      roundingPolicy: roundingPolicy,
-      groupSelectionMode: groupSelectionMode,
-      seed: seed,
-      durationMinutes: durationMinutes,
-      clearDuration: clearDuration,
-      instructions: instructions,
-      headerText: headerText,
-      footerText: footerText,
-      clearError: true,
-      clearAvailability: true,
-    ));
+    emitIfOpen(
+      state.copyWith(
+        title: title,
+        totalMarks: totalMarks,
+        clearTotalMarks: clearTotalMarks,
+        mode: mode,
+        markDistributionMode: markDistributionMode,
+        roundingPolicy: roundingPolicy,
+        groupSelectionMode: groupSelectionMode,
+        seed: seed,
+        durationMinutes: durationMinutes,
+        clearDuration: clearDuration,
+        instructions: instructions,
+        headerText: headerText,
+        footerText: footerText,
+        clearError: true,
+        clearAvailability: true,
+      ),
+    );
     checkAvailability();
   }
 
   void updateRules(List<ExamGenerationRuleModel> rules) {
-    emit(state.copyWith(
-      rules: rules,
-      clearError: true,
-      clearShortages: true,
-      clearAvailability: true,
-    ));
+    emitIfOpen(
+      state.copyWith(
+        rules: rules,
+        clearError: true,
+        clearShortages: true,
+        clearAvailability: true,
+      ),
+    );
     checkAvailability();
   }
 
   void updateSections(List<ExamGenerationSectionModel> sections) {
-    emit(state.copyWith(
-      sections: sections,
-      clearError: true,
-      clearShortages: true,
-      clearAvailability: true,
-    ));
+    emitIfOpen(
+      state.copyWith(
+        sections: sections,
+        clearError: true,
+        clearShortages: true,
+        clearAvailability: true,
+      ),
+    );
     checkAvailability();
   }
 
@@ -174,12 +200,11 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
     final rules = state.mode == ExamGenerationMode.flat
         ? state.rules
         : const <ExamGenerationRuleModel>[];
-    final sections =
-        state.mode == ExamGenerationMode.sectioned
-            ? state.sections
-            : const <ExamGenerationSectionModel>[];
+    final sections = state.mode == ExamGenerationMode.sectioned
+        ? state.sections
+        : const <ExamGenerationSectionModel>[];
     if (rules.isEmpty && sections.isEmpty) return;
-    emit(state.copyWith(isCheckingAvailability: true, clearError: true));
+    emitIfOpen(state.copyWith(isCheckingAvailability: true, clearError: true));
     final result = await _examGeneratorService.checkGenerationAvailability(
       courseId: state.courseId!,
       title: state.title,
@@ -195,11 +220,13 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
       headerText: state.headerText,
       footerText: state.footerText,
     );
-    emit(state.copyWith(
-      isCheckingAvailability: false,
-      availability: result.data,
-      errorMessage: result.isSuccess ? null : result.error?.message,
-    ));
+    emitIfOpen(
+      state.copyWith(
+        isCheckingAvailability: false,
+        availability: result.data,
+        errorMessage: result.isSuccess ? null : result.error?.message,
+      ),
+    );
   }
 
   Future<int?> submit() async {
@@ -221,20 +248,24 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
     );
     final validation = form.validate();
     if (validation != null) {
-      emit(state.copyWith(errorMessage: validation));
+      emitIfOpen(state.copyWith(errorMessage: validation));
       return null;
     }
-    emit(state.copyWith(
-      isSubmitting: true,
-      clearError: true,
-      clearShortages: true,
-      clearDraft: true,
-    ));
+    emitIfOpen(
+      state.copyWith(
+        isSubmitting: true,
+        clearError: true,
+        clearShortages: true,
+        clearDraft: true,
+      ),
+    );
     final result = await _examGeneratorService.generatePreview(
       courseId: state.courseId!,
       title: state.title,
       rules: state.mode == ExamGenerationMode.flat ? state.rules : const [],
-      sections: state.mode == ExamGenerationMode.sectioned ? state.sections : const [],
+      sections: state.mode == ExamGenerationMode.sectioned
+          ? state.sections
+          : const [],
       totalMarks: state.totalMarks,
       markDistributionMode: state.markDistributionMode,
       roundingPolicy: state.roundingPolicy,
@@ -247,19 +278,20 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState> {
     );
     if (!result.isSuccess || result.data == null) {
       final original = result.error?.originalError;
-      emit(state.copyWith(
-        isSubmitting: false,
-        errorMessage: result.error?.message ?? 'examGenerateFailed',
-        shortages: original is ExamShortageException
-            ? original.shortages
-            : const <ExamShortageModel>[],
-      ));
+      emitIfOpen(
+        state.copyWith(
+          isSubmitting: false,
+          errorMessage: result.error?.message ?? 'examGenerateFailed',
+          shortages: original is ExamShortageException
+              ? original.shortages
+              : const <ExamShortageModel>[],
+        ),
+      );
       return null;
     }
-    emit(state.copyWith(
-      isSubmitting: false,
-      createdDraftId: result.data!.id,
-    ));
+    emitIfOpen(
+      state.copyWith(isSubmitting: false, createdDraftId: result.data!.id),
+    );
     return result.data!.id;
   }
 }

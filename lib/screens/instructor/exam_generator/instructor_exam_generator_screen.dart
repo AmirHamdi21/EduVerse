@@ -19,7 +19,9 @@ class InstructorExamGeneratorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ExamGeneratorCubit(
-        examGeneratorService: ExamGeneratorService(coreApiClient: CoreApiClient()),
+        examGeneratorService: ExamGeneratorService(
+          coreApiClient: CoreApiClient(),
+        ),
         enrollmentService: EnrollmentService(coreApiClient: CoreApiClient()),
       )..initialize(),
       child: const _InstructorExamGeneratorView(),
@@ -58,11 +60,13 @@ class _InstructorExamGeneratorView extends StatelessWidget {
                   subtitle: l10n.examGeneratorHeroSubtitle,
                   stats: {
                     l10n.drafts:
-                        (state.stats?.openDrafts ?? state.drafts.length).toString(),
+                        (state.stats?.openDrafts ?? state.drafts.length)
+                            .toString(),
                     l10n.savedExams:
-                        (state.stats?.savedExams ?? state.exams.length).toString(),
-                    l10n.examPublished:
-                        (state.stats?.publishedExams ?? 0).toString(),
+                        (state.stats?.savedExams ?? state.exams.length)
+                            .toString(),
+                    l10n.examPublished: (state.stats?.publishedExams ?? 0)
+                        .toString(),
                     l10n.examApprovedPool:
                         (state.stats?.approvedQuestionPool ?? 0).toString(),
                   },
@@ -103,9 +107,11 @@ class _InstructorExamGeneratorView extends StatelessWidget {
                             ),
                           ),
                         ],
-                        onChanged: (value) => context
-                            .read<ExamGeneratorCubit>()
-                            .setFilters(courseId: value, clearCourse: value == null),
+                        onChanged: (value) =>
+                            context.read<ExamGeneratorCubit>().setFilters(
+                              courseId: value,
+                              clearCourse: value == null,
+                            ),
                       ),
                     ),
                     SizedBox(
@@ -113,7 +119,9 @@ class _InstructorExamGeneratorView extends StatelessWidget {
                       child: DropdownButtonFormField<ExamDraftStatus?>(
                         isExpanded: true,
                         initialValue: state.selectedDraftStatus,
-                        decoration: InputDecoration(labelText: l10n.examDraftStatus),
+                        decoration: InputDecoration(
+                          labelText: l10n.examDraftStatus,
+                        ),
                         items: [
                           DropdownMenuItem<ExamDraftStatus?>(
                             value: null,
@@ -126,9 +134,8 @@ class _InstructorExamGeneratorView extends StatelessWidget {
                             ),
                           ),
                         ],
-                        onChanged: (value) => context
-                            .read<ExamGeneratorCubit>()
-                            .setFilters(
+                        onChanged: (value) =>
+                            context.read<ExamGeneratorCubit>().setFilters(
                               draftStatus: value,
                               clearDraftStatus: value == null,
                             ),
@@ -152,30 +159,39 @@ class _InstructorExamGeneratorView extends StatelessWidget {
                             ),
                           ),
                         ],
-                        onChanged: (value) => context
-                            .read<ExamGeneratorCubit>()
-                            .setFilters(
+                        onChanged: (value) =>
+                            context.read<ExamGeneratorCubit>().setFilters(
                               examStatus: value,
                               clearExamStatus: value == null,
                             ),
                       ),
                     ),
                     OutlinedButton.icon(
-                      onPressed: () => _pickDate(context, from: true, state: state),
+                      onPressed: () =>
+                          _pickDate(context, from: true, state: state),
                       icon: const Icon(Icons.date_range_outlined),
                       label: Text(
                         state.dateFrom == null
                             ? l10n.examDateFrom
-                            : state.dateFrom!.toLocal().toString().split(' ').first,
+                            : state.dateFrom!
+                                  .toLocal()
+                                  .toString()
+                                  .split(' ')
+                                  .first,
                       ),
                     ),
                     OutlinedButton.icon(
-                      onPressed: () => _pickDate(context, from: false, state: state),
+                      onPressed: () =>
+                          _pickDate(context, from: false, state: state),
                       icon: const Icon(Icons.event_outlined),
                       label: Text(
                         state.dateTo == null
                             ? l10n.examDateTo
-                            : state.dateTo!.toLocal().toString().split(' ').first,
+                            : state.dateTo!
+                                  .toLocal()
+                                  .toString()
+                                  .split(' ')
+                                  .first,
                       ),
                     ),
                     TextButton.icon(
@@ -192,8 +208,14 @@ class _InstructorExamGeneratorView extends StatelessWidget {
                   selectedIndex: state.selectedTabIndex,
                   onChanged: context.read<ExamGeneratorCubit>().selectTab,
                   tabs: [
-                    InstructorModernTabItem(icon: Icons.description_outlined, label: l10n.drafts),
-                    InstructorModernTabItem(icon: Icons.fact_check_outlined, label: l10n.savedExams),
+                    InstructorModernTabItem(
+                      icon: Icons.description_outlined,
+                      label: l10n.drafts,
+                    ),
+                    InstructorModernTabItem(
+                      icon: Icons.fact_check_outlined,
+                      label: l10n.savedExams,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -224,9 +246,9 @@ class _InstructorExamGeneratorView extends StatelessWidget {
     );
     if (picked == null || !context.mounted) return;
     await context.read<ExamGeneratorCubit>().setFilters(
-          dateFrom: from ? picked : state.dateFrom,
-          dateTo: from ? state.dateTo : picked,
-        );
+      dateFrom: from ? picked : state.dateFrom,
+      dateTo: from ? state.dateTo : picked,
+    );
   }
 }
 
@@ -278,8 +300,12 @@ class _ReadinessCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              ...readiness.byChapter.take(5).map((item) => _statChip(item.label, item.count)),
-              ...readiness.byType.take(4).map((item) => _statChip(item.label, item.count)),
+              ...readiness.byChapter
+                  .take(5)
+                  .map((item) => _statChip(item.label, item.count)),
+              ...readiness.byType
+                  .take(4)
+                  .map((item) => _statChip(item.label, item.count)),
             ],
           ),
         ],
@@ -288,12 +314,7 @@ class _ReadinessCard extends StatelessWidget {
   }
 
   Widget _statChip(String label, int count) {
-    return Chip(
-      label: Text(
-        '$label: $count',
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
+    return Chip(label: Text('$label: $count', overflow: TextOverflow.ellipsis));
   }
 }
 
@@ -316,7 +337,8 @@ class _DraftList extends StatelessWidget {
           .map(
             (draft) => ExamDraftCard(
               draft: draft,
-              onTap: () => context.push('/instructor/exam-generator/drafts/${draft.id}'),
+              onTap: () =>
+                  context.push('/instructor/exam-generator/drafts/${draft.id}'),
             ),
           )
           .toList(),
@@ -338,7 +360,9 @@ class _ExplanationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: lowPool
             ? Theme.of(context).colorScheme.errorContainer
-            : Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.35),
+            : Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -349,9 +373,7 @@ class _ExplanationCard extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              lowPool
-                  ? l10n.examNoApprovedPoolHelp
-                  : l10n.examDashboardHelp,
+              lowPool ? l10n.examNoApprovedPoolHelp : l10n.examDashboardHelp,
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
@@ -385,7 +407,8 @@ class _ExamList extends StatelessWidget {
           .map(
             (exam) => ExamSavedCard(
               exam: exam,
-              onTap: () => context.push('/instructor/exam-generator/exams/${exam.id}'),
+              onTap: () =>
+                  context.push('/instructor/exam-generator/exams/${exam.id}'),
             ),
           )
           .toList(),

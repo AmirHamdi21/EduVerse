@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../common/bloc/route_request_controller.dart';
+
 import '../../../models/exams/exam_draft_item_update_payload.dart';
 import '../../../models/exams/exam_draft_section_payload.dart';
 import '../../../models/exams/exam_generator_enums.dart';
@@ -9,7 +11,8 @@ import '../../../services/api/question_bank_service.dart';
 import '../../../services/api/exam_generator_service.dart';
 import 'exam_draft_editor_state.dart';
 
-class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
+class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
+    with SafeRouteCubitMixin<ExamDraftEditorState> {
   ExamDraftEditorCubit({
     required ExamGeneratorService examGeneratorService,
     QuestionBankService? questionBankService,
@@ -21,10 +24,10 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   final QuestionBankService? _questionBankService;
 
   Future<void> loadDraft(int draftId) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final result = await _examGeneratorService.getDraft(draftId);
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage: result.error?.message ?? 'Failed to load draft',
@@ -43,7 +46,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
             courseId: result.data!.courseId,
             limit: 200,
           );
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         draft: result.data,
@@ -62,10 +65,10 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   }) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.createSection(
       draftId: draft.id,
       title: title,
@@ -74,7 +77,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       answerPolicy: answerPolicy,
     );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to create section',
@@ -83,7 +86,9 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return;
     }
     await loadDraft(draft.id);
-    emit(state.copyWith(isMutating: false, actionMessage: 'Section created'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Section created'),
+    );
   }
 
   Future<void> upsertSection({
@@ -92,15 +97,15 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   }) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
     final validation = payload.validate();
     if (validation != null) {
-      emit(state.copyWith(errorMessage: validation));
+      emitIfOpen(state.copyWith(errorMessage: validation));
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = sectionId == null
         ? await _examGeneratorService.createSection(
             draftId: draft.id,
@@ -120,7 +125,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
             requiredAnswerCount: payload.requiredAnswerCount,
           );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to save section',
@@ -129,22 +134,24 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return;
     }
     await loadDraft(draft.id);
-    emit(state.copyWith(isMutating: false, actionMessage: 'Section saved'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Section saved'),
+    );
   }
 
   Future<void> deleteSection(int sectionId) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.deleteSection(
       draftId: draft.id,
       sectionId: sectionId,
     );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to delete section',
@@ -153,20 +160,22 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return;
     }
     await loadDraft(draft.id);
-    emit(state.copyWith(isMutating: false, actionMessage: 'Section deleted'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Section deleted'),
+    );
   }
 
   Future<void> reorderSections(List<int> orderedSectionIds) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
     final existing = draft.sections.map((section) => section.id).toSet();
     if (orderedSectionIds.length != existing.length ||
         orderedSectionIds.toSet().length != existing.length ||
         !orderedSectionIds.toSet().containsAll(existing)) {
-      emit(
+      emitIfOpen(
         state.copyWith(errorMessage: 'Reorder must include every section once'),
       );
       return;
@@ -179,7 +188,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       ],
     );
     if (!result.isSuccess) {
-      emit(state.copyWith(errorMessage: result.error?.message));
+      emitIfOpen(state.copyWith(errorMessage: result.error?.message));
       return;
     }
     await loadDraft(draft.id);
@@ -194,10 +203,10 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   }) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.addItem(
       draftId: draft.id,
       questionId: questionId,
@@ -207,7 +216,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       overrideReason: overrideReason,
     );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to add item',
@@ -216,7 +225,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return;
     }
     await loadDraft(draft.id);
-    emit(state.copyWith(isMutating: false, actionMessage: 'Item added'));
+    emitIfOpen(state.copyWith(isMutating: false, actionMessage: 'Item added'));
   }
 
   Future<void> updateItem({
@@ -226,17 +235,17 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   }) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
     final validation = payload.validate(
       requiresOverrideReason: requiresOverrideReason,
     );
     if (validation != null) {
-      emit(state.copyWith(errorMessage: validation));
+      emitIfOpen(state.copyWith(errorMessage: validation));
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.updateItem(
       draftId: draft.id,
       itemId: itemId,
@@ -249,7 +258,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       overrideReason: payload.overrideReason,
     );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to update item',
@@ -258,7 +267,9 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return;
     }
     await loadDraft(draft.id);
-    emit(state.copyWith(isMutating: false, actionMessage: 'Item updated'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Item updated'),
+    );
   }
 
   Future<bool> replacementRequiresOverride({
@@ -273,11 +284,11 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       replacementQuestionId: replacementQuestionId,
     );
     if (!result.isSuccess || result.data == null) {
-      emit(state.copyWith(errorMessage: result.error?.message));
+      emitIfOpen(state.copyWith(errorMessage: result.error?.message));
       return true;
     }
     if (result.data!.requiresOverrideReason) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           actionMessage: result.data!.reasons.isEmpty
               ? 'Replacement is outside the original rules'
@@ -291,20 +302,22 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   Future<void> removeItem(int itemId) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
     if (draft.items.length <= 1) {
-      emit(state.copyWith(errorMessage: 'Cannot remove the last draft item'));
+      emitIfOpen(
+        state.copyWith(errorMessage: 'Cannot remove the last draft item'),
+      );
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.removeItem(
       draftId: draft.id,
       itemId: itemId,
     );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to remove item',
@@ -313,20 +326,22 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return;
     }
     await loadDraft(draft.id);
-    emit(state.copyWith(isMutating: false, actionMessage: 'Item removed'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Item removed'),
+    );
   }
 
   Future<void> reorderItems(List<int> orderedItemIds) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
     final existing = draft.items.map((item) => item.id).toSet();
     if (orderedItemIds.length != existing.length ||
         orderedItemIds.toSet().length != existing.length ||
         !orderedItemIds.toSet().containsAll(existing)) {
-      emit(
+      emitIfOpen(
         state.copyWith(errorMessage: 'Reorder must include every item once'),
       );
       return;
@@ -339,7 +354,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       ],
     );
     if (!result.isSuccess) {
-      emit(state.copyWith(errorMessage: result.error?.message));
+      emitIfOpen(state.copyWith(errorMessage: result.error?.message));
       return;
     }
     await loadDraft(draft.id);
@@ -358,7 +373,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
     final service = _questionBankService;
     if (draft == null || service == null) return;
     final nextPage = append ? state.candidatePage + 1 : 1;
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoadingCandidates: true,
         candidateChapterId: chapterId,
@@ -389,7 +404,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
     );
     final page = result.data;
     final questions = page?.data ?? const [];
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoadingCandidates: false,
         candidateQuestions: append
@@ -425,7 +440,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
     if (validation.isSuccess &&
         validation.data != null &&
         !validation.data!.canSave) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           validation: validation.data,
           errorMessage: validation.data!.errors.join('\n'),
@@ -433,10 +448,10 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       );
       return null;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.saveDraft(draft.id);
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to save exam',
@@ -444,7 +459,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       );
       return null;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isMutating: false,
         savedExam: result.data,
@@ -460,17 +475,17 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   }) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return null;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.regenerateDraft(
       draftId: draft.id,
       seed: seed,
       keepManualEdits: keepManualEdits,
     );
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to regenerate draft',
@@ -478,7 +493,9 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       );
       return null;
     }
-    emit(state.copyWith(isMutating: false, actionMessage: 'Draft regenerated'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Draft regenerated'),
+    );
     return result.data!.id;
   }
 
@@ -489,7 +506,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   }) async {
     final draft = state.draft;
     if (draft == null) return null;
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.duplicateDraft(
       draftId: draft.id,
       title: title,
@@ -497,7 +514,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       regenerate: regenerate,
     );
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to duplicate draft',
@@ -505,7 +522,9 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       );
       return null;
     }
-    emit(state.copyWith(isMutating: false, actionMessage: 'Draft duplicated'));
+    emitIfOpen(
+      state.copyWith(isMutating: false, actionMessage: 'Draft duplicated'),
+    );
     return result.data!.id;
   }
 
@@ -513,23 +532,23 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
     final draft = state.draft;
     if (draft == null) return;
     await loadDraft(draft.id);
-    emit(state.copyWith(actionMessage: 'Draft revalidated'));
+    emitIfOpen(state.copyWith(actionMessage: 'Draft revalidated'));
   }
 
   Future<int?> reshuffleSection(int sectionId, {String? seed}) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return null;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.reshuffleSection(
       draftId: draft.id,
       sectionId: sectionId,
       seed: seed,
     );
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to reshuffle section',
@@ -538,7 +557,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return null;
     }
     await loadDraft(result.data!.id);
-    emit(
+    emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'Section reshuffled'),
     );
     return result.data!.id;
@@ -550,17 +569,17 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   }) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.normalizeSectionMarks(
       draftId: draft.id,
       sectionId: sectionId,
       totalMarks: totalMarks,
     );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isMutating: false,
           errorMessage: result.error?.message ?? 'Failed to normalize marks',
@@ -569,7 +588,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       return;
     }
     await loadDraft(draft.id);
-    emit(
+    emitIfOpen(
       state.copyWith(
         isMutating: false,
         actionMessage: 'Section marks normalized',
@@ -580,14 +599,14 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
   Future<void> moveItemsToSection(List<int> itemIds, int? sectionId) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
-      emit(state.copyWith(errorMessage: 'Draft is not editable'));
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
     if (itemIds.isEmpty) {
-      emit(state.copyWith(errorMessage: 'Select at least one question'));
+      emitIfOpen(state.copyWith(errorMessage: 'Select at least one question'));
       return;
     }
-    emit(state.copyWith(isMutating: true, clearError: true));
+    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     for (final itemId in itemIds) {
       final result = await _examGeneratorService.updateItem(
         draftId: draft.id,
@@ -595,7 +614,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
         draftSectionId: sectionId,
       );
       if (!result.isSuccess) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isMutating: false,
             errorMessage:
@@ -606,7 +625,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState> {
       }
     }
     await loadDraft(draft.id);
-    emit(
+    emitIfOpen(
       state.copyWith(
         isMutating: false,
         actionMessage: 'Selected questions moved',

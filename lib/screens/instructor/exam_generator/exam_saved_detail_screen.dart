@@ -8,6 +8,7 @@ import '../../../models/exams/exam_full_detail_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
+import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 
 class ExamSavedDetailScreen extends StatefulWidget {
   const ExamSavedDetailScreen({super.key, required this.examId});
@@ -206,16 +207,16 @@ class _SavedExamPreview extends StatelessWidget {
   Widget _item(BuildContext context, ExamSnapshotItemModel item) {
     final l10n = AppLocalizations.of(context);
     return ListTile(
-      leading: _preview(item.questionImagePreviewUrl) ??
+      leading:
+          _preview(item.questionImagePreviewUrl) ??
           Icon(
             item.questionFileId != null
                 ? Icons.image_outlined
                 : Icons.quiz_outlined,
           ),
-      title: Text(
-        item.questionText.isEmpty
-            ? l10n.examQuestionSnapshot
-            : item.questionText,
+      title: QuestionFormattedText(
+        text: item.questionText,
+        fallback: l10n.examQuestionSnapshot,
       ),
       subtitle: Text(
         [

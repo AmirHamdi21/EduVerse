@@ -8,6 +8,7 @@ import '../../../models/exams/exam_generator_enums.dart';
 import '../../../models/exams/exam_paper_template_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
+import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
 
 class ExamPaperExportPreviewScreen extends StatefulWidget {
@@ -844,8 +845,9 @@ class _ExamPaperExportPreviewScreenState
         for (var i = 0; i < previewItems.length; i++)
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: Text(
-              '${i + 1}. ${previewItems[i].questionText.isEmpty ? 'Question snapshot' : previewItems[i].questionText}',
+            child: QuestionFormattedText(
+              text: '${i + 1}. ${previewItems[i].questionText}',
+              fallback: '${i + 1}. Question snapshot',
               style: const TextStyle(fontSize: 12),
             ),
           ),

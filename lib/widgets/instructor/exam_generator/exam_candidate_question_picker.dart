@@ -6,6 +6,7 @@ import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_group_model.dart';
 import '../../../models/question_bank/question_bank_question_model.dart';
 import '../question_bank/question_bank_localized_labels.dart';
+import '../question_bank/question_text_renderer.dart';
 
 class ExamCandidateQuestionPicker extends StatefulWidget {
   const ExamCandidateQuestionPicker({
@@ -154,8 +155,9 @@ class _ExamCandidateQuestionPickerState
                         ),
                       ),
                     ),
-              title: Text(
-                question.questionText ?? '${l10n.questions} ${question.id}',
+              title: QuestionFormattedText(
+                text: question.questionText,
+                fallback: '${l10n.questions} ${question.id}',
               ),
               subtitle: Text(
                 '${localizedQuestionType(l10n, question.questionType)} • '

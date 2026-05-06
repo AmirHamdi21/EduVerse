@@ -12,6 +12,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
+import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/shared/instructor_modern_tab_strip.dart';
 
 class ExamDraftDetailScreen extends StatelessWidget {
@@ -450,10 +451,9 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
                     group?.title ??
                     '${l10n.qbGroups} ${item.sourceGroupId}',
               ),
-              subtitle: Text(
-                item.sourceGroupPrompt ??
-                    group?.sharedPrompt ??
-                    l10n.examGroupedPromptShownOnce,
+              subtitle: QuestionFormattedText(
+                text: item.sourceGroupPrompt ?? group?.sharedPrompt,
+                fallback: l10n.examGroupedPromptShownOnce,
               ),
             ),
           ),
@@ -496,35 +496,36 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
     if (!context.mounted) return;
     String? reason;
     if (requiresOverride) {
-    final controller = TextEditingController();
+      final controller = TextEditingController();
       reason = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.examReplaceQuestion),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.examOverrideReasonHelper),
-            const SizedBox(height: 12),
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(labelText: l10n.examOverrideReason),
-              maxLines: 3,
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.examReplaceQuestion),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.examOverrideReasonHelper),
+              const SizedBox(height: 12),
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(labelText: l10n.examOverrideReason),
+                maxLines: 3,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () =>
+                  Navigator.of(context).pop(controller.text.trim()),
+              child: Text(l10n.examReplaceQuestion),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: Text(l10n.examReplaceQuestion),
-          ),
-        ],
-      ),
-    );
+      );
       if (!context.mounted || reason == null) return;
     }
     context.read<ExamDraftEditorCubit>().updateItem(
@@ -641,13 +642,13 @@ class _ValidationView extends StatelessWidget {
               item.isOk
                   ? Icons.check_circle_outline
                   : item.isWarning
-                      ? Icons.warning_amber_outlined
-                      : Icons.error_outline,
+                  ? Icons.warning_amber_outlined
+                  : Icons.error_outline,
               color: item.isOk
                   ? Colors.green
                   : item.isWarning
-                      ? Colors.orange
-                      : Theme.of(context).colorScheme.error,
+                  ? Colors.orange
+                  : Theme.of(context).colorScheme.error,
             ),
             title: Text(localizedExamMessage(l10n, item.message)),
             trailing: item.action == null
@@ -780,7 +781,8 @@ class _FinalReviewView extends StatelessWidget {
           CheckboxListTile(
             value: draft.items.every(
               (item) =>
-                  item.question?.questionFileId != null || item.question != null,
+                  item.question?.questionFileId != null ||
+                  item.question != null,
             ),
             onChanged: null,
             title: Text(l10n.examReviewSnapshotsReady),

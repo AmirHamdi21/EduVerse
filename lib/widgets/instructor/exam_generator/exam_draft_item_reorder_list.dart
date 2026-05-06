@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/exams/exam_draft_item_model.dart';
+import '../question_bank/question_text_renderer.dart';
 
 class ExamDraftItemReorderList extends StatelessWidget {
   const ExamDraftItemReorderList({
@@ -14,6 +16,7 @@ class ExamDraftItemReorderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ReorderableListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -30,7 +33,10 @@ class ExamDraftItemReorderList extends StatelessWidget {
         return ListTile(
           key: ValueKey(item.id),
           leading: const Icon(Icons.drag_indicator_rounded),
-          title: Text(item.question?.questionText ?? 'Question ${item.questionId}'),
+          title: QuestionFormattedText(
+            text: item.question?.questionText,
+            fallback: '${l10n.questions} ${item.questionId}',
+          ),
           subtitle: Text('${item.marks ?? item.weight}'),
         );
       },

@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
 
 class ExamOverrideReasonField extends StatelessWidget {
-  const ExamOverrideReasonField({
-    super.key,
-    required this.controller,
-  });
+  const ExamOverrideReasonField({super.key, required this.controller});
 
   final TextEditingController controller;
 

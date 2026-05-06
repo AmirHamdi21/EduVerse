@@ -19,18 +19,24 @@ class ExamDraftSectionEditorCard extends StatefulWidget {
   final VoidCallback? onCancel;
 
   @override
-  State<ExamDraftSectionEditorCard> createState() => _ExamDraftSectionEditorCardState();
+  State<ExamDraftSectionEditorCard> createState() =>
+      _ExamDraftSectionEditorCardState();
 }
 
-class _ExamDraftSectionEditorCardState extends State<ExamDraftSectionEditorCard> {
-  late final TextEditingController _title =
-      TextEditingController(text: widget.initial?.title ?? '');
-  late final TextEditingController _instructions =
-      TextEditingController(text: widget.initial?.instructions ?? '');
-  late final TextEditingController _marks =
-      TextEditingController(text: widget.initial?.totalMarks?.toString() ?? '');
-  late final TextEditingController _required =
-      TextEditingController(text: widget.initial?.requiredAnswerCount?.toString() ?? '');
+class _ExamDraftSectionEditorCardState
+    extends State<ExamDraftSectionEditorCard> {
+  late final TextEditingController _title = TextEditingController(
+    text: widget.initial?.title ?? '',
+  );
+  late final TextEditingController _instructions = TextEditingController(
+    text: widget.initial?.instructions ?? '',
+  );
+  late final TextEditingController _marks = TextEditingController(
+    text: widget.initial?.totalMarks?.toString() ?? '',
+  );
+  late final TextEditingController _required = TextEditingController(
+    text: widget.initial?.requiredAnswerCount?.toString() ?? '',
+  );
   late ExamSectionAnswerPolicy _policy =
       widget.initial?.answerPolicy ?? ExamSectionAnswerPolicy.answerAll;
 
@@ -51,7 +57,10 @@ class _ExamDraftSectionEditorCardState extends State<ExamDraftSectionEditorCard>
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(controller: _title, decoration: InputDecoration(labelText: l10n.title)),
+            TextField(
+              controller: _title,
+              decoration: InputDecoration(labelText: l10n.title),
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: _instructions,
@@ -68,7 +77,12 @@ class _ExamDraftSectionEditorCardState extends State<ExamDraftSectionEditorCard>
               initialValue: _policy,
               decoration: InputDecoration(labelText: l10n.examAnswerPolicy),
               items: ExamSectionAnswerPolicy.values
-                  .map((value) => DropdownMenuItem(value: value, child: Text(localizedAnswerPolicy(l10n, value))))
+                  .map(
+                    (value) => DropdownMenuItem(
+                      value: value,
+                      child: Text(localizedAnswerPolicy(l10n, value)),
+                    ),
+                  )
                   .toList(),
               onChanged: (value) => setState(() => _policy = value ?? _policy),
             ),
@@ -76,7 +90,9 @@ class _ExamDraftSectionEditorCardState extends State<ExamDraftSectionEditorCard>
             TextField(
               controller: _required,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: l10n.examRequiredAnswerCount),
+              decoration: InputDecoration(
+                labelText: l10n.examRequiredAnswerCount,
+              ),
             ),
             const SizedBox(height: 12),
             Wrap(
@@ -95,7 +111,10 @@ class _ExamDraftSectionEditorCardState extends State<ExamDraftSectionEditorCard>
                   child: Text(l10n.save),
                 ),
                 if (widget.onCancel != null)
-                  OutlinedButton(onPressed: widget.onCancel, child: Text(l10n.cancel)),
+                  OutlinedButton(
+                    onPressed: widget.onCancel,
+                    child: Text(l10n.cancel),
+                  ),
               ],
             ),
           ],

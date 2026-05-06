@@ -24,7 +24,13 @@ class ExamRuleEditor extends StatelessWidget {
             children: [
               const Icon(Icons.rule_folder_outlined, color: Color(0xFF2563EB)),
               const SizedBox(width: 8),
-              Text(l10n.examGenerationRules, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+              Text(
+                l10n.examGenerationRules,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 18,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 14),

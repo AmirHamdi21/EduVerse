@@ -23,10 +23,26 @@ class ExamExportActions extends StatelessWidget {
       spacing: 10,
       runSpacing: 10,
       children: [
-        FilledButton.icon(onPressed: onPublish, icon: const Icon(Icons.publish_outlined), label: Text(l10n.examPublish)),
-        OutlinedButton.icon(onPressed: onUnpublish, icon: const Icon(Icons.undo_rounded), label: Text(l10n.examUnpublish)),
-        OutlinedButton.icon(onPressed: onArchive, icon: const Icon(Icons.archive_outlined), label: Text(l10n.examArchive)),
-        FilledButton.icon(onPressed: onExport, icon: const Icon(Icons.download_rounded), label: Text(l10n.examExport)),
+        FilledButton.icon(
+          onPressed: onPublish,
+          icon: const Icon(Icons.publish_outlined),
+          label: Text(l10n.examPublish),
+        ),
+        OutlinedButton.icon(
+          onPressed: onUnpublish,
+          icon: const Icon(Icons.undo_rounded),
+          label: Text(l10n.examUnpublish),
+        ),
+        OutlinedButton.icon(
+          onPressed: onArchive,
+          icon: const Icon(Icons.archive_outlined),
+          label: Text(l10n.examArchive),
+        ),
+        FilledButton.icon(
+          onPressed: onExport,
+          icon: const Icon(Icons.download_rounded),
+          label: Text(l10n.examExport),
+        ),
       ],
     );
   }

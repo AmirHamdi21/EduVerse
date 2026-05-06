@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/exams/exam_draft_item_model.dart';
 import '../question_bank/question_bank_localized_labels.dart';
+import '../question_bank/question_text_renderer.dart';
 
 class ExamDraftItemCard extends StatelessWidget {
   const ExamDraftItemCard({
@@ -38,9 +39,9 @@ class ExamDraftItemCard extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              item.question?.questionText ??
-                  '${l10n.questions} ${item.questionId}',
+            QuestionFormattedText(
+              text: item.question?.questionText,
+              fallback: '${l10n.questions} ${item.questionId}',
             ),
             if (item.overrideReason != null &&
                 item.overrideReason!.trim().isNotEmpty)
@@ -65,7 +66,9 @@ class ExamDraftItemCard extends StatelessWidget {
               '${l10n.status}: ${item.sourceQuestionStatus}',
             if (item.sourceQuestionVersionId != null)
               l10n.examVersionBadge(item.sourceQuestionVersionId!),
-            if ((item.questionImagePreviewUrl ?? item.question?.questionImageUrl) != null)
+            if ((item.questionImagePreviewUrl ??
+                    item.question?.questionImageUrl) !=
+                null)
               l10n.qbPromptImage,
             if (item.supportingAttachments.isNotEmpty)
               '${l10n.attachments}: ${item.supportingAttachments.length}',
@@ -119,7 +122,8 @@ class ExamDraftItemCard extends StatelessWidget {
   }
 
   Widget _thumbnail(BuildContext context) {
-    final imageUrl = item.questionImagePreviewUrl ?? item.question?.questionImageUrl;
+    final imageUrl =
+        item.questionImagePreviewUrl ?? item.question?.questionImageUrl;
     if (imageUrl == null || imageUrl.isEmpty) {
       return CircleAvatar(
         child: Icon(

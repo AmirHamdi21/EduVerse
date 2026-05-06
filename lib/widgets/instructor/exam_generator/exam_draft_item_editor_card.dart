@@ -20,19 +20,24 @@ class ExamDraftItemEditorCard extends StatefulWidget {
   final VoidCallback? onCancel;
 
   @override
-  State<ExamDraftItemEditorCard> createState() => _ExamDraftItemEditorCardState();
+  State<ExamDraftItemEditorCard> createState() =>
+      _ExamDraftItemEditorCardState();
 }
 
 class _ExamDraftItemEditorCardState extends State<ExamDraftItemEditorCard> {
   late int? _sectionId = widget.item.draftSectionId;
-  late final TextEditingController _marks =
-      TextEditingController(text: widget.item.marks?.toString() ?? '');
-  late final TextEditingController _weight =
-      TextEditingController(text: widget.item.weight.toString());
-  late final TextEditingController _weightUnits =
-      TextEditingController(text: widget.item.weightUnits.toString());
-  late final TextEditingController _override =
-      TextEditingController(text: widget.item.overrideReason ?? '');
+  late final TextEditingController _marks = TextEditingController(
+    text: widget.item.marks?.toString() ?? '',
+  );
+  late final TextEditingController _weight = TextEditingController(
+    text: widget.item.weight.toString(),
+  );
+  late final TextEditingController _weightUnits = TextEditingController(
+    text: widget.item.weightUnits.toString(),
+  );
+  late final TextEditingController _override = TextEditingController(
+    text: widget.item.overrideReason ?? '',
+  );
 
   @override
   void dispose() {
@@ -56,38 +61,63 @@ class _ExamDraftItemEditorCardState extends State<ExamDraftItemEditorCard> {
               initialValue: _sectionId,
               decoration: InputDecoration(labelText: l10n.examMoveToSection),
               items: [
-                DropdownMenuItem<int?>(value: null, child: Text(l10n.examUnassigned)),
-                ...widget.sections.map((section) => DropdownMenuItem<int?>(
-                      value: section.id,
-                      child: Text(section.title),
-                    )),
+                DropdownMenuItem<int?>(
+                  value: null,
+                  child: Text(l10n.examUnassigned),
+                ),
+                ...widget.sections.map(
+                  (section) => DropdownMenuItem<int?>(
+                    value: section.id,
+                    child: Text(section.title),
+                  ),
+                ),
               ],
               onChanged: (value) => setState(() => _sectionId = value),
             ),
             const SizedBox(height: 12),
-            TextField(controller: _marks, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l10n.examMarks)),
+            TextField(
+              controller: _marks,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: l10n.examMarks),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: _weight, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l10n.examMarkDistribution)),
+            TextField(
+              controller: _weight,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: l10n.examMarkDistribution),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: _weightUnits, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l10n.examWeightUnits)),
+            TextField(
+              controller: _weightUnits,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: l10n.examWeightUnits),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: _override, decoration: InputDecoration(labelText: l10n.examOverrideReason)),
+            TextField(
+              controller: _override,
+              decoration: InputDecoration(labelText: l10n.examOverrideReason),
+            ),
             const SizedBox(height: 12),
             Wrap(
               spacing: 10,
               children: [
                 FilledButton(
-                  onPressed: () => widget.onSubmit(ExamDraftItemUpdatePayload(
-                    draftSectionId: _sectionId,
-                    marks: double.tryParse(_marks.text),
-                    weight: double.tryParse(_weight.text),
-                    weightUnits: double.tryParse(_weightUnits.text),
-                    overrideReason: _override.text,
-                  )),
+                  onPressed: () => widget.onSubmit(
+                    ExamDraftItemUpdatePayload(
+                      draftSectionId: _sectionId,
+                      marks: double.tryParse(_marks.text),
+                      weight: double.tryParse(_weight.text),
+                      weightUnits: double.tryParse(_weightUnits.text),
+                      overrideReason: _override.text,
+                    ),
+                  ),
                   child: Text(l10n.save),
                 ),
                 if (widget.onCancel != null)
-                  OutlinedButton(onPressed: widget.onCancel, child: Text(l10n.cancel)),
+                  OutlinedButton(
+                    onPressed: widget.onCancel,
+                    child: Text(l10n.cancel),
+                  ),
               ],
             ),
           ],
