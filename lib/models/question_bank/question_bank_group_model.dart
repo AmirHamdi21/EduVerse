@@ -6,10 +6,13 @@ class QuestionBankGroupSummaryModel {
     required this.groupId,
     required this.itemOrder,
     required this.courseId,
+    this.courseCode,
+    this.courseName,
     this.chapterId,
     this.title,
     this.sharedPrompt,
     this.sharedFileId,
+    this.sharedImageUrl,
     this.sharedFileCaption,
     this.sharedFileAltText,
     required this.groupType,
@@ -19,10 +22,13 @@ class QuestionBankGroupSummaryModel {
   final int groupId;
   final int itemOrder;
   final int courseId;
+  final String? courseCode;
+  final String? courseName;
   final int? chapterId;
   final String? title;
   final String? sharedPrompt;
   final int? sharedFileId;
+  final String? sharedImageUrl;
   final String? sharedFileCaption;
   final String? sharedFileAltText;
   final QuestionGroupType groupType;
@@ -33,10 +39,13 @@ class QuestionBankGroupSummaryModel {
       groupId: _toInt(json['groupId']),
       itemOrder: _toInt(json['itemOrder']),
       courseId: _toInt(json['courseId']),
+      courseCode: _courseCode(json),
+      courseName: _courseName(json),
       chapterId: _nullableInt(json['chapterId']),
       title: _nullableString(json['title']),
       sharedPrompt: _nullableString(json['sharedPrompt']),
       sharedFileId: _nullableInt(json['sharedFileId']),
+      sharedImageUrl: _sharedImageUrl(json),
       sharedFileCaption: _nullableString(json['sharedFileCaption']),
       sharedFileAltText: _nullableString(json['sharedFileAltText']),
       groupType: QuestionGroupType.fromJson(json['groupType']),
@@ -56,9 +65,18 @@ class QuestionBankGroupItemModel {
   final int itemOrder;
 
   factory QuestionBankGroupItemModel.fromJson(Map<String, dynamic> json) {
+    final nestedQuestion = json['question'];
+    final question = nestedQuestion is Map<String, dynamic>
+        ? nestedQuestion
+        : const <String, dynamic>{};
     return QuestionBankGroupItemModel(
       id: _toInt(json['id'] ?? json['groupItemId']),
-      questionId: _toInt(json['questionId']),
+      questionId: _toInt(
+        json['questionId'] ??
+            question['questionId'] ??
+            question['id'] ??
+            (json.containsKey('questionType') ? json['id'] : null),
+      ),
       itemOrder: _toInt(json['itemOrder']),
     );
   }
@@ -68,10 +86,13 @@ class QuestionBankGroupModel {
   const QuestionBankGroupModel({
     required this.id,
     required this.courseId,
+    this.courseCode,
+    this.courseName,
     this.chapterId,
     this.title,
     this.sharedPrompt,
     this.sharedFileId,
+    this.sharedImageUrl,
     this.sharedFileCaption,
     this.sharedFileAltText,
     required this.groupType,
@@ -90,10 +111,13 @@ class QuestionBankGroupModel {
 
   final int id;
   final int courseId;
+  final String? courseCode;
+  final String? courseName;
   final int? chapterId;
   final String? title;
   final String? sharedPrompt;
   final int? sharedFileId;
+  final String? sharedImageUrl;
   final String? sharedFileCaption;
   final String? sharedFileAltText;
   final QuestionGroupType groupType;
@@ -113,10 +137,13 @@ class QuestionBankGroupModel {
     return QuestionBankGroupModel(
       id: _toInt(json['id'] ?? json['groupId']),
       courseId: _toInt(json['courseId']),
+      courseCode: _courseCode(json),
+      courseName: _courseName(json),
       chapterId: _nullableInt(json['chapterId']),
       title: _nullableString(json['title']),
       sharedPrompt: _nullableString(json['sharedPrompt']),
       sharedFileId: _nullableInt(json['sharedFileId']),
+      sharedImageUrl: _sharedImageUrl(json),
       sharedFileCaption: _nullableString(json['sharedFileCaption']),
       sharedFileAltText: _nullableString(json['sharedFileAltText']),
       groupType: QuestionGroupType.fromJson(json['groupType']),
@@ -130,10 +157,17 @@ class QuestionBankGroupModel {
       underReviewQuestions: _toInt(json['underReviewQuestions']),
       rejectedQuestions: _toInt(json['rejectedQuestions']),
       archivedQuestions: _toInt(json['archivedQuestions']),
-      items: _asList(json['items'])
-          .whereType<Map<String, dynamic>>()
-          .map(QuestionBankGroupItemModel.fromJson)
-          .toList(),
+      items:
+          _asList(
+                json['items'] ??
+                    json['groupItems'] ??
+                    json['questionItems'] ??
+                    json['questions'],
+              )
+              .whereType<Map<String, dynamic>>()
+              .map(QuestionBankGroupItemModel.fromJson)
+              .where((item) => item.questionId > 0)
+              .toList(),
     );
   }
 }
@@ -163,4 +197,49 @@ DateTime? _toDate(dynamic value) {
 
 List<dynamic> _asList(dynamic value) {
   return value is List ? value : const <dynamic>[];
+}
+
+Map<String, dynamic>? _nestedCourse(Map<String, dynamic> json) {
+  final course = json['course'];
+  return course is Map<String, dynamic> ? course : null;
+}
+
+String? _courseCode(Map<String, dynamic> json) {
+  final course = _nestedCourse(json);
+  return _nullableString(
+    json['courseCode'] ??
+        json['code'] ??
+        course?['code'] ??
+        course?['courseCode'],
+  );
+}
+
+String? _courseName(Map<String, dynamic> json) {
+  final course = _nestedCourse(json);
+  return _nullableString(
+    json['courseName'] ??
+        json['name'] ??
+        course?['name'] ??
+        course?['courseName'],
+  );
+}
+
+String? _sharedImageUrl(Map<String, dynamic> json) {
+  final sharedFile = json['sharedFile'];
+  final file = json['file'];
+  final sharedFileMap = sharedFile is Map<String, dynamic> ? sharedFile : null;
+  final fileMap = file is Map<String, dynamic> ? file : null;
+  return _nullableString(
+    json['sharedImageUrl'] ??
+        json['sharedFileUrl'] ??
+        json['sharedFileImageUrl'] ??
+        json['imageUrl'] ??
+        json['url'] ??
+        sharedFileMap?['imageUrl'] ??
+        sharedFileMap?['url'] ??
+        sharedFileMap?['downloadUrl'] ??
+        fileMap?['imageUrl'] ??
+        fileMap?['url'] ??
+        fileMap?['downloadUrl'],
+  );
 }

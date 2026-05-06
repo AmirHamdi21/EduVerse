@@ -108,7 +108,11 @@ class QuestionBankService {
         if (status != null) 'status': status.value,
         if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
         if (hasAttachments != null) 'hasAttachments': hasAttachments,
-        if (groupId != null) 'groupId': groupId,
+        if (groupId != null) ...{
+          'groupId': groupId,
+          'questionGroupId': groupId,
+          'groupIds': groupId,
+        },
       };
       final response = await _client.dio.get(
         '/question-bank/questions',
@@ -148,7 +152,11 @@ class QuestionBankService {
           if (search != null && search.trim().isNotEmpty)
             'search': search.trim(),
           if (hasAttachments != null) 'hasAttachments': hasAttachments,
-          if (groupId != null) 'groupId': groupId,
+          if (groupId != null) ...{
+            'groupId': groupId,
+            'questionGroupId': groupId,
+            'groupIds': groupId,
+          },
         },
         cancelToken: cancelToken,
       );

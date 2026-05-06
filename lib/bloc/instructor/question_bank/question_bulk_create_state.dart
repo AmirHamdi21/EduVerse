@@ -9,6 +9,7 @@ class QuestionBulkCreateState extends Equatable {
   const QuestionBulkCreateState({
     this.isLoading = false,
     this.isSubmitting = false,
+    this.isLoadingChapters = false,
     this.courses = const <TeachingCourseModel>[],
     this.chapters = const <CourseChapterModel>[],
     this.courseId,
@@ -23,6 +24,7 @@ class QuestionBulkCreateState extends Equatable {
 
   final bool isLoading;
   final bool isSubmitting;
+  final bool isLoadingChapters;
   final List<TeachingCourseModel> courses;
   final List<CourseChapterModel> chapters;
   final int? courseId;
@@ -37,6 +39,7 @@ class QuestionBulkCreateState extends Equatable {
   QuestionBulkCreateState copyWith({
     bool? isLoading,
     bool? isSubmitting,
+    bool? isLoadingChapters,
     List<TeachingCourseModel>? courses,
     List<CourseChapterModel>? chapters,
     int? courseId,
@@ -57,6 +60,7 @@ class QuestionBulkCreateState extends Equatable {
     return QuestionBulkCreateState(
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
+      isLoadingChapters: isLoadingChapters ?? this.isLoadingChapters,
       courses: courses ?? this.courses,
       chapters: chapters ?? this.chapters,
       courseId: clearCourse ? null : courseId ?? this.courseId,
@@ -84,6 +88,7 @@ class QuestionBulkCreateState extends Equatable {
   List<Object?> get props => [
     isLoading,
     isSubmitting,
+    isLoadingChapters,
     courses,
     chapters,
     courseId,

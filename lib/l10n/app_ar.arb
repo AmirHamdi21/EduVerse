@@ -6145,6 +6145,7 @@
   "questionBankStudioSubtitle": "اضبط نص السؤال والإجابة والتصنيف والوسائط في تدفق واحد.",
   "questionBankEditQuestion": "تعديل سؤال",
   "questionBankQuestionDetails": "تفاصيل السؤال",
+  "qbQuestionReviewWorkspace": "راجع نص السؤال والوسائط ونموذج الإجابة والمجموعات وحالة النشر في مساحة واحدة مركزة.",
   "questionBankImageQuestion": "سؤال بصورة",
   "questionBankBulkSubtitle": "أنشئ حتى 50 سؤالًا مع بقاء الصفوف قابلة للتعديل عند فشل الخادم.",
   "questionBankGroupDetails": "تفاصيل مجموعة الأسئلة",
@@ -6193,18 +6194,47 @@
   "qbApprovedEditWarningTitle": "سيتم إعادة حالة الاعتماد",
   "qbApprovedEditWarningBody": "تعديل هذا السؤال المعتمد سيعيده إلى مسودة حتى يتم اعتماده مرة أخرى.",
   "qbQuestionPrompt": "نص السؤال",
+  "qbQuestionPromptReviewHint": "اقرأ النص الذي سيظهر للطالب قبل الاعتماد أو التعديل.",
+  "qbQuestionHintsReviewHint": "نص مساعد اختياري يظهر مع هذا السؤال.",
+  "qbQuestionImageReviewHint": "اضغط على الصورة لمعاينتها قبل التعديل.",
+  "qbNoQuestionHint": "لم يتم حفظ تلميح لهذا السؤال بعد.",
+  "qbNoImageCaption": "لم يتم حفظ تعليق للصورة في هذا السؤال.",
+  "qbNoImageAltText": "لم يتم حفظ نص بديل للصورة في هذا السؤال.",
   "metadata": "البيانات",
+  "qbMetadataReviewHint": "بيانات التصنيف والتوجيه المستخدمة في الفلاتر وتوليد الامتحانات.",
   "expectedAnswer": "الإجابة المتوقعة",
+  "qbAnswerModel": "نموذج الإجابة",
+  "qbAnswerModelReviewHint": "راجع الإجابة المقبولة قبل نشر هذا السؤال.",
+  "qbNoAnswerProvided": "لا توجد إجابة محفوظة لهذا السؤال.",
+  "qbQuestionScope": "نطاق السؤال",
+  "qbQuestionScopeReviewHint": "سياق المقرر والفصل الخاص بهذا السؤال.",
   "allStates": "كل الحالات",
   "qbManageChapters": "إدارة الفصول",
+  "qbChapters": "الفصول",
+  "qbSearchChaptersHint": "ابحث باسم الفصل أو ترتيبه",
+  "qbNoChaptersMessage": "أنشئ فصولاً لتنظيم أسئلة المقرر قبل استخدامها في الامتحانات.",
+  "qbChapterStatus": "حالة الفصل",
+  "qbAllChapterStatuses": "كل الحالات",
   "qbCreateChapter": "إنشاء فصل",
   "qbEditChapter": "تعديل فصل",
   "qbDeleteChapter": "حذف فصل",
   "qbChapterName": "اسم الفصل",
   "qbChapterOrder": "ترتيب الفصل",
+  "qbChapterOrderTakenHint": "الترتيبات المستخدمة في هذا المقرر: {orders}",
+  "@qbChapterOrderTakenHint": {
+    "placeholders": {
+      "orders": {"type": "String"}
+    }
+  },
   "qbChapterActive": "نشط",
   "qbChapterInactive": "غير نشط",
   "qbChapterCascadeWarning": "حذف هذا الفصل قد يحذف الأسئلة والمجموعات المرتبطة به. لا يمكن التراجع عن ذلك.",
+  "qbChapterCount": "{count, plural, one {فصل واحد} other {{count} فصول}}",
+  "@qbChapterCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "qbChapterQuestionCount": "{count, plural, one {سؤال واحد} other {{count} أسئلة}}",
   "@qbChapterQuestionCount": {
     "placeholders": {
@@ -6219,6 +6249,14 @@
   "qbEditGroup": "تعديل المجموعة",
   "qbDeleteGroup": "حذف المجموعة",
   "qbGroupType": "نوع المجموعة",
+  "qbAllGroupTypes": "كل أنواع المجموعات",
+  "qbSearchGroupsHint": "ابحث بعنوان المجموعة أو النص المشترك",
+  "qbQuestionCount": "{count, plural, one {سؤال واحد} other {{count} أسئلة}}",
+  "@qbQuestionCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "qbSharedPrompt": "النص المشترك",
   "qbSharedFileId": "معرّف الملف المشترك",
   "qbUploadGroupImage": "رفع صورة المجموعة",
@@ -6226,11 +6264,25 @@
   "qbGroupImageUploaded": "تم رفع صورة المجموعة",
   "qbGroupedBatchCreate": "إضافة أسئلة للمجموعة",
   "qbAddExistingQuestions": "إضافة أسئلة موجودة",
+  "qbAvailableQuestions": "الأسئلة المتاحة",
+  "qbLinkSelectedQuestions": "ربط الأسئلة المحددة",
+  "qbSelectAllVisible": "تحديد الأسئلة الظاهرة",
+  "qbClearSelection": "مسح التحديد",
+  "qbFilters": "الفلاتر",
   "qbRemoveFromGroup": "إزالة من المجموعة",
   "qbRemoveFromGroupBody": "سيتم حذف علاقة المجموعة فقط. سيبقى السؤال داخل بنك الأسئلة.",
   "qbReorderGroupQuestions": "إعادة ترتيب أسئلة المجموعة",
   "qbGroupDeleteBody": "حذف هذه المجموعة لا يحذف أسئلتها.",
+  "qbGroupSaved": "تم حفظ المجموعة",
   "qbAttachmentAddByFile": "إضافة بمعرّف ملف",
+  "qbAttachmentCount": "{count, plural, one {مرفق واحد} other {{count} مرفقات}}",
+  "@qbAttachmentCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "qbNoAttachments": "لا توجد مرفقات",
+  "qbNoAttachmentsMessage": "ارفع صوراً داعمة عندما يحتاج السؤال إلى سياق بصري إضافي.",
   "qbUploadAttachment": "رفع مرفق",
   "qbEditAttachment": "تعديل مرفق",
   "qbCaption": "التعليق",
@@ -6266,6 +6318,9 @@
       "count": {"type": "int"}
     }
   },
+  "qbBulkGlobalActions": "إجراءات عامة",
+  "qbBulkCreatedQuestions": "الأسئلة المنشأة",
+  "qbBulkGlobalActionsHint": "طبّق نفس إجراء الحالة على كل الأسئلة المنشأة.",
   "qbUploadQuestionImage": "رفع صورة السؤال",
   "qbReplaceQuestionImage": "استبدال صورة السؤال",
   "qbRemoveQuestionImage": "إزالة صورة السؤال",
@@ -6289,9 +6344,29 @@
   "qbReject": "رفض",
   "qbArchive": "أرشفة",
   "qbRestore": "استعادة",
+  "qbStatusWorkflow": "مسار الحالة",
+  "qbCurrentStatus": "الحالة الحالية: {status}",
+  "@qbCurrentStatus": {
+    "placeholders": {
+      "status": {"type": "String"}
+    }
+  },
+  "qbStatusWorkflowHint": "تتفعّل الإجراءات فقط عندما يسمح مسار الخادم بها حسب الحالة الحالية.",
+  "qbSubmitForReviewHint": "أرسل السؤال إلى قائمة المراجعة.",
+  "qbSubmitForReviewDisabledHint": "متاح فقط للأسئلة المسودة أو المرفوضة.",
+  "qbApproveHint": "اجعل السؤال جاهزاً لتوليد الامتحانات.",
+  "qbApproveDisabledHint": "متاح فقط للأسئلة المسودة أو قيد المراجعة.",
+  "qbRejectHint": "أعد السؤال من المراجعة مع الحاجة إلى تعديلات.",
+  "qbRejectDisabledHint": "متاح فقط عندما يكون السؤال قيد المراجعة.",
+  "qbArchiveHint": "أخفِ السؤال من الاستخدام المعتاد بدون حذفه.",
+  "qbArchiveDisabledHint": "هذا السؤال مؤرشف بالفعل.",
+  "qbRestoreHint": "أعد السؤال المؤرشف إلى بنك الأسئلة النشط.",
+  "qbRestoreDisabledHint": "متاح فقط للأسئلة المؤرشفة.",
   "qbOverview": "نظرة عامة",
   "qbAnswers": "الإجابات",
   "qbGroups": "المجموعات",
+  "qbQuestionGroupsReviewHint": "المجموعات التي تحتوي هذا السؤال حالياً.",
+  "qbNoGroupsForQuestion": "هذا السؤال غير موجود في أي مجموعة",
   "qbStatus": "الحالة",
   "examFlatRules": "قواعد مسطحة",
   "examSectionedRules": "قواعد بأقسام",

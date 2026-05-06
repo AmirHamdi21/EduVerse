@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../common/bloc/route_request_controller.dart';
@@ -21,6 +23,15 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
   late final RouteRequestController _loadRequest = trackRouteRequest(
     RouteRequestController(),
   );
+  late final RouteRequestController _questionsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _statsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  final Map<int, QuestionBankQuestionModel> _questionCache =
+      <int, QuestionBankQuestionModel>{};
+  Timer? _remoteFilterDebounce;
 
   Future<void> initialize({int? preferredCourseId}) async {
     final request = _loadRequest.begin();
@@ -54,7 +65,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
       state.copyWith(
         teachingCourses: courses,
         selectedCourseId: selected,
-        isLoading: false,
+        isLoading: true,
         clearError: true,
       ),
     );
@@ -63,6 +74,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
   }
 
   Future<void> selectCourse(int? courseId) async {
+    _remoteFilterDebounce?.cancel();
     emitIfOpen(
       state.copyWith(
         selectedCourseId: courseId,
@@ -92,8 +104,10 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
     int? groupId,
     bool clearGroup = false,
     String? search,
+    bool debounceRemote = false,
   }) async {
-    emitIfOpen(
+    _remoteFilterDebounce?.cancel();
+    final nextState = _withLocalQuestionPreview(
       state.copyWith(
         selectedChapterId: chapterId,
         clearSelectedChapter: clearChapter,
@@ -111,9 +125,21 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
         clearGroup: clearGroup,
         search: search,
         page: 1,
+        isLoading: false,
+        isLoadingMore: false,
+        clearError: true,
       ),
     );
-    await loadQuestions(refresh: true);
+    emitIfOpen(nextState);
+    if (debounceRemote) {
+      _remoteFilterDebounce = Timer(const Duration(milliseconds: 120), () {
+        if (!isClosed) {
+          loadQuestions(refresh: true, quiet: true);
+        }
+      });
+      return;
+    }
+    await loadQuestions(refresh: true, quiet: true);
   }
 
   Future<void> refresh() => _loadDependent(resetPage: true);
@@ -127,7 +153,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
     await Future.wait(<Future<void>>[
       loadChapters(),
       loadGroups(),
-      loadQuestions(refresh: resetPage),
+      loadQuestions(refresh: resetPage, refreshStats: false),
       loadStats(),
     ]);
   }
@@ -262,27 +288,38 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
     }
   }
 
-  Future<void> loadQuestions({int page = 1, bool refresh = false}) async {
-    emitIfOpen(
-      state.copyWith(
-        isLoading: page == 1,
-        isLoadingMore: page > 1,
-        clearError: true,
-      ),
-    );
+  Future<void> loadQuestions({
+    int page = 1,
+    bool refresh = false,
+    bool quiet = false,
+    bool refreshStats = true,
+  }) async {
+    final request = _questionsRequest.begin();
+    final queryState = state;
+    if (!(quiet && page == 1)) {
+      emitIfOpen(
+        state.copyWith(
+          isLoading: page == 1,
+          isLoadingMore: page > 1,
+          clearError: true,
+        ),
+      );
+    }
     final result = await _questionBankService.getQuestions(
-      courseId: state.selectedCourseId,
-      chapterId: state.selectedChapterId,
-      questionType: state.selectedType,
-      difficulty: state.selectedDifficulty,
-      bloomLevel: state.selectedBloomLevel,
-      status: state.selectedStatus,
-      search: state.search,
-      hasAttachments: state.hasAttachments,
-      groupId: state.selectedGroupId,
+      courseId: queryState.selectedCourseId,
+      chapterId: queryState.selectedChapterId,
+      questionType: queryState.selectedType,
+      difficulty: queryState.selectedDifficulty,
+      bloomLevel: queryState.selectedBloomLevel,
+      status: queryState.selectedStatus,
+      search: queryState.search,
+      hasAttachments: queryState.hasAttachments,
+      groupId: queryState.selectedGroupId,
       page: page,
-      limit: state.limit,
+      limit: queryState.limit,
+      cancelToken: _questionsRequest.token,
     );
+    if (!isRequestCurrent(_questionsRequest, request)) return;
     if (!result.isSuccess || result.data == null) {
       emitIfOpen(
         state.copyWith(
@@ -294,6 +331,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
       return;
     }
     final pageData = result.data!;
+    _cacheQuestions(pageData.data);
     emitIfOpen(
       state.copyWith(
         isLoading: false,
@@ -307,23 +345,27 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
         clearError: true,
       ),
     );
-    if (page == 1) {
+    if (page == 1 && refreshStats) {
       await loadStats();
     }
   }
 
   Future<void> loadStats() async {
+    final request = _statsRequest.begin();
+    final queryState = state;
     final result = await _questionBankService.getQuestionStats(
-      courseId: state.selectedCourseId,
-      chapterId: state.selectedChapterId,
-      questionType: state.selectedType,
-      difficulty: state.selectedDifficulty,
-      bloomLevel: state.selectedBloomLevel,
-      status: state.selectedStatus,
-      search: state.search,
-      hasAttachments: state.hasAttachments,
-      groupId: state.selectedGroupId,
+      courseId: queryState.selectedCourseId,
+      chapterId: queryState.selectedChapterId,
+      questionType: queryState.selectedType,
+      difficulty: queryState.selectedDifficulty,
+      bloomLevel: queryState.selectedBloomLevel,
+      status: queryState.selectedStatus,
+      search: queryState.search,
+      hasAttachments: queryState.hasAttachments,
+      groupId: queryState.selectedGroupId,
+      cancelToken: _statsRequest.token,
     );
+    if (!isRequestCurrent(_statsRequest, request)) return;
     if (result.isSuccess && result.data != null) {
       emitIfOpen(state.copyWith(stats: result.data!));
     }
@@ -345,6 +387,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
       return;
     }
     final updated = result.data!;
+    _questionCache[updated.id] = updated;
     emitIfOpen(
       state.copyWith(
         isMutating: false,
@@ -377,6 +420,22 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
       state.copyWith(
         selectedQuestionIds: selected,
         isSelectionMode: selected.isNotEmpty || state.isSelectionMode,
+      ),
+    );
+  }
+
+  void setCurrentQuestionsSelected(bool selected) {
+    final currentIds = state.questions.map((question) => question.id).toSet();
+    final next = Set<int>.from(state.selectedQuestionIds);
+    if (selected) {
+      next.addAll(currentIds);
+    } else {
+      next.removeAll(currentIds);
+    }
+    emitIfOpen(
+      state.copyWith(
+        selectedQuestionIds: next,
+        isSelectionMode: next.isNotEmpty || state.isSelectionMode,
       ),
     );
   }
@@ -423,9 +482,84 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
       );
       return;
     }
+    _questionCache.remove(questionId);
     await loadQuestions(refresh: true);
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'questionDeleted'),
     );
+  }
+
+  QuestionBankState _withLocalQuestionPreview(QuestionBankState nextState) {
+    if (_questionCache.isEmpty) {
+      return nextState;
+    }
+
+    final filtered = _filteredCachedQuestions(nextState);
+    return nextState.copyWith(
+      questions: filtered,
+      page: 1,
+      total: filtered.length,
+      isLoading: false,
+      isLoadingMore: false,
+    );
+  }
+
+  List<QuestionBankQuestionModel> _filteredCachedQuestions(
+    QuestionBankState filters,
+  ) {
+    final query = filters.search.trim().toLowerCase();
+    return _questionCache.values.where((question) {
+      if (filters.selectedCourseId != null &&
+          question.courseId != filters.selectedCourseId) {
+        return false;
+      }
+      if (filters.selectedChapterId != null &&
+          question.chapterId != filters.selectedChapterId) {
+        return false;
+      }
+      if (filters.selectedType != null &&
+          question.questionType != filters.selectedType) {
+        return false;
+      }
+      if (filters.selectedDifficulty != null &&
+          question.difficulty != filters.selectedDifficulty) {
+        return false;
+      }
+      if (filters.selectedBloomLevel != null &&
+          question.bloomLevel != filters.selectedBloomLevel) {
+        return false;
+      }
+      if (filters.selectedStatus != null &&
+          question.status != filters.selectedStatus) {
+        return false;
+      }
+      if (filters.hasAttachments != null &&
+          question.hasAttachments != filters.hasAttachments) {
+        return false;
+      }
+      if (filters.selectedGroupId != null &&
+          !question.groups.any(
+            (group) => group.groupId == filters.selectedGroupId,
+          )) {
+        return false;
+      }
+      if (query.isNotEmpty &&
+          !(question.questionText ?? '').toLowerCase().contains(query)) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  void _cacheQuestions(List<QuestionBankQuestionModel> questions) {
+    for (final question in questions) {
+      _questionCache[question.id] = question;
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _remoteFilterDebounce?.cancel();
+    return super.close();
   }
 }

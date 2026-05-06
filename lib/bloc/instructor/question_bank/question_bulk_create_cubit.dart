@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../common/bloc/route_request_controller.dart';
+
 import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_fill_blank_model.dart';
 import '../../../models/question_bank/question_bank_option_model.dart';
@@ -9,7 +11,8 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import 'question_bulk_create_state.dart';
 
-class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
+class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
+    with SafeRouteCubitMixin<QuestionBulkCreateState> {
   QuestionBulkCreateCubit({
     required QuestionBankService questionBankService,
     required EnrollmentService enrollmentService,
@@ -19,42 +22,71 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
 
   final QuestionBankService _questionBankService;
   final EnrollmentService _enrollmentService;
+  int _courseRequestVersion = 0;
 
   Future<void> initialize() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final coursesResult = await _enrollmentService.getTeachingCourses();
     final courses = coursesResult.data ?? const [];
     final courseId = courses.isNotEmpty ? courses.first.courseId : null;
-    emit(
+    if (courseId == null) {
+      emitIfOpen(
+        state.copyWith(
+          isLoading: false,
+          courses: courses,
+          clearCourse: true,
+          clearDefaultChapter: true,
+          clearError: true,
+        ),
+      );
+      return;
+    }
+    final chaptersResult = await _questionBankService.getChapters(courseId);
+    final chapters = chaptersResult.data ?? const [];
+    final defaultChapterId = chapters.isNotEmpty ? chapters.first.id : null;
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         courses: courses,
         courseId: courseId,
+        chapters: chapters,
+        defaultChapterId: defaultChapterId,
+        rows: _applyDefaultChapter(state.rows, defaultChapterId),
         clearError: true,
       ),
     );
-    if (courseId != null) await selectCourse(courseId);
   }
 
   Future<void> selectCourse(int? courseId) async {
-    emit(
+    final requestVersion = ++_courseRequestVersion;
+    emitIfOpen(
       state.copyWith(
         courseId: courseId,
         clearCourse: courseId == null,
         clearDefaultChapter: true,
+        isLoadingChapters: courseId != null,
         chapters: const [],
         rows: state.rows
             .map((row) => row.copyWith(clearChapter: true))
             .toList(),
       ),
     );
-    if (courseId == null) return;
+    if (courseId == null) {
+      emitIfOpen(state.copyWith(isLoadingChapters: false));
+      return;
+    }
     final result = await _questionBankService.getChapters(courseId);
+    if (requestVersion != _courseRequestVersion || state.courseId != courseId) {
+      return;
+    }
     final chapters = result.data ?? const [];
-    emit(
+    final defaultChapterId = chapters.isNotEmpty ? chapters.first.id : null;
+    emitIfOpen(
       state.copyWith(
+        isLoadingChapters: false,
         chapters: chapters,
-        defaultChapterId: chapters.isNotEmpty ? chapters.first.id : null,
+        defaultChapterId: defaultChapterId,
+        rows: _applyDefaultChapter(state.rows, defaultChapterId),
       ),
     );
   }
@@ -65,10 +97,10 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
   }) async {
     final courseId = state.courseId;
     if (courseId == null || courseId <= 0) {
-      emit(state.copyWith(errorMessage: 'courseRequired'));
+      emitIfOpen(state.copyWith(errorMessage: 'courseRequired'));
       return;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(isSubmitting: true, clearError: true, clearSuccess: true),
     );
     final result = await _questionBankService.createChapter(
@@ -77,7 +109,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       chapterOrder: chapterOrder,
     );
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isSubmitting: false,
           errorMessage: result.error?.message ?? 'chapterCreateFailed',
@@ -86,17 +118,19 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       return;
     }
     final chapters = await _questionBankService.getChapters(courseId);
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSubmitting: false,
         chapters: chapters.data ?? state.chapters,
+        defaultChapterId: result.data!.id,
+        rows: _applyDefaultChapter(state.rows, result.data!.id),
         successMessage: 'chapterCreated',
       ),
     );
   }
 
   void selectDefaultChapter(int? chapterId) {
-    emit(
+    emitIfOpen(
       state.copyWith(
         defaultChapterId: chapterId,
         clearDefaultChapter: chapterId == null,
@@ -106,17 +140,20 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
 
   void addRow() {
     if (state.rows.length >= 50) {
-      emit(state.copyWith(errorMessage: 'bulkMaxRows'));
+      emitIfOpen(state.copyWith(errorMessage: 'bulkMaxRows'));
       return;
     }
     final nextId =
         state.rows.map((row) => row.localId).fold(0, (a, b) => a > b ? a : b) +
         1;
-    emit(
+    emitIfOpen(
       state.copyWith(
         rows: [
           ...state.rows,
-          QuestionBulkRowModel(localId: nextId),
+          QuestionBulkRowModel(
+            localId: nextId,
+            chapterId: state.defaultChapterId,
+          ),
         ],
       ),
     );
@@ -124,7 +161,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
 
   void removeRow(int localId) {
     if (state.rows.length <= 1) return;
-    emit(
+    emitIfOpen(
       state.copyWith(
         rows: state.rows.where((row) => row.localId != localId).toList(),
       ),
@@ -132,7 +169,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
   }
 
   void updateRow(QuestionBulkRowModel row) {
-    emit(
+    emitIfOpen(
       state.copyWith(
         rows: state.rows
             .map((item) => item.localId == row.localId ? row : item)
@@ -171,12 +208,12 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
     required int localId,
     required String path,
   }) async {
-    emit(
+    emitIfOpen(
       state.copyWith(isSubmitting: true, clearError: true, clearSuccess: true),
     );
     final result = await _questionBankService.uploadQuestionImage(path);
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isSubmitting: false,
           errorMessage: result.error?.message ?? 'questionImageUploadFailed',
@@ -186,9 +223,12 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
     }
     final rows = state.rows.map((row) {
       if (row.localId != localId) return row;
-      return row.copyWith(questionFileId: result.data!.fileId);
+      return row.copyWith(
+        questionFileId: result.data!.fileId,
+        questionImageUrl: result.data!.imageUrl,
+      );
     }).toList();
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSubmitting: false,
         rows: rows,
@@ -202,13 +242,13 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       (item) => item.localId == localId,
       orElse: () => QuestionBulkRowModel(localId: localId),
     );
-    emit(
+    emitIfOpen(
       state.copyWith(isSubmitting: true, clearError: true, clearSuccess: true),
     );
     if (row.questionFileId != null) {
       await _questionBankService.deleteUploadedFile(row.questionFileId!);
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSubmitting: false,
         rows: state.rows
@@ -233,14 +273,14 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
     required List<String> paths,
   }) async {
     if (paths.isEmpty) return;
-    emit(
+    emitIfOpen(
       state.copyWith(isSubmitting: true, clearError: true, clearSuccess: true),
     );
     final uploaded = <QuestionAttachmentPayload>[];
     for (final path in paths) {
       final result = await _questionBankService.uploadQuestionImage(path);
       if (!result.isSuccess || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isSubmitting: false,
             errorMessage: result.error?.message ?? 'attachmentUploadFailed',
@@ -256,7 +296,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
         ),
       );
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSubmitting: false,
         rows: state.rows
@@ -281,7 +321,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
     required int fileId,
   }) async {
     await _questionBankService.deleteUploadedFile(fileId);
-    emit(
+    emitIfOpen(
       state.copyWith(
         rows: state.rows
             .map(
@@ -303,7 +343,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
     required int localId,
     required QuestionAttachmentPayload attachment,
   }) {
-    emit(
+    emitIfOpen(
       state.copyWith(
         rows: state.rows
             .map(
@@ -377,11 +417,11 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
   Future<bool> submit() async {
     final courseId = state.courseId;
     if (courseId == null || courseId <= 0) {
-      emit(state.copyWith(errorMessage: 'courseRequired'));
+      emitIfOpen(state.copyWith(errorMessage: 'courseRequired'));
       return false;
     }
     if (state.rows.length > 50) {
-      emit(state.copyWith(errorMessage: 'bulkMaxRows'));
+      emitIfOpen(state.copyWith(errorMessage: 'bulkMaxRows'));
       return false;
     }
     final rows = <QuestionBulkRowModel>[];
@@ -393,7 +433,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       hasError = hasError || error != null;
     }
     if (hasError) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           rows: rows,
           errorMessage: 'bulkRowsInvalid',
@@ -403,7 +443,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       );
       return false;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSubmitting: true,
         rows: rows,
@@ -417,7 +457,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
     );
     if (!result.isSuccess) {
       final message = result.error?.message ?? 'bulkCreateFailed';
-      emit(
+      emitIfOpen(
         state.copyWith(
           isSubmitting: false,
           errorMessage: message,
@@ -443,7 +483,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
         .where((row) => row.error != null)
         .toList();
     final allCreated = [...state.createdQuestions, ...?detailed?.created];
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSubmitting: false,
         successMessage: detailed?.hasFailures == true
@@ -452,7 +492,12 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
         createdQuestions: allCreated,
         rows: detailed?.hasFailures == true
             ? failedRows
-            : const [QuestionBulkRowModel(localId: 1)],
+            : [
+                QuestionBulkRowModel(
+                  localId: 1,
+                  chapterId: state.defaultChapterId,
+                ),
+              ],
         failedRows: failedRows,
         failureReportMessage: detailed?.hasFailures == true
             ? 'bulkCreatePartialSuccess'
@@ -464,9 +509,11 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
   }
 
   Future<void> resetAfterSuccess() async {
-    emit(
+    emitIfOpen(
       state.copyWith(
-        rows: const [QuestionBulkRowModel(localId: 1)],
+        rows: [
+          QuestionBulkRowModel(localId: 1, chapterId: state.defaultChapterId),
+        ],
         clearCreatedQuestions: true,
         clearFailureReport: true,
         clearError: true,
@@ -493,7 +540,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
 
   Future<bool> statusCreatedQuestions(String action) async {
     if (state.createdQuestions.isEmpty) return false;
-    emit(state.copyWith(isSubmitting: true, clearError: true));
+    emitIfOpen(state.copyWith(isSubmitting: true, clearError: true));
     final result = await _questionBankService.batchStatusAction(
       questionIds: state.createdQuestions
           .map((question) => question.id)
@@ -501,7 +548,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       action: action,
     );
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isSubmitting: false,
           errorMessage: result.error?.message ?? 'bulkStatusFailed',
@@ -509,7 +556,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       );
       return false;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSubmitting: false,
         createdQuestions: result.data ?? state.createdQuestions,
@@ -517,5 +564,47 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState> {
       ),
     );
     return true;
+  }
+
+  Future<bool> statusCreatedQuestion({
+    required int questionId,
+    required String action,
+  }) async {
+    emitIfOpen(state.copyWith(isSubmitting: true, clearError: true));
+    final result = await _questionBankService.statusAction(
+      questionId: questionId,
+      action: action,
+    );
+    if (!result.isSuccess || result.data == null) {
+      emitIfOpen(
+        state.copyWith(
+          isSubmitting: false,
+          errorMessage: result.error?.message ?? 'Failed to update question',
+        ),
+      );
+      return false;
+    }
+    emitIfOpen(
+      state.copyWith(
+        isSubmitting: false,
+        createdQuestions: state.createdQuestions
+            .map(
+              (question) => question.id == questionId ? result.data! : question,
+            )
+            .toList(),
+        successMessage: 'Question saved',
+      ),
+    );
+    return true;
+  }
+
+  List<QuestionBulkRowModel> _applyDefaultChapter(
+    List<QuestionBulkRowModel> rows,
+    int? chapterId,
+  ) {
+    if (chapterId == null) {
+      return rows.map((row) => row.copyWith(clearChapter: true)).toList();
+    }
+    return rows.map((row) => row.copyWith(chapterId: chapterId)).toList();
   }
 }

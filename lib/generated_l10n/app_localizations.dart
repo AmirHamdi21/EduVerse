@@ -29993,6 +29993,12 @@ abstract class AppLocalizations {
   /// **'Question Details'**
   String get questionBankQuestionDetails;
 
+  /// No description provided for @qbQuestionReviewWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Review prompt, media, answer model, groups, and publishing state in one focused workspace.'**
+  String get qbQuestionReviewWorkspace;
+
   /// No description provided for @questionBankImageQuestion.
   ///
   /// In en, this message translates to:
@@ -30233,17 +30239,89 @@ abstract class AppLocalizations {
   /// **'Question Prompt'**
   String get qbQuestionPrompt;
 
+  /// No description provided for @qbQuestionPromptReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the exact student-facing prompt before approving or editing.'**
+  String get qbQuestionPromptReviewHint;
+
+  /// No description provided for @qbQuestionHintsReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional support text shown with this question.'**
+  String get qbQuestionHintsReviewHint;
+
+  /// No description provided for @qbQuestionImageReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the image to preview it before editing.'**
+  String get qbQuestionImageReviewHint;
+
+  /// No description provided for @qbNoQuestionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No hint has been saved for this question yet.'**
+  String get qbNoQuestionHint;
+
+  /// No description provided for @qbNoImageCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'No image caption has been saved for this question.'**
+  String get qbNoImageCaption;
+
+  /// No description provided for @qbNoImageAltText.
+  ///
+  /// In en, this message translates to:
+  /// **'No image alt text has been saved for this question.'**
+  String get qbNoImageAltText;
+
   /// No description provided for @metadata.
   ///
   /// In en, this message translates to:
   /// **'Metadata'**
   String get metadata;
 
+  /// No description provided for @qbMetadataReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Taxonomy and routing data used by filters and exam generation.'**
+  String get qbMetadataReviewHint;
+
   /// No description provided for @expectedAnswer.
   ///
   /// In en, this message translates to:
   /// **'Expected Answer'**
   String get expectedAnswer;
+
+  /// No description provided for @qbAnswerModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer Model'**
+  String get qbAnswerModel;
+
+  /// No description provided for @qbAnswerModelReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the accepted answer before publishing this question.'**
+  String get qbAnswerModelReviewHint;
+
+  /// No description provided for @qbNoAnswerProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer content is saved for this question.'**
+  String get qbNoAnswerProvided;
+
+  /// No description provided for @qbQuestionScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Scope'**
+  String get qbQuestionScope;
+
+  /// No description provided for @qbQuestionScopeReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Course and chapter context for this question.'**
+  String get qbQuestionScopeReviewHint;
 
   /// No description provided for @allStates.
   ///
@@ -30256,6 +30334,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage Chapters'**
   String get qbManageChapters;
+
+  /// No description provided for @qbChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get qbChapters;
+
+  /// No description provided for @qbSearchChaptersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search chapter name or order'**
+  String get qbSearchChaptersHint;
+
+  /// No description provided for @qbNoChaptersMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Create chapters to organize course questions before they reach exams.'**
+  String get qbNoChaptersMessage;
+
+  /// No description provided for @qbChapterStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter Status'**
+  String get qbChapterStatus;
+
+  /// No description provided for @qbAllChapterStatuses.
+  ///
+  /// In en, this message translates to:
+  /// **'All Statuses'**
+  String get qbAllChapterStatuses;
 
   /// No description provided for @qbCreateChapter.
   ///
@@ -30287,6 +30395,12 @@ abstract class AppLocalizations {
   /// **'Chapter Order'**
   String get qbChapterOrder;
 
+  /// No description provided for @qbChapterOrderTakenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Used orders in this course: {orders}'**
+  String qbChapterOrderTakenHint(String orders);
+
   /// No description provided for @qbChapterActive.
   ///
   /// In en, this message translates to:
@@ -30304,6 +30418,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deleting this chapter can also remove related questions and groups. This cannot be undone.'**
   String get qbChapterCascadeWarning;
+
+  /// No description provided for @qbChapterCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {1 chapter} other {{count} chapters}}'**
+  String qbChapterCount(int count);
 
   /// No description provided for @qbChapterQuestionCount.
   ///
@@ -30359,6 +30479,24 @@ abstract class AppLocalizations {
   /// **'Group Type'**
   String get qbGroupType;
 
+  /// No description provided for @qbAllGroupTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All Group Types'**
+  String get qbAllGroupTypes;
+
+  /// No description provided for @qbSearchGroupsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search group title or shared prompt'**
+  String get qbSearchGroupsHint;
+
+  /// No description provided for @qbQuestionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {1 question} other {{count} questions}}'**
+  String qbQuestionCount(int count);
+
   /// No description provided for @qbSharedPrompt.
   ///
   /// In en, this message translates to:
@@ -30401,6 +30539,36 @@ abstract class AppLocalizations {
   /// **'Add Existing Questions'**
   String get qbAddExistingQuestions;
 
+  /// No description provided for @qbAvailableQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Questions'**
+  String get qbAvailableQuestions;
+
+  /// No description provided for @qbLinkSelectedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Selected Questions'**
+  String get qbLinkSelectedQuestions;
+
+  /// No description provided for @qbSelectAllVisible.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Visible Questions'**
+  String get qbSelectAllVisible;
+
+  /// No description provided for @qbClearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Selection'**
+  String get qbClearSelection;
+
+  /// No description provided for @qbFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get qbFilters;
+
   /// No description provided for @qbRemoveFromGroup.
   ///
   /// In en, this message translates to:
@@ -30425,11 +30593,35 @@ abstract class AppLocalizations {
   /// **'Deleting this group does not delete its questions.'**
   String get qbGroupDeleteBody;
 
+  /// No description provided for @qbGroupSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Group saved'**
+  String get qbGroupSaved;
+
   /// No description provided for @qbAttachmentAddByFile.
   ///
   /// In en, this message translates to:
   /// **'Add by File ID'**
   String get qbAttachmentAddByFile;
+
+  /// No description provided for @qbAttachmentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {1 attachment} other {{count} attachments}}'**
+  String qbAttachmentCount(int count);
+
+  /// No description provided for @qbNoAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'No Attachments'**
+  String get qbNoAttachments;
+
+  /// No description provided for @qbNoAttachmentsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload supporting images when this question needs extra visual context.'**
+  String get qbNoAttachmentsMessage;
 
   /// No description provided for @qbUploadAttachment.
   ///
@@ -30581,6 +30773,24 @@ abstract class AppLocalizations {
   /// **'{count} questions created as drafts'**
   String qbBulkCreatedDraftSummary(int count);
 
+  /// No description provided for @qbBulkGlobalActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Global actions'**
+  String get qbBulkGlobalActions;
+
+  /// No description provided for @qbBulkCreatedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Created questions'**
+  String get qbBulkCreatedQuestions;
+
+  /// No description provided for @qbBulkGlobalActionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply the same status action to every created question.'**
+  String get qbBulkGlobalActionsHint;
+
   /// No description provided for @qbUploadQuestionImage.
   ///
   /// In en, this message translates to:
@@ -30719,6 +30929,84 @@ abstract class AppLocalizations {
   /// **'Restore'**
   String get qbRestore;
 
+  /// No description provided for @qbStatusWorkflow.
+  ///
+  /// In en, this message translates to:
+  /// **'Status Workflow'**
+  String get qbStatusWorkflow;
+
+  /// No description provided for @qbCurrentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Current status: {status}'**
+  String qbCurrentStatus(String status);
+
+  /// No description provided for @qbStatusWorkflowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions are enabled only when the backend workflow allows them for the current state.'**
+  String get qbStatusWorkflowHint;
+
+  /// No description provided for @qbSubmitForReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the question to the review queue.'**
+  String get qbSubmitForReviewHint;
+
+  /// No description provided for @qbSubmitForReviewDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Available only for Draft or Rejected questions.'**
+  String get qbSubmitForReviewDisabledHint;
+
+  /// No description provided for @qbApproveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the question ready for exam generation.'**
+  String get qbApproveHint;
+
+  /// No description provided for @qbApproveDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Available only for Draft or Under Review questions.'**
+  String get qbApproveDisabledHint;
+
+  /// No description provided for @qbRejectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Return the question from review with changes needed.'**
+  String get qbRejectHint;
+
+  /// No description provided for @qbRejectDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Available only while the question is Under Review.'**
+  String get qbRejectDisabledHint;
+
+  /// No description provided for @qbArchiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide the question from normal reuse without deleting it.'**
+  String get qbArchiveHint;
+
+  /// No description provided for @qbArchiveDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This question is already archived.'**
+  String get qbArchiveDisabledHint;
+
+  /// No description provided for @qbRestoreHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Move the archived question back to the active bank.'**
+  String get qbRestoreHint;
+
+  /// No description provided for @qbRestoreDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Available only for Archived questions.'**
+  String get qbRestoreDisabledHint;
+
   /// No description provided for @qbOverview.
   ///
   /// In en, this message translates to:
@@ -30736,6 +31024,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Groups'**
   String get qbGroups;
+
+  /// No description provided for @qbQuestionGroupsReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups that currently include this question.'**
+  String get qbQuestionGroupsReviewHint;
+
+  /// No description provided for @qbNoGroupsForQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'This question is not in any group'**
+  String get qbNoGroupsForQuestion;
 
   /// No description provided for @qbStatus.
   ///

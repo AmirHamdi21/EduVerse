@@ -15681,6 +15681,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get questionBankQuestionDetails => 'Question Details';
 
   @override
+  String get qbQuestionReviewWorkspace =>
+      'Review prompt, media, answer model, groups, and publishing state in one focused workspace.';
+
+  @override
   String get questionBankImageQuestion => 'Image Question';
 
   @override
@@ -15813,16 +15817,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qbQuestionPrompt => 'Question Prompt';
 
   @override
+  String get qbQuestionPromptReviewHint =>
+      'Read the exact student-facing prompt before approving or editing.';
+
+  @override
+  String get qbQuestionHintsReviewHint =>
+      'Optional support text shown with this question.';
+
+  @override
+  String get qbQuestionImageReviewHint =>
+      'Tap the image to preview it before editing.';
+
+  @override
+  String get qbNoQuestionHint =>
+      'No hint has been saved for this question yet.';
+
+  @override
+  String get qbNoImageCaption =>
+      'No image caption has been saved for this question.';
+
+  @override
+  String get qbNoImageAltText =>
+      'No image alt text has been saved for this question.';
+
+  @override
   String get metadata => 'Metadata';
 
   @override
+  String get qbMetadataReviewHint =>
+      'Taxonomy and routing data used by filters and exam generation.';
+
+  @override
   String get expectedAnswer => 'Expected Answer';
+
+  @override
+  String get qbAnswerModel => 'Answer Model';
+
+  @override
+  String get qbAnswerModelReviewHint =>
+      'Check the accepted answer before publishing this question.';
+
+  @override
+  String get qbNoAnswerProvided =>
+      'No answer content is saved for this question.';
+
+  @override
+  String get qbQuestionScope => 'Question Scope';
+
+  @override
+  String get qbQuestionScopeReviewHint =>
+      'Course and chapter context for this question.';
 
   @override
   String get allStates => 'All States';
 
   @override
   String get qbManageChapters => 'Manage Chapters';
+
+  @override
+  String get qbChapters => 'Chapters';
+
+  @override
+  String get qbSearchChaptersHint => 'Search chapter name or order';
+
+  @override
+  String get qbNoChaptersMessage =>
+      'Create chapters to organize course questions before they reach exams.';
+
+  @override
+  String get qbChapterStatus => 'Chapter Status';
+
+  @override
+  String get qbAllChapterStatuses => 'All Statuses';
 
   @override
   String get qbCreateChapter => 'Create Chapter';
@@ -15840,6 +15906,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qbChapterOrder => 'Chapter Order';
 
   @override
+  String qbChapterOrderTakenHint(String orders) {
+    return 'Used orders in this course: $orders';
+  }
+
+  @override
   String get qbChapterActive => 'Active';
 
   @override
@@ -15848,6 +15919,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get qbChapterCascadeWarning =>
       'Deleting this chapter can also remove related questions and groups. This cannot be undone.';
+
+  @override
+  String qbChapterCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters',
+      one: '1 chapter',
+    );
+    return '$_temp0';
+  }
 
   @override
   String qbChapterQuestionCount(int count) {
@@ -15886,6 +15968,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qbGroupType => 'Group Type';
 
   @override
+  String get qbAllGroupTypes => 'All Group Types';
+
+  @override
+  String get qbSearchGroupsHint => 'Search group title or shared prompt';
+
+  @override
+  String qbQuestionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions',
+      one: '1 question',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get qbSharedPrompt => 'Shared Prompt';
 
   @override
@@ -15907,6 +16006,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qbAddExistingQuestions => 'Add Existing Questions';
 
   @override
+  String get qbAvailableQuestions => 'Available Questions';
+
+  @override
+  String get qbLinkSelectedQuestions => 'Link Selected Questions';
+
+  @override
+  String get qbSelectAllVisible => 'Select Visible Questions';
+
+  @override
+  String get qbClearSelection => 'Clear Selection';
+
+  @override
+  String get qbFilters => 'Filters';
+
+  @override
   String get qbRemoveFromGroup => 'Remove from Group';
 
   @override
@@ -15921,7 +16035,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'Deleting this group does not delete its questions.';
 
   @override
+  String get qbGroupSaved => 'Group saved';
+
+  @override
   String get qbAttachmentAddByFile => 'Add by File ID';
+
+  @override
+  String qbAttachmentCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count attachments',
+      one: '1 attachment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qbNoAttachments => 'No Attachments';
+
+  @override
+  String get qbNoAttachmentsMessage =>
+      'Upload supporting images when this question needs extra visual context.';
 
   @override
   String get qbUploadAttachment => 'Upload Attachment';
@@ -16006,6 +16141,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get qbBulkGlobalActions => 'Global actions';
+
+  @override
+  String get qbBulkCreatedQuestions => 'Created questions';
+
+  @override
+  String get qbBulkGlobalActionsHint =>
+      'Apply the same status action to every created question.';
+
+  @override
   String get qbUploadQuestionImage => 'Upload question image';
 
   @override
@@ -16077,6 +16222,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qbRestore => 'Restore';
 
   @override
+  String get qbStatusWorkflow => 'Status Workflow';
+
+  @override
+  String qbCurrentStatus(String status) {
+    return 'Current status: $status';
+  }
+
+  @override
+  String get qbStatusWorkflowHint =>
+      'Actions are enabled only when the backend workflow allows them for the current state.';
+
+  @override
+  String get qbSubmitForReviewHint => 'Send the question to the review queue.';
+
+  @override
+  String get qbSubmitForReviewDisabledHint =>
+      'Available only for Draft or Rejected questions.';
+
+  @override
+  String get qbApproveHint => 'Mark the question ready for exam generation.';
+
+  @override
+  String get qbApproveDisabledHint =>
+      'Available only for Draft or Under Review questions.';
+
+  @override
+  String get qbRejectHint =>
+      'Return the question from review with changes needed.';
+
+  @override
+  String get qbRejectDisabledHint =>
+      'Available only while the question is Under Review.';
+
+  @override
+  String get qbArchiveHint =>
+      'Hide the question from normal reuse without deleting it.';
+
+  @override
+  String get qbArchiveDisabledHint => 'This question is already archived.';
+
+  @override
+  String get qbRestoreHint =>
+      'Move the archived question back to the active bank.';
+
+  @override
+  String get qbRestoreDisabledHint => 'Available only for Archived questions.';
+
+  @override
   String get qbOverview => 'Overview';
 
   @override
@@ -16084,6 +16277,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qbGroups => 'Groups';
+
+  @override
+  String get qbQuestionGroupsReviewHint =>
+      'Groups that currently include this question.';
+
+  @override
+  String get qbNoGroupsForQuestion => 'This question is not in any group';
 
   @override
   String get qbStatus => 'Status';

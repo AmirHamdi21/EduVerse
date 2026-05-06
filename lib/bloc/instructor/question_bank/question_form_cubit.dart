@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../common/bloc/route_request_controller.dart';
+
 import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_fill_blank_model.dart';
 import '../../../models/question_bank/question_bank_form_payload.dart';
@@ -8,7 +10,8 @@ import '../../../models/question_bank/question_attachment_payload.dart';
 import '../../../services/api/question_bank_service.dart';
 import 'question_form_state.dart';
 
-class QuestionFormCubit extends Cubit<QuestionFormState> {
+class QuestionFormCubit extends Cubit<QuestionFormState>
+    with SafeRouteCubitMixin<QuestionFormState> {
   QuestionFormCubit({required QuestionBankService questionBankService})
     : _questionBankService = questionBankService,
       super(const QuestionFormState());
@@ -16,10 +19,12 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
   final QuestionBankService _questionBankService;
 
   Future<void> initializeCreate({int? courseId}) async {
-    emit(state.copyWith(courseId: courseId, isLoading: true, clearError: true));
+    emitIfOpen(
+      state.copyWith(courseId: courseId, isLoading: true, clearError: true),
+    );
     if (courseId != null) {
       final chapters = await _questionBankService.getChapters(courseId);
-      emit(
+      emitIfOpen(
         state.copyWith(
           chapters: chapters.data ?? const [],
           chapterId: chapters.data?.isNotEmpty == true
@@ -29,15 +34,15 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
         ),
       );
     } else {
-      emit(state.copyWith(isLoading: false));
+      emitIfOpen(state.copyWith(isLoading: false));
     }
   }
 
   Future<void> initializeEdit(int questionId) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final result = await _questionBankService.getQuestion(questionId);
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage: result.error?.message ?? 'Failed to load question',
@@ -47,7 +52,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
     }
     final question = result.data!;
     final chapters = await _questionBankService.getChapters(question.courseId);
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         originalQuestion: question,
@@ -58,6 +63,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
         bloomLevel: question.bloomLevel,
         questionText: question.questionText ?? '',
         questionFileId: question.questionFileId,
+        questionImageUrl: question.questionImageUrl,
         questionFileCaption: question.questionFileCaption ?? '',
         questionFileAltText: question.questionFileAltText ?? '',
         expectedAnswerText: question.expectedAnswerText ?? '',
@@ -70,7 +76,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
   }
 
   Future<void> selectCourse(int? courseId) async {
-    emit(
+    emitIfOpen(
       state.copyWith(
         courseId: courseId,
         clearCourse: courseId == null,
@@ -79,11 +85,11 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
       ),
     );
     if (courseId == null) {
-      emit(state.copyWith(chapters: const [], isLoading: false));
+      emitIfOpen(state.copyWith(chapters: const [], isLoading: false));
       return;
     }
     final chapters = await _questionBankService.getChapters(courseId);
-    emit(
+    emitIfOpen(
       state.copyWith(
         chapters: chapters.data ?? const [],
         chapterId: chapters.data?.isNotEmpty == true
@@ -100,17 +106,19 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
   }) async {
     final courseId = state.courseId;
     if (courseId == null || courseId <= 0) {
-      emit(state.copyWith(errorMessage: 'courseRequired'));
+      emitIfOpen(state.copyWith(errorMessage: 'courseRequired'));
       return;
     }
-    emit(state.copyWith(isLoading: true, clearError: true, clearSuccess: true));
+    emitIfOpen(
+      state.copyWith(isLoading: true, clearError: true, clearSuccess: true),
+    );
     final result = await _questionBankService.createChapter(
       courseId: courseId,
       name: name,
       chapterOrder: chapterOrder,
     );
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage: result.error?.message ?? 'chapterCreateFailed',
@@ -119,7 +127,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
       return;
     }
     final chapters = await _questionBankService.getChapters(courseId);
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         chapters: chapters.data ?? const [],
@@ -153,7 +161,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
             ]
           : const <QuestionBankFillBlankModel>[];
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         chapterId: chapterId,
         questionType: questionType,
@@ -172,20 +180,20 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
   }
 
   void updateOptions(List<QuestionBankOptionModel> options) {
-    emit(state.copyWith(options: options, clearValidation: true));
+    emitIfOpen(state.copyWith(options: options, clearValidation: true));
   }
 
   void updateFillBlanks(List<QuestionBankFillBlankModel> blanks) {
-    emit(state.copyWith(fillBlanks: blanks, clearValidation: true));
+    emitIfOpen(state.copyWith(fillBlanks: blanks, clearValidation: true));
   }
 
   Future<void> uploadQuestionImage(String path) async {
-    emit(
+    emitIfOpen(
       state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
     );
     final result = await _questionBankService.uploadQuestionImage(path);
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isUploading: false,
           errorMessage: result.error?.message ?? 'Upload failed',
@@ -193,10 +201,11 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
       );
       return;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isUploading: false,
         questionFileId: result.data!.fileId,
+        questionImageUrl: result.data!.imageUrl,
         successMessage: 'questionImageUploaded',
       ),
     );
@@ -204,13 +213,13 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
 
   Future<void> removeQuestionImage() async {
     final fileId = state.questionFileId;
-    emit(
+    emitIfOpen(
       state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
     );
     if (fileId != null && state.originalQuestion == null) {
       await _questionBankService.deleteUploadedFile(fileId);
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isUploading: false,
         clearQuestionFile: true,
@@ -223,14 +232,14 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
 
   Future<void> uploadCreateAttachments(List<String> paths) async {
     if (paths.isEmpty) return;
-    emit(
+    emitIfOpen(
       state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
     );
     final next = [...state.attachments];
     for (final path in paths) {
       final result = await _questionBankService.uploadQuestionImage(path);
       if (!result.isSuccess || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isUploading: false,
             attachments: next,
@@ -249,7 +258,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
         ),
       );
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isUploading: false,
         attachments: _normalizeAttachmentOrders(next),
@@ -259,11 +268,11 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
   }
 
   Future<void> removeCreateAttachment(int fileId) async {
-    emit(
+    emitIfOpen(
       state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
     );
     await _questionBankService.deleteUploadedFile(fileId);
-    emit(
+    emitIfOpen(
       state.copyWith(
         isUploading: false,
         attachments: _normalizeAttachmentOrders(
@@ -277,7 +286,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
   }
 
   void updateCreateAttachment(QuestionAttachmentPayload updated) {
-    emit(
+    emitIfOpen(
       state.copyWith(
         attachments: _normalizeAttachmentOrders(
           state.attachments
@@ -294,7 +303,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
       for (final attachment in state.attachments)
         if (attachment.fileId != null) attachment.fileId!: attachment,
     };
-    emit(
+    emitIfOpen(
       state.copyWith(
         attachments: _normalizeAttachmentOrders([
           for (final fileId in orderedFileIds)
@@ -308,10 +317,10 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
     final payload = _payload();
     final validation = payload.validate();
     if (validation != null) {
-      emit(state.copyWith(validationError: validation));
+      emitIfOpen(state.copyWith(validationError: validation));
       return false;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSaving: true,
         clearError: true,
@@ -327,7 +336,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
             dirtyPayload: payload.toDirtyUpdateJson(original),
           );
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isSaving: false,
           errorMessage: result.error?.message ?? 'Failed to save question',
@@ -335,7 +344,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
       );
       return false;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSaving: false,
         savedQuestion: result.data,
@@ -348,13 +357,15 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
   Future<bool> statusSavedQuestion(String action) async {
     final question = state.savedQuestion;
     if (question == null) return false;
-    emit(state.copyWith(isSaving: true, clearError: true, clearSuccess: true));
+    emitIfOpen(
+      state.copyWith(isSaving: true, clearError: true, clearSuccess: true),
+    );
     final result = await _questionBankService.statusAction(
       questionId: question.id,
       action: action,
     );
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isSaving: false,
           errorMessage: result.error?.message ?? 'Failed to update question',
@@ -362,7 +373,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
       );
       return false;
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         isSaving: false,
         savedQuestion: result.data,
@@ -391,7 +402,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState> {
     for (final fileId in fileIds) {
       await _questionBankService.deleteUploadedFile(fileId);
     }
-    emit(
+    emitIfOpen(
       state.copyWith(
         clearQuestionFile: true,
         questionFileCaption: '',

@@ -9,10 +9,13 @@ import '../../../bloc/instructor/question_bank/question_group_cubit.dart';
 import '../../../bloc/instructor/question_bank/question_group_state.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
+import '../../../models/question_bank/question_bank_upload_response.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
+import '../../../widgets/instructor/shared/instructor_colors.dart';
+import 'question_bank_create_screen.dart';
 
 class QuestionGroupCreateScreen extends StatelessWidget {
   const QuestionGroupCreateScreen({super.key});
@@ -59,17 +62,31 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return PopScope<Object?>(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) _handleBack(context);
       },
       child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
         appBar: AppBar(
-          title: Text(l10n.qbCreateGroup),
+          backgroundColor: InstructorColors.background(isDark),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            l10n.qbCreateGroup,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
           leading: IconButton(
             onPressed: () => _handleBack(context),
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: InstructorColors.textPrimaryColor(isDark),
+            ),
           ),
         ),
         body: BlocListener<QuestionGroupCubit, QuestionGroupState>(
@@ -93,18 +110,25 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
           child: BlocBuilder<QuestionBankCubit, QuestionBankState>(
             builder: (context, bankState) {
               if (bankState.isLoading) {
-                return const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: QuestionBankSkeletons(itemCount: 4),
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                  children: const [QuestionBankSkeletons(itemCount: 3)],
                 );
               }
               return ListView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
                 children: [
                   QuestionFormHero(
                     title: l10n.qbCreateGroup,
                     subtitle: l10n.qbSharedPrompt,
-                    tiles: {l10n.course: _selectedCourseLabel(bankState)},
+                    tiles: {
+                      l10n.course: _selectedCourseLabel(bankState),
+                      l10n.qbGroupType: localizedGroupType(
+                        l10n,
+                        QuestionGroupType.other,
+                      ),
+                    },
                   ),
                   const SizedBox(height: 18),
                   _GroupCourseSelector(
@@ -120,6 +144,12 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
                         courseId: bankState.selectedCourseId,
                         onUploadSharedImage: (path) =>
                             _uploadGroupImage(context, path),
+                        onRemoveSharedImage: (fileId) async {
+                          _pendingUploadIds.remove(fileId);
+                          await context
+                              .read<QuestionGroupCubit>()
+                              .deleteUploadedQuestionImage(fileId);
+                        },
                         isSubmitting: groupState.isMutating,
                         onSubmit:
                             ({
@@ -162,12 +192,16 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
     );
   }
 
-  Future<int?> _uploadGroupImage(BuildContext context, String path) async {
-    final fileId = await context.read<QuestionGroupCubit>().uploadGroupImage(
+  Future<QuestionBankUploadResponse?> _uploadGroupImage(
+    BuildContext context,
+    String path,
+  ) async {
+    final upload = await context.read<QuestionGroupCubit>().uploadGroupImage(
       path,
     );
+    final fileId = upload?.fileId;
     if (fileId != null) _pendingUploadIds.add(fileId);
-    return fileId;
+    return upload;
   }
 
   Future<void> _handleBack(BuildContext context) async {
@@ -176,19 +210,15 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
       final discard =
           await showDialog<bool>(
             context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.qbDiscardUploadsTitle),
-              content: Text(l10n.qbDiscardUploadsBody),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(l10n.cancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(l10n.discard),
-                ),
-              ],
+            builder: (context) => QuestionFormDecisionDialog(
+              title: l10n.qbDiscardUploadsTitle,
+              message: l10n.qbDiscardUploadsBody,
+              icon: Icons.cloud_off_outlined,
+              color: InstructorColors.error,
+              primaryLabel: l10n.discard,
+              secondaryLabel: l10n.cancel,
+              onPrimary: () => Navigator.of(context).pop(true),
+              onSecondary: () => Navigator.of(context).pop(false),
             ),
           ) ??
           false;
@@ -224,46 +254,45 @@ class _GroupCourseSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final uniqueCourses = _uniqueCourses(courses);
     final value =
         uniqueCourses.any((course) => course.courseId == selectedCourseId)
         ? selectedCourseId
         : null;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
+    return QuestionSectionCard(
+      title: l10n.course,
+      icon: Icons.school_outlined,
+      color: InstructorColors.primary,
+      children: [
+        QuestionFormMenuField<int>(
+          label: l10n.course,
+          value: value,
+          icon: Icons.menu_book_outlined,
+          color: InstructorColors.primary,
+          enabled: uniqueCourses.isNotEmpty,
+          options: uniqueCourses
+              .map(
+                (course) => QuestionFormMenuOption<int>(
+                  value: course.courseId,
+                  label: '${course.course.code} - ${course.course.name}',
+                  icon: Icons.menu_book_outlined,
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+        ),
+        if (uniqueCourses.isEmpty) ...[
+          const SizedBox(height: 10),
+          Text(
+            l10n.noCoursesAvailable,
+            style: TextStyle(
+              color: InstructorColors.textSecondaryColor(isDark),
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
-      ),
-      child: DropdownButtonFormField<int>(
-        isExpanded: true,
-        initialValue: value,
-        decoration: InputDecoration(
-          labelText: l10n.course,
-          prefixIcon: const Icon(Icons.menu_book_outlined),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        items: uniqueCourses
-            .map(
-              (course) => DropdownMenuItem<int>(
-                value: course.courseId,
-                child: Text(
-                  '${course.course.code} - ${course.course.name}',
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            )
-            .toList(),
-        onChanged: onChanged,
-      ),
+      ],
     );
   }
 

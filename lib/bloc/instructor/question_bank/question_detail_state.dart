@@ -7,6 +7,8 @@ class QuestionDetailState extends Equatable {
     this.isLoading = false,
     this.isMutating = false,
     this.question,
+    this.courseLabel,
+    this.chapterLabel,
     this.errorMessage,
     this.actionMessage,
   });
@@ -14,6 +16,8 @@ class QuestionDetailState extends Equatable {
   final bool isLoading;
   final bool isMutating;
   final QuestionBankQuestionModel? question;
+  final String? courseLabel;
+  final String? chapterLabel;
   final String? errorMessage;
   final String? actionMessage;
 
@@ -21,6 +25,8 @@ class QuestionDetailState extends Equatable {
     bool? isLoading,
     bool? isMutating,
     QuestionBankQuestionModel? question,
+    String? courseLabel,
+    String? chapterLabel,
     String? errorMessage,
     String? actionMessage,
     bool clearError = false,
@@ -30,6 +36,8 @@ class QuestionDetailState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       isMutating: isMutating ?? this.isMutating,
       question: question ?? this.question,
+      courseLabel: courseLabel ?? this.courseLabel,
+      chapterLabel: chapterLabel ?? this.chapterLabel,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       actionMessage: clearAction ? null : actionMessage ?? this.actionMessage,
     );
@@ -37,10 +45,12 @@ class QuestionDetailState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        isMutating,
-        question,
-        errorMessage,
-        actionMessage,
-      ];
+    isLoading,
+    isMutating,
+    question,
+    courseLabel,
+    chapterLabel,
+    errorMessage,
+    actionMessage,
+  ];
 }

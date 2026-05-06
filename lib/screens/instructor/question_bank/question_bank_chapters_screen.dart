@@ -1,6 +1,7 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../bloc/instructor/question_bank/question_bank_cubit.dart';
 import '../../../bloc/instructor/question_bank/question_bank_state.dart';
@@ -10,6 +11,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
+import '../../../widgets/instructor/shared/instructor_colors.dart';
 
 class QuestionBankChaptersScreen extends StatelessWidget {
   const QuestionBankChaptersScreen({super.key});
@@ -37,14 +39,73 @@ class _QuestionBankChaptersView extends StatefulWidget {
 }
 
 class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
+  final TextEditingController _search = TextEditingController();
   CourseChapterModel? _editing;
   bool _creating = false;
+  _ChapterStatusFilter _statusFilter = _ChapterStatusFilter.all;
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.qbManageChapters)),
+      backgroundColor: InstructorColors.background(isDark),
+      appBar: AppBar(
+        backgroundColor: InstructorColors.background(isDark),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: InstructorColors.textPrimaryColor(isDark),
+          ),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          l10n.qbManageChapters,
+          style: TextStyle(
+            color: InstructorColors.textPrimaryColor(isDark),
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsetsDirectional.only(end: 10),
+        //     child: IconButton(
+        //       tooltip: l10n.qbCreateChapter,
+        //       onPressed: () => _showCreateForm(),
+        //       style: IconButton.styleFrom(
+        //         backgroundColor: InstructorColors.teal.withValues(
+        //           alpha: isDark ? 0.18 : 0.1,
+        //         ),
+        //         foregroundColor: InstructorColors.teal,
+        //       ),
+        //       icon: const Icon(Icons.create_new_folder_outlined),
+        //     ),
+        //   ),
+        // ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _showCreateForm,
+        backgroundColor: InstructorColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        icon: const Icon(Icons.add_rounded),
+        label: Text(
+          l10n.qbCreateChapter,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ),
       body: BlocConsumer<QuestionBankCubit, QuestionBankState>(
         listenWhen: (previous, current) {
           final previousMessage =
@@ -63,99 +124,151 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
           }
         },
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Padding(
-              padding: EdgeInsets.all(20),
+          if (state.isLoading && state.chapters.isEmpty) {
+            return const SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(16, 12, 16, 32),
               child: QuestionBankSkeletons(itemCount: 4),
             );
           }
-          return ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              QuestionBankHeroHeader(
-                title: l10n.qbManageChapters,
-                subtitle: l10n.qbChapterCascadeWarning,
-                stats: {
-                  l10n.course: _selectedCourseLabel(state),
-                  l10n.chapter: state.chapters.length.toString(),
-                },
-              ),
-              const SizedBox(height: 16),
-              _ChapterCourseSelector(
-                courses: state.teachingCourses,
-                selectedCourseId: state.selectedCourseId,
-                onChanged: (courseId) async {
-                  setState(() {
-                    _creating = false;
-                    _editing = null;
-                  });
-                  await context.read<QuestionBankCubit>().selectCourse(
-                    courseId,
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              if (_creating || _editing != null)
-                QuestionChapterFormCard(
-                  initial: _editing,
-                  suggestedOrder: _nextChapterOrder(state),
-                  isSubmitting: state.isMutating,
-                  onCancel: () => setState(() {
-                    _creating = false;
-                    _editing = null;
-                  }),
-                  onSubmit: (name, order, isActive) async {
-                    if (_editing == null) {
-                      await context.read<QuestionBankCubit>().createChapter(
-                        name: name,
-                        chapterOrder: order,
-                      );
-                    } else {
-                      await context.read<QuestionBankCubit>().updateChapter(
-                        chapterId: _editing!.id,
-                        name: name,
-                        chapterOrder: order,
-                        isActive: isActive,
-                      );
-                    }
+
+          final visibleChapters = _visibleChapters(state);
+          final activeCount = state.chapters
+              .where((chapter) => chapter.isActive)
+              .length;
+          final questionTotal = visibleChapters.fold<int>(
+            0,
+            (sum, chapter) =>
+                sum + (state.chapterQuestionCounts[chapter.id] ?? 0),
+          );
+
+          return RefreshIndicator(
+            onRefresh: () => context.read<QuestionBankCubit>().refresh(),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 110),
+              children: [
+                QuestionBankHeroHeader(
+                  title: l10n.qbManageChapters,
+                  subtitle: l10n.qbChapterCascadeWarning,
+                  stats: {
+                    l10n.course: _selectedCourseShortLabel(state),
+                    l10n.qbChapters: state.chapters.length.toString(),
+                    l10n.qbChapterActive: activeCount.toString(),
+                    l10n.questions: questionTotal.toString(),
+                  },
+                  isDark: isDark,
+                ),
+                const SizedBox(height: 16),
+                _ChapterFilterPanel(
+                  state: state,
+                  search: _search,
+                  statusFilter: _statusFilter,
+                  onSearchChanged: (_) => setState(() {}),
+                  onCourseChanged: (courseId) async {
                     setState(() {
                       _creating = false;
                       _editing = null;
                     });
+                    await context.read<QuestionBankCubit>().selectCourse(
+                      courseId,
+                    );
+                  },
+                  onStatusChanged: (filter) =>
+                      setState(() => _statusFilter = filter),
+                  onClear: () {
+                    _search.clear();
+                    setState(() => _statusFilter = _ChapterStatusFilter.all);
                   },
                 ),
-              if (_creating || _editing != null) const SizedBox(height: 16),
-              QuestionChapterManagerCard(
-                chapters: state.chapters,
-                questionCounts: state.chapterQuestionCounts,
-                onCreate: () => setState(() {
-                  _creating = true;
-                  _editing = null;
-                }),
-                onEdit: (chapter) => setState(() {
-                  _editing = chapter;
-                  _creating = false;
-                }),
-                onDelete: (chapter) async {
-                  final ok = await showQuestionChapterDeleteDialog(context);
-                  if (ok && context.mounted) {
-                    await context.read<QuestionBankCubit>().deleteChapter(
-                      chapter.id,
-                    );
-                  }
-                },
-              ),
-            ],
+                const SizedBox(height: 16),
+                if (_creating || _editing != null) ...[
+                  QuestionChapterFormCard(
+                    key: ValueKey(_editing?.id ?? 'create'),
+                    initial: _editing,
+                    suggestedOrder: _nextChapterOrder(state),
+                    occupiedOrders: _occupiedOrders(state),
+                    isSubmitting: state.isMutating,
+                    onCancel: () => setState(() {
+                      _creating = false;
+                      _editing = null;
+                    }),
+                    onSubmit: (name, order, isActive) async {
+                      if (_editing == null) {
+                        await context.read<QuestionBankCubit>().createChapter(
+                          name: name,
+                          chapterOrder: order,
+                        );
+                      } else {
+                        await context.read<QuestionBankCubit>().updateChapter(
+                          chapterId: _editing!.id,
+                          name: name,
+                          chapterOrder: order,
+                          isActive: isActive,
+                        );
+                      }
+                      if (!context.mounted) return;
+                      setState(() {
+                        _creating = false;
+                        _editing = null;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                QuestionChapterManagerCard(
+                  chapters: visibleChapters,
+                  totalChapters: state.chapters.length,
+                  questionCounts: state.chapterQuestionCounts,
+                  onCreate: _showCreateForm,
+                  onEdit: (chapter) => setState(() {
+                    _editing = chapter;
+                    _creating = false;
+                  }),
+                  onDelete: (chapter) async {
+                    final ok = await showQuestionChapterDeleteDialog(context);
+                    if (ok && context.mounted) {
+                      await context.read<QuestionBankCubit>().deleteChapter(
+                        chapter.id,
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),
     );
   }
 
-  String _selectedCourseLabel(QuestionBankState state) {
+  void _showCreateForm() {
+    setState(() {
+      _creating = true;
+      _editing = null;
+    });
+  }
+
+  List<CourseChapterModel> _visibleChapters(QuestionBankState state) {
+    final query = _search.text.trim().toLowerCase();
+    return state.chapters.where((chapter) {
+      if (_statusFilter == _ChapterStatusFilter.active && !chapter.isActive) {
+        return false;
+      }
+      if (_statusFilter == _ChapterStatusFilter.inactive && chapter.isActive) {
+        return false;
+      }
+      if (query.isEmpty) return true;
+      return [
+        chapter.name,
+        chapter.chapterOrder.toString(),
+      ].join(' ').toLowerCase().contains(query);
+    }).toList();
+  }
+
+  String _selectedCourseShortLabel(QuestionBankState state) {
     for (final course in state.teachingCourses) {
       if (course.courseId == state.selectedCourseId) {
-        return course.course.code;
+        final code = course.course.code.trim();
+        return code.isNotEmpty ? code : course.course.name;
       }
     }
     return state.selectedCourseId?.toString() ?? '-';
@@ -168,61 +281,166 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
             .reduce((a, b) => a > b ? a : b) +
         1;
   }
+
+  List<int> _occupiedOrders(QuestionBankState state) {
+    final orders =
+        state.chapters.map((chapter) => chapter.chapterOrder).toList()..sort();
+    return orders;
+  }
 }
 
-class _ChapterCourseSelector extends StatelessWidget {
-  const _ChapterCourseSelector({
-    required this.courses,
-    required this.selectedCourseId,
-    required this.onChanged,
+enum _ChapterStatusFilter { all, active, inactive }
+
+class _ChapterFilterPanel extends StatelessWidget {
+  const _ChapterFilterPanel({
+    required this.state,
+    required this.search,
+    required this.statusFilter,
+    required this.onSearchChanged,
+    required this.onCourseChanged,
+    required this.onStatusChanged,
+    required this.onClear,
   });
 
-  final List<TeachingCourseModel> courses;
-  final int? selectedCourseId;
-  final ValueChanged<int?> onChanged;
+  final QuestionBankState state;
+  final TextEditingController search;
+  final _ChapterStatusFilter statusFilter;
+  final ValueChanged<String> onSearchChanged;
+  final ValueChanged<int?> onCourseChanged;
+  final ValueChanged<_ChapterStatusFilter> onStatusChanged;
+  final VoidCallback onClear;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final uniqueCourses = _uniqueCourses(courses);
-    final dropdownValue =
-        uniqueCourses.any((course) => course.courseId == selectedCourseId)
-        ? selectedCourseId
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final uniqueCourses = _uniqueCourses(state.teachingCourses);
+    final selectedCourseId =
+        uniqueCourses.any((course) => course.courseId == state.selectedCourseId)
+        ? state.selectedCourseId
         : null;
+    final hasFilters =
+        search.text.trim().isNotEmpty ||
+        statusFilter != _ChapterStatusFilter.all;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: InstructorColors.borderColor(isDark)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 18,
+            color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.045),
+            blurRadius: 16,
             offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: DropdownButtonFormField<int>(
-        isExpanded: true,
-        initialValue: dropdownValue,
-        decoration: InputDecoration(
-          labelText: l10n.course,
-          prefixIcon: const Icon(Icons.menu_book_outlined),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        items: uniqueCourses
-            .map(
-              (course) => DropdownMenuItem<int>(
-                value: course.courseId,
-                child: Text(
-                  '${course.course.code} - ${course.course.name}',
-                  overflow: TextOverflow.ellipsis,
+      child: Column(
+        children: [
+          TextField(
+            controller: search,
+            onChanged: onSearchChanged,
+            cursorColor: InstructorColors.primary,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w700,
+            ),
+            decoration: InputDecoration(
+              hintText: l10n.qbSearchChaptersHint,
+              hintStyle: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                fontWeight: FontWeight.w600,
+              ),
+              prefixIcon: const Icon(Icons.search_rounded),
+              filled: true,
+              fillColor: InstructorColors.surfaceColor(isDark),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 14,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                  color: InstructorColors.borderColor(isDark),
                 ),
               ),
-            )
-            .toList(),
-        onChanged: onChanged,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                  color: InstructorColors.primary,
+                  width: 1.4,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: QuestionFormMenuField<int>(
+                  label: l10n.course,
+                  value: selectedCourseId,
+                  icon: Icons.menu_book_outlined,
+                  color: InstructorColors.primary,
+                  options: uniqueCourses
+                      .map(
+                        (course) => QuestionFormMenuOption<int>(
+                          value: course.courseId,
+                          label: _courseLabel(course),
+                          icon: Icons.menu_book_outlined,
+                        ),
+                      )
+                      .toList(),
+                  onChanged: onCourseChanged,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: QuestionFormMenuField<_ChapterStatusFilter>(
+                  label: l10n.qbChapterStatus,
+                  value: statusFilter,
+                  icon: Icons.verified_outlined,
+                  color: InstructorColors.teal,
+                  options: [
+                    QuestionFormMenuOption<_ChapterStatusFilter>(
+                      value: _ChapterStatusFilter.all,
+                      label: l10n.qbAllChapterStatuses,
+                      icon: Icons.filter_alt_off_rounded,
+                    ),
+                    QuestionFormMenuOption<_ChapterStatusFilter>(
+                      value: _ChapterStatusFilter.active,
+                      label: l10n.qbChapterActive,
+                      icon: Icons.check_circle_outline_rounded,
+                    ),
+                    QuestionFormMenuOption<_ChapterStatusFilter>(
+                      value: _ChapterStatusFilter.inactive,
+                      label: l10n.qbChapterInactive,
+                      icon: Icons.pause_circle_outline_rounded,
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) onStatusChanged(value);
+                  },
+                ),
+              ),
+            ],
+          ),
+          if (hasFilters) ...[
+            const SizedBox(height: 4),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TextButton.icon(
+                onPressed: onClear,
+                icon: const Icon(Icons.refresh_rounded, size: 18),
+                label: Text(l10n.clearFilters),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -233,5 +451,13 @@ class _ChapterCourseSelector extends StatelessWidget {
       for (final course in source)
         if (seen.add(course.courseId)) course,
     ];
+  }
+
+  String _courseLabel(TeachingCourseModel course) {
+    final code = course.course.code.trim();
+    final name = course.course.name.trim();
+    if (code.isNotEmpty && name.isNotEmpty) return '$code - $name';
+    if (code.isNotEmpty) return code;
+    return name.isNotEmpty ? name : course.courseId.toString();
   }
 }

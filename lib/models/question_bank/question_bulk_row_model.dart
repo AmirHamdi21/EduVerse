@@ -13,6 +13,7 @@ class QuestionBulkRowModel {
     this.bloomLevel = BloomLevel.understanding,
     this.questionText = '',
     this.questionFileId,
+    this.questionImageUrl,
     this.questionFileCaption = '',
     this.questionFileAltText = '',
     this.expectedAnswerText = '',
@@ -33,6 +34,7 @@ class QuestionBulkRowModel {
   final BloomLevel bloomLevel;
   final String questionText;
   final int? questionFileId;
+  final String? questionImageUrl;
   final String questionFileCaption;
   final String questionFileAltText;
   final String expectedAnswerText;
@@ -50,6 +52,7 @@ class QuestionBulkRowModel {
     BloomLevel? bloomLevel,
     String? questionText,
     int? questionFileId,
+    String? questionImageUrl,
     bool clearQuestionFile = false,
     String? questionFileCaption,
     String? questionFileAltText,
@@ -71,6 +74,9 @@ class QuestionBulkRowModel {
       questionFileId: clearQuestionFile
           ? null
           : questionFileId ?? this.questionFileId,
+      questionImageUrl: clearQuestionFile
+          ? null
+          : questionImageUrl ?? this.questionImageUrl,
       questionFileCaption: questionFileCaption ?? this.questionFileCaption,
       questionFileAltText: questionFileAltText ?? this.questionFileAltText,
       expectedAnswerText: expectedAnswerText ?? this.expectedAnswerText,

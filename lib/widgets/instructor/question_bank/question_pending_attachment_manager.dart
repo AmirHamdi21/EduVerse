@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/question_bank/question_attachment_payload.dart';
+import '../shared/instructor_colors.dart';
 
 class QuestionPendingAttachmentManager extends StatelessWidget {
   const QuestionPendingAttachmentManager({
@@ -25,40 +26,102 @@ class QuestionPendingAttachmentManager extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: InstructorColors.surfaceColor(isDark),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: InstructorColors.borderColor(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.attachments,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 390;
+              final title = Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: InstructorColors.cyan.withValues(
+                        alpha: isDark ? 0.2 : 0.1,
+                      ),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: const Icon(
+                      Icons.collections_outlined,
+                      color: InstructorColors.cyan,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      l10n.attachments,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+              final uploadButton = OutlinedButton.icon(
+                onPressed: isUploading ? null : _pickImages,
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: InstructorColors.cyan.withValues(
+                    alpha: isDark ? 0.18 : 0.08,
+                  ),
+                  foregroundColor: InstructorColors.cyan,
+                  side: BorderSide(
+                    color: InstructorColors.cyan.withValues(alpha: 0.24),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-              ),
-              OutlinedButton.icon(
-                onPressed: isUploading ? null : _pickImages,
-                icon: const Icon(Icons.add_photo_alternate_outlined),
-                label: Text(l10n.qbUploadQuestionImage),
-              ),
-            ],
+                icon: isUploading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.add_photo_alternate_outlined),
+                label: Text(
+                  l10n.qbUploadQuestionImage,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+              if (compact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [title, const SizedBox(height: 10), uploadButton],
+                );
+              }
+              return Row(
+                children: [
+                  Expanded(child: title),
+                  const SizedBox(width: 10),
+                  Flexible(child: uploadButton),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 10),
           if (attachments.isEmpty)
             Text(
               l10n.questionBankEmptyMessage,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: const Color(0xFF64748B)),
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                fontWeight: FontWeight.w700,
+              ),
             )
           else
             ReorderableListView.builder(
@@ -116,41 +179,63 @@ class QuestionPendingAttachmentManager extends StatelessWidget {
       context: context,
       builder: (context) => Dialog(
         insetPadding: const EdgeInsets.all(18),
+        backgroundColor: Colors.transparent,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
+          child: Builder(
+            builder: (context) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              return Container(
+                decoration: BoxDecoration(
+                  color: InstructorColors.cardColor(isDark),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: InstructorColors.borderColor(isDark),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: Text(
-                        attachment.caption?.trim().isNotEmpty == true
-                            ? attachment.caption!
-                            : attachment.fileName ?? l10n.attachments,
-                        style: Theme.of(context).textTheme.titleMedium,
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              attachment.caption?.trim().isNotEmpty == true
+                                  ? attachment.caption!
+                                  : attachment.fileName ?? l10n.attachments,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                        ],
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close_rounded),
+                    Flexible(
+                      child: InteractiveViewer(
+                        child: Image.network(
+                          attachment.imageUrl!,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.broken_image_outlined, size: 64),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Flexible(
-                child: InteractiveViewer(
-                  child: Image.network(
-                    attachment.imageUrl!,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.broken_image_outlined, size: 64),
-                  ),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -177,13 +262,14 @@ class _PendingAttachmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Card(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
       key: key,
-      elevation: 0,
       margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFFE5E7EB)),
+        border: Border.all(color: InstructorColors.borderColor(isDark)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -191,7 +277,10 @@ class _PendingAttachmentCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.drag_indicator_rounded),
+                Icon(
+                  Icons.drag_indicator_rounded,
+                  color: InstructorColors.textTertiaryColor(isDark),
+                ),
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: onPreview,
@@ -219,12 +308,22 @@ class _PendingAttachmentCard extends StatelessWidget {
                     attachment.fileName ??
                         '${l10n.questionBankImageQuestion} ${index + 1}',
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
                 IconButton(
                   tooltip: l10n.qbRemoveQuestionImage,
                   onPressed: onRemove,
-                  icon: const Icon(Icons.delete_outline),
+                  style: IconButton.styleFrom(
+                    backgroundColor: InstructorColors.error.withValues(
+                      alpha: isDark ? 0.18 : 0.1,
+                    ),
+                    foregroundColor: InstructorColors.error,
+                  ),
+                  icon: const Icon(Icons.delete_outline_rounded),
                 ),
               ],
             ),
@@ -232,7 +331,7 @@ class _PendingAttachmentCard extends StatelessWidget {
             TextFormField(
               key: ValueKey('caption-${attachment.fileId}'),
               initialValue: attachment.caption,
-              decoration: InputDecoration(labelText: l10n.qbImageCaption),
+              decoration: _decoration(context, l10n.qbImageCaption),
               onChanged: (value) =>
                   onChanged(attachment.copyWith(caption: value)),
             ),
@@ -240,11 +339,32 @@ class _PendingAttachmentCard extends StatelessWidget {
             TextFormField(
               key: ValueKey('alt-${attachment.fileId}'),
               initialValue: attachment.altText,
-              decoration: InputDecoration(labelText: l10n.qbImageAltText),
+              decoration: _decoration(context, l10n.qbImageAltText),
               onChanged: (value) =>
                   onChanged(attachment.copyWith(altText: value)),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _decoration(BuildContext context, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: InstructorColors.surfaceColor(isDark),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: InstructorColors.borderColor(isDark)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(
+          color: InstructorColors.primary,
+          width: 1.4,
         ),
       ),
     );

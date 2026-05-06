@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/question_bank/course_chapter_model.dart';
+import '../shared/instructor_colors.dart';
+import 'question_form_menu_field.dart';
 
 class QuestionChapterSelector extends StatelessWidget {
   const QuestionChapterSelector({
@@ -20,34 +22,62 @@ class QuestionChapterSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        DropdownButtonFormField<int>(
-          isExpanded: true,
-          initialValue: value,
-          decoration: InputDecoration(
-            labelText: l10n.chapter,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          ),
-          items: chapters
-              .map((chapter) => DropdownMenuItem<int>(
-                    value: chapter.id,
-                    child: Text(chapter.name, overflow: TextOverflow.ellipsis),
-                  ))
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 430;
+        final dropdown = QuestionFormMenuField<int>(
+          label: l10n.chapter,
+          value: value,
+          icon: Icons.menu_book_outlined,
+          color: InstructorColors.primary,
+          options: chapters
+              .map(
+                (chapter) => QuestionFormMenuOption<int>(
+                  value: chapter.id,
+                  label: chapter.name,
+                  icon: Icons.bookmark_border_rounded,
+                ),
+              )
               .toList(),
           onChanged: onChanged,
-        ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: TextButton.icon(
-            onPressed: onCreateChapter,
-            icon: const Icon(Icons.add_rounded),
-            label: Text(l10n.qbCreateChapter),
+          enabled: chapters.isNotEmpty,
+        );
+        final createButton = OutlinedButton.icon(
+          onPressed: onCreateChapter,
+          style: OutlinedButton.styleFrom(
+            backgroundColor: InstructorColors.teal.withValues(
+              alpha: isDark ? 0.18 : 0.08,
+            ),
+            foregroundColor: InstructorColors.teal,
+            side: BorderSide(
+              color: InstructorColors.teal.withValues(alpha: 0.24),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
-        ),
-      ],
+          icon: const Icon(Icons.add_rounded),
+          label: Text(
+            l10n.qbCreateChapter,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+        if (compact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [dropdown, const SizedBox(height: 10), createButton],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: dropdown),
+            const SizedBox(width: 10),
+            SizedBox(width: 174, height: 56, child: createButton),
+          ],
+        );
+      },
     );
   }
 }

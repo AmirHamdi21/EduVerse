@@ -12,6 +12,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
+import '../../../widgets/instructor/shared/instructor_colors.dart';
 
 class QuestionBankCreateScreen extends StatelessWidget {
   const QuestionBankCreateScreen({super.key});
@@ -65,16 +66,30 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return PopScope<Object?>(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) _handleBack(context);
       },
       child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
         appBar: AppBar(
-          title: Text(l10n.questionBankCreateQuestion),
+          backgroundColor: InstructorColors.background(isDark),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            l10n.questionBankCreateQuestion,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: InstructorColors.textPrimaryColor(isDark),
+            ),
             onPressed: () => _handleBack(context),
           ),
         ),
@@ -83,9 +98,10 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
           listener: _listen,
           builder: (context, state) {
             if (_loadingCourses || state.isLoading) {
-              return const Padding(
-                padding: EdgeInsets.all(20),
-                child: QuestionBankSkeletons(itemCount: 4),
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                children: const [QuestionBankSkeletons(itemCount: 3)],
               );
             }
             return QuestionFormBody(
@@ -114,19 +130,15 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
       final discard =
           await showDialog<bool>(
             context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.qbDiscardUploadsTitle),
-              content: Text(l10n.qbDiscardUploadsBody),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(l10n.cancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(l10n.discard),
-                ),
-              ],
+            builder: (context) => QuestionFormDecisionDialog(
+              title: l10n.qbDiscardUploadsTitle,
+              message: l10n.qbDiscardUploadsBody,
+              icon: Icons.cloud_off_outlined,
+              color: InstructorColors.error,
+              primaryLabel: l10n.discard,
+              secondaryLabel: l10n.cancel,
+              onPrimary: () => Navigator.of(context).pop(true),
+              onSecondary: () => Navigator.of(context).pop(false),
             ),
           ) ??
           false;
@@ -137,52 +149,35 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
   }
 
   Future<void> _showCreateSuccessActions(BuildContext context) async {
-    final l10n = AppLocalizations.of(context);
     final cubit = context.read<QuestionFormCubit>();
     final question = cubit.state.savedQuestion;
     if (question == null) return;
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.qbQuestionCreatedDraftTitle),
-        content: Text(l10n.qbQuestionCreatedDraftBody),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              context.go('/instructor/question-bank');
-            },
-            child: Text(l10n.qbReviewLater),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              context.go('/instructor/question-bank/${question.id}');
-            },
-            child: Text(l10n.qbViewQuestion),
-          ),
-          FilledButton.tonal(
-            onPressed: () async {
-              final ok = await cubit.statusSavedQuestion('submit-for-review');
-              if (ok && context.mounted) {
-                Navigator.of(dialogContext).pop();
-                context.go('/instructor/question-bank/${question.id}');
-              }
-            },
-            child: Text(l10n.submitForReview),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final ok = await cubit.statusSavedQuestion('approve');
-              if (ok && context.mounted) {
-                Navigator.of(dialogContext).pop();
-                context.go('/instructor/question-bank/${question.id}');
-              }
-            },
-            child: Text(l10n.qbApprove),
-          ),
-        ],
+      builder: (dialogContext) => _QuestionCreatedDialog(
+        onReviewLater: () {
+          Navigator.of(dialogContext).pop();
+          context.go('/instructor/question-bank');
+        },
+        onView: () {
+          Navigator.of(dialogContext).pop();
+          context.go('/instructor/question-bank/${question.id}');
+        },
+        onSubmitForReview: () async {
+          final ok = await cubit.statusSavedQuestion('submit-for-review');
+          if (ok && context.mounted) {
+            Navigator.of(dialogContext).pop();
+            context.go('/instructor/question-bank/${question.id}');
+          }
+        },
+        onApprove: () async {
+          final ok = await cubit.statusSavedQuestion('approve');
+          if (ok && context.mounted) {
+            Navigator.of(dialogContext).pop();
+            context.go('/instructor/question-bank/${question.id}');
+          }
+        },
       ),
     );
   }
@@ -234,8 +229,9 @@ class QuestionFormBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
       children: [
         QuestionFormHero(
           title: heroTitle,
@@ -250,6 +246,8 @@ class QuestionFormBody extends StatelessWidget {
         const SizedBox(height: 18),
         QuestionCoreSection(
           title: l10n.qbCoreDetails,
+          icon: Icons.fact_check_outlined,
+          color: InstructorColors.primary,
           children: [
             if (courses.isEmpty || lockCourse)
               TextFormField(
@@ -258,26 +256,26 @@ class QuestionFormBody extends StatelessWidget {
                 ),
                 initialValue: _courseLabel(),
                 enabled: false,
-                decoration: _decoration(l10n.course),
+                decoration: _decoration(context, l10n.course),
               )
             else
-              DropdownButtonFormField<int>(
-                isExpanded: true,
-                initialValue: state.courseId,
-                decoration: _decoration(l10n.course),
-                items: courses
+              QuestionFormMenuField<int>(
+                label: l10n.course,
+                value: state.courseId,
+                icon: Icons.school_outlined,
+                color: InstructorColors.primary,
+                options: courses
                     .map(
-                      (course) => DropdownMenuItem<int>(
+                      (course) => QuestionFormMenuOption<int>(
                         value: course.courseId,
-                        child: Text(
-                          '${course.course.code} - ${course.course.name}',
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        label: '${course.course.code} - ${course.course.name}',
+                        icon: Icons.menu_book_outlined,
                       ),
                     )
                     .toList(),
-                onChanged: (value) =>
-                    context.read<QuestionFormCubit>().selectCourse(value),
+                onChanged: (value) {
+                  context.read<QuestionFormCubit>().selectCourse(value);
+                },
               ),
             const SizedBox(height: 12),
             QuestionChapterSelector(
@@ -293,7 +291,11 @@ class QuestionFormBody extends StatelessWidget {
               initialValue: state.questionText,
               minLines: 4,
               maxLines: 8,
-              decoration: _decoration(l10n.questionBankSearchQuestionTextOnly),
+              decoration: _decoration(
+                context,
+                l10n.qbQuestionPrompt,
+                icon: Icons.help_outline_rounded,
+              ),
               onChanged: (value) => context
                   .read<QuestionFormCubit>()
                   .updateCore(questionText: value),
@@ -303,66 +305,90 @@ class QuestionFormBody extends StatelessWidget {
               initialValue: state.hints,
               minLines: 2,
               maxLines: 4,
-              decoration: _decoration(l10n.qbQuestionHints),
+              decoration: _decoration(
+                context,
+                l10n.qbQuestionHints,
+                icon: Icons.lightbulb_outline_rounded,
+              ),
               onChanged: (value) =>
                   context.read<QuestionFormCubit>().updateCore(hints: value),
             ),
             const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: state.isUploading
-                      ? null
-                      : () => _pickQuestionImage(context),
-                  icon: const Icon(Icons.image_outlined),
-                  label: Text(
-                    state.questionFileId == null
-                        ? l10n.qbUploadQuestionImage
-                        : l10n.qbReplaceQuestionImage,
-                  ),
-                ),
-                if (state.questionFileId != null)
-                  IconButton.outlined(
-                    tooltip: l10n.qbRemoveQuestionImage,
-                    onPressed: state.isUploading
-                        ? null
-                        : () => context
-                              .read<QuestionFormCubit>()
-                              .removeQuestionImage(),
-                    icon: const Icon(Icons.delete_outline),
-                  ),
-              ],
+            _QuestionImageUploadPanel(
+              state: state,
+              isDark: isDark,
+              onPick: () => _pickQuestionImage(context),
+              onRemove: () =>
+                  context.read<QuestionFormCubit>().removeQuestionImage(),
+              onPreview: state.questionImageUrl == null
+                  ? null
+                  : () => _showQuestionImagePreview(
+                      context,
+                      imageUrl: state.questionImageUrl!,
+                      title: state.questionFileCaption.trim().isNotEmpty
+                          ? state.questionFileCaption
+                          : '${l10n.questionBankImageQuestion}: ${state.questionFileId}',
+                    ),
             ),
             if (state.questionFileId != null) ...[
               const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEFF6FF),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: state.questionImageUrl == null
+                      ? null
+                      : () => _showQuestionImagePreview(
+                          context,
+                          imageUrl: state.questionImageUrl!,
+                          title: state.questionFileCaption.trim().isNotEmpty
+                              ? state.questionFileCaption
+                              : '${l10n.questionBankImageQuestion}: ${state.questionFileId}',
+                        ),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFBFDBFE)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.image_outlined, color: Color(0xFF2563EB)),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        '${l10n.questionBankImageQuestion}: ${state.questionFileId}',
-                        overflow: TextOverflow.ellipsis,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: InstructorColors.primary.withValues(
+                        alpha: isDark ? 0.16 : 0.08,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: InstructorColors.primary.withValues(alpha: 0.24),
                       ),
                     ),
-                  ],
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.image_outlined,
+                          color: InstructorColors.primary,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            '${l10n.questionBankImageQuestion}: ${state.questionFileId}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (state.questionImageUrl != null)
+                          const Icon(
+                            Icons.visibility_outlined,
+                            color: InstructorColors.primary,
+                            size: 20,
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
             const SizedBox(height: 12),
             TextFormField(
               initialValue: state.questionFileCaption,
-              decoration: _decoration(l10n.qbImageCaption),
+              decoration: _decoration(
+                context,
+                l10n.qbImageCaption,
+                icon: Icons.closed_caption_outlined,
+              ),
               onChanged: (value) => context
                   .read<QuestionFormCubit>()
                   .updateCore(questionFileCaption: value),
@@ -370,7 +396,11 @@ class QuestionFormBody extends StatelessWidget {
             const SizedBox(height: 12),
             TextFormField(
               initialValue: state.questionFileAltText,
-              decoration: _decoration(l10n.qbImageAltText),
+              decoration: _decoration(
+                context,
+                l10n.qbImageAltText,
+                icon: Icons.accessibility_new_outlined,
+              ),
               onChanged: (value) => context
                   .read<QuestionFormCubit>()
                   .updateCore(questionFileAltText: value),
@@ -400,38 +430,74 @@ class QuestionFormBody extends StatelessWidget {
         QuestionTypeSection(
           title: l10n.qbQuestionSettings,
           children: [
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                _EnumDropdown<QuestionBankType>(
-                  label: l10n.type,
-                  value: state.questionType,
-                  values: QuestionBankType.values,
-                  text: (value) => localizedQuestionType(l10n, value),
-                  onChanged: (value) => context
-                      .read<QuestionFormCubit>()
-                      .updateCore(questionType: value),
-                ),
-                _EnumDropdown<QuestionBankDifficulty>(
-                  label: l10n.difficulty,
-                  value: state.difficulty,
-                  values: QuestionBankDifficulty.values,
-                  text: (value) => localizedDifficulty(l10n, value),
-                  onChanged: (value) => context
-                      .read<QuestionFormCubit>()
-                      .updateCore(difficulty: value),
-                ),
-                _EnumDropdown<BloomLevel>(
-                  label: l10n.qbBloomLevel,
-                  value: state.bloomLevel,
-                  values: BloomLevel.values,
-                  text: (value) => localizedBloomLevel(l10n, value),
-                  onChanged: (value) => context
-                      .read<QuestionFormCubit>()
-                      .updateCore(bloomLevel: value),
-                ),
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final compact = constraints.maxWidth < 460;
+                final width = compact
+                    ? constraints.maxWidth
+                    : (constraints.maxWidth - 12) / 2;
+                return Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    QuestionFormMenuField<QuestionBankType>(
+                      width: width,
+                      label: l10n.type,
+                      value: state.questionType,
+                      icon: Icons.category_outlined,
+                      color: InstructorColors.primary,
+                      options: QuestionBankType.values
+                          .map(
+                            (value) => QuestionFormMenuOption<QuestionBankType>(
+                              value: value,
+                              label: localizedQuestionType(l10n, value),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) => context
+                          .read<QuestionFormCubit>()
+                          .updateCore(questionType: value),
+                    ),
+                    QuestionFormMenuField<QuestionBankDifficulty>(
+                      width: width,
+                      label: l10n.difficulty,
+                      value: state.difficulty,
+                      icon: Icons.speed_rounded,
+                      color: InstructorColors.teal,
+                      options: QuestionBankDifficulty.values
+                          .map(
+                            (value) =>
+                                QuestionFormMenuOption<QuestionBankDifficulty>(
+                                  value: value,
+                                  label: localizedDifficulty(l10n, value),
+                                ),
+                          )
+                          .toList(),
+                      onChanged: (value) => context
+                          .read<QuestionFormCubit>()
+                          .updateCore(difficulty: value),
+                    ),
+                    QuestionFormMenuField<BloomLevel>(
+                      width: compact ? constraints.maxWidth : width,
+                      label: l10n.qbBloomLevel,
+                      value: state.bloomLevel,
+                      icon: Icons.psychology_outlined,
+                      color: InstructorColors.accent,
+                      options: BloomLevel.values
+                          .map(
+                            (value) => QuestionFormMenuOption<BloomLevel>(
+                              value: value,
+                              label: localizedBloomLevel(l10n, value),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) => context
+                          .read<QuestionFormCubit>()
+                          .updateCore(bloomLevel: value),
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 14),
             if (state.questionType == QuestionBankType.mcq ||
@@ -439,6 +505,7 @@ class QuestionFormBody extends StatelessWidget {
               QuestionOptionsEditor(
                 options: state.options,
                 lockCount: state.questionType == QuestionBankType.trueFalse,
+                singleCorrect: state.questionType == QuestionBankType.trueFalse,
                 onChanged: context.read<QuestionFormCubit>().updateOptions,
               ),
             if (state.questionType == QuestionBankType.fillBlanks)
@@ -452,7 +519,11 @@ class QuestionFormBody extends StatelessWidget {
                 initialValue: state.expectedAnswerText,
                 minLines: 3,
                 maxLines: 6,
-                decoration: _decoration(l10n.qbAnswer),
+                decoration: _decoration(
+                  context,
+                  l10n.qbAnswer,
+                  icon: Icons.notes_rounded,
+                ),
                 onChanged: (value) => context
                     .read<QuestionFormCubit>()
                     .updateCore(expectedAnswerText: value),
@@ -460,19 +531,38 @@ class QuestionFormBody extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 18),
-        FilledButton.icon(
-          onPressed: state.isSaving ? null : onSubmit,
-          icon: const Icon(Icons.save_outlined),
-          label: Text(submitLabel),
+        _QuestionFormSubmitBar(
+          label: submitLabel,
+          isSaving: state.isSaving,
+          onSubmit: onSubmit,
         ),
       ],
     );
   }
 
-  InputDecoration _decoration(String label) {
+  InputDecoration _decoration(
+    BuildContext context,
+    String label, {
+    IconData? icon,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InputDecoration(
       labelText: label,
+      prefixIcon: icon == null ? null : Icon(icon),
+      filled: true,
+      fillColor: InstructorColors.surfaceColor(isDark),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: InstructorColors.borderColor(isDark)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(
+          color: InstructorColors.primary,
+          width: 1.4,
+        ),
+      ),
     );
   }
 
@@ -493,16 +583,98 @@ class QuestionFormBody extends StatelessWidget {
     }
   }
 
+  Future<void> _showQuestionImagePreview(
+    BuildContext context, {
+    required String imageUrl,
+    required String title,
+  }) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    await showDialog<void>(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(18),
+        backgroundColor: Colors.transparent,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 680),
+          child: Container(
+            decoration: BoxDecoration(
+              color: InstructorColors.cardColor(isDark),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: InstructorColors.borderColor(isDark)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: InstructorColors.primary.withValues(
+                            alpha: isDark ? 0.2 : 0.1,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Icon(
+                          Icons.image_outlined,
+                          color: InstructorColors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: InstructorColors.textPrimaryColor(isDark),
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  child: InteractiveViewer(
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.broken_image_outlined, size: 64),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _showCreateChapter(BuildContext context) async {
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => Dialog(
         insetPadding: const EdgeInsets.all(18),
+        backgroundColor: Colors.transparent,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 520),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
             child: QuestionChapterFormCard(
+              suggestedOrder: _nextChapterOrder(),
+              occupiedOrders: state.chapters
+                  .where((chapter) => chapter.isActive)
+                  .map((chapter) => chapter.chapterOrder)
+                  .toList(),
               onCancel: () => Navigator.of(dialogContext).pop(),
               onSubmit: (name, order, _) async {
                 await context.read<QuestionFormCubit>().createChapter(
@@ -517,43 +689,551 @@ class QuestionFormBody extends StatelessWidget {
       ),
     );
   }
+
+  int _nextChapterOrder() {
+    final activeOrders = state.chapters
+        .where((chapter) => chapter.isActive)
+        .map((chapter) => chapter.chapterOrder)
+        .where((order) => order > 0)
+        .toList();
+    if (activeOrders.isEmpty) return 1;
+    activeOrders.sort();
+    return activeOrders.last + 1;
+  }
 }
 
-class _EnumDropdown<T> extends StatelessWidget {
-  const _EnumDropdown({
+class _QuestionImageUploadPanel extends StatelessWidget {
+  const _QuestionImageUploadPanel({
+    required this.state,
+    required this.isDark,
+    required this.onPick,
+    required this.onRemove,
+    this.onPreview,
+  });
+
+  final QuestionFormState state;
+  final bool isDark;
+  final VoidCallback onPick;
+  final VoidCallback onRemove;
+  final VoidCallback? onPreview;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final hasImage = state.questionFileId != null;
+    final label = hasImage
+        ? l10n.qbReplaceQuestionImage
+        : l10n.qbUploadQuestionImage;
+    final color = hasImage ? InstructorColors.teal : InstructorColors.primary;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: state.isUploading ? null : onPreview ?? onPick,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: isDark ? 0.14 : 0.07),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: color.withValues(alpha: 0.22)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: isDark ? 0.2 : 0.12),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: state.isUploading
+                    ? Padding(
+                        padding: const EdgeInsets.all(11),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.2,
+                          valueColor: AlwaysStoppedAnimation<Color>(color),
+                        ),
+                      )
+                    : Icon(
+                        hasImage
+                            ? Icons.image_search_rounded
+                            : Icons.add_photo_alternate_outlined,
+                        color: color,
+                        size: 22,
+                      ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      hasImage
+                          ? '${l10n.questionBankImageQuestion} #${state.questionFileId}'
+                          : l10n.image,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textSecondaryColor(isDark),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                tooltip: label,
+                onPressed: state.isUploading ? null : onPick,
+                style: IconButton.styleFrom(
+                  backgroundColor: color.withValues(alpha: isDark ? 0.2 : 0.1),
+                  foregroundColor: color,
+                  minimumSize: const Size(40, 40),
+                ),
+                icon: Icon(
+                  hasImage ? Icons.sync_rounded : Icons.upload_rounded,
+                ),
+              ),
+              if (hasImage && onPreview != null) ...[
+                const SizedBox(width: 6),
+                IconButton(
+                  tooltip: l10n.questionBankImageQuestion,
+                  onPressed: state.isUploading ? null : onPreview,
+                  style: IconButton.styleFrom(
+                    backgroundColor: InstructorColors.primary.withValues(
+                      alpha: isDark ? 0.18 : 0.1,
+                    ),
+                    foregroundColor: InstructorColors.primary,
+                    minimumSize: const Size(40, 40),
+                  ),
+                  icon: const Icon(Icons.visibility_outlined),
+                ),
+              ],
+              if (hasImage) ...[
+                const SizedBox(width: 6),
+                IconButton(
+                  tooltip: l10n.remove,
+                  onPressed: state.isUploading ? null : onRemove,
+                  style: IconButton.styleFrom(
+                    backgroundColor: InstructorColors.error.withValues(
+                      alpha: isDark ? 0.18 : 0.1,
+                    ),
+                    foregroundColor: InstructorColors.error,
+                    minimumSize: const Size(40, 40),
+                  ),
+                  icon: const Icon(Icons.delete_outline_rounded),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuestionFormSubmitBar extends StatelessWidget {
+  const _QuestionFormSubmitBar({
     required this.label,
-    required this.value,
-    required this.values,
-    required this.text,
-    required this.onChanged,
+    required this.isSaving,
+    required this.onSubmit,
   });
 
   final String label;
-  final T value;
-  final List<T> values;
-  final String Function(T) text;
-  final ValueChanged<T?> onChanged;
+  final bool isSaving;
+  final VoidCallback onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      minimum: EdgeInsets.zero,
+      child: SizedBox(
+        width: double.infinity,
+        height: 56,
+        child: FilledButton.icon(
+          onPressed: isSaving ? null : onSubmit,
+          style: FilledButton.styleFrom(
+            backgroundColor: InstructorColors.primary,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: InstructorColors.primary.withValues(
+              alpha: 0.42,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          icon: isSaving
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : const Icon(Icons.save_rounded),
+          label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+      ),
+    );
+  }
+}
+
+class QuestionFormDecisionDialog extends StatelessWidget {
+  const QuestionFormDecisionDialog({
+    super.key,
+    required this.title,
+    required this.message,
+    required this.icon,
+    required this.color,
+    required this.primaryLabel,
+    required this.secondaryLabel,
+    required this.onPrimary,
+    required this.onSecondary,
+  });
+
+  final String title;
+  final String message;
+  final IconData icon;
+  final Color color;
+  final String primaryLabel;
+  final String secondaryLabel;
+  final VoidCallback onPrimary;
+  final VoidCallback onSecondary;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Dialog(
+      insetPadding: const EdgeInsets.all(20),
+      backgroundColor: Colors.transparent,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: InstructorColors.cardColor(isDark),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: InstructorColors.borderColor(isDark)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.26 : 0.12),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: isDark ? 0.2 : 0.11),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(icon, color: color, size: 23),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontSize: 19,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                message,
+                style: TextStyle(
+                  color: InstructorColors.textSecondaryColor(isDark),
+                  height: 1.35,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 18),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final stacked = constraints.maxWidth < 360;
+                  final buttons = [
+                    OutlinedButton(
+                      onPressed: onSecondary,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: InstructorColors.textPrimaryColor(
+                          isDark,
+                        ),
+                        side: BorderSide(
+                          color: InstructorColors.borderColor(isDark),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: Text(
+                        secondaryLabel,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    FilledButton(
+                      onPressed: onPrimary,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: color,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: Text(
+                        primaryLabel,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ];
+                  if (stacked) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        buttons.first,
+                        const SizedBox(height: 10),
+                        buttons.last,
+                      ],
+                    );
+                  }
+                  return Row(
+                    children: [
+                      Expanded(child: buttons.first),
+                      const SizedBox(width: 10),
+                      Expanded(child: buttons.last),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuestionCreatedDialog extends StatelessWidget {
+  const _QuestionCreatedDialog({
+    required this.onReviewLater,
+    required this.onView,
+    required this.onSubmitForReview,
+    required this.onApprove,
+  });
+
+  final VoidCallback onReviewLater;
+  final VoidCallback onView;
+  final Future<void> Function() onSubmitForReview;
+  final Future<void> Function() onApprove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Dialog(
+      insetPadding: const EdgeInsets.all(20),
+      backgroundColor: Colors.transparent,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: InstructorColors.cardColor(isDark),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: InstructorColors.borderColor(isDark)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.26 : 0.12),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          InstructorColors.success,
+                          InstructorColors.teal,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(17),
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 25,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.qbQuestionCreatedDraftTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: InstructorColors.textPrimaryColor(isDark),
+                            fontSize: 19,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          l10n.qbQuestionCreatedDraftBody,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: InstructorColors.textSecondaryColor(isDark),
+                            fontWeight: FontWeight.w700,
+                            height: 1.25,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final narrow = constraints.maxWidth < 420;
+                  final width = narrow
+                      ? constraints.maxWidth
+                      : (constraints.maxWidth - 10) / 2;
+                  return Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      _QuestionCreatedAction(
+                        width: width,
+                        label: l10n.qbReviewLater,
+                        icon: Icons.schedule_rounded,
+                        color: InstructorColors.textSecondary,
+                        isDark: isDark,
+                        onTap: onReviewLater,
+                      ),
+                      _QuestionCreatedAction(
+                        width: width,
+                        label: l10n.qbViewQuestion,
+                        icon: Icons.visibility_outlined,
+                        color: InstructorColors.primary,
+                        isDark: isDark,
+                        onTap: onView,
+                      ),
+                      _QuestionCreatedAction(
+                        width: width,
+                        label: l10n.submitForReview,
+                        icon: Icons.outbox_rounded,
+                        color: InstructorColors.info,
+                        isDark: isDark,
+                        onTap: () {
+                          onSubmitForReview();
+                        },
+                      ),
+                      _QuestionCreatedAction(
+                        width: width,
+                        label: l10n.qbApprove,
+                        icon: Icons.verified_rounded,
+                        color: InstructorColors.success,
+                        isDark: isDark,
+                        onTap: () {
+                          onApprove();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuestionCreatedAction extends StatelessWidget {
+  const _QuestionCreatedAction({
+    required this.width,
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  final double width;
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool isDark;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 180,
-      child: DropdownButtonFormField<T>(
-        isExpanded: true,
-        initialValue: value,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+      width: width,
+      height: 54,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: color.withValues(alpha: isDark ? 0.16 : 0.08),
+          foregroundColor: color,
+          side: BorderSide(color: color.withValues(alpha: 0.24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(17),
+          ),
+          alignment: Alignment.centerLeft,
         ),
-        items: values
-            .map(
-              (value) => DropdownMenuItem<T>(
-                value: value,
-                child: Text(text(value), overflow: TextOverflow.ellipsis),
-              ),
-            )
-            .toList(),
-        onChanged: onChanged,
+        icon: Icon(icon, size: 20),
+        label: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.w900),
+        ),
       ),
     );
   }

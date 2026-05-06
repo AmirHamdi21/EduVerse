@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/question_bank/question_bank_group_model.dart';
 import 'question_bank_localized_labels.dart';
+import 'question_text_renderer.dart';
 
 class QuestionGroupCard extends StatelessWidget {
   const QuestionGroupCard({
@@ -41,8 +42,9 @@ class QuestionGroupCard extends StatelessWidget {
               '${l10n.questions}: ${group.totalQuestions} • ${l10n.approved}: ${group.approvedQuestions}',
             ),
             if (group.sharedPrompt != null)
-              Text(
-                group.sharedPrompt!,
+              QuestionFormattedText(
+                text: group.sharedPrompt,
+                fallback: '',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

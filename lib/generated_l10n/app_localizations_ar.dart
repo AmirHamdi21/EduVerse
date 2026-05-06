@@ -15622,6 +15622,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get questionBankQuestionDetails => 'تفاصيل السؤال';
 
   @override
+  String get qbQuestionReviewWorkspace =>
+      'راجع نص السؤال والوسائط ونموذج الإجابة والمجموعات وحالة النشر في مساحة واحدة مركزة.';
+
+  @override
   String get questionBankImageQuestion => 'سؤال بصورة';
 
   @override
@@ -15754,16 +15758,74 @@ class AppLocalizationsAr extends AppLocalizations {
   String get qbQuestionPrompt => 'نص السؤال';
 
   @override
+  String get qbQuestionPromptReviewHint =>
+      'اقرأ النص الذي سيظهر للطالب قبل الاعتماد أو التعديل.';
+
+  @override
+  String get qbQuestionHintsReviewHint =>
+      'نص مساعد اختياري يظهر مع هذا السؤال.';
+
+  @override
+  String get qbQuestionImageReviewHint =>
+      'اضغط على الصورة لمعاينتها قبل التعديل.';
+
+  @override
+  String get qbNoQuestionHint => 'لم يتم حفظ تلميح لهذا السؤال بعد.';
+
+  @override
+  String get qbNoImageCaption => 'لم يتم حفظ تعليق للصورة في هذا السؤال.';
+
+  @override
+  String get qbNoImageAltText => 'لم يتم حفظ نص بديل للصورة في هذا السؤال.';
+
+  @override
   String get metadata => 'البيانات';
 
   @override
+  String get qbMetadataReviewHint =>
+      'بيانات التصنيف والتوجيه المستخدمة في الفلاتر وتوليد الامتحانات.';
+
+  @override
   String get expectedAnswer => 'الإجابة المتوقعة';
+
+  @override
+  String get qbAnswerModel => 'نموذج الإجابة';
+
+  @override
+  String get qbAnswerModelReviewHint =>
+      'راجع الإجابة المقبولة قبل نشر هذا السؤال.';
+
+  @override
+  String get qbNoAnswerProvided => 'لا توجد إجابة محفوظة لهذا السؤال.';
+
+  @override
+  String get qbQuestionScope => 'نطاق السؤال';
+
+  @override
+  String get qbQuestionScopeReviewHint =>
+      'سياق المقرر والفصل الخاص بهذا السؤال.';
 
   @override
   String get allStates => 'كل الحالات';
 
   @override
   String get qbManageChapters => 'إدارة الفصول';
+
+  @override
+  String get qbChapters => 'الفصول';
+
+  @override
+  String get qbSearchChaptersHint => 'ابحث باسم الفصل أو ترتيبه';
+
+  @override
+  String get qbNoChaptersMessage =>
+      'أنشئ فصولاً لتنظيم أسئلة المقرر قبل استخدامها في الامتحانات.';
+
+  @override
+  String get qbChapterStatus => 'حالة الفصل';
+
+  @override
+  String get qbAllChapterStatuses => 'كل الحالات';
 
   @override
   String get qbCreateChapter => 'إنشاء فصل';
@@ -15781,6 +15843,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get qbChapterOrder => 'ترتيب الفصل';
 
   @override
+  String qbChapterOrderTakenHint(String orders) {
+    return 'الترتيبات المستخدمة في هذا المقرر: $orders';
+  }
+
+  @override
   String get qbChapterActive => 'نشط';
 
   @override
@@ -15789,6 +15856,17 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get qbChapterCascadeWarning =>
       'حذف هذا الفصل قد يحذف الأسئلة والمجموعات المرتبطة به. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String qbChapterCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فصول',
+      one: 'فصل واحد',
+    );
+    return '$_temp0';
+  }
 
   @override
   String qbChapterQuestionCount(int count) {
@@ -15826,6 +15904,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get qbGroupType => 'نوع المجموعة';
 
   @override
+  String get qbAllGroupTypes => 'كل أنواع المجموعات';
+
+  @override
+  String get qbSearchGroupsHint => 'ابحث بعنوان المجموعة أو النص المشترك';
+
+  @override
+  String qbQuestionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أسئلة',
+      one: 'سؤال واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get qbSharedPrompt => 'النص المشترك';
 
   @override
@@ -15847,6 +15942,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get qbAddExistingQuestions => 'إضافة أسئلة موجودة';
 
   @override
+  String get qbAvailableQuestions => 'الأسئلة المتاحة';
+
+  @override
+  String get qbLinkSelectedQuestions => 'ربط الأسئلة المحددة';
+
+  @override
+  String get qbSelectAllVisible => 'تحديد الأسئلة الظاهرة';
+
+  @override
+  String get qbClearSelection => 'مسح التحديد';
+
+  @override
+  String get qbFilters => 'الفلاتر';
+
+  @override
   String get qbRemoveFromGroup => 'إزالة من المجموعة';
 
   @override
@@ -15860,7 +15970,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get qbGroupDeleteBody => 'حذف هذه المجموعة لا يحذف أسئلتها.';
 
   @override
+  String get qbGroupSaved => 'تم حفظ المجموعة';
+
+  @override
   String get qbAttachmentAddByFile => 'إضافة بمعرّف ملف';
+
+  @override
+  String qbAttachmentCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مرفقات',
+      one: 'مرفق واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qbNoAttachments => 'لا توجد مرفقات';
+
+  @override
+  String get qbNoAttachmentsMessage =>
+      'ارفع صوراً داعمة عندما يحتاج السؤال إلى سياق بصري إضافي.';
 
   @override
   String get qbUploadAttachment => 'رفع مرفق';
@@ -15945,6 +16076,16 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get qbBulkGlobalActions => 'إجراءات عامة';
+
+  @override
+  String get qbBulkCreatedQuestions => 'الأسئلة المنشأة';
+
+  @override
+  String get qbBulkGlobalActionsHint =>
+      'طبّق نفس إجراء الحالة على كل الأسئلة المنشأة.';
+
+  @override
   String get qbUploadQuestionImage => 'رفع صورة السؤال';
 
   @override
@@ -16015,6 +16156,50 @@ class AppLocalizationsAr extends AppLocalizations {
   String get qbRestore => 'استعادة';
 
   @override
+  String get qbStatusWorkflow => 'مسار الحالة';
+
+  @override
+  String qbCurrentStatus(String status) {
+    return 'الحالة الحالية: $status';
+  }
+
+  @override
+  String get qbStatusWorkflowHint =>
+      'تتفعّل الإجراءات فقط عندما يسمح مسار الخادم بها حسب الحالة الحالية.';
+
+  @override
+  String get qbSubmitForReviewHint => 'أرسل السؤال إلى قائمة المراجعة.';
+
+  @override
+  String get qbSubmitForReviewDisabledHint =>
+      'متاح فقط للأسئلة المسودة أو المرفوضة.';
+
+  @override
+  String get qbApproveHint => 'اجعل السؤال جاهزاً لتوليد الامتحانات.';
+
+  @override
+  String get qbApproveDisabledHint =>
+      'متاح فقط للأسئلة المسودة أو قيد المراجعة.';
+
+  @override
+  String get qbRejectHint => 'أعد السؤال من المراجعة مع الحاجة إلى تعديلات.';
+
+  @override
+  String get qbRejectDisabledHint => 'متاح فقط عندما يكون السؤال قيد المراجعة.';
+
+  @override
+  String get qbArchiveHint => 'أخفِ السؤال من الاستخدام المعتاد بدون حذفه.';
+
+  @override
+  String get qbArchiveDisabledHint => 'هذا السؤال مؤرشف بالفعل.';
+
+  @override
+  String get qbRestoreHint => 'أعد السؤال المؤرشف إلى بنك الأسئلة النشط.';
+
+  @override
+  String get qbRestoreDisabledHint => 'متاح فقط للأسئلة المؤرشفة.';
+
+  @override
   String get qbOverview => 'نظرة عامة';
 
   @override
@@ -16022,6 +16207,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get qbGroups => 'المجموعات';
+
+  @override
+  String get qbQuestionGroupsReviewHint =>
+      'المجموعات التي تحتوي هذا السؤال حالياً.';
+
+  @override
+  String get qbNoGroupsForQuestion => 'هذا السؤال غير موجود في أي مجموعة';
 
   @override
   String get qbStatus => 'الحالة';

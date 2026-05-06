@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/question_bank/course_chapter_model.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_fill_blank_model.dart';
 import '../../../models/question_bank/question_bank_option_model.dart';
 import '../../../models/question_bank/question_attachment_payload.dart';
 import '../../../models/question_bank/question_bulk_row_model.dart';
+import 'question_bulk_editor.dart';
 import 'question_bulk_row_card.dart';
 
 class QuestionGroupBatchEditor extends StatelessWidget {
@@ -23,6 +23,7 @@ class QuestionGroupBatchEditor extends StatelessWidget {
     this.onAttachmentChanged,
     this.onRemoveAttachment,
     this.onReorderAttachments,
+    this.isBusy = false,
   });
 
   final List<QuestionBulkRowModel> rows;
@@ -34,57 +35,50 @@ class QuestionGroupBatchEditor extends StatelessWidget {
   final ValueChanged<QuestionBulkRowModel>? onRemoveImage;
   final void Function(int localId, List<String> paths)? onUploadAttachments;
   final void Function(int localId, QuestionAttachmentPayload attachment)?
-      onAttachmentChanged;
+  onAttachmentChanged;
   final void Function(int localId, int fileId)? onRemoveAttachment;
   final void Function(int localId, List<int> orderedFileIds)?
-      onReorderAttachments;
+  onReorderAttachments;
+  final bool isBusy;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(child: Text(l10n.qbGroupedBatchCreate)),
-            FilledButton.icon(
-              onPressed: rows.length >= 50 ? null : onAddRow,
-              icon: const Icon(Icons.add_rounded),
-              label: Text(l10n.qbAddRow),
+    return QuestionBulkEditor(
+      rowCount: rows.length,
+      onAddRow: onAddRow,
+      children: rows
+          .map(
+            (row) => QuestionBulkRowCard(
+              row: row,
+              chapters: chapters,
+              isBusy: isBusy,
+              onChanged: onChanged,
+              onTypeChanged: (type) => onChanged(_rowForType(row, type)),
+              onUploadImage: onUploadImage == null
+                  ? null
+                  : (path) => onUploadImage!(row.localId, path),
+              onRemoveImage: row.questionFileId == null
+                  ? null
+                  : () => onRemoveImage?.call(row),
+              onUploadAttachments: onUploadAttachments == null
+                  ? null
+                  : (paths) => onUploadAttachments!(row.localId, paths),
+              onAttachmentChanged: onAttachmentChanged == null
+                  ? null
+                  : (attachment) =>
+                        onAttachmentChanged!(row.localId, attachment),
+              onRemoveAttachment: onRemoveAttachment == null
+                  ? null
+                  : (fileId) => onRemoveAttachment!(row.localId, fileId),
+              onReorderAttachments: onReorderAttachments == null
+                  ? null
+                  : (ids) => onReorderAttachments!(row.localId, ids),
+              onRemove: rows.length <= 1
+                  ? null
+                  : () => onRemoveRow(row.localId),
             ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ...rows.map(
-          (row) => QuestionBulkRowCard(
-            row: row,
-            chapters: chapters,
-            onChanged: onChanged,
-            onTypeChanged: (type) => onChanged(_rowForType(row, type)),
-            onUploadImage: onUploadImage == null
-                ? null
-                : (path) => onUploadImage!(row.localId, path),
-            onRemoveImage: row.questionFileId == null
-                ? null
-                : () => onRemoveImage?.call(row),
-            onUploadAttachments: onUploadAttachments == null
-                ? null
-                : (paths) => onUploadAttachments!(row.localId, paths),
-            onAttachmentChanged: onAttachmentChanged == null
-                ? null
-                : (attachment) =>
-                    onAttachmentChanged!(row.localId, attachment),
-            onRemoveAttachment: onRemoveAttachment == null
-                ? null
-                : (fileId) => onRemoveAttachment!(row.localId, fileId),
-            onReorderAttachments: onReorderAttachments == null
-                ? null
-                : (ids) => onReorderAttachments!(row.localId, ids),
-            onRemove: rows.length <= 1 ? null : () => onRemoveRow(row.localId),
-          ),
-        ),
-      ],
+          )
+          .toList(),
     );
   }
 

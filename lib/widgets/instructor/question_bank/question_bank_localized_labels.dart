@@ -129,7 +129,7 @@ String localizedQuestionBankMessage(AppLocalizations l10n, String message) {
     case 'attachmentRemoved':
       return l10n.qbRemoveAttachment;
     case 'groupSaved':
-      return l10n.qbEditGroup;
+      return l10n.qbGroupSaved;
     case 'groupDeleted':
       return l10n.qbDeleteGroup;
     case 'groupQuestionsAdded':

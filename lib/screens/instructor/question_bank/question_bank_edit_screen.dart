@@ -11,6 +11,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
+import '../../../widgets/instructor/shared/instructor_colors.dart';
 import 'question_bank_create_screen.dart';
 
 class QuestionBankEditScreen extends StatelessWidget {
@@ -77,12 +78,26 @@ class _QuestionBankEditCourseLoaderState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: InstructorColors.background(isDark),
       appBar: AppBar(
-        title: Text(l10n.questionBankEditQuestion),
+        backgroundColor: InstructorColors.background(isDark),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          l10n.questionBankEditQuestion,
+          style: TextStyle(
+            color: InstructorColors.textPrimaryColor(isDark),
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: InstructorColors.textPrimaryColor(isDark),
+          ),
         ),
       ),
       body: BlocConsumer<QuestionFormCubit, QuestionFormState>(
@@ -112,9 +127,10 @@ class _QuestionBankEditCourseLoaderState
         },
         builder: (context, state) {
           if (_loadingCourses || state.isLoading) {
-            return const Padding(
-              padding: EdgeInsets.all(20),
-              child: QuestionBankSkeletons(itemCount: 4),
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+              children: const [QuestionBankSkeletons(itemCount: 3)],
             );
           }
           return QuestionFormBody(
@@ -146,19 +162,15 @@ class _QuestionBankEditCourseLoaderState
     final l10n = AppLocalizations.of(context);
     return await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.qbApprovedEditWarningTitle),
-            content: Text(l10n.qbApprovedEditWarningBody),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(l10n.cancel),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(l10n.save),
-              ),
-            ],
+          builder: (context) => QuestionFormDecisionDialog(
+            title: l10n.qbApprovedEditWarningTitle,
+            message: l10n.qbApprovedEditWarningBody,
+            icon: Icons.verified_outlined,
+            color: InstructorColors.warning,
+            primaryLabel: l10n.save,
+            secondaryLabel: l10n.cancel,
+            onPrimary: () => Navigator.of(context).pop(true),
+            onSecondary: () => Navigator.of(context).pop(false),
           ),
         ) ??
         false;
