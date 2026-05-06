@@ -101,6 +101,24 @@ import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_course_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussion_post_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/instructor_question_bank_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_bulk_create_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_chapters_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_create_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_edit_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_create_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_add_questions_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_edit_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_link_questions_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_groups_screen.dart';
+import 'package:edu_verse/models/question_bank/question_bank_enums.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/instructor_exam_generator_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_draft_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_generator_create_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_paper_export_preview_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_saved_detail_screen.dart';
 import 'package:edu_verse/models/assignments/assignment_model.dart'
     as assignment_models;
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
@@ -818,6 +836,193 @@ class AppRouter {
           };
 
           return LabDetailScreen(labId: labId, initialTab: initialTab);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank',
+        builder: (context, state) {
+          final query = state.uri.queryParameters;
+          T? enumValue<T>(List<T> values, String? raw, String Function(T) value) {
+            if (raw == null || raw.isEmpty) return null;
+            for (final item in values) {
+              if (value(item) == raw) return item;
+            }
+            return null;
+          }
+          String? firstCsv(String? value) {
+            if (value == null || value.isEmpty) return null;
+            return value.split(',').first;
+          }
+          return InstructorQuestionBankScreen(
+            initialCourseId: _parsePositiveInt(query['courseId']),
+            initialChapterId: _parsePositiveInt(
+              query['chapterId'] ?? firstCsv(query['chapterIds']),
+            ),
+            initialGroupId: _parsePositiveInt(
+              query['groupId'] ?? firstCsv(query['groupIds']),
+            ),
+            initialType: enumValue(
+              QuestionBankType.values,
+              query['questionType'] ?? query['type'],
+              (item) => item.value,
+            ),
+            initialDifficulty: enumValue(
+              QuestionBankDifficulty.values,
+              query['difficulty'],
+              (item) => item.value,
+            ),
+            initialBloomLevel: enumValue(
+              BloomLevel.values,
+              query['bloomLevel'],
+              (item) => item.value,
+            ),
+            initialStatus: enumValue(
+              QuestionBankStatus.values,
+              query['status'],
+              (item) => item.value,
+            ),
+            initialSearch: query['search'],
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/create',
+        builder: (context, state) => const QuestionBankCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/bulk-create',
+        builder: (context, state) => const QuestionBankBulkCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/chapters',
+        builder: (context, state) => const QuestionBankChaptersScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups',
+        builder: (context, state) => const QuestionGroupsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/create',
+        builder: (context, state) => const QuestionGroupCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId/edit',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid group id')),
+            );
+          }
+          return QuestionGroupEditScreen(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId/add-questions',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question group route')),
+            );
+          }
+          return QuestionGroupAddQuestionsScreen(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId/link-questions',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question group route')),
+            );
+          }
+          return QuestionGroupLinkQuestionsScreen(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question group route')),
+            );
+          }
+          return QuestionGroupDetailScreen(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/:questionId/edit',
+        builder: (context, state) {
+          final questionId = int.tryParse(
+            state.pathParameters['questionId'] ?? '',
+          );
+          if (questionId == null || questionId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question edit route')),
+            );
+          }
+          return QuestionBankEditScreen(questionId: questionId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/:questionId',
+        builder: (context, state) {
+          final questionId = int.tryParse(
+            state.pathParameters['questionId'] ?? '',
+          );
+          if (questionId == null || questionId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question detail route')),
+            );
+          }
+          return QuestionBankDetailScreen(questionId: questionId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator',
+        builder: (context, state) => const InstructorExamGeneratorScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/create',
+        builder: (context, state) => const ExamGeneratorCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/drafts/:draftId',
+        builder: (context, state) {
+          final draftId = int.tryParse(state.pathParameters['draftId'] ?? '');
+          if (draftId == null || draftId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid draft detail route')),
+            );
+          }
+          return ExamDraftDetailScreen(draftId: draftId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/exams/:examId/paper-export',
+        builder: (context, state) {
+          final examId = int.tryParse(state.pathParameters['examId'] ?? '');
+          if (examId == null || examId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid exam paper export route')),
+            );
+          }
+          return ExamPaperExportPreviewScreen(examId: examId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/exams/:examId',
+        builder: (context, state) {
+          final examId = int.tryParse(state.pathParameters['examId'] ?? '');
+          if (examId == null || examId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid exam detail route')),
+            );
+          }
+          return ExamSavedDetailScreen(examId: examId);
         },
       ),
       GoRoute(

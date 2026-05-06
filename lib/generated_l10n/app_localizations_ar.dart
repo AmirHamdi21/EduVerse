@@ -15575,4 +15575,1220 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chatVoiceCallTooltip => 'مكالمة صوتية';
+
+  @override
+  String get questionBank => 'بنك الأسئلة';
+
+  @override
+  String get examGenerator => 'مولد الامتحانات';
+
+  @override
+  String get questionBankHeroTitle => 'نبض بنك الأسئلة';
+
+  @override
+  String get questionBankHeroSubtitle =>
+      'أنشئ أسئلة المقرر وفلترها واعتمدها وأعد استخدامها من مساحة واحدة.';
+
+  @override
+  String get questionBankAttachedGrouped => 'مرفقة/مجمعة';
+
+  @override
+  String get questionBankSearchQuestionTextOnly => 'البحث في نص السؤال فقط';
+
+  @override
+  String get questionBankCreateQuestion => 'إنشاء سؤال';
+
+  @override
+  String get questionBankBulkCreate => 'إنشاء أسئلة متعددة';
+
+  @override
+  String get questionBankEmptyTitle => 'لا توجد أسئلة';
+
+  @override
+  String get questionBankEmptyMessage =>
+      'ستظهر الأسئلة هنا بعد إنشائها أو عند مطابقة الفلاتر.';
+
+  @override
+  String get questionBankStudioTitle => 'استوديو السؤال';
+
+  @override
+  String get questionBankStudioSubtitle =>
+      'اضبط نص السؤال والإجابة والتصنيف والوسائط في تدفق واحد.';
+
+  @override
+  String get questionBankEditQuestion => 'تعديل سؤال';
+
+  @override
+  String get questionBankQuestionDetails => 'تفاصيل السؤال';
+
+  @override
+  String get questionBankImageQuestion => 'سؤال بصورة';
+
+  @override
+  String get questionBankBulkSubtitle =>
+      'أنشئ حتى 50 سؤالًا مع بقاء الصفوف قابلة للتعديل عند فشل الخادم.';
+
+  @override
+  String get questionBankGroupDetails => 'تفاصيل مجموعة الأسئلة';
+
+  @override
+  String get questionBankGroupDeleteKeepsQuestions =>
+      'حذف المجموعة لا يحذف أسئلتها.';
+
+  @override
+  String get examGeneratorHeroTitle => 'نبض مولد الامتحانات';
+
+  @override
+  String get examGeneratorHeroSubtitle =>
+      'أنشئ مسودات من الأسئلة المعتمدة وراجع النواقص وانشر الامتحانات.';
+
+  @override
+  String get examGeneratorCreateDraft => 'إنشاء مسودة امتحان';
+
+  @override
+  String get examGeneratorStudioTitle => 'استوديو الامتحان';
+
+  @override
+  String get examGeneratorStudioSubtitle =>
+      'اختر المقرر والفصول والقواعد والأوزان وأنشئ مسودة من الأسئلة المعتمدة.';
+
+  @override
+  String get examGeneratorNoDrafts => 'لا توجد مسودات';
+
+  @override
+  String get examGeneratorNoDraftsMessage =>
+      'ستظهر مسودات الامتحانات هنا بعد إنشائها.';
+
+  @override
+  String get examGeneratorNoSavedExams => 'لا توجد امتحانات محفوظة';
+
+  @override
+  String get examGeneratorNoSavedExamsMessage =>
+      'ستظهر الامتحانات المحفوظة هنا بعد إنهاء المسودة.';
+
+  @override
+  String get examDraftDetails => 'تفاصيل مسودة الامتحان';
+
+  @override
+  String get examDraftEditable => 'هذه المسودة مفتوحة وقابلة للتعديل.';
+
+  @override
+  String get examDraftNotEditable =>
+      'هذه المسودة منتهية أو نهائية ولا يمكن تعديلها.';
+
+  @override
+  String get examSavedDetails => 'تفاصيل الامتحان المحفوظ';
+
+  @override
+  String get examSavedPreviewUnavailableTitle => 'معاينة العناصر غير متاحة';
+
+  @override
+  String get examSavedPreviewUnavailable =>
+      'الخادم الحالي يعيد تفاصيل مختصرة للامتحان المحفوظ فقط، لذلك معاينة الأسئلة غير متاحة.';
+
+  @override
+  String get drafts => 'المسودات';
+
+  @override
+  String get savedExams => 'الامتحانات المحفوظة';
+
+  @override
+  String get sections => 'الأقسام';
+
+  @override
+  String get totalMarks => 'إجمالي الدرجات';
+
+  @override
+  String get difficulty => 'الصعوبة';
+
+  @override
+  String get approved => 'معتمد';
+
+  @override
+  String get submitForReview => 'إرسال للمراجعة';
+
+  @override
+  String get bloomLevel => 'مستوى بلوم';
+
+  @override
+  String get allChapters => 'كل الفصول';
+
+  @override
+  String get qbUnderReview => 'قيد المراجعة';
+
+  @override
+  String get qbRejected => 'مرفوض';
+
+  @override
+  String get qbSelectQuestions => 'تحديد الأسئلة';
+
+  @override
+  String qbSelectedCount(int count) {
+    return '$count محدد';
+  }
+
+  @override
+  String get qbQuestionsBatchUpdated => 'تم تحديث الأسئلة المحددة';
+
+  @override
+  String get qbQuestionCreatedDraftTitle => 'تم الإنشاء كمسودة';
+
+  @override
+  String get qbQuestionCreatedDraftBody =>
+      'اعتمد هذا السؤال قبل أن يستخدمه مولد الامتحانات.';
+
+  @override
+  String get qbReviewLater => 'المراجعة لاحقاً';
+
+  @override
+  String get qbViewQuestion => 'عرض السؤال';
+
+  @override
+  String get qbApprovedEditWarningTitle => 'سيتم إعادة حالة الاعتماد';
+
+  @override
+  String get qbApprovedEditWarningBody =>
+      'تعديل هذا السؤال المعتمد سيعيده إلى مسودة حتى يتم اعتماده مرة أخرى.';
+
+  @override
+  String get qbQuestionPrompt => 'نص السؤال';
+
+  @override
+  String get metadata => 'البيانات';
+
+  @override
+  String get expectedAnswer => 'الإجابة المتوقعة';
+
+  @override
+  String get allStates => 'كل الحالات';
+
+  @override
+  String get qbManageChapters => 'إدارة الفصول';
+
+  @override
+  String get qbCreateChapter => 'إنشاء فصل';
+
+  @override
+  String get qbEditChapter => 'تعديل فصل';
+
+  @override
+  String get qbDeleteChapter => 'حذف فصل';
+
+  @override
+  String get qbChapterName => 'اسم الفصل';
+
+  @override
+  String get qbChapterOrder => 'ترتيب الفصل';
+
+  @override
+  String get qbChapterActive => 'نشط';
+
+  @override
+  String get qbChapterInactive => 'غير نشط';
+
+  @override
+  String get qbChapterCascadeWarning =>
+      'حذف هذا الفصل قد يحذف الأسئلة والمجموعات المرتبطة به. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String qbChapterQuestionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أسئلة',
+      one: 'سؤال واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qbChapterDeleteBlocked => 'انقل أو أرشف أسئلة هذا الفصل قبل حذفه.';
+
+  @override
+  String get qbChapterCreated => 'تم إنشاء الفصل';
+
+  @override
+  String get qbChapterUpdated => 'تم تحديث الفصل';
+
+  @override
+  String get qbChapterDeleted => 'تم حذف الفصل';
+
+  @override
+  String get qbCreateGroup => 'إنشاء مجموعة';
+
+  @override
+  String get qbEditGroup => 'تعديل المجموعة';
+
+  @override
+  String get qbDeleteGroup => 'حذف المجموعة';
+
+  @override
+  String get qbGroupType => 'نوع المجموعة';
+
+  @override
+  String get qbSharedPrompt => 'النص المشترك';
+
+  @override
+  String get qbSharedFileId => 'معرّف الملف المشترك';
+
+  @override
+  String get qbUploadGroupImage => 'رفع صورة المجموعة';
+
+  @override
+  String get qbGroupImage => 'صورة المجموعة';
+
+  @override
+  String get qbGroupImageUploaded => 'تم رفع صورة المجموعة';
+
+  @override
+  String get qbGroupedBatchCreate => 'إضافة أسئلة للمجموعة';
+
+  @override
+  String get qbAddExistingQuestions => 'إضافة أسئلة موجودة';
+
+  @override
+  String get qbRemoveFromGroup => 'إزالة من المجموعة';
+
+  @override
+  String get qbRemoveFromGroupBody =>
+      'سيتم حذف علاقة المجموعة فقط. سيبقى السؤال داخل بنك الأسئلة.';
+
+  @override
+  String get qbReorderGroupQuestions => 'إعادة ترتيب أسئلة المجموعة';
+
+  @override
+  String get qbGroupDeleteBody => 'حذف هذه المجموعة لا يحذف أسئلتها.';
+
+  @override
+  String get qbAttachmentAddByFile => 'إضافة بمعرّف ملف';
+
+  @override
+  String get qbUploadAttachment => 'رفع مرفق';
+
+  @override
+  String get qbEditAttachment => 'تعديل مرفق';
+
+  @override
+  String get qbCaption => 'التعليق';
+
+  @override
+  String get qbAltText => 'النص البديل';
+
+  @override
+  String get qbDisplayOrder => 'ترتيب العرض';
+
+  @override
+  String get qbPrimaryAttachment => 'المرفق الأساسي';
+
+  @override
+  String get qbReorderAttachments => 'إعادة ترتيب المرفقات';
+
+  @override
+  String get qbRemoveAttachment => 'إزالة المرفق';
+
+  @override
+  String get qbDeleteQuestion => 'حذف السؤال';
+
+  @override
+  String get qbDeleteQuestionBody =>
+      'سيقوم الخادم بأرشفة هذا السؤال. هل تريد المتابعة؟';
+
+  @override
+  String get qbBulkRows => 'الصفوف';
+
+  @override
+  String get qbAddRow => 'إضافة صف';
+
+  @override
+  String get qbRemoveRow => 'إزالة صف';
+
+  @override
+  String get qbQuestionRow => 'صف السؤال';
+
+  @override
+  String get qbSubmitBulk => 'إنشاء الأسئلة';
+
+  @override
+  String get qbMaxRowsWarning => 'يمكنك إنشاء حتى 50 سؤالًا دفعة واحدة.';
+
+  @override
+  String get qbBulkRowsInvalid => 'أصلح الصفوف غير الصحيحة قبل الإرسال.';
+
+  @override
+  String get qbBulkCreatePartialSuccess =>
+      'تم إنشاء بعض الأسئلة. راجع الصفوف التي ما زالت تحتاج إلى تعديل.';
+
+  @override
+  String get qbBulkFailureReportTitle => 'صفوف تحتاج إلى مراجعة';
+
+  @override
+  String get qbBulkFailureReportBody =>
+      'لم يتم إنشاء أي أسئلة. الصفوف ما زالت قابلة للتعديل.';
+
+  @override
+  String get qbRowKeptEditable => 'بقي قابلاً للتعديل بعد رفض الخادم';
+
+  @override
+  String qbMoreFailedRows(int count) {
+    return '+$count صفوف أخرى';
+  }
+
+  @override
+  String get qbCreateMoreQuestions => 'إنشاء أسئلة أخرى';
+
+  @override
+  String get qbBulkCreateSuccess => 'تم إنشاء الأسئلة';
+
+  @override
+  String qbBulkCreatedDraftSummary(int count) {
+    return 'تم إنشاء $count أسئلة كمسودات';
+  }
+
+  @override
+  String get qbUploadQuestionImage => 'رفع صورة السؤال';
+
+  @override
+  String get qbReplaceQuestionImage => 'استبدال صورة السؤال';
+
+  @override
+  String get qbRemoveQuestionImage => 'إزالة صورة السؤال';
+
+  @override
+  String get qbQuestionImageRemoved => 'تمت إزالة صورة السؤال';
+
+  @override
+  String get qbDiscardUploadsTitle => 'حذف الصور المرفوعة؟';
+
+  @override
+  String get qbDiscardUploadsBody =>
+      'سيتم حذف الصور المرفوعة التي لم يتم حفظها داخل سؤال أو مجموعة. إذا أُغلق التطبيق فجأة فسيزيل تنظيف الخادم الرفع غير المستخدم لاحقاً.';
+
+  @override
+  String get qbQuestionHints => 'تلميحات السؤال';
+
+  @override
+  String get qbImageCaption => 'تعليق الصورة';
+
+  @override
+  String get qbImageAltText => 'النص البديل للصورة';
+
+  @override
+  String get questionBankBulkChapterPerRow => 'اختر الفصل داخل كل صف سؤال.';
+
+  @override
+  String get qbCoreDetails => 'التفاصيل الأساسية';
+
+  @override
+  String get qbQuestionSettings => 'إعدادات السؤال';
+
+  @override
+  String get qbBloomLevel => 'مستوى بلوم';
+
+  @override
+  String get qbOptionNumber => 'اختيار';
+
+  @override
+  String get qbBlankKey => 'مفتاح الفراغ';
+
+  @override
+  String get qbAnswer => 'الإجابة';
+
+  @override
+  String get qbAddOption => 'إضافة اختيار';
+
+  @override
+  String get qbAddBlank => 'إضافة فراغ';
+
+  @override
+  String get qbSubmit => 'إرسال';
+
+  @override
+  String get qbApprove => 'اعتماد';
+
+  @override
+  String get qbReject => 'رفض';
+
+  @override
+  String get qbArchive => 'أرشفة';
+
+  @override
+  String get qbRestore => 'استعادة';
+
+  @override
+  String get qbOverview => 'نظرة عامة';
+
+  @override
+  String get qbAnswers => 'الإجابات';
+
+  @override
+  String get qbGroups => 'المجموعات';
+
+  @override
+  String get qbStatus => 'الحالة';
+
+  @override
+  String get examFlatRules => 'قواعد مسطحة';
+
+  @override
+  String get examSectionedRules => 'قواعد بأقسام';
+
+  @override
+  String get examGenerationSettings => 'إعدادات التوليد';
+
+  @override
+  String get examGenerationRules => 'قواعد التوليد';
+
+  @override
+  String get examSections => 'أقسام الامتحان';
+
+  @override
+  String get examMarkDistribution => 'توزيع الدرجات';
+
+  @override
+  String get examRoundingPolicy => 'سياسة التقريب';
+
+  @override
+  String get examSeed => 'البذرة';
+
+  @override
+  String get examAnswerPolicy => 'سياسة الإجابة';
+
+  @override
+  String get examRequiredAnswerCount => 'عدد الإجابات المطلوبة';
+
+  @override
+  String get examAnswerAnyMarksHelp =>
+      'في أقسام أجب عن أي عدد، تُوزّع الدرجة الكلية على الإجابات المطلوبة. مثال: 30 درجة وأجب عن أي 3 يعني أن كل سؤال مُجاب عنه يساوي 10 درجات.';
+
+  @override
+  String get examWeightPerQuestion => 'وزن كل سؤال';
+
+  @override
+  String get examQuestionCount => 'عدد الأسئلة';
+
+  @override
+  String get examShortageTitle => 'مخزون الأسئلة غير كافٍ';
+
+  @override
+  String examShortageLine(int chapterId, int required, int available) {
+    return 'الفصل $chapterId: مطلوب $required، متاح $available';
+  }
+
+  @override
+  String get examGenerateDraft => 'توليد المسودة';
+
+  @override
+  String get examDraftOverview => 'نظرة عامة';
+
+  @override
+  String get examDraftQuestions => 'الأسئلة';
+
+  @override
+  String get examDraftReorder => 'إعادة الترتيب';
+
+  @override
+  String get examDraftSave => 'حفظ';
+
+  @override
+  String get examAddQuestion => 'إضافة سؤال';
+
+  @override
+  String get examReplaceQuestion => 'استبدال السؤال';
+
+  @override
+  String get examEditGeneratedQuestion => 'تعديل السؤال المولد';
+
+  @override
+  String get examOpenSourceQuestion => 'فتح السؤال الأصلي';
+
+  @override
+  String get examEditSourceQuestion => 'تعديل السؤال الأصلي';
+
+  @override
+  String get examMoveToSection => 'نقل إلى قسم';
+
+  @override
+  String get examUnassigned => 'غير مخصص';
+
+  @override
+  String get examMarks => 'الدرجات';
+
+  @override
+  String get examWeightUnits => 'وحدات الوزن';
+
+  @override
+  String get examOverrideReason => 'سبب التجاوز';
+
+  @override
+  String get examOverrideReasonRequired => 'سبب التجاوز مطلوب.';
+
+  @override
+  String get examReorderQuestions => 'إعادة ترتيب الأسئلة';
+
+  @override
+  String get examCannotRemoveLastItem => 'لا يمكن حذف آخر سؤال في المسودة.';
+
+  @override
+  String get examDraftExpired => 'انتهت صلاحية المسودة';
+
+  @override
+  String get examDraftFinalized => 'المسودة نهائية';
+
+  @override
+  String get examDraftNotEditableMessage => 'لا يمكن تعديل هذه المسودة.';
+
+  @override
+  String get examDeleteSection => 'حذف القسم';
+
+  @override
+  String get examDeleteSectionBody =>
+      'حذف هذا القسم يلغي تخصيص أسئلته ولا يحذفها.';
+
+  @override
+  String get examCreateSection => 'إنشاء قسم';
+
+  @override
+  String get examEditSection => 'تعديل القسم';
+
+  @override
+  String get examReorderSections => 'إعادة ترتيب الأقسام';
+
+  @override
+  String get examCandidatePicker => 'اختيار سؤال معتمد';
+
+  @override
+  String get examPublish => 'تحديد كمنشور';
+
+  @override
+  String get examUnpublish => 'إلغاء النشر';
+
+  @override
+  String get examArchive => 'أرشفة';
+
+  @override
+  String get examExport => 'تصدير';
+
+  @override
+  String get examIndependentOnly => 'الاختيار المستقل فقط';
+
+  @override
+  String get examSimpleMode => 'امتحان بسيط';
+
+  @override
+  String get examSectionedMode => 'امتحان بأقسام';
+
+  @override
+  String get examSimpleModeHelp =>
+      'قائمة واحدة من الأسئلة، مثل 20 سؤال اختيار من متعدد من المقرر.';
+
+  @override
+  String get examSectionedModeHelp =>
+      'نظّم الامتحان إلى أقسام، مثل القسم أ: اختيار من متعدد والقسم ب: مقالي.';
+
+  @override
+  String get examScopeCourse => 'المقرر كله';
+
+  @override
+  String get examScopeChapter => 'فصل واحد';
+
+  @override
+  String get examScopeChapters => 'عدة فصول';
+
+  @override
+  String get examScopeGroup => 'مجموعة أسئلة';
+
+  @override
+  String get examGroupSelectionMode => 'الأسئلة المجمعة';
+
+  @override
+  String get examGroupIndependent => 'تضمين الأسئلة المجمعة بشكل مستقل';
+
+  @override
+  String get examGroupExclude => 'استبعاد الأسئلة المجمعة';
+
+  @override
+  String get examGroupKeepTogether => 'إبقاء المجموعة معًا';
+
+  @override
+  String get examVersionCode => 'رمز نسخة الامتحان';
+
+  @override
+  String get examSeedHelp =>
+      'استخدم نفس الرمز مع نفس القواعد ومخزون الأسئلة لإعادة توليد نفس النسخة.';
+
+  @override
+  String get examRandomSeed => 'بذرة عشوائية';
+
+  @override
+  String get examDurationMinutes => 'مدة الامتحان بالدقائق';
+
+  @override
+  String get examHeaderText => 'نص الترويسة';
+
+  @override
+  String get examFooterText => 'نص التذييل';
+
+  @override
+  String get examApprovedOnlyHelp =>
+      'يتم استخدام أسئلة بنك الأسئلة المعتمدة فقط.';
+
+  @override
+  String get examAvailabilityTitle => 'توفر التوليد';
+
+  @override
+  String examAvailabilitySummary(int available, int required) {
+    return '$available متاح من $required مطلوب';
+  }
+
+  @override
+  String get examAvailabilityLowHelp =>
+      'اعتمد أسئلة مطابقة أكثر أو قلل العدد المطلوب.';
+
+  @override
+  String get examViewMatchingQuestions => 'عرض الأسئلة المطابقة';
+
+  @override
+  String get examApproveMoreQuestions => 'اعتماد أسئلة أكثر';
+
+  @override
+  String examSkippedGroupsTooLarge(int skipped, int largest) {
+    return 'تم تخطي $skipped مجموعة؛ أكبرها تحتوي على $largest أسئلة';
+  }
+
+  @override
+  String get examQuestionPoolReadiness => 'جاهزية مخزون الأسئلة';
+
+  @override
+  String get examApproved => 'معتمد';
+
+  @override
+  String get examGrouped => 'مجمّع';
+
+  @override
+  String get examStandalone => 'مستقل';
+
+  @override
+  String get examGroupedIndependentHelp =>
+      'يمكن اختيار الأسئلة المجمعة واحدًا تلو الآخر.';
+
+  @override
+  String get examGroupedTogetherHelp =>
+      'تبقى مجموعات القطعة أو الحالة معًا عندما تناسب العدد المطلوب.';
+
+  @override
+  String get examExcludeGroupedHelp => 'يتم استخدام الأسئلة المستقلة فقط.';
+
+  @override
+  String get examGroupScopeKeepsPrompt =>
+      'سيتم الاحتفاظ بنص/صورة المجموعة مع هذه الأسئلة.';
+
+  @override
+  String get examStudentNameLine => 'سطر اسم الطالب';
+
+  @override
+  String get examInstructorName => 'اسم المدرس';
+
+  @override
+  String get examPageBreakPerSection => 'فاصل صفحة لكل قسم';
+
+  @override
+  String get examAnswerKeyStyle => 'نمط نموذج الإجابة';
+
+  @override
+  String examSnapshotTimestamp(String value) {
+    return 'اللقطة: $value';
+  }
+
+  @override
+  String examVersionBadge(Object value) {
+    return 'الإصدار: $value';
+  }
+
+  @override
+  String get examDoesNotAssignStudents => 'هذا لا يعيّن الامتحان للطلاب.';
+
+  @override
+  String get examPublished => 'منشور';
+
+  @override
+  String get examApprovedPool => 'المخزون المعتمد';
+
+  @override
+  String get examDraftStatus => 'حالة المسودة';
+
+  @override
+  String get examStatus => 'حالة الامتحان';
+
+  @override
+  String get examDateFrom => 'التاريخ من';
+
+  @override
+  String get examDateTo => 'التاريخ إلى';
+
+  @override
+  String get examDashboardHelp =>
+      'المسودات قابلة للتعديل لمدة 24 ساعة. الامتحانات المحفوظة سجلات نهائية. التوليد يستخدم الأسئلة المعتمدة فقط.';
+
+  @override
+  String get examNoApprovedPoolHelp =>
+      'لا توجد أسئلة معتمدة جاهزة للتوليد لهذا المقرر.';
+
+  @override
+  String get examValidation => 'التحقق';
+
+  @override
+  String get examFinalReview => 'المراجعة النهائية';
+
+  @override
+  String get examValidationUnavailable =>
+      'ستظهر تفاصيل التحقق بعد تحميل المسودة.';
+
+  @override
+  String get examCanSave => 'يمكن حفظ المسودة';
+
+  @override
+  String get examCannotSave => 'تحتاج المسودة إلى إصلاحات قبل الحفظ';
+
+  @override
+  String get examDeleteSectionUnassigns =>
+      'حذف هذا القسم يجعل أسئلته غير مخصصة. لا يتم حذف الأسئلة.';
+
+  @override
+  String examDraftExpiresIn(int hours, int minutes) {
+    return 'سيتم قفل المسودة خلال $hoursس $minutesد. احفظها قبل انتهاء الصلاحية.';
+  }
+
+  @override
+  String get examReviewHasQuestions => 'الامتحان يحتوي على أسئلة.';
+
+  @override
+  String get examReviewCanSave => 'تحقق الخادم يسمح بالحفظ.';
+
+  @override
+  String get examReviewSnapshotsReady => 'لقطات الأسئلة والوسائط جاهزة.';
+
+  @override
+  String get examRegenerateDraft => 'إعادة توليد المسودة';
+
+  @override
+  String get examReshuffleSection => 'إعادة خلط القسم';
+
+  @override
+  String get examNormalizeSectionMarks => 'توزيع درجات القسم تلقائيًا';
+
+  @override
+  String get examMoveSelectedQuestions => 'نقل الأسئلة المحددة';
+
+  @override
+  String examSelectedQuestions(int count) {
+    return '$count محدد';
+  }
+
+  @override
+  String get examGroupedPromptShownOnce =>
+      'يظهر نص المجموعة مرة واحدة للأسئلة التالية.';
+
+  @override
+  String get examEditSourceQuestionWarning =>
+      'تعديل السؤال الأصلي في بنك الأسئلة قد يعيده إلى مسودة وقد يؤثر في تحقق هذه المسودة. هل تريد المتابعة؟';
+
+  @override
+  String get examOutsideOriginalRules => 'خارج القواعد الأصلية';
+
+  @override
+  String get examOverrideReasonHelper =>
+      'إذا كان هذا الاستبدال خارج قواعد التوليد الأصلية، اشرح السبب. اتركه فارغًا فقط إذا كان لا يزال يطابق القاعدة المقصودة.';
+
+  @override
+  String get examSnapshotHelp =>
+      'الامتحانات المحفوظة تحتفظ بلقطات وقت الحفظ، لذلك لا تغيّر تعديلات بنك الأسئلة اللاحقة هذا الامتحان.';
+
+  @override
+  String get examUnassignedQuestions => 'أسئلة غير مخصصة';
+
+  @override
+  String get examQuestionSnapshot => 'لقطة السؤال';
+
+  @override
+  String get examLifecycleReason => 'سبب تغيير الحالة';
+
+  @override
+  String get reason => 'السبب';
+
+  @override
+  String get marks => 'درجة';
+
+  @override
+  String get qbPromptImage => 'صورة السؤال';
+
+  @override
+  String get examExportStudentCopy => 'نسخة الطالب';
+
+  @override
+  String get examExportAnswerKey => 'نموذج الإجابة';
+
+  @override
+  String get examExportCombined => 'نسخة مجمعة';
+
+  @override
+  String get examExportVariant => 'نسخة التصدير';
+
+  @override
+  String get examExportFormat => 'صيغة التصدير';
+
+  @override
+  String get examExportWordDocument => 'مستند متوافق مع Word';
+
+  @override
+  String get examExportPdfDocument => 'مستند PDF';
+
+  @override
+  String get examLifecycleTitle => 'دورة حياة الامتحان';
+
+  @override
+  String get examLifecycleExplanation =>
+      'تحديد الامتحان كمنشور يغير حالة هذا الامتحان المحفوظ فقط. لا ينشئ واجبًا للطلاب إلا إذا تمت إضافة مسار تسليم.';
+
+  @override
+  String get examValidationCourseRequired => 'المقرر مطلوب.';
+
+  @override
+  String get examValidationTitleRequired => 'العنوان مطلوب.';
+
+  @override
+  String get examValidationTotalMarksPositive =>
+      'يجب أن تكون الدرجة الكلية أكبر من صفر.';
+
+  @override
+  String get examValidationDurationPositive => 'يجب أن تكون المدة أكبر من صفر.';
+
+  @override
+  String get examValidationAddRule => 'أضف قاعدة واحدة على الأقل.';
+
+  @override
+  String get examValidationAddSection => 'أضف قسمًا واحدًا على الأقل.';
+
+  @override
+  String get examValidationChapterRequired => 'الفصل مطلوب.';
+
+  @override
+  String get examValidationSelectChapter => 'اختر فصلًا واحدًا على الأقل.';
+
+  @override
+  String get examValidationSelectGroup => 'اختر مجموعة واحدة على الأقل.';
+
+  @override
+  String get examValidationCountPositive => 'يجب أن يكون العدد أكبر من صفر.';
+
+  @override
+  String get examValidationWeightPositive => 'يجب أن يكون الوزن أكبر من صفر.';
+
+  @override
+  String get examValidationSectionTitleRequired => 'عنوان القسم مطلوب.';
+
+  @override
+  String get examValidationSectionMarksPositive =>
+      'يجب أن تكون درجات القسم أكبر من صفر.';
+
+  @override
+  String get examValidationSectionMarksNonNegative =>
+      'لا يمكن أن تكون درجات القسم سالبة.';
+
+  @override
+  String get examValidationRequiredAnswerPositive =>
+      'يجب أن يكون عدد الإجابات المطلوبة أكبر من صفر.';
+
+  @override
+  String get examValidationReplacementRequired => 'السؤال البديل مطلوب.';
+
+  @override
+  String get examValidationSectionValid => 'يجب أن يكون القسم صالحًا.';
+
+  @override
+  String get examValidationWeightNonNegative => 'لا يمكن أن يكون الوزن سالبًا.';
+
+  @override
+  String get examValidationWeightUnitsNonNegative =>
+      'لا يمكن أن تكون وحدات الوزن سالبة.';
+
+  @override
+  String get examValidationMarksNonNegative => 'لا يمكن أن تكون الدرجات سالبة.';
+
+  @override
+  String get examValidationItemOrderNonNegative =>
+      'لا يمكن أن يكون ترتيب السؤال سالبًا.';
+
+  @override
+  String get enumQuestionWritten => 'كتابي';
+
+  @override
+  String get enumQuestionMcq => 'اختيار من متعدد';
+
+  @override
+  String get enumQuestionTrueFalse => 'صح / خطأ';
+
+  @override
+  String get enumQuestionFillBlanks => 'ملء الفراغات';
+
+  @override
+  String get enumQuestionEssay => 'مقالي';
+
+  @override
+  String get enumDifficultyEasy => 'سهل';
+
+  @override
+  String get enumDifficultyMedium => 'متوسط';
+
+  @override
+  String get enumDifficultyHard => 'صعب';
+
+  @override
+  String get enumBloomRemembering => 'تذكر';
+
+  @override
+  String get enumBloomUnderstanding => 'فهم';
+
+  @override
+  String get enumBloomApplying => 'تطبيق';
+
+  @override
+  String get enumBloomAnalyzing => 'تحليل';
+
+  @override
+  String get enumBloomEvaluating => 'تقييم';
+
+  @override
+  String get enumBloomCreating => 'إنشاء';
+
+  @override
+  String get enumQuestionStatusDraft => 'مسودة';
+
+  @override
+  String get enumQuestionStatusUnderReview => 'قيد المراجعة';
+
+  @override
+  String get enumQuestionStatusApproved => 'معتمد';
+
+  @override
+  String get enumQuestionStatusRejected => 'مرفوض';
+
+  @override
+  String get enumQuestionStatusArchived => 'مؤرشف';
+
+  @override
+  String get enumAttachmentImage => 'صورة';
+
+  @override
+  String get enumAttachmentDocument => 'مستند';
+
+  @override
+  String get enumAttachmentAudio => 'صوت';
+
+  @override
+  String get enumAttachmentVideo => 'فيديو';
+
+  @override
+  String get enumGroupPassage => 'قطعة';
+
+  @override
+  String get enumGroupCaseStudy => 'دراسة حالة';
+
+  @override
+  String get enumGroupImageSet => 'مجموعة صور';
+
+  @override
+  String get enumGroupMultipart => 'متعدد الأجزاء';
+
+  @override
+  String get enumGroupOther => 'أخرى';
+
+  @override
+  String get enumDraftOpen => 'مفتوحة';
+
+  @override
+  String get enumDraftFinalized => 'نهائية';
+
+  @override
+  String get enumDraftExpired => 'منتهية';
+
+  @override
+  String get enumDraftCancelled => 'ملغاة';
+
+  @override
+  String get enumDraftFailed => 'فاشلة';
+
+  @override
+  String get enumExamDraft => 'مسودة';
+
+  @override
+  String get enumExamPublished => 'منشور';
+
+  @override
+  String get enumExamArchived => 'مؤرشف';
+
+  @override
+  String get enumMarkManual => 'يدوي';
+
+  @override
+  String get enumMarkWeightNormalized => 'تطبيع الأوزان';
+
+  @override
+  String get enumMarkEqual => 'متساوٍ';
+
+  @override
+  String get enumRoundingNone => 'بدون';
+
+  @override
+  String get enumRounding025 => 'أقرب 0.25';
+
+  @override
+  String get enumRounding05 => 'أقرب 0.5';
+
+  @override
+  String get enumRounding1 => 'أقرب 1';
+
+  @override
+  String get enumAnswerAll => 'الإجابة على الكل';
+
+  @override
+  String get enumAnswerAny => 'الإجابة على أي عدد';
+
+  @override
+  String get examPaperDesignerTitle => 'مصمم ورقة الامتحان';
+
+  @override
+  String get examPaperDesignerSubtitle =>
+      'صمم رأس الورقة والنهاية وخيارات التصدير قبل إنشاء الملف.';
+
+  @override
+  String get examPaperTemplates => 'قوالب الورق';
+
+  @override
+  String get examPaperTemplate => 'قالب الورقة';
+
+  @override
+  String get examPaperTemplateName => 'اسم القالب';
+
+  @override
+  String get examPaperStructuredZones => 'مناطق منظمة';
+
+  @override
+  String get examPaperFreeDrag => 'سحب حر';
+
+  @override
+  String get examPaperHybrid => 'مختلط';
+
+  @override
+  String get examPaperHeaderFields => 'حقول الرأس';
+
+  @override
+  String get examPaperHeaderLeft1 => 'سطر الرأس الأيسر 1';
+
+  @override
+  String get examPaperHeaderLeft2 => 'سطر الرأس الأيسر 2';
+
+  @override
+  String get examPaperHeaderLeft3 => 'سطر الرأس الأيسر 3';
+
+  @override
+  String get examPaperHeaderCenter1 => 'سطر الرأس الأوسط 1';
+
+  @override
+  String get examPaperHeaderCenter2 => 'سطر الرأس الأوسط 2 / شعار';
+
+  @override
+  String get examPaperHeaderRight1 => 'سطر الرأس الأيمن 1';
+
+  @override
+  String get examPaperHeaderRight2 => 'سطر الرأس الأيمن 2';
+
+  @override
+  String get examPaperHeaderRight3 => 'سطر الرأس الأيمن 3';
+
+  @override
+  String get examPaperMetadataRows => 'سطور البيانات';
+
+  @override
+  String get examPaperMetadataLeft1 => 'بيانات يسار 1';
+
+  @override
+  String get examPaperMetadataLeft2 => 'بيانات يسار 2';
+
+  @override
+  String get examPaperMetadataLeft3 => 'بيانات يسار 3';
+
+  @override
+  String get examPaperMetadataRight1 => 'بيانات يمين 1';
+
+  @override
+  String get examPaperMetadataRight2 => 'بيانات يمين 2';
+
+  @override
+  String get examPaperMetadataRight3 => 'بيانات يمين 3';
+
+  @override
+  String get examPaperFreeElements => 'حقول حرة الموضع';
+
+  @override
+  String get examPaperFreeElementsHelp =>
+      'أضف حقلا نصيا ثم اسحبه داخل معاينة الورقة.';
+
+  @override
+  String get examPaperFreeElementText => 'نص الحقل الحر';
+
+  @override
+  String get examPaperTrailingFields => 'حقول النهاية والتذييل';
+
+  @override
+  String get examPaperEndLine => 'سطر النهاية';
+
+  @override
+  String get examPaperGoodLuckLine => 'سطر التوفيق';
+
+  @override
+  String get examPaperExaminersLine => 'سطر الممتحنين';
+
+  @override
+  String get examPaperPageNumberFormat => 'صيغة رقم الصفحة';
+
+  @override
+  String get examPaperLivePreview => 'معاينة الورقة';
+
+  @override
+  String get examPaperSaveTemplate => 'حفظ القالب';
+
+  @override
+  String get examPaperSaveAsTemplate => 'حفظ كقالب';
+
+  @override
+  String get examPaperResetDefault => 'استعادة الافتراضي';
+
+  @override
+  String get examPaperApplyToExam => 'تطبيق على الامتحان';
+
+  @override
+  String get examPaperExportAfterPreview => 'تصدير بعد المعاينة';
+
+  @override
+  String get examPaperTemplateSaved => 'تم حفظ قالب الورقة.';
+
+  @override
+  String get examPaperTemplateApplied =>
+      'تم تطبيق قالب الورقة على هذا الامتحان.';
+
+  @override
+  String get examPaperExportReady => 'التصدير جاهز';
+
+  @override
+  String get examPaperExportReadyMessage =>
+      'تم إنشاء ملف الامتحان. يمكنك فتحه الآن أو العودة إلى المصمم.';
+
+  @override
+  String get examPaperOpenFile => 'فتح الملف';
+
+  @override
+  String get examPaperShareFile => 'مشاركة الملف';
+
+  @override
+  String get examPaperExportFailed => 'تعذر تصدير ورقة الامتحان.';
 }

@@ -189,6 +189,21 @@ class RetryHelper {
       if (message is String && message.trim().isNotEmpty) {
         return message;
       }
+      if (message is List) {
+        final text = message
+            .map((item) => item?.toString().trim() ?? '')
+            .where((item) => item.isNotEmpty)
+            .join('\n');
+        if (text.isNotEmpty) return text;
+      }
+      if (message is Map) {
+        final text = message.values
+            .expand((value) => value is List ? value : [value])
+            .map((item) => item?.toString().trim() ?? '')
+            .where((item) => item.isNotEmpty)
+            .join('\n');
+        if (text.isNotEmpty) return text;
+      }
     }
 
     if (error.message != null && error.message!.trim().isNotEmpty) {

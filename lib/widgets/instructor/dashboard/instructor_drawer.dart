@@ -323,6 +323,20 @@ class _InstructorDrawerState extends State<InstructorDrawer>
       _MenuItem(
         icon: Icons.quiz_outlined,
         activeIcon: Icons.quiz,
+        title: l10n.questionBank,
+        route: '/instructor/question-bank',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.auto_awesome_outlined,
+        activeIcon: Icons.auto_awesome,
+        title: l10n.examGenerator,
+        route: '/instructor/exam-generator',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.quiz_outlined,
+        activeIcon: Icons.quiz,
         title: 'Quiz Management',
         route: '/instructor/quiz-management',
         category: 'main',

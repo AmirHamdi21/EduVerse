@@ -15634,4 +15634,1226 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatVoiceCallTooltip => 'Voice call';
+
+  @override
+  String get questionBank => 'Question Bank';
+
+  @override
+  String get examGenerator => 'Exam Generator';
+
+  @override
+  String get questionBankHeroTitle => 'Question Bank Pulse';
+
+  @override
+  String get questionBankHeroSubtitle =>
+      'Build, filter, approve, and reuse course questions in one focused workspace.';
+
+  @override
+  String get questionBankAttachedGrouped => 'Attached/Grouped';
+
+  @override
+  String get questionBankSearchQuestionTextOnly => 'Search question text only';
+
+  @override
+  String get questionBankCreateQuestion => 'Create Question';
+
+  @override
+  String get questionBankBulkCreate => 'Bulk Create Questions';
+
+  @override
+  String get questionBankEmptyTitle => 'No Questions Found';
+
+  @override
+  String get questionBankEmptyMessage =>
+      'Questions will appear here after they are created or when filters match.';
+
+  @override
+  String get questionBankStudioTitle => 'Question Studio';
+
+  @override
+  String get questionBankStudioSubtitle =>
+      'Shape the prompt, answer model, taxonomy, and media in one focused flow.';
+
+  @override
+  String get questionBankEditQuestion => 'Edit Question';
+
+  @override
+  String get questionBankQuestionDetails => 'Question Details';
+
+  @override
+  String get questionBankImageQuestion => 'Image Question';
+
+  @override
+  String get questionBankBulkSubtitle =>
+      'Create up to 50 backend-validated questions while keeping failed rows editable.';
+
+  @override
+  String get questionBankGroupDetails => 'Question Group Details';
+
+  @override
+  String get questionBankGroupDeleteKeepsQuestions =>
+      'Deleting a group does not delete its questions.';
+
+  @override
+  String get examGeneratorHeroTitle => 'Exam Generator Pulse';
+
+  @override
+  String get examGeneratorHeroSubtitle =>
+      'Generate drafts from approved questions, review shortages, and publish saved exams.';
+
+  @override
+  String get examGeneratorCreateDraft => 'Create Exam Draft';
+
+  @override
+  String get examGeneratorStudioTitle => 'Exam Studio';
+
+  @override
+  String get examGeneratorStudioSubtitle =>
+      'Choose course, chapters, rules, weights, and generate a draft from approved questions.';
+
+  @override
+  String get examGeneratorNoDrafts => 'No Drafts Found';
+
+  @override
+  String get examGeneratorNoDraftsMessage =>
+      'Generated exam drafts will appear here.';
+
+  @override
+  String get examGeneratorNoSavedExams => 'No Saved Exams';
+
+  @override
+  String get examGeneratorNoSavedExamsMessage =>
+      'Saved exams will appear here after a draft is finalized.';
+
+  @override
+  String get examDraftDetails => 'Exam Draft Details';
+
+  @override
+  String get examDraftEditable => 'This draft is open and editable.';
+
+  @override
+  String get examDraftNotEditable =>
+      'This draft is expired or finalized and cannot be edited.';
+
+  @override
+  String get examSavedDetails => 'Saved Exam Details';
+
+  @override
+  String get examSavedPreviewUnavailableTitle => 'Item Preview Unavailable';
+
+  @override
+  String get examSavedPreviewUnavailable =>
+      'The current backend returns compact saved exam details only, so question item preview is unavailable.';
+
+  @override
+  String get drafts => 'Drafts';
+
+  @override
+  String get savedExams => 'Saved Exams';
+
+  @override
+  String get sections => 'Sections';
+
+  @override
+  String get totalMarks => 'Total Marks';
+
+  @override
+  String get difficulty => 'Difficulty';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get submitForReview => 'Submit for review';
+
+  @override
+  String get bloomLevel => 'Bloom level';
+
+  @override
+  String get allChapters => 'All Chapters';
+
+  @override
+  String get qbUnderReview => 'Under Review';
+
+  @override
+  String get qbRejected => 'Rejected';
+
+  @override
+  String get qbSelectQuestions => 'Select Questions';
+
+  @override
+  String qbSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get qbQuestionsBatchUpdated => 'Selected questions updated';
+
+  @override
+  String get qbQuestionCreatedDraftTitle => 'Created as Draft';
+
+  @override
+  String get qbQuestionCreatedDraftBody =>
+      'Approve this question before exam generation can use it.';
+
+  @override
+  String get qbReviewLater => 'Review later';
+
+  @override
+  String get qbViewQuestion => 'View question';
+
+  @override
+  String get qbApprovedEditWarningTitle => 'Approval will reset';
+
+  @override
+  String get qbApprovedEditWarningBody =>
+      'Editing this approved question will move it back to Draft until it is approved again.';
+
+  @override
+  String get qbQuestionPrompt => 'Question Prompt';
+
+  @override
+  String get metadata => 'Metadata';
+
+  @override
+  String get expectedAnswer => 'Expected Answer';
+
+  @override
+  String get allStates => 'All States';
+
+  @override
+  String get qbManageChapters => 'Manage Chapters';
+
+  @override
+  String get qbCreateChapter => 'Create Chapter';
+
+  @override
+  String get qbEditChapter => 'Edit Chapter';
+
+  @override
+  String get qbDeleteChapter => 'Delete Chapter';
+
+  @override
+  String get qbChapterName => 'Chapter Name';
+
+  @override
+  String get qbChapterOrder => 'Chapter Order';
+
+  @override
+  String get qbChapterActive => 'Active';
+
+  @override
+  String get qbChapterInactive => 'Inactive';
+
+  @override
+  String get qbChapterCascadeWarning =>
+      'Deleting this chapter can also remove related questions and groups. This cannot be undone.';
+
+  @override
+  String qbChapterQuestionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions',
+      one: '1 question',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qbChapterDeleteBlocked =>
+      'Move or archive this chapter\'s questions before deleting it.';
+
+  @override
+  String get qbChapterCreated => 'Chapter created';
+
+  @override
+  String get qbChapterUpdated => 'Chapter updated';
+
+  @override
+  String get qbChapterDeleted => 'Chapter deleted';
+
+  @override
+  String get qbCreateGroup => 'Create Group';
+
+  @override
+  String get qbEditGroup => 'Edit Group';
+
+  @override
+  String get qbDeleteGroup => 'Delete Group';
+
+  @override
+  String get qbGroupType => 'Group Type';
+
+  @override
+  String get qbSharedPrompt => 'Shared Prompt';
+
+  @override
+  String get qbSharedFileId => 'Shared File ID';
+
+  @override
+  String get qbUploadGroupImage => 'Upload Group Image';
+
+  @override
+  String get qbGroupImage => 'Group Image';
+
+  @override
+  String get qbGroupImageUploaded => 'Group image uploaded';
+
+  @override
+  String get qbGroupedBatchCreate => 'Add Grouped Questions';
+
+  @override
+  String get qbAddExistingQuestions => 'Add Existing Questions';
+
+  @override
+  String get qbRemoveFromGroup => 'Remove from Group';
+
+  @override
+  String get qbRemoveFromGroupBody =>
+      'This removes only the group relationship. The question stays in the Question Bank.';
+
+  @override
+  String get qbReorderGroupQuestions => 'Reorder Group Questions';
+
+  @override
+  String get qbGroupDeleteBody =>
+      'Deleting this group does not delete its questions.';
+
+  @override
+  String get qbAttachmentAddByFile => 'Add by File ID';
+
+  @override
+  String get qbUploadAttachment => 'Upload Attachment';
+
+  @override
+  String get qbEditAttachment => 'Edit Attachment';
+
+  @override
+  String get qbCaption => 'Caption';
+
+  @override
+  String get qbAltText => 'Alt Text';
+
+  @override
+  String get qbDisplayOrder => 'Display Order';
+
+  @override
+  String get qbPrimaryAttachment => 'Primary Attachment';
+
+  @override
+  String get qbReorderAttachments => 'Reorder Attachments';
+
+  @override
+  String get qbRemoveAttachment => 'Remove Attachment';
+
+  @override
+  String get qbDeleteQuestion => 'Delete Question';
+
+  @override
+  String get qbDeleteQuestionBody =>
+      'The backend will archive this question. Continue?';
+
+  @override
+  String get qbBulkRows => 'Rows';
+
+  @override
+  String get qbAddRow => 'Add Row';
+
+  @override
+  String get qbRemoveRow => 'Remove Row';
+
+  @override
+  String get qbQuestionRow => 'Question Row';
+
+  @override
+  String get qbSubmitBulk => 'Create Questions';
+
+  @override
+  String get qbMaxRowsWarning => 'You can create up to 50 questions at once.';
+
+  @override
+  String get qbBulkRowsInvalid => 'Fix invalid rows before submitting.';
+
+  @override
+  String get qbBulkCreatePartialSuccess =>
+      'Some questions were created. Review the rows that still need attention.';
+
+  @override
+  String get qbBulkFailureReportTitle => 'Rows need attention';
+
+  @override
+  String get qbBulkFailureReportBody =>
+      'No questions were created. Your rows are still editable.';
+
+  @override
+  String get qbRowKeptEditable => 'Kept editable after backend rejection';
+
+  @override
+  String qbMoreFailedRows(int count) {
+    return '+$count more rows';
+  }
+
+  @override
+  String get qbCreateMoreQuestions => 'Create more questions';
+
+  @override
+  String get qbBulkCreateSuccess => 'Questions created';
+
+  @override
+  String qbBulkCreatedDraftSummary(int count) {
+    return '$count questions created as drafts';
+  }
+
+  @override
+  String get qbUploadQuestionImage => 'Upload question image';
+
+  @override
+  String get qbReplaceQuestionImage => 'Replace question image';
+
+  @override
+  String get qbRemoveQuestionImage => 'Remove question image';
+
+  @override
+  String get qbQuestionImageRemoved => 'Question image removed';
+
+  @override
+  String get qbDiscardUploadsTitle => 'Discard uploaded images?';
+
+  @override
+  String get qbDiscardUploadsBody =>
+      'Uploaded images that are not saved to a question or group will be deleted. If the app closes unexpectedly, backend cleanup removes old unused uploads later.';
+
+  @override
+  String get qbQuestionHints => 'Question hints';
+
+  @override
+  String get qbImageCaption => 'Image caption';
+
+  @override
+  String get qbImageAltText => 'Image alt text';
+
+  @override
+  String get questionBankBulkChapterPerRow =>
+      'Choose the chapter inside each question row.';
+
+  @override
+  String get qbCoreDetails => 'Core Details';
+
+  @override
+  String get qbQuestionSettings => 'Question Settings';
+
+  @override
+  String get qbBloomLevel => 'Bloom level';
+
+  @override
+  String get qbOptionNumber => 'Option';
+
+  @override
+  String get qbBlankKey => 'Blank Key';
+
+  @override
+  String get qbAnswer => 'Answer';
+
+  @override
+  String get qbAddOption => 'Add Option';
+
+  @override
+  String get qbAddBlank => 'Add Blank';
+
+  @override
+  String get qbSubmit => 'Submit';
+
+  @override
+  String get qbApprove => 'Approve';
+
+  @override
+  String get qbReject => 'Reject';
+
+  @override
+  String get qbArchive => 'Archive';
+
+  @override
+  String get qbRestore => 'Restore';
+
+  @override
+  String get qbOverview => 'Overview';
+
+  @override
+  String get qbAnswers => 'Answers';
+
+  @override
+  String get qbGroups => 'Groups';
+
+  @override
+  String get qbStatus => 'Status';
+
+  @override
+  String get examFlatRules => 'Flat Rules';
+
+  @override
+  String get examSectionedRules => 'Sectioned Rules';
+
+  @override
+  String get examGenerationSettings => 'Generation Settings';
+
+  @override
+  String get examGenerationRules => 'Generation Rules';
+
+  @override
+  String get examSections => 'Exam Sections';
+
+  @override
+  String get examMarkDistribution => 'Mark Distribution';
+
+  @override
+  String get examRoundingPolicy => 'Rounding Policy';
+
+  @override
+  String get examSeed => 'Seed';
+
+  @override
+  String get examAnswerPolicy => 'Answer Policy';
+
+  @override
+  String get examRequiredAnswerCount => 'Required Answer Count';
+
+  @override
+  String get examAnswerAnyMarksHelp =>
+      'For answer-any sections, total marks are awarded across the required answers. Example: 30 marks, answer any 3 means each answered question is worth 10 marks.';
+
+  @override
+  String get examWeightPerQuestion => 'Weight per Question';
+
+  @override
+  String get examQuestionCount => 'Question Count';
+
+  @override
+  String get examShortageTitle => 'Insufficient Question Pool';
+
+  @override
+  String examShortageLine(int chapterId, int required, int available) {
+    return 'Chapter $chapterId: needs $required, available $available';
+  }
+
+  @override
+  String get examGenerateDraft => 'Generate Draft';
+
+  @override
+  String get examDraftOverview => 'Overview';
+
+  @override
+  String get examDraftQuestions => 'Questions';
+
+  @override
+  String get examDraftReorder => 'Reorder';
+
+  @override
+  String get examDraftSave => 'Save';
+
+  @override
+  String get examAddQuestion => 'Add Question';
+
+  @override
+  String get examReplaceQuestion => 'Replace Question';
+
+  @override
+  String get examEditGeneratedQuestion => 'Edit Generated Question';
+
+  @override
+  String get examOpenSourceQuestion => 'Open Source Question';
+
+  @override
+  String get examEditSourceQuestion => 'Edit Source Question';
+
+  @override
+  String get examMoveToSection => 'Move to Section';
+
+  @override
+  String get examUnassigned => 'Unassigned';
+
+  @override
+  String get examMarks => 'Marks';
+
+  @override
+  String get examWeightUnits => 'Weight Units';
+
+  @override
+  String get examOverrideReason => 'Override Reason';
+
+  @override
+  String get examOverrideReasonRequired => 'Override reason is required.';
+
+  @override
+  String get examReorderQuestions => 'Reorder Questions';
+
+  @override
+  String get examCannotRemoveLastItem => 'Cannot remove the last draft item.';
+
+  @override
+  String get examDraftExpired => 'Draft expired';
+
+  @override
+  String get examDraftFinalized => 'Draft finalized';
+
+  @override
+  String get examDraftNotEditableMessage => 'This draft cannot be edited.';
+
+  @override
+  String get examDeleteSection => 'Delete Section';
+
+  @override
+  String get examDeleteSectionBody =>
+      'Deleting this section unassigns its questions. It does not delete them.';
+
+  @override
+  String get examCreateSection => 'Create Section';
+
+  @override
+  String get examEditSection => 'Edit Section';
+
+  @override
+  String get examReorderSections => 'Reorder Sections';
+
+  @override
+  String get examCandidatePicker => 'Approved Question Picker';
+
+  @override
+  String get examPublish => 'Mark as Published';
+
+  @override
+  String get examUnpublish => 'Unpublish';
+
+  @override
+  String get examArchive => 'Archive';
+
+  @override
+  String get examExport => 'Export';
+
+  @override
+  String get examIndependentOnly => 'Independent selection only';
+
+  @override
+  String get examSimpleMode => 'Simple exam';
+
+  @override
+  String get examSectionedMode => 'Exam with sections';
+
+  @override
+  String get examSimpleModeHelp =>
+      'One list of questions, such as 20 mixed MCQ questions from the course.';
+
+  @override
+  String get examSectionedModeHelp =>
+      'Organize the exam into sections, such as Section A: MCQ and Section B: Essay.';
+
+  @override
+  String get examScopeCourse => 'Whole course';
+
+  @override
+  String get examScopeChapter => 'One chapter';
+
+  @override
+  String get examScopeChapters => 'Multiple chapters';
+
+  @override
+  String get examScopeGroup => 'Question group';
+
+  @override
+  String get examGroupSelectionMode => 'Grouped questions';
+
+  @override
+  String get examGroupIndependent => 'Include grouped questions independently';
+
+  @override
+  String get examGroupExclude => 'Exclude grouped questions';
+
+  @override
+  String get examGroupKeepTogether => 'Keep groups together';
+
+  @override
+  String get examVersionCode => 'Exam version code';
+
+  @override
+  String get examSeedHelp =>
+      'Use the same code with the same rules and pool to regenerate the same version.';
+
+  @override
+  String get examRandomSeed => 'Random seed';
+
+  @override
+  String get examDurationMinutes => 'Duration minutes';
+
+  @override
+  String get examHeaderText => 'Header text';
+
+  @override
+  String get examFooterText => 'Footer text';
+
+  @override
+  String get examApprovedOnlyHelp =>
+      'Only approved Question Bank questions are used.';
+
+  @override
+  String get examAvailabilityTitle => 'Generation availability';
+
+  @override
+  String examAvailabilitySummary(int available, int required) {
+    return '$available available for $required requested';
+  }
+
+  @override
+  String get examAvailabilityLowHelp =>
+      'Approve more matching questions or reduce the requested count.';
+
+  @override
+  String get examViewMatchingQuestions => 'View matching questions';
+
+  @override
+  String get examApproveMoreQuestions => 'Approve more questions';
+
+  @override
+  String examSkippedGroupsTooLarge(int skipped, int largest) {
+    return 'Skipped $skipped group(s); largest has $largest questions';
+  }
+
+  @override
+  String get examQuestionPoolReadiness => 'Question pool readiness';
+
+  @override
+  String get examApproved => 'Approved';
+
+  @override
+  String get examGrouped => 'Grouped';
+
+  @override
+  String get examStandalone => 'Standalone';
+
+  @override
+  String get examGroupedIndependentHelp =>
+      'Grouped questions may be selected one by one.';
+
+  @override
+  String get examGroupedTogetherHelp =>
+      'Passage/case groups stay together when they fit the requested count.';
+
+  @override
+  String get examExcludeGroupedHelp => 'Only standalone questions are used.';
+
+  @override
+  String get examGroupScopeKeepsPrompt =>
+      'The group prompt/image will be kept with these questions.';
+
+  @override
+  String get examStudentNameLine => 'Student name line';
+
+  @override
+  String get examInstructorName => 'Instructor name';
+
+  @override
+  String get examPageBreakPerSection => 'Page break per section';
+
+  @override
+  String get examAnswerKeyStyle => 'Answer key style';
+
+  @override
+  String examSnapshotTimestamp(String value) {
+    return 'Snapshot: $value';
+  }
+
+  @override
+  String examVersionBadge(Object value) {
+    return 'Version: $value';
+  }
+
+  @override
+  String get examDoesNotAssignStudents =>
+      'This does not assign the exam to students.';
+
+  @override
+  String get examPublished => 'Published';
+
+  @override
+  String get examApprovedPool => 'Approved pool';
+
+  @override
+  String get examDraftStatus => 'Draft status';
+
+  @override
+  String get examStatus => 'Exam status';
+
+  @override
+  String get examDateFrom => 'Date from';
+
+  @override
+  String get examDateTo => 'Date to';
+
+  @override
+  String get examDashboardHelp =>
+      'Drafts are editable for 24 hours. Saved exams are finalized records. Generation uses approved questions only.';
+
+  @override
+  String get examNoApprovedPoolHelp =>
+      'This course has no approved questions ready for generation yet.';
+
+  @override
+  String get examValidation => 'Validation';
+
+  @override
+  String get examFinalReview => 'Final Review';
+
+  @override
+  String get examValidationUnavailable =>
+      'Validation details will appear after the draft loads.';
+
+  @override
+  String get examCanSave => 'Draft can be saved';
+
+  @override
+  String get examCannotSave => 'Draft needs fixes before saving';
+
+  @override
+  String get examDeleteSectionUnassigns =>
+      'Deleting this section makes its questions unassigned. It does not delete the questions.';
+
+  @override
+  String examDraftExpiresIn(int hours, int minutes) {
+    return 'Draft locks in ${hours}h ${minutes}m. Save before it expires.';
+  }
+
+  @override
+  String get examReviewHasQuestions => 'The exam has questions.';
+
+  @override
+  String get examReviewCanSave => 'Backend validation allows saving.';
+
+  @override
+  String get examReviewSnapshotsReady =>
+      'Question snapshots and media are ready.';
+
+  @override
+  String get examRegenerateDraft => 'Regenerate draft';
+
+  @override
+  String get examReshuffleSection => 'Reshuffle section';
+
+  @override
+  String get examNormalizeSectionMarks => 'Normalize section marks';
+
+  @override
+  String get examMoveSelectedQuestions => 'Move selected questions';
+
+  @override
+  String examSelectedQuestions(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get examGroupedPromptShownOnce =>
+      'This grouped prompt is shown once for the following questions.';
+
+  @override
+  String get examEditSourceQuestionWarning =>
+      'Editing the source Question Bank question can move it back to draft and may affect this draft\'s validation. Continue?';
+
+  @override
+  String get examOutsideOriginalRules => 'Outside original rules';
+
+  @override
+  String get examOverrideReasonHelper =>
+      'If this replacement is outside the original generation rules, explain why. Leave blank only when it still matches the intended rule.';
+
+  @override
+  String get examSnapshotHelp =>
+      'Saved exams keep snapshots from save time, so later Question Bank edits do not change this exam.';
+
+  @override
+  String get examUnassignedQuestions => 'Unassigned questions';
+
+  @override
+  String get examQuestionSnapshot => 'Question snapshot';
+
+  @override
+  String get examLifecycleReason => 'Lifecycle reason';
+
+  @override
+  String get reason => 'Reason';
+
+  @override
+  String get marks => 'marks';
+
+  @override
+  String get qbPromptImage => 'Prompt image';
+
+  @override
+  String get examExportStudentCopy => 'Student copy';
+
+  @override
+  String get examExportAnswerKey => 'Answer key';
+
+  @override
+  String get examExportCombined => 'Combined copy';
+
+  @override
+  String get examExportVariant => 'Export copy';
+
+  @override
+  String get examExportFormat => 'Export format';
+
+  @override
+  String get examExportWordDocument => 'Word-compatible document';
+
+  @override
+  String get examExportPdfDocument => 'PDF document';
+
+  @override
+  String get examLifecycleTitle => 'Exam lifecycle';
+
+  @override
+  String get examLifecycleExplanation =>
+      'Mark as Published changes this saved exam\'s lifecycle status. It does not create a student assignment unless a delivery flow is added.';
+
+  @override
+  String get examValidationCourseRequired => 'Course is required.';
+
+  @override
+  String get examValidationTitleRequired => 'Title is required.';
+
+  @override
+  String get examValidationTotalMarksPositive =>
+      'Total marks must be positive.';
+
+  @override
+  String get examValidationDurationPositive => 'Duration must be positive.';
+
+  @override
+  String get examValidationAddRule => 'Add at least one rule.';
+
+  @override
+  String get examValidationAddSection => 'Add at least one section.';
+
+  @override
+  String get examValidationChapterRequired => 'Chapter is required.';
+
+  @override
+  String get examValidationSelectChapter => 'Select at least one chapter.';
+
+  @override
+  String get examValidationSelectGroup => 'Select at least one group.';
+
+  @override
+  String get examValidationCountPositive => 'Count must be greater than zero.';
+
+  @override
+  String get examValidationWeightPositive =>
+      'Weight must be greater than zero.';
+
+  @override
+  String get examValidationSectionTitleRequired => 'Section title is required.';
+
+  @override
+  String get examValidationSectionMarksPositive =>
+      'Section marks must be greater than zero.';
+
+  @override
+  String get examValidationSectionMarksNonNegative =>
+      'Section marks cannot be negative.';
+
+  @override
+  String get examValidationRequiredAnswerPositive =>
+      'Required answer count must be positive.';
+
+  @override
+  String get examValidationReplacementRequired =>
+      'Replacement question is required.';
+
+  @override
+  String get examValidationSectionValid => 'Section must be valid.';
+
+  @override
+  String get examValidationWeightNonNegative => 'Weight cannot be negative.';
+
+  @override
+  String get examValidationWeightUnitsNonNegative =>
+      'Weight units cannot be negative.';
+
+  @override
+  String get examValidationMarksNonNegative => 'Marks cannot be negative.';
+
+  @override
+  String get examValidationItemOrderNonNegative =>
+      'Item order cannot be negative.';
+
+  @override
+  String get enumQuestionWritten => 'Written';
+
+  @override
+  String get enumQuestionMcq => 'MCQ';
+
+  @override
+  String get enumQuestionTrueFalse => 'True / False';
+
+  @override
+  String get enumQuestionFillBlanks => 'Fill Blanks';
+
+  @override
+  String get enumQuestionEssay => 'Essay';
+
+  @override
+  String get enumDifficultyEasy => 'Easy';
+
+  @override
+  String get enumDifficultyMedium => 'Medium';
+
+  @override
+  String get enumDifficultyHard => 'Hard';
+
+  @override
+  String get enumBloomRemembering => 'Remembering';
+
+  @override
+  String get enumBloomUnderstanding => 'Understanding';
+
+  @override
+  String get enumBloomApplying => 'Applying';
+
+  @override
+  String get enumBloomAnalyzing => 'Analyzing';
+
+  @override
+  String get enumBloomEvaluating => 'Evaluating';
+
+  @override
+  String get enumBloomCreating => 'Creating';
+
+  @override
+  String get enumQuestionStatusDraft => 'Draft';
+
+  @override
+  String get enumQuestionStatusUnderReview => 'Under Review';
+
+  @override
+  String get enumQuestionStatusApproved => 'Approved';
+
+  @override
+  String get enumQuestionStatusRejected => 'Rejected';
+
+  @override
+  String get enumQuestionStatusArchived => 'Archived';
+
+  @override
+  String get enumAttachmentImage => 'Image';
+
+  @override
+  String get enumAttachmentDocument => 'Document';
+
+  @override
+  String get enumAttachmentAudio => 'Audio';
+
+  @override
+  String get enumAttachmentVideo => 'Video';
+
+  @override
+  String get enumGroupPassage => 'Passage';
+
+  @override
+  String get enumGroupCaseStudy => 'Case Study';
+
+  @override
+  String get enumGroupImageSet => 'Image Set';
+
+  @override
+  String get enumGroupMultipart => 'Multipart';
+
+  @override
+  String get enumGroupOther => 'Other';
+
+  @override
+  String get enumDraftOpen => 'Open';
+
+  @override
+  String get enumDraftFinalized => 'Finalized';
+
+  @override
+  String get enumDraftExpired => 'Expired';
+
+  @override
+  String get enumDraftCancelled => 'Cancelled';
+
+  @override
+  String get enumDraftFailed => 'Failed';
+
+  @override
+  String get enumExamDraft => 'Draft';
+
+  @override
+  String get enumExamPublished => 'Published';
+
+  @override
+  String get enumExamArchived => 'Archived';
+
+  @override
+  String get enumMarkManual => 'Manual';
+
+  @override
+  String get enumMarkWeightNormalized => 'Weight Normalized';
+
+  @override
+  String get enumMarkEqual => 'Equal';
+
+  @override
+  String get enumRoundingNone => 'None';
+
+  @override
+  String get enumRounding025 => 'Nearest 0.25';
+
+  @override
+  String get enumRounding05 => 'Nearest 0.5';
+
+  @override
+  String get enumRounding1 => 'Nearest 1';
+
+  @override
+  String get enumAnswerAll => 'Answer All';
+
+  @override
+  String get enumAnswerAny => 'Answer Any';
+
+  @override
+  String get examPaperDesignerTitle => 'Exam Paper Designer';
+
+  @override
+  String get examPaperDesignerSubtitle =>
+      'Design the printable header, trailing notes, and export format before creating the file.';
+
+  @override
+  String get examPaperTemplates => 'Paper Templates';
+
+  @override
+  String get examPaperTemplate => 'Paper Template';
+
+  @override
+  String get examPaperTemplateName => 'Template Name';
+
+  @override
+  String get examPaperStructuredZones => 'Structured Zones';
+
+  @override
+  String get examPaperFreeDrag => 'Free Drag';
+
+  @override
+  String get examPaperHybrid => 'Hybrid';
+
+  @override
+  String get examPaperHeaderFields => 'Header Fields';
+
+  @override
+  String get examPaperHeaderLeft1 => 'Header left line 1';
+
+  @override
+  String get examPaperHeaderLeft2 => 'Header left line 2';
+
+  @override
+  String get examPaperHeaderLeft3 => 'Header left line 3';
+
+  @override
+  String get examPaperHeaderCenter1 => 'Header center line 1';
+
+  @override
+  String get examPaperHeaderCenter2 => 'Header center line 2 / logo label';
+
+  @override
+  String get examPaperHeaderRight1 => 'Header right line 1';
+
+  @override
+  String get examPaperHeaderRight2 => 'Header right line 2';
+
+  @override
+  String get examPaperHeaderRight3 => 'Header right line 3';
+
+  @override
+  String get examPaperMetadataRows => 'Metadata Rows';
+
+  @override
+  String get examPaperMetadataLeft1 => 'Metadata left line 1';
+
+  @override
+  String get examPaperMetadataLeft2 => 'Metadata left line 2';
+
+  @override
+  String get examPaperMetadataLeft3 => 'Metadata left line 3';
+
+  @override
+  String get examPaperMetadataRight1 => 'Metadata right line 1';
+
+  @override
+  String get examPaperMetadataRight2 => 'Metadata right line 2';
+
+  @override
+  String get examPaperMetadataRight3 => 'Metadata right line 3';
+
+  @override
+  String get examPaperFreeElements => 'Free Positioned Fields';
+
+  @override
+  String get examPaperFreeElementsHelp =>
+      'Add a text field, then drag it on the paper preview.';
+
+  @override
+  String get examPaperFreeElementText => 'Free field text';
+
+  @override
+  String get examPaperTrailingFields => 'Trailing And Footer Fields';
+
+  @override
+  String get examPaperEndLine => 'End line';
+
+  @override
+  String get examPaperGoodLuckLine => 'Good luck line';
+
+  @override
+  String get examPaperExaminersLine => 'Examiners line';
+
+  @override
+  String get examPaperPageNumberFormat => 'Page number format';
+
+  @override
+  String get examPaperLivePreview => 'Live Paper Preview';
+
+  @override
+  String get examPaperSaveTemplate => 'Save Template';
+
+  @override
+  String get examPaperSaveAsTemplate => 'Save As Template';
+
+  @override
+  String get examPaperResetDefault => 'Reset Default';
+
+  @override
+  String get examPaperApplyToExam => 'Apply To Exam';
+
+  @override
+  String get examPaperExportAfterPreview => 'Export After Preview';
+
+  @override
+  String get examPaperTemplateSaved => 'Paper template saved.';
+
+  @override
+  String get examPaperTemplateApplied => 'Paper template applied to this exam.';
+
+  @override
+  String get examPaperExportReady => 'Export Ready';
+
+  @override
+  String get examPaperExportReadyMessage =>
+      'The exam file was created. You can open it now or return to the designer.';
+
+  @override
+  String get examPaperOpenFile => 'Open File';
+
+  @override
+  String get examPaperShareFile => 'Share File';
+
+  @override
+  String get examPaperExportFailed => 'Failed to export the exam paper.';
 }

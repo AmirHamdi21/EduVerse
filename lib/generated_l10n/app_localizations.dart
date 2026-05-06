@@ -29908,6 +29908,2286 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Voice call'**
   String get chatVoiceCallTooltip;
+
+  /// No description provided for @questionBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Bank'**
+  String get questionBank;
+
+  /// No description provided for @examGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Generator'**
+  String get examGenerator;
+
+  /// No description provided for @questionBankHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Bank Pulse'**
+  String get questionBankHeroTitle;
+
+  /// No description provided for @questionBankHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build, filter, approve, and reuse course questions in one focused workspace.'**
+  String get questionBankHeroSubtitle;
+
+  /// No description provided for @questionBankAttachedGrouped.
+  ///
+  /// In en, this message translates to:
+  /// **'Attached/Grouped'**
+  String get questionBankAttachedGrouped;
+
+  /// No description provided for @questionBankSearchQuestionTextOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Search question text only'**
+  String get questionBankSearchQuestionTextOnly;
+
+  /// No description provided for @questionBankCreateQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Question'**
+  String get questionBankCreateQuestion;
+
+  /// No description provided for @questionBankBulkCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Create Questions'**
+  String get questionBankBulkCreate;
+
+  /// No description provided for @questionBankEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Questions Found'**
+  String get questionBankEmptyTitle;
+
+  /// No description provided for @questionBankEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions will appear here after they are created or when filters match.'**
+  String get questionBankEmptyMessage;
+
+  /// No description provided for @questionBankStudioTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Studio'**
+  String get questionBankStudioTitle;
+
+  /// No description provided for @questionBankStudioSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shape the prompt, answer model, taxonomy, and media in one focused flow.'**
+  String get questionBankStudioSubtitle;
+
+  /// No description provided for @questionBankEditQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Question'**
+  String get questionBankEditQuestion;
+
+  /// No description provided for @questionBankQuestionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Details'**
+  String get questionBankQuestionDetails;
+
+  /// No description provided for @questionBankImageQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Question'**
+  String get questionBankImageQuestion;
+
+  /// No description provided for @questionBankBulkSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create up to 50 backend-validated questions while keeping failed rows editable.'**
+  String get questionBankBulkSubtitle;
+
+  /// No description provided for @questionBankGroupDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Group Details'**
+  String get questionBankGroupDetails;
+
+  /// No description provided for @questionBankGroupDeleteKeepsQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting a group does not delete its questions.'**
+  String get questionBankGroupDeleteKeepsQuestions;
+
+  /// No description provided for @examGeneratorHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Generator Pulse'**
+  String get examGeneratorHeroTitle;
+
+  /// No description provided for @examGeneratorHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate drafts from approved questions, review shortages, and publish saved exams.'**
+  String get examGeneratorHeroSubtitle;
+
+  /// No description provided for @examGeneratorCreateDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Exam Draft'**
+  String get examGeneratorCreateDraft;
+
+  /// No description provided for @examGeneratorStudioTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Studio'**
+  String get examGeneratorStudioTitle;
+
+  /// No description provided for @examGeneratorStudioSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose course, chapters, rules, weights, and generate a draft from approved questions.'**
+  String get examGeneratorStudioSubtitle;
+
+  /// No description provided for @examGeneratorNoDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'No Drafts Found'**
+  String get examGeneratorNoDrafts;
+
+  /// No description provided for @examGeneratorNoDraftsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated exam drafts will appear here.'**
+  String get examGeneratorNoDraftsMessage;
+
+  /// No description provided for @examGeneratorNoSavedExams.
+  ///
+  /// In en, this message translates to:
+  /// **'No Saved Exams'**
+  String get examGeneratorNoSavedExams;
+
+  /// No description provided for @examGeneratorNoSavedExamsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved exams will appear here after a draft is finalized.'**
+  String get examGeneratorNoSavedExamsMessage;
+
+  /// No description provided for @examDraftDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Draft Details'**
+  String get examDraftDetails;
+
+  /// No description provided for @examDraftEditable.
+  ///
+  /// In en, this message translates to:
+  /// **'This draft is open and editable.'**
+  String get examDraftEditable;
+
+  /// No description provided for @examDraftNotEditable.
+  ///
+  /// In en, this message translates to:
+  /// **'This draft is expired or finalized and cannot be edited.'**
+  String get examDraftNotEditable;
+
+  /// No description provided for @examSavedDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Exam Details'**
+  String get examSavedDetails;
+
+  /// No description provided for @examSavedPreviewUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Preview Unavailable'**
+  String get examSavedPreviewUnavailableTitle;
+
+  /// No description provided for @examSavedPreviewUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The current backend returns compact saved exam details only, so question item preview is unavailable.'**
+  String get examSavedPreviewUnavailable;
+
+  /// No description provided for @drafts.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get drafts;
+
+  /// No description provided for @savedExams.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Exams'**
+  String get savedExams;
+
+  /// No description provided for @sections.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
+  String get sections;
+
+  /// No description provided for @totalMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Marks'**
+  String get totalMarks;
+
+  /// No description provided for @difficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get difficulty;
+
+  /// No description provided for @approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get approved;
+
+  /// No description provided for @submitForReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for review'**
+  String get submitForReview;
+
+  /// No description provided for @bloomLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bloom level'**
+  String get bloomLevel;
+
+  /// No description provided for @allChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'All Chapters'**
+  String get allChapters;
+
+  /// No description provided for @qbUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Review'**
+  String get qbUnderReview;
+
+  /// No description provided for @qbRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get qbRejected;
+
+  /// No description provided for @qbSelectQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Questions'**
+  String get qbSelectQuestions;
+
+  /// No description provided for @qbSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String qbSelectedCount(int count);
+
+  /// No description provided for @qbQuestionsBatchUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected questions updated'**
+  String get qbQuestionsBatchUpdated;
+
+  /// No description provided for @qbQuestionCreatedDraftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Created as Draft'**
+  String get qbQuestionCreatedDraftTitle;
+
+  /// No description provided for @qbQuestionCreatedDraftBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve this question before exam generation can use it.'**
+  String get qbQuestionCreatedDraftBody;
+
+  /// No description provided for @qbReviewLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Review later'**
+  String get qbReviewLater;
+
+  /// No description provided for @qbViewQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'View question'**
+  String get qbViewQuestion;
+
+  /// No description provided for @qbApprovedEditWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval will reset'**
+  String get qbApprovedEditWarningTitle;
+
+  /// No description provided for @qbApprovedEditWarningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing this approved question will move it back to Draft until it is approved again.'**
+  String get qbApprovedEditWarningBody;
+
+  /// No description provided for @qbQuestionPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Prompt'**
+  String get qbQuestionPrompt;
+
+  /// No description provided for @metadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata'**
+  String get metadata;
+
+  /// No description provided for @expectedAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Answer'**
+  String get expectedAnswer;
+
+  /// No description provided for @allStates.
+  ///
+  /// In en, this message translates to:
+  /// **'All States'**
+  String get allStates;
+
+  /// No description provided for @qbManageChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Chapters'**
+  String get qbManageChapters;
+
+  /// No description provided for @qbCreateChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Chapter'**
+  String get qbCreateChapter;
+
+  /// No description provided for @qbEditChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Chapter'**
+  String get qbEditChapter;
+
+  /// No description provided for @qbDeleteChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Chapter'**
+  String get qbDeleteChapter;
+
+  /// No description provided for @qbChapterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter Name'**
+  String get qbChapterName;
+
+  /// No description provided for @qbChapterOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter Order'**
+  String get qbChapterOrder;
+
+  /// No description provided for @qbChapterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get qbChapterActive;
+
+  /// No description provided for @qbChapterInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get qbChapterInactive;
+
+  /// No description provided for @qbChapterCascadeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting this chapter can also remove related questions and groups. This cannot be undone.'**
+  String get qbChapterCascadeWarning;
+
+  /// No description provided for @qbChapterQuestionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {1 question} other {{count} questions}}'**
+  String qbChapterQuestionCount(int count);
+
+  /// No description provided for @qbChapterDeleteBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Move or archive this chapter\'s questions before deleting it.'**
+  String get qbChapterDeleteBlocked;
+
+  /// No description provided for @qbChapterCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter created'**
+  String get qbChapterCreated;
+
+  /// No description provided for @qbChapterUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter updated'**
+  String get qbChapterUpdated;
+
+  /// No description provided for @qbChapterDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter deleted'**
+  String get qbChapterDeleted;
+
+  /// No description provided for @qbCreateGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
+  String get qbCreateGroup;
+
+  /// No description provided for @qbEditGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
+  String get qbEditGroup;
+
+  /// No description provided for @qbDeleteGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Group'**
+  String get qbDeleteGroup;
+
+  /// No description provided for @qbGroupType.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Type'**
+  String get qbGroupType;
+
+  /// No description provided for @qbSharedPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Prompt'**
+  String get qbSharedPrompt;
+
+  /// No description provided for @qbSharedFileId.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared File ID'**
+  String get qbSharedFileId;
+
+  /// No description provided for @qbUploadGroupImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Group Image'**
+  String get qbUploadGroupImage;
+
+  /// No description provided for @qbGroupImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Image'**
+  String get qbGroupImage;
+
+  /// No description provided for @qbGroupImageUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Group image uploaded'**
+  String get qbGroupImageUploaded;
+
+  /// No description provided for @qbGroupedBatchCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Grouped Questions'**
+  String get qbGroupedBatchCreate;
+
+  /// No description provided for @qbAddExistingQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Existing Questions'**
+  String get qbAddExistingQuestions;
+
+  /// No description provided for @qbRemoveFromGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Group'**
+  String get qbRemoveFromGroup;
+
+  /// No description provided for @qbRemoveFromGroupBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes only the group relationship. The question stays in the Question Bank.'**
+  String get qbRemoveFromGroupBody;
+
+  /// No description provided for @qbReorderGroupQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder Group Questions'**
+  String get qbReorderGroupQuestions;
+
+  /// No description provided for @qbGroupDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting this group does not delete its questions.'**
+  String get qbGroupDeleteBody;
+
+  /// No description provided for @qbAttachmentAddByFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Add by File ID'**
+  String get qbAttachmentAddByFile;
+
+  /// No description provided for @qbUploadAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Attachment'**
+  String get qbUploadAttachment;
+
+  /// No description provided for @qbEditAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Attachment'**
+  String get qbEditAttachment;
+
+  /// No description provided for @qbCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption'**
+  String get qbCaption;
+
+  /// No description provided for @qbAltText.
+  ///
+  /// In en, this message translates to:
+  /// **'Alt Text'**
+  String get qbAltText;
+
+  /// No description provided for @qbDisplayOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Order'**
+  String get qbDisplayOrder;
+
+  /// No description provided for @qbPrimaryAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Attachment'**
+  String get qbPrimaryAttachment;
+
+  /// No description provided for @qbReorderAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder Attachments'**
+  String get qbReorderAttachments;
+
+  /// No description provided for @qbRemoveAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Attachment'**
+  String get qbRemoveAttachment;
+
+  /// No description provided for @qbDeleteQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Question'**
+  String get qbDeleteQuestion;
+
+  /// No description provided for @qbDeleteQuestionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The backend will archive this question. Continue?'**
+  String get qbDeleteQuestionBody;
+
+  /// No description provided for @qbBulkRows.
+  ///
+  /// In en, this message translates to:
+  /// **'Rows'**
+  String get qbBulkRows;
+
+  /// No description provided for @qbAddRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Row'**
+  String get qbAddRow;
+
+  /// No description provided for @qbRemoveRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Row'**
+  String get qbRemoveRow;
+
+  /// No description provided for @qbQuestionRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Row'**
+  String get qbQuestionRow;
+
+  /// No description provided for @qbSubmitBulk.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Questions'**
+  String get qbSubmitBulk;
+
+  /// No description provided for @qbMaxRowsWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You can create up to 50 questions at once.'**
+  String get qbMaxRowsWarning;
+
+  /// No description provided for @qbBulkRowsInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix invalid rows before submitting.'**
+  String get qbBulkRowsInvalid;
+
+  /// No description provided for @qbBulkCreatePartialSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Some questions were created. Review the rows that still need attention.'**
+  String get qbBulkCreatePartialSuccess;
+
+  /// No description provided for @qbBulkFailureReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rows need attention'**
+  String get qbBulkFailureReportTitle;
+
+  /// No description provided for @qbBulkFailureReportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions were created. Your rows are still editable.'**
+  String get qbBulkFailureReportBody;
+
+  /// No description provided for @qbRowKeptEditable.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept editable after backend rejection'**
+  String get qbRowKeptEditable;
+
+  /// No description provided for @qbMoreFailedRows.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} more rows'**
+  String qbMoreFailedRows(int count);
+
+  /// No description provided for @qbCreateMoreQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Create more questions'**
+  String get qbCreateMoreQuestions;
+
+  /// No description provided for @qbBulkCreateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions created'**
+  String get qbBulkCreateSuccess;
+
+  /// No description provided for @qbBulkCreatedDraftSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions created as drafts'**
+  String qbBulkCreatedDraftSummary(int count);
+
+  /// No description provided for @qbUploadQuestionImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload question image'**
+  String get qbUploadQuestionImage;
+
+  /// No description provided for @qbReplaceQuestionImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace question image'**
+  String get qbReplaceQuestionImage;
+
+  /// No description provided for @qbRemoveQuestionImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove question image'**
+  String get qbRemoveQuestionImage;
+
+  /// No description provided for @qbQuestionImageRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Question image removed'**
+  String get qbQuestionImageRemoved;
+
+  /// No description provided for @qbDiscardUploadsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard uploaded images?'**
+  String get qbDiscardUploadsTitle;
+
+  /// No description provided for @qbDiscardUploadsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded images that are not saved to a question or group will be deleted. If the app closes unexpectedly, backend cleanup removes old unused uploads later.'**
+  String get qbDiscardUploadsBody;
+
+  /// No description provided for @qbQuestionHints.
+  ///
+  /// In en, this message translates to:
+  /// **'Question hints'**
+  String get qbQuestionHints;
+
+  /// No description provided for @qbImageCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Image caption'**
+  String get qbImageCaption;
+
+  /// No description provided for @qbImageAltText.
+  ///
+  /// In en, this message translates to:
+  /// **'Image alt text'**
+  String get qbImageAltText;
+
+  /// No description provided for @questionBankBulkChapterPerRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the chapter inside each question row.'**
+  String get questionBankBulkChapterPerRow;
+
+  /// No description provided for @qbCoreDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Details'**
+  String get qbCoreDetails;
+
+  /// No description provided for @qbQuestionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Settings'**
+  String get qbQuestionSettings;
+
+  /// No description provided for @qbBloomLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bloom level'**
+  String get qbBloomLevel;
+
+  /// No description provided for @qbOptionNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Option'**
+  String get qbOptionNumber;
+
+  /// No description provided for @qbBlankKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Blank Key'**
+  String get qbBlankKey;
+
+  /// No description provided for @qbAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer'**
+  String get qbAnswer;
+
+  /// No description provided for @qbAddOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Option'**
+  String get qbAddOption;
+
+  /// No description provided for @qbAddBlank.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Blank'**
+  String get qbAddBlank;
+
+  /// No description provided for @qbSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get qbSubmit;
+
+  /// No description provided for @qbApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get qbApprove;
+
+  /// No description provided for @qbReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get qbReject;
+
+  /// No description provided for @qbArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get qbArchive;
+
+  /// No description provided for @qbRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get qbRestore;
+
+  /// No description provided for @qbOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get qbOverview;
+
+  /// No description provided for @qbAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers'**
+  String get qbAnswers;
+
+  /// No description provided for @qbGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get qbGroups;
+
+  /// No description provided for @qbStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get qbStatus;
+
+  /// No description provided for @examFlatRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat Rules'**
+  String get examFlatRules;
+
+  /// No description provided for @examSectionedRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Sectioned Rules'**
+  String get examSectionedRules;
+
+  /// No description provided for @examGenerationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation Settings'**
+  String get examGenerationSettings;
+
+  /// No description provided for @examGenerationRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation Rules'**
+  String get examGenerationRules;
+
+  /// No description provided for @examSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Sections'**
+  String get examSections;
+
+  /// No description provided for @examMarkDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Distribution'**
+  String get examMarkDistribution;
+
+  /// No description provided for @examRoundingPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Rounding Policy'**
+  String get examRoundingPolicy;
+
+  /// No description provided for @examSeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed'**
+  String get examSeed;
+
+  /// No description provided for @examAnswerPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer Policy'**
+  String get examAnswerPolicy;
+
+  /// No description provided for @examRequiredAnswerCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Answer Count'**
+  String get examRequiredAnswerCount;
+
+  /// No description provided for @examAnswerAnyMarksHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'For answer-any sections, total marks are awarded across the required answers. Example: 30 marks, answer any 3 means each answered question is worth 10 marks.'**
+  String get examAnswerAnyMarksHelp;
+
+  /// No description provided for @examWeightPerQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight per Question'**
+  String get examWeightPerQuestion;
+
+  /// No description provided for @examQuestionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Count'**
+  String get examQuestionCount;
+
+  /// No description provided for @examShortageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient Question Pool'**
+  String get examShortageTitle;
+
+  /// No description provided for @examShortageLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter {chapterId}: needs {required}, available {available}'**
+  String examShortageLine(int chapterId, int required, int available);
+
+  /// No description provided for @examGenerateDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Draft'**
+  String get examGenerateDraft;
+
+  /// No description provided for @examDraftOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get examDraftOverview;
+
+  /// No description provided for @examDraftQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get examDraftQuestions;
+
+  /// No description provided for @examDraftReorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder'**
+  String get examDraftReorder;
+
+  /// No description provided for @examDraftSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get examDraftSave;
+
+  /// No description provided for @examAddQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Question'**
+  String get examAddQuestion;
+
+  /// No description provided for @examReplaceQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace Question'**
+  String get examReplaceQuestion;
+
+  /// No description provided for @examEditGeneratedQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Generated Question'**
+  String get examEditGeneratedQuestion;
+
+  /// No description provided for @examOpenSourceQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Source Question'**
+  String get examOpenSourceQuestion;
+
+  /// No description provided for @examEditSourceQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Source Question'**
+  String get examEditSourceQuestion;
+
+  /// No description provided for @examMoveToSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Section'**
+  String get examMoveToSection;
+
+  /// No description provided for @examUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get examUnassigned;
+
+  /// No description provided for @examMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Marks'**
+  String get examMarks;
+
+  /// No description provided for @examWeightUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Units'**
+  String get examWeightUnits;
+
+  /// No description provided for @examOverrideReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Override Reason'**
+  String get examOverrideReason;
+
+  /// No description provided for @examOverrideReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Override reason is required.'**
+  String get examOverrideReasonRequired;
+
+  /// No description provided for @examReorderQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder Questions'**
+  String get examReorderQuestions;
+
+  /// No description provided for @examCannotRemoveLastItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot remove the last draft item.'**
+  String get examCannotRemoveLastItem;
+
+  /// No description provided for @examDraftExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft expired'**
+  String get examDraftExpired;
+
+  /// No description provided for @examDraftFinalized.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft finalized'**
+  String get examDraftFinalized;
+
+  /// No description provided for @examDraftNotEditableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This draft cannot be edited.'**
+  String get examDraftNotEditableMessage;
+
+  /// No description provided for @examDeleteSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Section'**
+  String get examDeleteSection;
+
+  /// No description provided for @examDeleteSectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting this section unassigns its questions. It does not delete them.'**
+  String get examDeleteSectionBody;
+
+  /// No description provided for @examCreateSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Section'**
+  String get examCreateSection;
+
+  /// No description provided for @examEditSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Section'**
+  String get examEditSection;
+
+  /// No description provided for @examReorderSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder Sections'**
+  String get examReorderSections;
+
+  /// No description provided for @examCandidatePicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved Question Picker'**
+  String get examCandidatePicker;
+
+  /// No description provided for @examPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Published'**
+  String get examPublish;
+
+  /// No description provided for @examUnpublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpublish'**
+  String get examUnpublish;
+
+  /// No description provided for @examArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get examArchive;
+
+  /// No description provided for @examExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get examExport;
+
+  /// No description provided for @examIndependentOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Independent selection only'**
+  String get examIndependentOnly;
+
+  /// No description provided for @examSimpleMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple exam'**
+  String get examSimpleMode;
+
+  /// No description provided for @examSectionedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam with sections'**
+  String get examSectionedMode;
+
+  /// No description provided for @examSimpleModeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'One list of questions, such as 20 mixed MCQ questions from the course.'**
+  String get examSimpleModeHelp;
+
+  /// No description provided for @examSectionedModeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize the exam into sections, such as Section A: MCQ and Section B: Essay.'**
+  String get examSectionedModeHelp;
+
+  /// No description provided for @examScopeCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Whole course'**
+  String get examScopeCourse;
+
+  /// No description provided for @examScopeChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'One chapter'**
+  String get examScopeChapter;
+
+  /// No description provided for @examScopeChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple chapters'**
+  String get examScopeChapters;
+
+  /// No description provided for @examScopeGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Question group'**
+  String get examScopeGroup;
+
+  /// No description provided for @examGroupSelectionMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped questions'**
+  String get examGroupSelectionMode;
+
+  /// No description provided for @examGroupIndependent.
+  ///
+  /// In en, this message translates to:
+  /// **'Include grouped questions independently'**
+  String get examGroupIndependent;
+
+  /// No description provided for @examGroupExclude.
+  ///
+  /// In en, this message translates to:
+  /// **'Exclude grouped questions'**
+  String get examGroupExclude;
+
+  /// No description provided for @examGroupKeepTogether.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep groups together'**
+  String get examGroupKeepTogether;
+
+  /// No description provided for @examVersionCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam version code'**
+  String get examVersionCode;
+
+  /// No description provided for @examSeedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the same code with the same rules and pool to regenerate the same version.'**
+  String get examSeedHelp;
+
+  /// No description provided for @examRandomSeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Random seed'**
+  String get examRandomSeed;
+
+  /// No description provided for @examDurationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration minutes'**
+  String get examDurationMinutes;
+
+  /// No description provided for @examHeaderText.
+  ///
+  /// In en, this message translates to:
+  /// **'Header text'**
+  String get examHeaderText;
+
+  /// No description provided for @examFooterText.
+  ///
+  /// In en, this message translates to:
+  /// **'Footer text'**
+  String get examFooterText;
+
+  /// No description provided for @examApprovedOnlyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Only approved Question Bank questions are used.'**
+  String get examApprovedOnlyHelp;
+
+  /// No description provided for @examAvailabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation availability'**
+  String get examAvailabilityTitle;
+
+  /// No description provided for @examAvailabilitySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{available} available for {required} requested'**
+  String examAvailabilitySummary(int available, int required);
+
+  /// No description provided for @examAvailabilityLowHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve more matching questions or reduce the requested count.'**
+  String get examAvailabilityLowHelp;
+
+  /// No description provided for @examViewMatchingQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'View matching questions'**
+  String get examViewMatchingQuestions;
+
+  /// No description provided for @examApproveMoreQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve more questions'**
+  String get examApproveMoreQuestions;
+
+  /// No description provided for @examSkippedGroupsTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped {skipped} group(s); largest has {largest} questions'**
+  String examSkippedGroupsTooLarge(int skipped, int largest);
+
+  /// No description provided for @examQuestionPoolReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Question pool readiness'**
+  String get examQuestionPoolReadiness;
+
+  /// No description provided for @examApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get examApproved;
+
+  /// No description provided for @examGrouped.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped'**
+  String get examGrouped;
+
+  /// No description provided for @examStandalone.
+  ///
+  /// In en, this message translates to:
+  /// **'Standalone'**
+  String get examStandalone;
+
+  /// No description provided for @examGroupedIndependentHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped questions may be selected one by one.'**
+  String get examGroupedIndependentHelp;
+
+  /// No description provided for @examGroupedTogetherHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Passage/case groups stay together when they fit the requested count.'**
+  String get examGroupedTogetherHelp;
+
+  /// No description provided for @examExcludeGroupedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Only standalone questions are used.'**
+  String get examExcludeGroupedHelp;
+
+  /// No description provided for @examGroupScopeKeepsPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'The group prompt/image will be kept with these questions.'**
+  String get examGroupScopeKeepsPrompt;
+
+  /// No description provided for @examStudentNameLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Student name line'**
+  String get examStudentNameLine;
+
+  /// No description provided for @examInstructorName.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor name'**
+  String get examInstructorName;
+
+  /// No description provided for @examPageBreakPerSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Page break per section'**
+  String get examPageBreakPerSection;
+
+  /// No description provided for @examAnswerKeyStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer key style'**
+  String get examAnswerKeyStyle;
+
+  /// No description provided for @examSnapshotTimestamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot: {value}'**
+  String examSnapshotTimestamp(String value);
+
+  /// No description provided for @examVersionBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Version: {value}'**
+  String examVersionBadge(Object value);
+
+  /// No description provided for @examDoesNotAssignStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'This does not assign the exam to students.'**
+  String get examDoesNotAssignStudents;
+
+  /// No description provided for @examPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get examPublished;
+
+  /// No description provided for @examApprovedPool.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved pool'**
+  String get examApprovedPool;
+
+  /// No description provided for @examDraftStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft status'**
+  String get examDraftStatus;
+
+  /// No description provided for @examStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam status'**
+  String get examStatus;
+
+  /// No description provided for @examDateFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Date from'**
+  String get examDateFrom;
+
+  /// No description provided for @examDateTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Date to'**
+  String get examDateTo;
+
+  /// No description provided for @examDashboardHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts are editable for 24 hours. Saved exams are finalized records. Generation uses approved questions only.'**
+  String get examDashboardHelp;
+
+  /// No description provided for @examNoApprovedPoolHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This course has no approved questions ready for generation yet.'**
+  String get examNoApprovedPoolHelp;
+
+  /// No description provided for @examValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation'**
+  String get examValidation;
+
+  /// No description provided for @examFinalReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Review'**
+  String get examFinalReview;
+
+  /// No description provided for @examValidationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation details will appear after the draft loads.'**
+  String get examValidationUnavailable;
+
+  /// No description provided for @examCanSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft can be saved'**
+  String get examCanSave;
+
+  /// No description provided for @examCannotSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft needs fixes before saving'**
+  String get examCannotSave;
+
+  /// No description provided for @examDeleteSectionUnassigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting this section makes its questions unassigned. It does not delete the questions.'**
+  String get examDeleteSectionUnassigns;
+
+  /// No description provided for @examDraftExpiresIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft locks in {hours}h {minutes}m. Save before it expires.'**
+  String examDraftExpiresIn(int hours, int minutes);
+
+  /// No description provided for @examReviewHasQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'The exam has questions.'**
+  String get examReviewHasQuestions;
+
+  /// No description provided for @examReviewCanSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Backend validation allows saving.'**
+  String get examReviewCanSave;
+
+  /// No description provided for @examReviewSnapshotsReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Question snapshots and media are ready.'**
+  String get examReviewSnapshotsReady;
+
+  /// No description provided for @examRegenerateDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate draft'**
+  String get examRegenerateDraft;
+
+  /// No description provided for @examReshuffleSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reshuffle section'**
+  String get examReshuffleSection;
+
+  /// No description provided for @examNormalizeSectionMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Normalize section marks'**
+  String get examNormalizeSectionMarks;
+
+  /// No description provided for @examMoveSelectedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Move selected questions'**
+  String get examMoveSelectedQuestions;
+
+  /// No description provided for @examSelectedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String examSelectedQuestions(int count);
+
+  /// No description provided for @examGroupedPromptShownOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'This grouped prompt is shown once for the following questions.'**
+  String get examGroupedPromptShownOnce;
+
+  /// No description provided for @examEditSourceQuestionWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing the source Question Bank question can move it back to draft and may affect this draft\'s validation. Continue?'**
+  String get examEditSourceQuestionWarning;
+
+  /// No description provided for @examOutsideOriginalRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Outside original rules'**
+  String get examOutsideOriginalRules;
+
+  /// No description provided for @examOverrideReasonHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'If this replacement is outside the original generation rules, explain why. Leave blank only when it still matches the intended rule.'**
+  String get examOverrideReasonHelper;
+
+  /// No description provided for @examSnapshotHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved exams keep snapshots from save time, so later Question Bank edits do not change this exam.'**
+  String get examSnapshotHelp;
+
+  /// No description provided for @examUnassignedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned questions'**
+  String get examUnassignedQuestions;
+
+  /// No description provided for @examQuestionSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Question snapshot'**
+  String get examQuestionSnapshot;
+
+  /// No description provided for @examLifecycleReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifecycle reason'**
+  String get examLifecycleReason;
+
+  /// No description provided for @reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get reason;
+
+  /// No description provided for @marks.
+  ///
+  /// In en, this message translates to:
+  /// **'marks'**
+  String get marks;
+
+  /// No description provided for @qbPromptImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt image'**
+  String get qbPromptImage;
+
+  /// No description provided for @examExportStudentCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Student copy'**
+  String get examExportStudentCopy;
+
+  /// No description provided for @examExportAnswerKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer key'**
+  String get examExportAnswerKey;
+
+  /// No description provided for @examExportCombined.
+  ///
+  /// In en, this message translates to:
+  /// **'Combined copy'**
+  String get examExportCombined;
+
+  /// No description provided for @examExportVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Export copy'**
+  String get examExportVariant;
+
+  /// No description provided for @examExportFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Export format'**
+  String get examExportFormat;
+
+  /// No description provided for @examExportWordDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Word-compatible document'**
+  String get examExportWordDocument;
+
+  /// No description provided for @examExportPdfDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF document'**
+  String get examExportPdfDocument;
+
+  /// No description provided for @examLifecycleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam lifecycle'**
+  String get examLifecycleTitle;
+
+  /// No description provided for @examLifecycleExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Published changes this saved exam\'s lifecycle status. It does not create a student assignment unless a delivery flow is added.'**
+  String get examLifecycleExplanation;
+
+  /// No description provided for @examValidationCourseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Course is required.'**
+  String get examValidationCourseRequired;
+
+  /// No description provided for @examValidationTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is required.'**
+  String get examValidationTitleRequired;
+
+  /// No description provided for @examValidationTotalMarksPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Total marks must be positive.'**
+  String get examValidationTotalMarksPositive;
+
+  /// No description provided for @examValidationDurationPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration must be positive.'**
+  String get examValidationDurationPositive;
+
+  /// No description provided for @examValidationAddRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one rule.'**
+  String get examValidationAddRule;
+
+  /// No description provided for @examValidationAddSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one section.'**
+  String get examValidationAddSection;
+
+  /// No description provided for @examValidationChapterRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter is required.'**
+  String get examValidationChapterRequired;
+
+  /// No description provided for @examValidationSelectChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one chapter.'**
+  String get examValidationSelectChapter;
+
+  /// No description provided for @examValidationSelectGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one group.'**
+  String get examValidationSelectGroup;
+
+  /// No description provided for @examValidationCountPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Count must be greater than zero.'**
+  String get examValidationCountPositive;
+
+  /// No description provided for @examValidationWeightPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight must be greater than zero.'**
+  String get examValidationWeightPositive;
+
+  /// No description provided for @examValidationSectionTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Section title is required.'**
+  String get examValidationSectionTitleRequired;
+
+  /// No description provided for @examValidationSectionMarksPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Section marks must be greater than zero.'**
+  String get examValidationSectionMarksPositive;
+
+  /// No description provided for @examValidationSectionMarksNonNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Section marks cannot be negative.'**
+  String get examValidationSectionMarksNonNegative;
+
+  /// No description provided for @examValidationRequiredAnswerPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Required answer count must be positive.'**
+  String get examValidationRequiredAnswerPositive;
+
+  /// No description provided for @examValidationReplacementRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacement question is required.'**
+  String get examValidationReplacementRequired;
+
+  /// No description provided for @examValidationSectionValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Section must be valid.'**
+  String get examValidationSectionValid;
+
+  /// No description provided for @examValidationWeightNonNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight cannot be negative.'**
+  String get examValidationWeightNonNegative;
+
+  /// No description provided for @examValidationWeightUnitsNonNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight units cannot be negative.'**
+  String get examValidationWeightUnitsNonNegative;
+
+  /// No description provided for @examValidationMarksNonNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Marks cannot be negative.'**
+  String get examValidationMarksNonNegative;
+
+  /// No description provided for @examValidationItemOrderNonNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Item order cannot be negative.'**
+  String get examValidationItemOrderNonNegative;
+
+  /// No description provided for @enumQuestionWritten.
+  ///
+  /// In en, this message translates to:
+  /// **'Written'**
+  String get enumQuestionWritten;
+
+  /// No description provided for @enumQuestionMcq.
+  ///
+  /// In en, this message translates to:
+  /// **'MCQ'**
+  String get enumQuestionMcq;
+
+  /// No description provided for @enumQuestionTrueFalse.
+  ///
+  /// In en, this message translates to:
+  /// **'True / False'**
+  String get enumQuestionTrueFalse;
+
+  /// No description provided for @enumQuestionFillBlanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill Blanks'**
+  String get enumQuestionFillBlanks;
+
+  /// No description provided for @enumQuestionEssay.
+  ///
+  /// In en, this message translates to:
+  /// **'Essay'**
+  String get enumQuestionEssay;
+
+  /// No description provided for @enumDifficultyEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get enumDifficultyEasy;
+
+  /// No description provided for @enumDifficultyMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get enumDifficultyMedium;
+
+  /// No description provided for @enumDifficultyHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get enumDifficultyHard;
+
+  /// No description provided for @enumBloomRemembering.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembering'**
+  String get enumBloomRemembering;
+
+  /// No description provided for @enumBloomUnderstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding'**
+  String get enumBloomUnderstanding;
+
+  /// No description provided for @enumBloomApplying.
+  ///
+  /// In en, this message translates to:
+  /// **'Applying'**
+  String get enumBloomApplying;
+
+  /// No description provided for @enumBloomAnalyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing'**
+  String get enumBloomAnalyzing;
+
+  /// No description provided for @enumBloomEvaluating.
+  ///
+  /// In en, this message translates to:
+  /// **'Evaluating'**
+  String get enumBloomEvaluating;
+
+  /// No description provided for @enumBloomCreating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating'**
+  String get enumBloomCreating;
+
+  /// No description provided for @enumQuestionStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get enumQuestionStatusDraft;
+
+  /// No description provided for @enumQuestionStatusUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Review'**
+  String get enumQuestionStatusUnderReview;
+
+  /// No description provided for @enumQuestionStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get enumQuestionStatusApproved;
+
+  /// No description provided for @enumQuestionStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get enumQuestionStatusRejected;
+
+  /// No description provided for @enumQuestionStatusArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get enumQuestionStatusArchived;
+
+  /// No description provided for @enumAttachmentImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get enumAttachmentImage;
+
+  /// No description provided for @enumAttachmentDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get enumAttachmentDocument;
+
+  /// No description provided for @enumAttachmentAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get enumAttachmentAudio;
+
+  /// No description provided for @enumAttachmentVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get enumAttachmentVideo;
+
+  /// No description provided for @enumGroupPassage.
+  ///
+  /// In en, this message translates to:
+  /// **'Passage'**
+  String get enumGroupPassage;
+
+  /// No description provided for @enumGroupCaseStudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Case Study'**
+  String get enumGroupCaseStudy;
+
+  /// No description provided for @enumGroupImageSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Set'**
+  String get enumGroupImageSet;
+
+  /// No description provided for @enumGroupMultipart.
+  ///
+  /// In en, this message translates to:
+  /// **'Multipart'**
+  String get enumGroupMultipart;
+
+  /// No description provided for @enumGroupOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get enumGroupOther;
+
+  /// No description provided for @enumDraftOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get enumDraftOpen;
+
+  /// No description provided for @enumDraftFinalized.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalized'**
+  String get enumDraftFinalized;
+
+  /// No description provided for @enumDraftExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get enumDraftExpired;
+
+  /// No description provided for @enumDraftCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get enumDraftCancelled;
+
+  /// No description provided for @enumDraftFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get enumDraftFailed;
+
+  /// No description provided for @enumExamDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get enumExamDraft;
+
+  /// No description provided for @enumExamPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get enumExamPublished;
+
+  /// No description provided for @enumExamArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get enumExamArchived;
+
+  /// No description provided for @enumMarkManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get enumMarkManual;
+
+  /// No description provided for @enumMarkWeightNormalized.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Normalized'**
+  String get enumMarkWeightNormalized;
+
+  /// No description provided for @enumMarkEqual.
+  ///
+  /// In en, this message translates to:
+  /// **'Equal'**
+  String get enumMarkEqual;
+
+  /// No description provided for @enumRoundingNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get enumRoundingNone;
+
+  /// No description provided for @enumRounding025.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest 0.25'**
+  String get enumRounding025;
+
+  /// No description provided for @enumRounding05.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest 0.5'**
+  String get enumRounding05;
+
+  /// No description provided for @enumRounding1.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest 1'**
+  String get enumRounding1;
+
+  /// No description provided for @enumAnswerAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer All'**
+  String get enumAnswerAll;
+
+  /// No description provided for @enumAnswerAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer Any'**
+  String get enumAnswerAny;
+
+  /// No description provided for @examPaperDesignerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Paper Designer'**
+  String get examPaperDesignerTitle;
+
+  /// No description provided for @examPaperDesignerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Design the printable header, trailing notes, and export format before creating the file.'**
+  String get examPaperDesignerSubtitle;
+
+  /// No description provided for @examPaperTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper Templates'**
+  String get examPaperTemplates;
+
+  /// No description provided for @examPaperTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper Template'**
+  String get examPaperTemplate;
+
+  /// No description provided for @examPaperTemplateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Template Name'**
+  String get examPaperTemplateName;
+
+  /// No description provided for @examPaperStructuredZones.
+  ///
+  /// In en, this message translates to:
+  /// **'Structured Zones'**
+  String get examPaperStructuredZones;
+
+  /// No description provided for @examPaperFreeDrag.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Drag'**
+  String get examPaperFreeDrag;
+
+  /// No description provided for @examPaperHybrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Hybrid'**
+  String get examPaperHybrid;
+
+  /// No description provided for @examPaperHeaderFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Header Fields'**
+  String get examPaperHeaderFields;
+
+  /// No description provided for @examPaperHeaderLeft1.
+  ///
+  /// In en, this message translates to:
+  /// **'Header left line 1'**
+  String get examPaperHeaderLeft1;
+
+  /// No description provided for @examPaperHeaderLeft2.
+  ///
+  /// In en, this message translates to:
+  /// **'Header left line 2'**
+  String get examPaperHeaderLeft2;
+
+  /// No description provided for @examPaperHeaderLeft3.
+  ///
+  /// In en, this message translates to:
+  /// **'Header left line 3'**
+  String get examPaperHeaderLeft3;
+
+  /// No description provided for @examPaperHeaderCenter1.
+  ///
+  /// In en, this message translates to:
+  /// **'Header center line 1'**
+  String get examPaperHeaderCenter1;
+
+  /// No description provided for @examPaperHeaderCenter2.
+  ///
+  /// In en, this message translates to:
+  /// **'Header center line 2 / logo label'**
+  String get examPaperHeaderCenter2;
+
+  /// No description provided for @examPaperHeaderRight1.
+  ///
+  /// In en, this message translates to:
+  /// **'Header right line 1'**
+  String get examPaperHeaderRight1;
+
+  /// No description provided for @examPaperHeaderRight2.
+  ///
+  /// In en, this message translates to:
+  /// **'Header right line 2'**
+  String get examPaperHeaderRight2;
+
+  /// No description provided for @examPaperHeaderRight3.
+  ///
+  /// In en, this message translates to:
+  /// **'Header right line 3'**
+  String get examPaperHeaderRight3;
+
+  /// No description provided for @examPaperMetadataRows.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata Rows'**
+  String get examPaperMetadataRows;
+
+  /// No description provided for @examPaperMetadataLeft1.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata left line 1'**
+  String get examPaperMetadataLeft1;
+
+  /// No description provided for @examPaperMetadataLeft2.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata left line 2'**
+  String get examPaperMetadataLeft2;
+
+  /// No description provided for @examPaperMetadataLeft3.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata left line 3'**
+  String get examPaperMetadataLeft3;
+
+  /// No description provided for @examPaperMetadataRight1.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata right line 1'**
+  String get examPaperMetadataRight1;
+
+  /// No description provided for @examPaperMetadataRight2.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata right line 2'**
+  String get examPaperMetadataRight2;
+
+  /// No description provided for @examPaperMetadataRight3.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata right line 3'**
+  String get examPaperMetadataRight3;
+
+  /// No description provided for @examPaperFreeElements.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Positioned Fields'**
+  String get examPaperFreeElements;
+
+  /// No description provided for @examPaperFreeElementsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a text field, then drag it on the paper preview.'**
+  String get examPaperFreeElementsHelp;
+
+  /// No description provided for @examPaperFreeElementText.
+  ///
+  /// In en, this message translates to:
+  /// **'Free field text'**
+  String get examPaperFreeElementText;
+
+  /// No description provided for @examPaperTrailingFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Trailing And Footer Fields'**
+  String get examPaperTrailingFields;
+
+  /// No description provided for @examPaperEndLine.
+  ///
+  /// In en, this message translates to:
+  /// **'End line'**
+  String get examPaperEndLine;
+
+  /// No description provided for @examPaperGoodLuckLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Good luck line'**
+  String get examPaperGoodLuckLine;
+
+  /// No description provided for @examPaperExaminersLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Examiners line'**
+  String get examPaperExaminersLine;
+
+  /// No description provided for @examPaperPageNumberFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Page number format'**
+  String get examPaperPageNumberFormat;
+
+  /// No description provided for @examPaperLivePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Paper Preview'**
+  String get examPaperLivePreview;
+
+  /// No description provided for @examPaperSaveTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Template'**
+  String get examPaperSaveTemplate;
+
+  /// No description provided for @examPaperSaveAsTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Save As Template'**
+  String get examPaperSaveAsTemplate;
+
+  /// No description provided for @examPaperResetDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Default'**
+  String get examPaperResetDefault;
+
+  /// No description provided for @examPaperApplyToExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply To Exam'**
+  String get examPaperApplyToExam;
+
+  /// No description provided for @examPaperExportAfterPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Export After Preview'**
+  String get examPaperExportAfterPreview;
+
+  /// No description provided for @examPaperTemplateSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper template saved.'**
+  String get examPaperTemplateSaved;
+
+  /// No description provided for @examPaperTemplateApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper template applied to this exam.'**
+  String get examPaperTemplateApplied;
+
+  /// No description provided for @examPaperExportReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Ready'**
+  String get examPaperExportReady;
+
+  /// No description provided for @examPaperExportReadyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The exam file was created. You can open it now or return to the designer.'**
+  String get examPaperExportReadyMessage;
+
+  /// No description provided for @examPaperOpenFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open File'**
+  String get examPaperOpenFile;
+
+  /// No description provided for @examPaperShareFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Share File'**
+  String get examPaperShareFile;
+
+  /// No description provided for @examPaperExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export the exam paper.'**
+  String get examPaperExportFailed;
 }
 
 class _AppLocalizationsDelegate
