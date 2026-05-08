@@ -6158,13 +6158,47 @@
   "examGeneratorCreateDraft": "Create Exam Draft",
   "examGeneratorStudioTitle": "Exam Studio",
   "examGeneratorStudioSubtitle": "Choose course, chapters, rules, weights, and generate a draft from approved questions.",
+  "examGeneratorInfoTitle": "Exam Generator Guide",
+  "examGeneratorInfoIntro": "Use approved Question Bank questions to create editable exam drafts, review shortages, adjust items, and finalize saved exams.",
+  "examGeneratorInfoApprovedOnly": "Only approved Question Bank questions are eligible for generation, so draft or rejected questions stay out of the pool.",
+  "examGeneratorInfoRules": "Generation rules decide the course, chapter, group, type, difficulty, Bloom level, count, and weight for the questions.",
+  "examGeneratorInfoDraftLifecycle": "Generated drafts stay editable first. After review, you can finalize them into saved exam records for publishing and export.",
+  "examGeneratorViewFullGuide": "View full guide",
+  "examGeneratorGuidePoolTitle": "Question pool",
+  "examGeneratorGuidePoolBody": "The readiness panel shows approved, grouped, standalone, chapter, and type counts. If availability is low, approve more matching questions or reduce the requested count.",
+  "examGeneratorGuideRulesTitle": "Generation rules",
+  "examGeneratorGuideRulesBody": "Create one or more rules. A rule can pull from the whole course, one chapter, multiple chapters, or a question group while filtering by taxonomy.",
+  "examGeneratorGuideModesTitle": "Simple or sectioned",
+  "examGeneratorGuideModesBody": "Simple exams produce one ordered list. Sectioned exams let you build named sections with their own instructions, marks, and answer policy.",
+  "examGeneratorGuideLifecycleTitle": "Draft lifecycle",
+  "examGeneratorGuideLifecycleBody": "Generate a draft, inspect every selected question, replace weak matches, reorder sections or items, then finalize when the exam is ready.",
+  "examGeneratorGuideTipsTitle": "Instructor tips",
+  "examGeneratorGuideTipsBody": "Use a version code when you need repeatable drafts, keep groups together for case-study prompts, and check availability before generating.",
+  "examCreateCoreDetails": "Core Details",
+  "examCreateCoreDetailsHint": "Name the draft and choose the course that owns the approved question pool.",
+  "examCreateSettingsHint": "Set marks, timing, grouped-question behavior, versioning, and optional exam text.",
+  "examCreateRulesHint": "Define what the generator should pull from the approved pool.",
+  "examCreateSectionsHint": "Build sections, then give each section its own question rules.",
+  "examCourseDataLoading": "Loading chapters and groups for the selected course...",
+  "examAddRule": "Add rule",
+  "examAddSection": "Add section",
+  "examCreateModeTitle": "Exam Structure",
   "examGeneratorNoDrafts": "No Drafts Found",
   "examGeneratorNoDraftsMessage": "Generated exam drafts will appear here.",
   "examGeneratorNoSavedExams": "No Saved Exams",
   "examGeneratorNoSavedExamsMessage": "Saved exams will appear here after a draft is finalized.",
+  "examGeneratorNoRecords": "No Exams Found",
+  "examGeneratorNoRecordsMessage": "Exam drafts and saved exams that match your filters will appear here.",
   "examDraftDetails": "Exam Draft Details",
   "examDraftEditable": "This draft is open and editable.",
   "examDraftNotEditable": "This draft is expired or finalized and cannot be edited.",
+  "examFinalizedDraftTitle": "This draft was saved",
+  "examFinalizedDraftMessage": "The editable draft is now locked because a saved exam snapshot was created from it. Open the saved exam to review, publish, export, or manage lifecycle actions.",
+  "examFinalizedDraftNoSavedExam": "This finalized draft does not include a saved exam link. Refresh the list, then open the saved exam record from Saved Exams.",
+  "examOpenSavedExam": "Open saved exam",
+  "examCreateEditableCopy": "Create editable copy",
+  "examFinalizedDraftRecordBadge": "Finalized source",
+  "examFinalizedDraftOpensSaved": "Opens the saved exam snapshot.",
   "examSavedDetails": "Saved Exam Details",
   "examSavedPreviewUnavailableTitle": "Item Preview Unavailable",
   "examSavedPreviewUnavailable": "The current backend returns compact saved exam details only, so question item preview is unavailable.",
@@ -6393,10 +6427,94 @@
       "available": {"type": "int"}
     }
   },
+  "examShortageNamedLine": "{chapter}: needs {required}, available {available}",
+  "@examShortageNamedLine": {
+    "placeholders": {
+      "chapter": {"type": "String"},
+      "required": {"type": "int"},
+      "available": {"type": "int"}
+    }
+  },
   "examGenerateDraft": "Generate Draft",
   "examDraftOverview": "Overview",
   "examDraftQuestions": "Questions",
   "examDraftReorder": "Reorder",
+  "examDraftBuild": "Build",
+  "examDraftReview": "Review",
+  "examDraftOverviewHint": "Scan readiness, issues, section totals, settings, timing, and paper text in one compact view.",
+  "examDraftBuildHint": "Edit sections, organize questions, and add approved questions from the same workspace.",
+  "examDraftReorderHint": "Drag sections or questions to match the order students will see in the final paper.",
+  "examDraftReorderPoolHint": "Questions outside sections stay together as a separate pool.",
+  "examDraftReorderGroupedHint": "Section questions stay together, so another question cannot split this section in the paper.",
+  "examDraftAllQuestionsAssigned": "All questions are assigned to sections.",
+  "examDraftReviewHint": "Complete the final checklist before saving or regenerate the draft when the current version needs a fresh pass.",
+  "examDraftSectionsHint": "Create or tune section rules without leaving the draft.",
+  "examDraftQuestionsHint": "Review selected questions, move them between sections, or add more approved questions.",
+  "examDraftNoSections": "No sections yet",
+  "examDraftNoSectionsHint": "Create a section when this draft needs organized parts such as MCQ, essay, or answer-any groups.",
+  "examDraftNoQuestions": "No questions yet",
+  "examDraftNoQuestionsHint": "Add approved Question Bank questions to build this draft.",
+  "examHideQuestionPicker": "Hide picker",
+  "examDraftReadiness": "Readiness",
+  "examDraftTextContent": "Paper text",
+  "examDraftNoValue": "Not set",
+  "examDraftIssues": "Issues to review",
+  "examSectionReviewSummary": "{count, plural, =0{0 questions} one{1 question} other{{count} questions}} • {marks} marks",
+  "@examSectionReviewSummary": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "marks": {"type": "double"}
+    }
+  },
+  "examActionReviewImages": "Review prompt images",
+  "examActionMoveUnassigned": "Move unassigned questions",
+  "examCandidatePickerHint": "Filter the approved pool and tap a question to add it to this draft.",
+  "examSearchApprovedQuestionsHint": "Search approved questions",
+  "examQuestionAlreadyInDraft": "Already in draft",
+  "examQuestionAlreadyInDraftHint": "This question is already included in this draft, so it cannot be added again.",
+  "examNeedsOverride": "Needs override",
+  "examNeedsOverrideHint": "This question is outside the draft's original generation rules. You can still add it by giving a reason.",
+  "examRuleMismatchTitle": "Why it needs override",
+  "examMismatchExpectedType": "Expected type: {value}",
+  "@examMismatchExpectedType": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedDifficulty": "Expected difficulty: {value}",
+  "@examMismatchExpectedDifficulty": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedBloom": "Expected Bloom level: {value}",
+  "@examMismatchExpectedBloom": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedChapter": "Expected chapter: {value}",
+  "@examMismatchExpectedChapter": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedGroup": "Expected group: {value}",
+  "@examMismatchExpectedGroup": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examAddQuestionOutsideRulesTitle": "Add question outside rules?",
+  "examAddQuestionOutsideRulesBody": "This question is {type}, {difficulty}, {bloom}. It does not match the draft's original generation constraints. To add it anyway, enter a clear override reason so the change is documented.",
+  "@examAddQuestionOutsideRulesBody": {
+    "placeholders": {
+      "type": {"type": "String"},
+      "difficulty": {"type": "String"},
+      "bloom": {"type": "String"}
+    }
+  },
+  "examAddQuestionWithOverride": "Add with override",
   "examDraftSave": "Save",
   "examAddQuestion": "Add Question",
   "examReplaceQuestion": "Replace Question",
@@ -6491,8 +6609,24 @@
   "examApprovedPool": "Approved pool",
   "examDraftStatus": "Draft status",
   "examStatus": "Exam status",
+  "examFilters": "Exam Filters",
+  "examSearchHint": "Search drafts and saved exams",
+  "examRecords": "Exam records",
+  "examAllRecords": "All records",
+  "examDraftRecords": "Draft records",
+  "examSavedRecords": "Saved records",
+  "examDraftRecordBadge": "Draft record",
+  "examSavedRecordBadge": "Saved exam",
+  "examSavedDraftStatus": "Saved, not published",
+  "examActiveFilterCount": "{count, plural, =0 {All filters} one {1 active filter} other {{count} active filters}}",
+  "@examActiveFilterCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "examDateFrom": "Date from",
   "examDateTo": "Date to",
+  "examExpires": "Expires",
   "examDashboardHelp": "Drafts are editable for 24 hours. Saved exams are finalized records. Generation uses approved questions only.",
   "examNoApprovedPoolHelp": "This course has no approved questions ready for generation yet.",
   "examValidation": "Validation",
@@ -6515,17 +6649,70 @@
   "examReshuffleSection": "Reshuffle section",
   "examNormalizeSectionMarks": "Normalize section marks",
   "examMoveSelectedQuestions": "Move selected questions",
+  "examSelectQuestionFirst": "Select at least one question first.",
+  "examMoveQuestionsFailed": "Failed to move selected questions.",
+  "examSelectedQuestionsMoved": "Selected questions moved.",
+  "examSavingOrder": "Saving new order...",
+  "examMovingQuestions": "Moving {count} questions...",
+  "@examMovingQuestions": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "examSelectedQuestions": "{count} selected",
   "@examSelectedQuestions": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
+  "examUnassignQuestion": "Unassign",
+  "examQuestionActions": "Question actions",
+  "examQuestionShortNumber": "Q{number}",
+  "@examQuestionShortNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "examShowQuestionDetails": "Show answer and details",
+  "examHideQuestionDetails": "Hide answer and details",
+  "examAnswerAndDetails": "Answer and details",
+  "examOrderNumber": "Order {number}",
+  "@examOrderNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "examUnassignedQuestionsHint": "Questions not assigned to a section yet. Select them here, then move them into the right section.",
+  "examAllQuestionsAssigned": "All questions are assigned",
+  "examAllQuestionsAssignedHint": "Every draft question belongs to a section. Use Unassign from a section card to return a question here.",
+  "examSectionAssignedQuestions": "{count} assigned questions",
+  "@examSectionAssignedQuestions": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "examSectionNoAssignedQuestions": "No questions assigned to this section yet.",
   "examGroupedPromptShownOnce": "This grouped prompt is shown once for the following questions.",
   "examEditSourceQuestionWarning": "Editing the source Question Bank question can move it back to draft and may affect this draft's validation. Continue?",
   "examOutsideOriginalRules": "Outside original rules",
   "examOverrideReasonHelper": "If this replacement is outside the original generation rules, explain why. Leave blank only when it still matches the intended rule.",
   "examSnapshotHelp": "Saved exams keep snapshots from save time, so later Question Bank edits do not change this exam.",
+  "examSavedOverviewTitle": "Saved exam overview",
+  "examSavedOverviewSubtitle": "Review the fixed snapshot, paper text, sections, and lifecycle actions in one compact view.",
+  "examSavedSnapshotLocked": "Question Bank edits after save will not change this saved exam.",
+  "examSavedStudentAssignmentNote": "Publishing changes lifecycle status only; it does not assign the exam to students.",
+  "examSavedPaperText": "Paper text",
+  "examSavedQuestionSnapshotDetails": "Snapshot details",
+  "examSavedSourceGroupPrompt": "Source group prompt",
+  "examSavedQuestionMedia": "Question media",
+  "examSavedGroupMedia": "Group media",
+  "examSavedNoSections": "No sections in this saved exam.",
+  "examSavedNoQuestions": "No saved questions are available.",
+  "examSavedUnassignedQuestionsHint": "Questions saved outside any section. They remain in the exam snapshot but are not part of a section.",
+  "examGeneratedAt": "Generated",
+  "examSavedAt": "Saved",
+  "examLifecycleUpdated": "Exam lifecycle updated.",
+  "examLifecycleReasonHint": "Add a short reason for the lifecycle log.",
   "examUnassignedQuestions": "Unassigned questions",
   "examQuestionSnapshot": "Question snapshot",
   "examLifecycleReason": "Lifecycle reason",
@@ -6562,6 +6749,8 @@
   "examValidationWeightUnitsNonNegative": "Weight units cannot be negative.",
   "examValidationMarksNonNegative": "Marks cannot be negative.",
   "examValidationItemOrderNonNegative": "Item order cannot be negative.",
+  "examValidationQuestionAlreadyInDraft": "This question is already in the draft.",
+  "examValidationQuestionOutsideRules": "This question does not match the draft's original generation constraints. Use Add with override and enter a reason, or filter the picker to the same type, chapter, difficulty, and Bloom level used by the draft.",
   "enumQuestionWritten": "Written",
   "enumQuestionMcq": "MCQ",
   "enumQuestionTrueFalse": "True / False",
@@ -6609,13 +6798,23 @@
   "enumAnswerAny": "Answer Any",
   "examPaperDesignerTitle": "Exam Paper Designer",
   "examPaperDesignerSubtitle": "Design the printable header, trailing notes, and export format before creating the file.",
+  "examPaperStepTemplate": "Template",
+  "examPaperStepContent": "Paper text",
+  "examPaperStepExport": "Preview and export",
   "examPaperTemplates": "Paper Templates",
+  "examPaperTemplateSetupHint": "Choose a saved style, name this version, and select how fields sit on the printable paper.",
   "examPaperTemplate": "Paper Template",
   "examPaperTemplateName": "Template Name",
+  "examPaperNoSavedTemplates": "No saved templates for this course yet. Save this setup as a template when it is ready.",
+  "examPaperDefaultTemplateName": "Exam paper template",
   "examPaperStructuredZones": "Structured Zones",
   "examPaperFreeDrag": "Free Drag",
   "examPaperHybrid": "Hybrid",
   "examPaperHeaderFields": "Header Fields",
+  "examPaperHeaderSetupHint": "Build the top area students will see before the exam title and metadata.",
+  "examPaperLeftColumn": "Left column",
+  "examPaperCenterColumn": "Center column",
+  "examPaperRightColumn": "Right column",
   "examPaperHeaderLeft1": "Header left line 1",
   "examPaperHeaderLeft2": "Header left line 2",
   "examPaperHeaderLeft3": "Header left line 3",
@@ -6625,6 +6824,7 @@
   "examPaperHeaderRight2": "Header right line 2",
   "examPaperHeaderRight3": "Header right line 3",
   "examPaperMetadataRows": "Metadata Rows",
+  "examPaperMetadataSetupHint": "Add date, course, duration, academic year, and other exam facts under the header.",
   "examPaperMetadataLeft1": "Metadata left line 1",
   "examPaperMetadataLeft2": "Metadata left line 2",
   "examPaperMetadataLeft3": "Metadata left line 3",
@@ -6633,13 +6833,23 @@
   "examPaperMetadataRight3": "Metadata right line 3",
   "examPaperFreeElements": "Free Positioned Fields",
   "examPaperFreeElementsHelp": "Add a text field, then drag it on the paper preview.",
+  "examPaperAddFreeField": "Add free field",
   "examPaperFreeElementText": "Free field text",
   "examPaperTrailingFields": "Trailing And Footer Fields",
+  "examPaperFooterSetupHint": "Set the closing text, examiner line, and page number pattern.",
   "examPaperEndLine": "End line",
   "examPaperGoodLuckLine": "Good luck line",
   "examPaperExaminersLine": "Examiners line",
   "examPaperPageNumberFormat": "Page number format",
+  "examPaperDefaultEndLine": "End of questions",
+  "examPaperDefaultGoodLuckLine": "Good Luck",
+  "examPaperDefaultExaminersLine": "Examiners: ______________________________",
+  "examPaperDefaultPageNumberFormat": "Page {page} of {totalPages}",
   "examPaperLivePreview": "Live Paper Preview",
+  "examPaperPreviewHint": "This preview updates from the fields above and shows how the first printed page will feel.",
+  "examPaperExportSetupHint": "Choose the copy type and what helper lines appear in the generated file.",
+  "examPaperShowTotalMarks": "Exam total marks",
+  "examPaperShowQuestionMarks": "Question marks",
   "examPaperSaveTemplate": "Save Template",
   "examPaperSaveAsTemplate": "Save As Template",
   "examPaperResetDefault": "Reset Default",

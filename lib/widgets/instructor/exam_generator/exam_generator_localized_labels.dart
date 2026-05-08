@@ -160,6 +160,19 @@ String localizedExamMessage(AppLocalizations l10n, String message) {
       return l10n.examValidationMarksNonNegative;
     case 'Item order cannot be negative':
       return l10n.examValidationItemOrderNonNegative;
+    case 'Question is already in draft':
+    case 'Question already exists in draft':
+    case 'This question is already in the draft':
+      return l10n.examValidationQuestionAlreadyInDraft;
+    case 'Select at least one question':
+      return l10n.examSelectQuestionFirst;
+    case 'Failed to move selected questions':
+      return l10n.examMoveQuestionsFailed;
+    case 'Selected questions moved':
+      return l10n.examSelectedQuestionsMoved;
+    case 'Question does not match the draft generation constraints. Provide overrideReason to intentionally override.':
+    case 'Question does not match the draft generation constraints':
+      return l10n.examValidationQuestionOutsideRules;
     case 'Override reason is required':
       return l10n.examOverrideReasonRequired;
     default:

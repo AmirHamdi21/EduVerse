@@ -30053,6 +30053,156 @@ abstract class AppLocalizations {
   /// **'Choose course, chapters, rules, weights, and generate a draft from approved questions.'**
   String get examGeneratorStudioSubtitle;
 
+  /// No description provided for @examGeneratorInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Generator Guide'**
+  String get examGeneratorInfoTitle;
+
+  /// No description provided for @examGeneratorInfoIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Use approved Question Bank questions to create editable exam drafts, review shortages, adjust items, and finalize saved exams.'**
+  String get examGeneratorInfoIntro;
+
+  /// No description provided for @examGeneratorInfoApprovedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only approved Question Bank questions are eligible for generation, so draft or rejected questions stay out of the pool.'**
+  String get examGeneratorInfoApprovedOnly;
+
+  /// No description provided for @examGeneratorInfoRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation rules decide the course, chapter, group, type, difficulty, Bloom level, count, and weight for the questions.'**
+  String get examGeneratorInfoRules;
+
+  /// No description provided for @examGeneratorInfoDraftLifecycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated drafts stay editable first. After review, you can finalize them into saved exam records for publishing and export.'**
+  String get examGeneratorInfoDraftLifecycle;
+
+  /// No description provided for @examGeneratorViewFullGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'View full guide'**
+  String get examGeneratorViewFullGuide;
+
+  /// No description provided for @examGeneratorGuidePoolTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Question pool'**
+  String get examGeneratorGuidePoolTitle;
+
+  /// No description provided for @examGeneratorGuidePoolBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The readiness panel shows approved, grouped, standalone, chapter, and type counts. If availability is low, approve more matching questions or reduce the requested count.'**
+  String get examGeneratorGuidePoolBody;
+
+  /// No description provided for @examGeneratorGuideRulesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation rules'**
+  String get examGeneratorGuideRulesTitle;
+
+  /// No description provided for @examGeneratorGuideRulesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create one or more rules. A rule can pull from the whole course, one chapter, multiple chapters, or a question group while filtering by taxonomy.'**
+  String get examGeneratorGuideRulesBody;
+
+  /// No description provided for @examGeneratorGuideModesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple or sectioned'**
+  String get examGeneratorGuideModesTitle;
+
+  /// No description provided for @examGeneratorGuideModesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple exams produce one ordered list. Sectioned exams let you build named sections with their own instructions, marks, and answer policy.'**
+  String get examGeneratorGuideModesBody;
+
+  /// No description provided for @examGeneratorGuideLifecycleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft lifecycle'**
+  String get examGeneratorGuideLifecycleTitle;
+
+  /// No description provided for @examGeneratorGuideLifecycleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a draft, inspect every selected question, replace weak matches, reorder sections or items, then finalize when the exam is ready.'**
+  String get examGeneratorGuideLifecycleBody;
+
+  /// No description provided for @examGeneratorGuideTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor tips'**
+  String get examGeneratorGuideTipsTitle;
+
+  /// No description provided for @examGeneratorGuideTipsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a version code when you need repeatable drafts, keep groups together for case-study prompts, and check availability before generating.'**
+  String get examGeneratorGuideTipsBody;
+
+  /// No description provided for @examCreateCoreDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Details'**
+  String get examCreateCoreDetails;
+
+  /// No description provided for @examCreateCoreDetailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name the draft and choose the course that owns the approved question pool.'**
+  String get examCreateCoreDetailsHint;
+
+  /// No description provided for @examCreateSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Set marks, timing, grouped-question behavior, versioning, and optional exam text.'**
+  String get examCreateSettingsHint;
+
+  /// No description provided for @examCreateRulesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Define what the generator should pull from the approved pool.'**
+  String get examCreateRulesHint;
+
+  /// No description provided for @examCreateSectionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Build sections, then give each section its own question rules.'**
+  String get examCreateSectionsHint;
+
+  /// No description provided for @examCourseDataLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading chapters and groups for the selected course...'**
+  String get examCourseDataLoading;
+
+  /// No description provided for @examAddRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Add rule'**
+  String get examAddRule;
+
+  /// No description provided for @examAddSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Add section'**
+  String get examAddSection;
+
+  /// No description provided for @examCreateModeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Structure'**
+  String get examCreateModeTitle;
+
   /// No description provided for @examGeneratorNoDrafts.
   ///
   /// In en, this message translates to:
@@ -30077,6 +30227,18 @@ abstract class AppLocalizations {
   /// **'Saved exams will appear here after a draft is finalized.'**
   String get examGeneratorNoSavedExamsMessage;
 
+  /// No description provided for @examGeneratorNoRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No Exams Found'**
+  String get examGeneratorNoRecords;
+
+  /// No description provided for @examGeneratorNoRecordsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam drafts and saved exams that match your filters will appear here.'**
+  String get examGeneratorNoRecordsMessage;
+
   /// No description provided for @examDraftDetails.
   ///
   /// In en, this message translates to:
@@ -30094,6 +30256,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This draft is expired or finalized and cannot be edited.'**
   String get examDraftNotEditable;
+
+  /// No description provided for @examFinalizedDraftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This draft was saved'**
+  String get examFinalizedDraftTitle;
+
+  /// No description provided for @examFinalizedDraftMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The editable draft is now locked because a saved exam snapshot was created from it. Open the saved exam to review, publish, export, or manage lifecycle actions.'**
+  String get examFinalizedDraftMessage;
+
+  /// No description provided for @examFinalizedDraftNoSavedExam.
+  ///
+  /// In en, this message translates to:
+  /// **'This finalized draft does not include a saved exam link. Refresh the list, then open the saved exam record from Saved Exams.'**
+  String get examFinalizedDraftNoSavedExam;
+
+  /// No description provided for @examOpenSavedExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Open saved exam'**
+  String get examOpenSavedExam;
+
+  /// No description provided for @examCreateEditableCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Create editable copy'**
+  String get examCreateEditableCopy;
+
+  /// No description provided for @examFinalizedDraftRecordBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalized source'**
+  String get examFinalizedDraftRecordBadge;
+
+  /// No description provided for @examFinalizedDraftOpensSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens the saved exam snapshot.'**
+  String get examFinalizedDraftOpensSaved;
 
   /// No description provided for @examSavedDetails.
   ///
@@ -31133,6 +31337,12 @@ abstract class AppLocalizations {
   /// **'Chapter {chapterId}: needs {required}, available {available}'**
   String examShortageLine(int chapterId, int required, int available);
 
+  /// No description provided for @examShortageNamedLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{chapter}: needs {required}, available {available}'**
+  String examShortageNamedLine(String chapter, int required, int available);
+
   /// No description provided for @examGenerateDraft.
   ///
   /// In en, this message translates to:
@@ -31156,6 +31366,238 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reorder'**
   String get examDraftReorder;
+
+  /// No description provided for @examDraftBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Build'**
+  String get examDraftBuild;
+
+  /// No description provided for @examDraftReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get examDraftReview;
+
+  /// No description provided for @examDraftOverviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan readiness, issues, section totals, settings, timing, and paper text in one compact view.'**
+  String get examDraftOverviewHint;
+
+  /// No description provided for @examDraftBuildHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit sections, organize questions, and add approved questions from the same workspace.'**
+  String get examDraftBuildHint;
+
+  /// No description provided for @examDraftReorderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag sections or questions to match the order students will see in the final paper.'**
+  String get examDraftReorderHint;
+
+  /// No description provided for @examDraftReorderPoolHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions outside sections stay together as a separate pool.'**
+  String get examDraftReorderPoolHint;
+
+  /// No description provided for @examDraftReorderGroupedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Section questions stay together, so another question cannot split this section in the paper.'**
+  String get examDraftReorderGroupedHint;
+
+  /// No description provided for @examDraftAllQuestionsAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'All questions are assigned to sections.'**
+  String get examDraftAllQuestionsAssigned;
+
+  /// No description provided for @examDraftReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the final checklist before saving or regenerate the draft when the current version needs a fresh pass.'**
+  String get examDraftReviewHint;
+
+  /// No description provided for @examDraftSectionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create or tune section rules without leaving the draft.'**
+  String get examDraftSectionsHint;
+
+  /// No description provided for @examDraftQuestionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Review selected questions, move them between sections, or add more approved questions.'**
+  String get examDraftQuestionsHint;
+
+  /// No description provided for @examDraftNoSections.
+  ///
+  /// In en, this message translates to:
+  /// **'No sections yet'**
+  String get examDraftNoSections;
+
+  /// No description provided for @examDraftNoSectionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a section when this draft needs organized parts such as MCQ, essay, or answer-any groups.'**
+  String get examDraftNoSectionsHint;
+
+  /// No description provided for @examDraftNoQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions yet'**
+  String get examDraftNoQuestions;
+
+  /// No description provided for @examDraftNoQuestionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add approved Question Bank questions to build this draft.'**
+  String get examDraftNoQuestionsHint;
+
+  /// No description provided for @examHideQuestionPicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide picker'**
+  String get examHideQuestionPicker;
+
+  /// No description provided for @examDraftReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Readiness'**
+  String get examDraftReadiness;
+
+  /// No description provided for @examDraftTextContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper text'**
+  String get examDraftTextContent;
+
+  /// No description provided for @examDraftNoValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get examDraftNoValue;
+
+  /// No description provided for @examDraftIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Issues to review'**
+  String get examDraftIssues;
+
+  /// No description provided for @examSectionReviewSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{0 questions} one{1 question} other{{count} questions}} • {marks} marks'**
+  String examSectionReviewSummary(int count, double marks);
+
+  /// No description provided for @examActionReviewImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Review prompt images'**
+  String get examActionReviewImages;
+
+  /// No description provided for @examActionMoveUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Move unassigned questions'**
+  String get examActionMoveUnassigned;
+
+  /// No description provided for @examCandidatePickerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter the approved pool and tap a question to add it to this draft.'**
+  String get examCandidatePickerHint;
+
+  /// No description provided for @examSearchApprovedQuestionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search approved questions'**
+  String get examSearchApprovedQuestionsHint;
+
+  /// No description provided for @examQuestionAlreadyInDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in draft'**
+  String get examQuestionAlreadyInDraft;
+
+  /// No description provided for @examQuestionAlreadyInDraftHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This question is already included in this draft, so it cannot be added again.'**
+  String get examQuestionAlreadyInDraftHint;
+
+  /// No description provided for @examNeedsOverride.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs override'**
+  String get examNeedsOverride;
+
+  /// No description provided for @examNeedsOverrideHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This question is outside the draft\'s original generation rules. You can still add it by giving a reason.'**
+  String get examNeedsOverrideHint;
+
+  /// No description provided for @examRuleMismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it needs override'**
+  String get examRuleMismatchTitle;
+
+  /// No description provided for @examMismatchExpectedType.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected type: {value}'**
+  String examMismatchExpectedType(String value);
+
+  /// No description provided for @examMismatchExpectedDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected difficulty: {value}'**
+  String examMismatchExpectedDifficulty(String value);
+
+  /// No description provided for @examMismatchExpectedBloom.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Bloom level: {value}'**
+  String examMismatchExpectedBloom(String value);
+
+  /// No description provided for @examMismatchExpectedChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected chapter: {value}'**
+  String examMismatchExpectedChapter(String value);
+
+  /// No description provided for @examMismatchExpectedGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected group: {value}'**
+  String examMismatchExpectedGroup(String value);
+
+  /// No description provided for @examAddQuestionOutsideRulesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add question outside rules?'**
+  String get examAddQuestionOutsideRulesTitle;
+
+  /// No description provided for @examAddQuestionOutsideRulesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This question is {type}, {difficulty}, {bloom}. It does not match the draft\'s original generation constraints. To add it anyway, enter a clear override reason so the change is documented.'**
+  String examAddQuestionOutsideRulesBody(
+    String type,
+    String difficulty,
+    String bloom,
+  );
+
+  /// No description provided for @examAddQuestionWithOverride.
+  ///
+  /// In en, this message translates to:
+  /// **'Add with override'**
+  String get examAddQuestionWithOverride;
 
   /// No description provided for @examDraftSave.
   ///
@@ -31589,6 +32031,66 @@ abstract class AppLocalizations {
   /// **'Exam status'**
   String get examStatus;
 
+  /// No description provided for @examFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Filters'**
+  String get examFilters;
+
+  /// No description provided for @examSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search drafts and saved exams'**
+  String get examSearchHint;
+
+  /// No description provided for @examRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam records'**
+  String get examRecords;
+
+  /// No description provided for @examAllRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'All records'**
+  String get examAllRecords;
+
+  /// No description provided for @examDraftRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft records'**
+  String get examDraftRecords;
+
+  /// No description provided for @examSavedRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved records'**
+  String get examSavedRecords;
+
+  /// No description provided for @examDraftRecordBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft record'**
+  String get examDraftRecordBadge;
+
+  /// No description provided for @examSavedRecordBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved exam'**
+  String get examSavedRecordBadge;
+
+  /// No description provided for @examSavedDraftStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved, not published'**
+  String get examSavedDraftStatus;
+
+  /// No description provided for @examActiveFilterCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0 {All filters} one {1 active filter} other {{count} active filters}}'**
+  String examActiveFilterCount(int count);
+
   /// No description provided for @examDateFrom.
   ///
   /// In en, this message translates to:
@@ -31600,6 +32102,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Date to'**
   String get examDateTo;
+
+  /// No description provided for @examExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get examExpires;
 
   /// No description provided for @examDashboardHelp.
   ///
@@ -31697,11 +32205,113 @@ abstract class AppLocalizations {
   /// **'Move selected questions'**
   String get examMoveSelectedQuestions;
 
+  /// No description provided for @examSelectQuestionFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one question first.'**
+  String get examSelectQuestionFirst;
+
+  /// No description provided for @examMoveQuestionsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to move selected questions.'**
+  String get examMoveQuestionsFailed;
+
+  /// No description provided for @examSelectedQuestionsMoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected questions moved.'**
+  String get examSelectedQuestionsMoved;
+
+  /// No description provided for @examSavingOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving new order...'**
+  String get examSavingOrder;
+
+  /// No description provided for @examMovingQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving {count} questions...'**
+  String examMovingQuestions(int count);
+
   /// No description provided for @examSelectedQuestions.
   ///
   /// In en, this message translates to:
   /// **'{count} selected'**
   String examSelectedQuestions(int count);
+
+  /// No description provided for @examUnassignQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassign'**
+  String get examUnassignQuestion;
+
+  /// No description provided for @examQuestionActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Question actions'**
+  String get examQuestionActions;
+
+  /// No description provided for @examQuestionShortNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Q{number}'**
+  String examQuestionShortNumber(int number);
+
+  /// No description provided for @examShowQuestionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Show answer and details'**
+  String get examShowQuestionDetails;
+
+  /// No description provided for @examHideQuestionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide answer and details'**
+  String get examHideQuestionDetails;
+
+  /// No description provided for @examAnswerAndDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer and details'**
+  String get examAnswerAndDetails;
+
+  /// No description provided for @examOrderNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Order {number}'**
+  String examOrderNumber(int number);
+
+  /// No description provided for @examUnassignedQuestionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions not assigned to a section yet. Select them here, then move them into the right section.'**
+  String get examUnassignedQuestionsHint;
+
+  /// No description provided for @examAllQuestionsAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'All questions are assigned'**
+  String get examAllQuestionsAssigned;
+
+  /// No description provided for @examAllQuestionsAssignedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Every draft question belongs to a section. Use Unassign from a section card to return a question here.'**
+  String get examAllQuestionsAssignedHint;
+
+  /// No description provided for @examSectionAssignedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} assigned questions'**
+  String examSectionAssignedQuestions(int count);
+
+  /// No description provided for @examSectionNoAssignedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions assigned to this section yet.'**
+  String get examSectionNoAssignedQuestions;
 
   /// No description provided for @examGroupedPromptShownOnce.
   ///
@@ -31732,6 +32342,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved exams keep snapshots from save time, so later Question Bank edits do not change this exam.'**
   String get examSnapshotHelp;
+
+  /// No description provided for @examSavedOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved exam overview'**
+  String get examSavedOverviewTitle;
+
+  /// No description provided for @examSavedOverviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the fixed snapshot, paper text, sections, and lifecycle actions in one compact view.'**
+  String get examSavedOverviewSubtitle;
+
+  /// No description provided for @examSavedSnapshotLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Bank edits after save will not change this saved exam.'**
+  String get examSavedSnapshotLocked;
+
+  /// No description provided for @examSavedStudentAssignmentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Publishing changes lifecycle status only; it does not assign the exam to students.'**
+  String get examSavedStudentAssignmentNote;
+
+  /// No description provided for @examSavedPaperText.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper text'**
+  String get examSavedPaperText;
+
+  /// No description provided for @examSavedQuestionSnapshotDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot details'**
+  String get examSavedQuestionSnapshotDetails;
+
+  /// No description provided for @examSavedSourceGroupPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Source group prompt'**
+  String get examSavedSourceGroupPrompt;
+
+  /// No description provided for @examSavedQuestionMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Question media'**
+  String get examSavedQuestionMedia;
+
+  /// No description provided for @examSavedGroupMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Group media'**
+  String get examSavedGroupMedia;
+
+  /// No description provided for @examSavedNoSections.
+  ///
+  /// In en, this message translates to:
+  /// **'No sections in this saved exam.'**
+  String get examSavedNoSections;
+
+  /// No description provided for @examSavedNoQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved questions are available.'**
+  String get examSavedNoQuestions;
+
+  /// No description provided for @examSavedUnassignedQuestionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions saved outside any section. They remain in the exam snapshot but are not part of a section.'**
+  String get examSavedUnassignedQuestionsHint;
+
+  /// No description provided for @examGeneratedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated'**
+  String get examGeneratedAt;
+
+  /// No description provided for @examSavedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get examSavedAt;
+
+  /// No description provided for @examLifecycleUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam lifecycle updated.'**
+  String get examLifecycleUpdated;
+
+  /// No description provided for @examLifecycleReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a short reason for the lifecycle log.'**
+  String get examLifecycleReasonHint;
 
   /// No description provided for @examUnassignedQuestions.
   ///
@@ -31948,6 +32654,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Item order cannot be negative.'**
   String get examValidationItemOrderNonNegative;
+
+  /// No description provided for @examValidationQuestionAlreadyInDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'This question is already in the draft.'**
+  String get examValidationQuestionAlreadyInDraft;
+
+  /// No description provided for @examValidationQuestionOutsideRules.
+  ///
+  /// In en, this message translates to:
+  /// **'This question does not match the draft\'s original generation constraints. Use Add with override and enter a reason, or filter the picker to the same type, chapter, difficulty, and Bloom level used by the draft.'**
+  String get examValidationQuestionOutsideRules;
 
   /// No description provided for @enumQuestionWritten.
   ///
@@ -32231,11 +32949,35 @@ abstract class AppLocalizations {
   /// **'Design the printable header, trailing notes, and export format before creating the file.'**
   String get examPaperDesignerSubtitle;
 
+  /// No description provided for @examPaperStepTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Template'**
+  String get examPaperStepTemplate;
+
+  /// No description provided for @examPaperStepContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper text'**
+  String get examPaperStepContent;
+
+  /// No description provided for @examPaperStepExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview and export'**
+  String get examPaperStepExport;
+
   /// No description provided for @examPaperTemplates.
   ///
   /// In en, this message translates to:
   /// **'Paper Templates'**
   String get examPaperTemplates;
+
+  /// No description provided for @examPaperTemplateSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a saved style, name this version, and select how fields sit on the printable paper.'**
+  String get examPaperTemplateSetupHint;
 
   /// No description provided for @examPaperTemplate.
   ///
@@ -32248,6 +32990,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Template Name'**
   String get examPaperTemplateName;
+
+  /// No description provided for @examPaperNoSavedTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved templates for this course yet. Save this setup as a template when it is ready.'**
+  String get examPaperNoSavedTemplates;
+
+  /// No description provided for @examPaperDefaultTemplateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam paper template'**
+  String get examPaperDefaultTemplateName;
 
   /// No description provided for @examPaperStructuredZones.
   ///
@@ -32272,6 +33026,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Header Fields'**
   String get examPaperHeaderFields;
+
+  /// No description provided for @examPaperHeaderSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Build the top area students will see before the exam title and metadata.'**
+  String get examPaperHeaderSetupHint;
+
+  /// No description provided for @examPaperLeftColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Left column'**
+  String get examPaperLeftColumn;
+
+  /// No description provided for @examPaperCenterColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Center column'**
+  String get examPaperCenterColumn;
+
+  /// No description provided for @examPaperRightColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Right column'**
+  String get examPaperRightColumn;
 
   /// No description provided for @examPaperHeaderLeft1.
   ///
@@ -32327,6 +33105,12 @@ abstract class AppLocalizations {
   /// **'Metadata Rows'**
   String get examPaperMetadataRows;
 
+  /// No description provided for @examPaperMetadataSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add date, course, duration, academic year, and other exam facts under the header.'**
+  String get examPaperMetadataSetupHint;
+
   /// No description provided for @examPaperMetadataLeft1.
   ///
   /// In en, this message translates to:
@@ -32375,6 +33159,12 @@ abstract class AppLocalizations {
   /// **'Add a text field, then drag it on the paper preview.'**
   String get examPaperFreeElementsHelp;
 
+  /// No description provided for @examPaperAddFreeField.
+  ///
+  /// In en, this message translates to:
+  /// **'Add free field'**
+  String get examPaperAddFreeField;
+
   /// No description provided for @examPaperFreeElementText.
   ///
   /// In en, this message translates to:
@@ -32386,6 +33176,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Trailing And Footer Fields'**
   String get examPaperTrailingFields;
+
+  /// No description provided for @examPaperFooterSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the closing text, examiner line, and page number pattern.'**
+  String get examPaperFooterSetupHint;
 
   /// No description provided for @examPaperEndLine.
   ///
@@ -32411,11 +33207,59 @@ abstract class AppLocalizations {
   /// **'Page number format'**
   String get examPaperPageNumberFormat;
 
+  /// No description provided for @examPaperDefaultEndLine.
+  ///
+  /// In en, this message translates to:
+  /// **'End of questions'**
+  String get examPaperDefaultEndLine;
+
+  /// No description provided for @examPaperDefaultGoodLuckLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Luck'**
+  String get examPaperDefaultGoodLuckLine;
+
+  /// No description provided for @examPaperDefaultExaminersLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Examiners: ______________________________'**
+  String get examPaperDefaultExaminersLine;
+
+  /// No description provided for @examPaperDefaultPageNumberFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {totalPages}'**
+  String examPaperDefaultPageNumberFormat(Object page, Object totalPages);
+
   /// No description provided for @examPaperLivePreview.
   ///
   /// In en, this message translates to:
   /// **'Live Paper Preview'**
   String get examPaperLivePreview;
+
+  /// No description provided for @examPaperPreviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This preview updates from the fields above and shows how the first printed page will feel.'**
+  String get examPaperPreviewHint;
+
+  /// No description provided for @examPaperExportSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the copy type and what helper lines appear in the generated file.'**
+  String get examPaperExportSetupHint;
+
+  /// No description provided for @examPaperShowTotalMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam total marks'**
+  String get examPaperShowTotalMarks;
+
+  /// No description provided for @examPaperShowQuestionMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Question marks'**
+  String get examPaperShowQuestionMarks;
 
   /// No description provided for @examPaperSaveTemplate.
   ///

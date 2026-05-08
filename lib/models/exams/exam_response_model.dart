@@ -13,6 +13,8 @@ class ExamResponseModel {
     this.footerText,
     this.publishedAt,
     this.archivedAt,
+    this.createdAt,
+    this.updatedAt,
     this.itemCount,
     this.sectionCount,
   });
@@ -28,6 +30,8 @@ class ExamResponseModel {
   final String? footerText;
   final DateTime? publishedAt;
   final DateTime? archivedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final int? itemCount;
   final int? sectionCount;
 
@@ -44,6 +48,8 @@ class ExamResponseModel {
       footerText: _nullableString(json['footerText']),
       publishedAt: _toDate(json['publishedAt']),
       archivedAt: _toDate(json['archivedAt']),
+      createdAt: _toDate(json['createdAt']),
+      updatedAt: _toDate(json['updatedAt']),
       itemCount: _nullableInt(json['itemCount']),
       sectionCount: _nullableInt(json['sectionCount']),
     );

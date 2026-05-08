@@ -117,6 +117,7 @@ import 'package:edu_verse/models/question_bank/question_bank_enums.dart';
 import 'package:edu_verse/screens/instructor/exam_generator/instructor_exam_generator_screen.dart';
 import 'package:edu_verse/screens/instructor/exam_generator/exam_draft_detail_screen.dart';
 import 'package:edu_verse/screens/instructor/exam_generator/exam_generator_create_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_generator_info_screen.dart';
 import 'package:edu_verse/screens/instructor/exam_generator/exam_paper_export_preview_screen.dart';
 import 'package:edu_verse/screens/instructor/exam_generator/exam_saved_detail_screen.dart';
 import 'package:edu_verse/models/assignments/assignment_model.dart'
@@ -842,17 +843,23 @@ class AppRouter {
         path: '/instructor/question-bank',
         builder: (context, state) {
           final query = state.uri.queryParameters;
-          T? enumValue<T>(List<T> values, String? raw, String Function(T) value) {
+          T? enumValue<T>(
+            List<T> values,
+            String? raw,
+            String Function(T) value,
+          ) {
             if (raw == null || raw.isEmpty) return null;
             for (final item in values) {
               if (value(item) == raw) return item;
             }
             return null;
           }
+
           String? firstCsv(String? value) {
             if (value == null || value.isEmpty) return null;
             return value.split(',').first;
           }
+
           return InstructorQuestionBankScreen(
             initialCourseId: _parsePositiveInt(query['courseId']),
             initialChapterId: _parsePositiveInt(
@@ -988,6 +995,10 @@ class AppRouter {
       GoRoute(
         path: '/instructor/exam-generator/create',
         builder: (context, state) => const ExamGeneratorCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/info',
+        builder: (context, state) => const ExamGeneratorInfoScreen(),
       ),
       GoRoute(
         path: '/instructor/exam-generator/drafts/:draftId',

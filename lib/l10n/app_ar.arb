@@ -6155,13 +6155,47 @@
   "examGeneratorCreateDraft": "إنشاء مسودة امتحان",
   "examGeneratorStudioTitle": "استوديو الامتحان",
   "examGeneratorStudioSubtitle": "اختر المقرر والفصول والقواعد والأوزان وأنشئ مسودة من الأسئلة المعتمدة.",
+  "examGeneratorInfoTitle": "دليل مولد الامتحانات",
+  "examGeneratorInfoIntro": "استخدم أسئلة بنك الأسئلة المعتمدة لإنشاء مسودات قابلة للتعديل، ومراجعة النواقص، وضبط العناصر، ثم إنهاء الامتحانات المحفوظة.",
+  "examGeneratorInfoApprovedOnly": "تدخل أسئلة بنك الأسئلة المعتمدة فقط في التوليد، لذلك لا تُستخدم الأسئلة المسودة أو المرفوضة.",
+  "examGeneratorInfoRules": "تحدد قواعد التوليد المقرر والفصل والمجموعة والنوع والصعوبة ومستوى بلوم والعدد والوزن.",
+  "examGeneratorInfoDraftLifecycle": "تبقى المسودات المولدة قابلة للتعديل أولاً. بعد المراجعة يمكنك إنهاؤها كامتحانات محفوظة للنشر والتصدير.",
+  "examGeneratorViewFullGuide": "عرض الدليل الكامل",
+  "examGeneratorGuidePoolTitle": "مخزون الأسئلة",
+  "examGeneratorGuidePoolBody": "تعرض لوحة الجاهزية أعداد الأسئلة المعتمدة والمجمعة والمستقلة حسب الفصل والنوع. إذا كان التوفر منخفضاً فاعتمد أسئلة مطابقة أكثر أو قلل العدد المطلوب.",
+  "examGeneratorGuideRulesTitle": "قواعد التوليد",
+  "examGeneratorGuideRulesBody": "أنشئ قاعدة واحدة أو أكثر. يمكن للقاعدة السحب من المقرر كله أو فصل واحد أو عدة فصول أو مجموعة أسئلة مع فلاتر التصنيف.",
+  "examGeneratorGuideModesTitle": "بسيط أو بأقسام",
+  "examGeneratorGuideModesBody": "ينتج الامتحان البسيط قائمة واحدة مرتبة. أما الامتحان بالأقسام فيتيح إنشاء أقسام لها تعليمات ودرجات وسياسة إجابة خاصة.",
+  "examGeneratorGuideLifecycleTitle": "دورة حياة المسودة",
+  "examGeneratorGuideLifecycleBody": "ولّد مسودة، راجع كل سؤال محدد، استبدل الاختيارات الضعيفة، أعد ترتيب الأقسام أو العناصر، ثم أنهِها عندما يصبح الامتحان جاهزاً.",
+  "examGeneratorGuideTipsTitle": "نصائح للمدرس",
+  "examGeneratorGuideTipsBody": "استخدم رمز نسخة عندما تحتاج إلى مسودات قابلة للتكرار، وأبقِ المجموعات معاً لأسئلة الحالة أو القطعة، وراجع التوفر قبل التوليد.",
+  "examCreateCoreDetails": "التفاصيل الأساسية",
+  "examCreateCoreDetailsHint": "سمّ المسودة واختر المقرر الذي يملك مخزون الأسئلة المعتمدة.",
+  "examCreateSettingsHint": "اضبط الدرجات والوقت وسلوك الأسئلة المجمعة وإصدار الامتحان والنصوص الاختيارية.",
+  "examCreateRulesHint": "حدد ما يجب أن يسحبه المولد من مخزون الأسئلة المعتمدة.",
+  "examCreateSectionsHint": "أنشئ الأقسام ثم امنح كل قسم قواعد الأسئلة الخاصة به.",
+  "examCourseDataLoading": "جارٍ تحميل الفصول والمجموعات للمقرر المحدد...",
+  "examAddRule": "إضافة قاعدة",
+  "examAddSection": "إضافة قسم",
+  "examCreateModeTitle": "هيكل الامتحان",
   "examGeneratorNoDrafts": "لا توجد مسودات",
   "examGeneratorNoDraftsMessage": "ستظهر مسودات الامتحانات هنا بعد إنشائها.",
   "examGeneratorNoSavedExams": "لا توجد امتحانات محفوظة",
   "examGeneratorNoSavedExamsMessage": "ستظهر الامتحانات المحفوظة هنا بعد إنهاء المسودة.",
+  "examGeneratorNoRecords": "لا توجد امتحانات",
+  "examGeneratorNoRecordsMessage": "ستظهر مسودات الامتحانات والامتحانات المحفوظة المطابقة للفلاتر هنا.",
   "examDraftDetails": "تفاصيل مسودة الامتحان",
   "examDraftEditable": "هذه المسودة مفتوحة وقابلة للتعديل.",
   "examDraftNotEditable": "هذه المسودة منتهية أو نهائية ولا يمكن تعديلها.",
+  "examFinalizedDraftTitle": "تم حفظ هذه المسودة",
+  "examFinalizedDraftMessage": "تم قفل المسودة القابلة للتعديل لأن لقطة امتحان محفوظة أُنشئت منها. افتح الامتحان المحفوظ للمراجعة أو النشر أو التصدير أو إدارة الحالة.",
+  "examFinalizedDraftNoSavedExam": "هذه المسودة النهائية لا تحتوي على رابط امتحان محفوظ. حدّث القائمة ثم افتح سجل الامتحان المحفوظ من الامتحانات المحفوظة.",
+  "examOpenSavedExam": "فتح الامتحان المحفوظ",
+  "examCreateEditableCopy": "إنشاء نسخة قابلة للتعديل",
+  "examFinalizedDraftRecordBadge": "مصدر نهائي",
+  "examFinalizedDraftOpensSaved": "يفتح لقطة الامتحان المحفوظة.",
   "examSavedDetails": "تفاصيل الامتحان المحفوظ",
   "examSavedPreviewUnavailableTitle": "معاينة العناصر غير متاحة",
   "examSavedPreviewUnavailable": "الخادم الحالي يعيد تفاصيل مختصرة للامتحان المحفوظ فقط، لذلك معاينة الأسئلة غير متاحة.",
@@ -6390,10 +6424,94 @@
       "available": {"type": "int"}
     }
   },
+  "examShortageNamedLine": "{chapter}: مطلوب {required}، متاح {available}",
+  "@examShortageNamedLine": {
+    "placeholders": {
+      "chapter": {"type": "String"},
+      "required": {"type": "int"},
+      "available": {"type": "int"}
+    }
+  },
   "examGenerateDraft": "توليد المسودة",
   "examDraftOverview": "نظرة عامة",
   "examDraftQuestions": "الأسئلة",
   "examDraftReorder": "إعادة الترتيب",
+  "examDraftBuild": "البناء",
+  "examDraftReview": "المراجعة",
+  "examDraftOverviewHint": "راجع الجاهزية والملاحظات ومجاميع الأقسام والإعدادات والوقت ونص الورقة في عرض مختصر واحد.",
+  "examDraftBuildHint": "عدّل الأقسام ونظّم الأسئلة وأضف أسئلة معتمدة من نفس مساحة العمل.",
+  "examDraftReorderHint": "اسحب الأقسام أو الأسئلة لتطابق الترتيب الذي سيراه الطلاب في الورقة النهائية.",
+  "examDraftReorderPoolHint": "الأسئلة خارج الأقسام تبقى معا كمجموعة منفصلة.",
+  "examDraftReorderGroupedHint": "أسئلة القسم تبقى معا، لذلك لا يمكن لسؤال آخر أن يفصل بينها في الورقة.",
+  "examDraftAllQuestionsAssigned": "كل الأسئلة موزعة على الأقسام.",
+  "examDraftReviewHint": "أكمل قائمة المراجعة النهائية قبل الحفظ أو أعد توليد المسودة عندما تحتاج النسخة الحالية إلى محاولة جديدة.",
+  "examDraftSectionsHint": "أنشئ أو عدّل قواعد الأقسام دون مغادرة المسودة.",
+  "examDraftQuestionsHint": "راجع الأسئلة المختارة وانقلها بين الأقسام أو أضف المزيد من الأسئلة المعتمدة.",
+  "examDraftNoSections": "لا توجد أقسام بعد",
+  "examDraftNoSectionsHint": "أنشئ قسمًا عندما تحتاج المسودة إلى أجزاء منظمة مثل الاختيار من متعدد أو المقالي أو أجب عن أي عدد.",
+  "examDraftNoQuestions": "لا توجد أسئلة بعد",
+  "examDraftNoQuestionsHint": "أضف أسئلة معتمدة من بنك الأسئلة لبناء هذه المسودة.",
+  "examHideQuestionPicker": "إخفاء الاختيار",
+  "examDraftReadiness": "الجاهزية",
+  "examDraftTextContent": "نص الورقة",
+  "examDraftNoValue": "غير محدد",
+  "examDraftIssues": "نقاط تحتاج مراجعة",
+  "examSectionReviewSummary": "{count, plural, =0{0 أسئلة} one{سؤال واحد} two{سؤالان} few{{count} أسئلة} many{{count} سؤالًا} other{{count} سؤال}} • {marks} درجة",
+  "@examSectionReviewSummary": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "marks": {"type": "double"}
+    }
+  },
+  "examActionReviewImages": "مراجعة صور الأسئلة",
+  "examActionMoveUnassigned": "نقل الأسئلة غير المخصصة",
+  "examCandidatePickerHint": "صفِّ المخزون المعتمد واضغط على سؤال لإضافته إلى هذه المسودة.",
+  "examSearchApprovedQuestionsHint": "ابحث في الأسئلة المعتمدة",
+  "examQuestionAlreadyInDraft": "موجود في المسودة",
+  "examQuestionAlreadyInDraftHint": "هذا السؤال موجود بالفعل في هذه المسودة، لذلك لا يمكن إضافته مرة أخرى.",
+  "examNeedsOverride": "يحتاج تجاوزًا",
+  "examNeedsOverrideHint": "هذا السؤال خارج قواعد التوليد الأصلية للمسودة. يمكنك إضافته إذا كتبت سببًا واضحًا.",
+  "examRuleMismatchTitle": "سبب الحاجة إلى التجاوز",
+  "examMismatchExpectedType": "النوع المتوقع: {value}",
+  "@examMismatchExpectedType": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedDifficulty": "الصعوبة المتوقعة: {value}",
+  "@examMismatchExpectedDifficulty": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedBloom": "مستوى بلوم المتوقع: {value}",
+  "@examMismatchExpectedBloom": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedChapter": "الفصل المتوقع: {value}",
+  "@examMismatchExpectedChapter": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examMismatchExpectedGroup": "المجموعة المتوقعة: {value}",
+  "@examMismatchExpectedGroup": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "examAddQuestionOutsideRulesTitle": "إضافة سؤال خارج القواعد؟",
+  "examAddQuestionOutsideRulesBody": "هذا السؤال نوعه {type}، وصعوبته {difficulty}، ومستوى بلوم {bloom}. لا يطابق قيود التوليد الأصلية للمسودة. لإضافته رغم ذلك، أدخل سبب تجاوز واضحًا لتوثيق التغيير.",
+  "@examAddQuestionOutsideRulesBody": {
+    "placeholders": {
+      "type": {"type": "String"},
+      "difficulty": {"type": "String"},
+      "bloom": {"type": "String"}
+    }
+  },
+  "examAddQuestionWithOverride": "إضافة مع تجاوز",
   "examDraftSave": "حفظ",
   "examAddQuestion": "إضافة سؤال",
   "examReplaceQuestion": "استبدال السؤال",
@@ -6488,8 +6606,24 @@
   "examApprovedPool": "المخزون المعتمد",
   "examDraftStatus": "حالة المسودة",
   "examStatus": "حالة الامتحان",
+  "examFilters": "فلاتر الامتحان",
+  "examSearchHint": "ابحث في المسودات والامتحانات المحفوظة",
+  "examRecords": "سجلات الامتحانات",
+  "examAllRecords": "كل السجلات",
+  "examDraftRecords": "سجلات المسودات",
+  "examSavedRecords": "سجلات الامتحانات المحفوظة",
+  "examDraftRecordBadge": "سجل مسودة",
+  "examSavedRecordBadge": "امتحان محفوظ",
+  "examSavedDraftStatus": "محفوظ، غير منشور",
+  "examActiveFilterCount": "{count, plural, =0 {كل الفلاتر} one {فلتر واحد نشط} two {فلتران نشطان} few {{count} فلاتر نشطة} many {{count} فلترًا نشطًا} other {{count} فلتر نشط}}",
+  "@examActiveFilterCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "examDateFrom": "التاريخ من",
   "examDateTo": "التاريخ إلى",
+  "examExpires": "تنتهي في",
   "examDashboardHelp": "المسودات قابلة للتعديل لمدة 24 ساعة. الامتحانات المحفوظة سجلات نهائية. التوليد يستخدم الأسئلة المعتمدة فقط.",
   "examNoApprovedPoolHelp": "لا توجد أسئلة معتمدة جاهزة للتوليد لهذا المقرر.",
   "examValidation": "التحقق",
@@ -6512,17 +6646,70 @@
   "examReshuffleSection": "إعادة خلط القسم",
   "examNormalizeSectionMarks": "توزيع درجات القسم تلقائيًا",
   "examMoveSelectedQuestions": "نقل الأسئلة المحددة",
+  "examSelectQuestionFirst": "حدد سؤالًا واحدًا على الأقل أولًا.",
+  "examMoveQuestionsFailed": "تعذر نقل الأسئلة المحددة.",
+  "examSelectedQuestionsMoved": "تم نقل الأسئلة المحددة.",
+  "examSavingOrder": "جارٍ حفظ الترتيب الجديد...",
+  "examMovingQuestions": "جارٍ نقل {count} أسئلة...",
+  "@examMovingQuestions": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "examSelectedQuestions": "{count} محدد",
   "@examSelectedQuestions": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
+  "examUnassignQuestion": "إلغاء التخصيص",
+  "examQuestionActions": "إجراءات السؤال",
+  "examQuestionShortNumber": "س{number}",
+  "@examQuestionShortNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "examShowQuestionDetails": "عرض الإجابة والتفاصيل",
+  "examHideQuestionDetails": "إخفاء الإجابة والتفاصيل",
+  "examAnswerAndDetails": "الإجابة والتفاصيل",
+  "examOrderNumber": "الترتيب {number}",
+  "@examOrderNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "examUnassignedQuestionsHint": "أسئلة لم تُخصص لقسم بعد. حددها من هنا ثم انقلها إلى القسم المناسب.",
+  "examAllQuestionsAssigned": "كل الأسئلة مخصصة",
+  "examAllQuestionsAssignedHint": "كل أسئلة المسودة داخل أقسام. استخدم إلغاء التخصيص من بطاقة القسم لإرجاع سؤال إلى هنا.",
+  "examSectionAssignedQuestions": "{count} أسئلة مخصصة",
+  "@examSectionAssignedQuestions": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "examSectionNoAssignedQuestions": "لا توجد أسئلة مخصصة لهذا القسم بعد.",
   "examGroupedPromptShownOnce": "يظهر نص المجموعة مرة واحدة للأسئلة التالية.",
   "examEditSourceQuestionWarning": "تعديل السؤال الأصلي في بنك الأسئلة قد يعيده إلى مسودة وقد يؤثر في تحقق هذه المسودة. هل تريد المتابعة؟",
   "examOutsideOriginalRules": "خارج القواعد الأصلية",
   "examOverrideReasonHelper": "إذا كان هذا الاستبدال خارج قواعد التوليد الأصلية، اشرح السبب. اتركه فارغًا فقط إذا كان لا يزال يطابق القاعدة المقصودة.",
   "examSnapshotHelp": "الامتحانات المحفوظة تحتفظ بلقطات وقت الحفظ، لذلك لا تغيّر تعديلات بنك الأسئلة اللاحقة هذا الامتحان.",
+  "examSavedOverviewTitle": "نظرة عامة على الامتحان المحفوظ",
+  "examSavedOverviewSubtitle": "راجع اللقطة الثابتة ونص الورقة والأقسام وإجراءات الحالة في عرض واحد مختصر.",
+  "examSavedSnapshotLocked": "تعديلات بنك الأسئلة بعد الحفظ لن تغيّر هذا الامتحان المحفوظ.",
+  "examSavedStudentAssignmentNote": "النشر يغيّر حالة الامتحان فقط؛ ولا يعيّنه للطلاب.",
+  "examSavedPaperText": "نص الورقة",
+  "examSavedQuestionSnapshotDetails": "تفاصيل اللقطة",
+  "examSavedSourceGroupPrompt": "نص مجموعة المصدر",
+  "examSavedQuestionMedia": "وسائط السؤال",
+  "examSavedGroupMedia": "وسائط المجموعة",
+  "examSavedNoSections": "لا توجد أقسام في هذا الامتحان المحفوظ.",
+  "examSavedNoQuestions": "لا توجد أسئلة محفوظة متاحة.",
+  "examSavedUnassignedQuestionsHint": "أسئلة حُفظت خارج أي قسم. تبقى ضمن لقطة الامتحان لكنها ليست جزءًا من قسم.",
+  "examGeneratedAt": "تم التوليد",
+  "examSavedAt": "تم الحفظ",
+  "examLifecycleUpdated": "تم تحديث حالة الامتحان.",
+  "examLifecycleReasonHint": "أضف سببًا مختصرًا لسجل تغيير الحالة.",
   "examUnassignedQuestions": "أسئلة غير مخصصة",
   "examQuestionSnapshot": "لقطة السؤال",
   "examLifecycleReason": "سبب تغيير الحالة",
@@ -6559,6 +6746,8 @@
   "examValidationWeightUnitsNonNegative": "لا يمكن أن تكون وحدات الوزن سالبة.",
   "examValidationMarksNonNegative": "لا يمكن أن تكون الدرجات سالبة.",
   "examValidationItemOrderNonNegative": "لا يمكن أن يكون ترتيب السؤال سالبًا.",
+  "examValidationQuestionAlreadyInDraft": "هذا السؤال موجود بالفعل في المسودة.",
+  "examValidationQuestionOutsideRules": "هذا السؤال لا يطابق قيود التوليد الأصلية للمسودة. استخدم إضافة مع تجاوز واكتب السبب، أو صفِّ الاختيار لنفس النوع والفصل والصعوبة ومستوى بلوم المستخدم في المسودة.",
   "enumQuestionWritten": "كتابي",
   "enumQuestionMcq": "اختيار من متعدد",
   "enumQuestionTrueFalse": "صح / خطأ",
@@ -6606,13 +6795,23 @@
   "enumAnswerAny": "الإجابة على أي عدد",
   "examPaperDesignerTitle": "مصمم ورقة الامتحان",
   "examPaperDesignerSubtitle": "صمم رأس الورقة والنهاية وخيارات التصدير قبل إنشاء الملف.",
+  "examPaperStepTemplate": "القالب",
+  "examPaperStepContent": "نص الورقة",
+  "examPaperStepExport": "المعاينة والتصدير",
   "examPaperTemplates": "قوالب الورق",
+  "examPaperTemplateSetupHint": "اختر نمطا محفوظا، وسم هذه النسخة، وحدد طريقة وضع الحقول في الورقة المطبوعة.",
   "examPaperTemplate": "قالب الورقة",
   "examPaperTemplateName": "اسم القالب",
+  "examPaperNoSavedTemplates": "لا توجد قوالب محفوظة لهذه المادة بعد. احفظ هذا الإعداد كقالب عندما يصبح جاهزا.",
+  "examPaperDefaultTemplateName": "قالب ورقة الامتحان",
   "examPaperStructuredZones": "مناطق منظمة",
   "examPaperFreeDrag": "سحب حر",
   "examPaperHybrid": "مختلط",
   "examPaperHeaderFields": "حقول الرأس",
+  "examPaperHeaderSetupHint": "أنشئ المنطقة العلوية التي يراها الطلاب قبل عنوان الامتحان وبياناته.",
+  "examPaperLeftColumn": "العمود الأيسر",
+  "examPaperCenterColumn": "العمود الأوسط",
+  "examPaperRightColumn": "العمود الأيمن",
   "examPaperHeaderLeft1": "سطر الرأس الأيسر 1",
   "examPaperHeaderLeft2": "سطر الرأس الأيسر 2",
   "examPaperHeaderLeft3": "سطر الرأس الأيسر 3",
@@ -6622,6 +6821,7 @@
   "examPaperHeaderRight2": "سطر الرأس الأيمن 2",
   "examPaperHeaderRight3": "سطر الرأس الأيمن 3",
   "examPaperMetadataRows": "سطور البيانات",
+  "examPaperMetadataSetupHint": "أضف التاريخ والمادة والمدة والعام الجامعي وبيانات الامتحان الأخرى أسفل الرأس.",
   "examPaperMetadataLeft1": "بيانات يسار 1",
   "examPaperMetadataLeft2": "بيانات يسار 2",
   "examPaperMetadataLeft3": "بيانات يسار 3",
@@ -6630,13 +6830,23 @@
   "examPaperMetadataRight3": "بيانات يمين 3",
   "examPaperFreeElements": "حقول حرة الموضع",
   "examPaperFreeElementsHelp": "أضف حقلا نصيا ثم اسحبه داخل معاينة الورقة.",
+  "examPaperAddFreeField": "إضافة حقل حر",
   "examPaperFreeElementText": "نص الحقل الحر",
   "examPaperTrailingFields": "حقول النهاية والتذييل",
+  "examPaperFooterSetupHint": "حدد نص النهاية وسطر الممتحنين ونمط ترقيم الصفحات.",
   "examPaperEndLine": "سطر النهاية",
   "examPaperGoodLuckLine": "سطر التوفيق",
   "examPaperExaminersLine": "سطر الممتحنين",
   "examPaperPageNumberFormat": "صيغة رقم الصفحة",
+  "examPaperDefaultEndLine": "نهاية الأسئلة",
+  "examPaperDefaultGoodLuckLine": "بالتوفيق",
+  "examPaperDefaultExaminersLine": "الممتحنون: ______________________________",
+  "examPaperDefaultPageNumberFormat": "صفحة {page} من {totalPages}",
   "examPaperLivePreview": "معاينة الورقة",
+  "examPaperPreviewHint": "تتحدث هذه المعاينة من الحقول بالأعلى وتوضح شكل الصفحة الأولى عند الطباعة.",
+  "examPaperExportSetupHint": "اختر نوع النسخة وما هي السطور المساعدة التي ستظهر في الملف الناتج.",
+  "examPaperShowTotalMarks": "إجمالي درجات الامتحان",
+  "examPaperShowQuestionMarks": "درجات الأسئلة",
   "examPaperSaveTemplate": "حفظ القالب",
   "examPaperSaveAsTemplate": "حفظ كقالب",
   "examPaperResetDefault": "استعادة الافتراضي",

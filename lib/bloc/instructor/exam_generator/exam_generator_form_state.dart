@@ -15,6 +15,7 @@ class ExamGeneratorFormState extends Equatable {
     this.isLoading = false,
     this.isSubmitting = false,
     this.isCheckingAvailability = false,
+    this.isLoadingCourseData = false,
     this.courses = const <TeachingCourseModel>[],
     this.chapters = const <CourseChapterModel>[],
     this.groups = const <QuestionBankGroupModel>[],
@@ -41,6 +42,7 @@ class ExamGeneratorFormState extends Equatable {
   final bool isLoading;
   final bool isSubmitting;
   final bool isCheckingAvailability;
+  final bool isLoadingCourseData;
   final List<TeachingCourseModel> courses;
   final List<CourseChapterModel> chapters;
   final List<QuestionBankGroupModel> groups;
@@ -67,6 +69,7 @@ class ExamGeneratorFormState extends Equatable {
     bool? isLoading,
     bool? isSubmitting,
     bool? isCheckingAvailability,
+    bool? isLoadingCourseData,
     List<TeachingCourseModel>? courses,
     List<CourseChapterModel>? chapters,
     List<QuestionBankGroupModel>? groups,
@@ -101,6 +104,7 @@ class ExamGeneratorFormState extends Equatable {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isCheckingAvailability:
           isCheckingAvailability ?? this.isCheckingAvailability,
+      isLoadingCourseData: isLoadingCourseData ?? this.isLoadingCourseData,
       courses: courses ?? this.courses,
       chapters: chapters ?? this.chapters,
       groups: groups ?? this.groups,
@@ -134,6 +138,7 @@ class ExamGeneratorFormState extends Equatable {
     isLoading,
     isSubmitting,
     isCheckingAvailability,
+    isLoadingCourseData,
     courses,
     chapters,
     groups,

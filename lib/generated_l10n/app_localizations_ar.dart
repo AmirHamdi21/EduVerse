@@ -15657,6 +15657,95 @@ class AppLocalizationsAr extends AppLocalizations {
       'اختر المقرر والفصول والقواعد والأوزان وأنشئ مسودة من الأسئلة المعتمدة.';
 
   @override
+  String get examGeneratorInfoTitle => 'دليل مولد الامتحانات';
+
+  @override
+  String get examGeneratorInfoIntro =>
+      'استخدم أسئلة بنك الأسئلة المعتمدة لإنشاء مسودات قابلة للتعديل، ومراجعة النواقص، وضبط العناصر، ثم إنهاء الامتحانات المحفوظة.';
+
+  @override
+  String get examGeneratorInfoApprovedOnly =>
+      'تدخل أسئلة بنك الأسئلة المعتمدة فقط في التوليد، لذلك لا تُستخدم الأسئلة المسودة أو المرفوضة.';
+
+  @override
+  String get examGeneratorInfoRules =>
+      'تحدد قواعد التوليد المقرر والفصل والمجموعة والنوع والصعوبة ومستوى بلوم والعدد والوزن.';
+
+  @override
+  String get examGeneratorInfoDraftLifecycle =>
+      'تبقى المسودات المولدة قابلة للتعديل أولاً. بعد المراجعة يمكنك إنهاؤها كامتحانات محفوظة للنشر والتصدير.';
+
+  @override
+  String get examGeneratorViewFullGuide => 'عرض الدليل الكامل';
+
+  @override
+  String get examGeneratorGuidePoolTitle => 'مخزون الأسئلة';
+
+  @override
+  String get examGeneratorGuidePoolBody =>
+      'تعرض لوحة الجاهزية أعداد الأسئلة المعتمدة والمجمعة والمستقلة حسب الفصل والنوع. إذا كان التوفر منخفضاً فاعتمد أسئلة مطابقة أكثر أو قلل العدد المطلوب.';
+
+  @override
+  String get examGeneratorGuideRulesTitle => 'قواعد التوليد';
+
+  @override
+  String get examGeneratorGuideRulesBody =>
+      'أنشئ قاعدة واحدة أو أكثر. يمكن للقاعدة السحب من المقرر كله أو فصل واحد أو عدة فصول أو مجموعة أسئلة مع فلاتر التصنيف.';
+
+  @override
+  String get examGeneratorGuideModesTitle => 'بسيط أو بأقسام';
+
+  @override
+  String get examGeneratorGuideModesBody =>
+      'ينتج الامتحان البسيط قائمة واحدة مرتبة. أما الامتحان بالأقسام فيتيح إنشاء أقسام لها تعليمات ودرجات وسياسة إجابة خاصة.';
+
+  @override
+  String get examGeneratorGuideLifecycleTitle => 'دورة حياة المسودة';
+
+  @override
+  String get examGeneratorGuideLifecycleBody =>
+      'ولّد مسودة، راجع كل سؤال محدد، استبدل الاختيارات الضعيفة، أعد ترتيب الأقسام أو العناصر، ثم أنهِها عندما يصبح الامتحان جاهزاً.';
+
+  @override
+  String get examGeneratorGuideTipsTitle => 'نصائح للمدرس';
+
+  @override
+  String get examGeneratorGuideTipsBody =>
+      'استخدم رمز نسخة عندما تحتاج إلى مسودات قابلة للتكرار، وأبقِ المجموعات معاً لأسئلة الحالة أو القطعة، وراجع التوفر قبل التوليد.';
+
+  @override
+  String get examCreateCoreDetails => 'التفاصيل الأساسية';
+
+  @override
+  String get examCreateCoreDetailsHint =>
+      'سمّ المسودة واختر المقرر الذي يملك مخزون الأسئلة المعتمدة.';
+
+  @override
+  String get examCreateSettingsHint =>
+      'اضبط الدرجات والوقت وسلوك الأسئلة المجمعة وإصدار الامتحان والنصوص الاختيارية.';
+
+  @override
+  String get examCreateRulesHint =>
+      'حدد ما يجب أن يسحبه المولد من مخزون الأسئلة المعتمدة.';
+
+  @override
+  String get examCreateSectionsHint =>
+      'أنشئ الأقسام ثم امنح كل قسم قواعد الأسئلة الخاصة به.';
+
+  @override
+  String get examCourseDataLoading =>
+      'جارٍ تحميل الفصول والمجموعات للمقرر المحدد...';
+
+  @override
+  String get examAddRule => 'إضافة قاعدة';
+
+  @override
+  String get examAddSection => 'إضافة قسم';
+
+  @override
+  String get examCreateModeTitle => 'هيكل الامتحان';
+
+  @override
   String get examGeneratorNoDrafts => 'لا توجد مسودات';
 
   @override
@@ -15671,6 +15760,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'ستظهر الامتحانات المحفوظة هنا بعد إنهاء المسودة.';
 
   @override
+  String get examGeneratorNoRecords => 'لا توجد امتحانات';
+
+  @override
+  String get examGeneratorNoRecordsMessage =>
+      'ستظهر مسودات الامتحانات والامتحانات المحفوظة المطابقة للفلاتر هنا.';
+
+  @override
   String get examDraftDetails => 'تفاصيل مسودة الامتحان';
 
   @override
@@ -15679,6 +15775,29 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get examDraftNotEditable =>
       'هذه المسودة منتهية أو نهائية ولا يمكن تعديلها.';
+
+  @override
+  String get examFinalizedDraftTitle => 'تم حفظ هذه المسودة';
+
+  @override
+  String get examFinalizedDraftMessage =>
+      'تم قفل المسودة القابلة للتعديل لأن لقطة امتحان محفوظة أُنشئت منها. افتح الامتحان المحفوظ للمراجعة أو النشر أو التصدير أو إدارة الحالة.';
+
+  @override
+  String get examFinalizedDraftNoSavedExam =>
+      'هذه المسودة النهائية لا تحتوي على رابط امتحان محفوظ. حدّث القائمة ثم افتح سجل الامتحان المحفوظ من الامتحانات المحفوظة.';
+
+  @override
+  String get examOpenSavedExam => 'فتح الامتحان المحفوظ';
+
+  @override
+  String get examCreateEditableCopy => 'إنشاء نسخة قابلة للتعديل';
+
+  @override
+  String get examFinalizedDraftRecordBadge => 'مصدر نهائي';
+
+  @override
+  String get examFinalizedDraftOpensSaved => 'يفتح لقطة الامتحان المحفوظة.';
 
   @override
   String get examSavedDetails => 'تفاصيل الامتحان المحفوظ';
@@ -16267,6 +16386,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String examShortageNamedLine(String chapter, int required, int available) {
+    return '$chapter: مطلوب $required، متاح $available';
+  }
+
+  @override
   String get examGenerateDraft => 'توليد المسودة';
 
   @override
@@ -16277,6 +16401,161 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get examDraftReorder => 'إعادة الترتيب';
+
+  @override
+  String get examDraftBuild => 'البناء';
+
+  @override
+  String get examDraftReview => 'المراجعة';
+
+  @override
+  String get examDraftOverviewHint =>
+      'راجع الجاهزية والملاحظات ومجاميع الأقسام والإعدادات والوقت ونص الورقة في عرض مختصر واحد.';
+
+  @override
+  String get examDraftBuildHint =>
+      'عدّل الأقسام ونظّم الأسئلة وأضف أسئلة معتمدة من نفس مساحة العمل.';
+
+  @override
+  String get examDraftReorderHint =>
+      'اسحب الأقسام أو الأسئلة لتطابق الترتيب الذي سيراه الطلاب في الورقة النهائية.';
+
+  @override
+  String get examDraftReorderPoolHint =>
+      'الأسئلة خارج الأقسام تبقى معا كمجموعة منفصلة.';
+
+  @override
+  String get examDraftReorderGroupedHint =>
+      'أسئلة القسم تبقى معا، لذلك لا يمكن لسؤال آخر أن يفصل بينها في الورقة.';
+
+  @override
+  String get examDraftAllQuestionsAssigned => 'كل الأسئلة موزعة على الأقسام.';
+
+  @override
+  String get examDraftReviewHint =>
+      'أكمل قائمة المراجعة النهائية قبل الحفظ أو أعد توليد المسودة عندما تحتاج النسخة الحالية إلى محاولة جديدة.';
+
+  @override
+  String get examDraftSectionsHint =>
+      'أنشئ أو عدّل قواعد الأقسام دون مغادرة المسودة.';
+
+  @override
+  String get examDraftQuestionsHint =>
+      'راجع الأسئلة المختارة وانقلها بين الأقسام أو أضف المزيد من الأسئلة المعتمدة.';
+
+  @override
+  String get examDraftNoSections => 'لا توجد أقسام بعد';
+
+  @override
+  String get examDraftNoSectionsHint =>
+      'أنشئ قسمًا عندما تحتاج المسودة إلى أجزاء منظمة مثل الاختيار من متعدد أو المقالي أو أجب عن أي عدد.';
+
+  @override
+  String get examDraftNoQuestions => 'لا توجد أسئلة بعد';
+
+  @override
+  String get examDraftNoQuestionsHint =>
+      'أضف أسئلة معتمدة من بنك الأسئلة لبناء هذه المسودة.';
+
+  @override
+  String get examHideQuestionPicker => 'إخفاء الاختيار';
+
+  @override
+  String get examDraftReadiness => 'الجاهزية';
+
+  @override
+  String get examDraftTextContent => 'نص الورقة';
+
+  @override
+  String get examDraftNoValue => 'غير محدد';
+
+  @override
+  String get examDraftIssues => 'نقاط تحتاج مراجعة';
+
+  @override
+  String examSectionReviewSummary(int count, double marks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سؤال',
+      many: '$count سؤالًا',
+      few: '$count أسئلة',
+      two: 'سؤالان',
+      one: 'سؤال واحد',
+      zero: '0 أسئلة',
+    );
+    return '$_temp0 • $marks درجة';
+  }
+
+  @override
+  String get examActionReviewImages => 'مراجعة صور الأسئلة';
+
+  @override
+  String get examActionMoveUnassigned => 'نقل الأسئلة غير المخصصة';
+
+  @override
+  String get examCandidatePickerHint =>
+      'صفِّ المخزون المعتمد واضغط على سؤال لإضافته إلى هذه المسودة.';
+
+  @override
+  String get examSearchApprovedQuestionsHint => 'ابحث في الأسئلة المعتمدة';
+
+  @override
+  String get examQuestionAlreadyInDraft => 'موجود في المسودة';
+
+  @override
+  String get examQuestionAlreadyInDraftHint =>
+      'هذا السؤال موجود بالفعل في هذه المسودة، لذلك لا يمكن إضافته مرة أخرى.';
+
+  @override
+  String get examNeedsOverride => 'يحتاج تجاوزًا';
+
+  @override
+  String get examNeedsOverrideHint =>
+      'هذا السؤال خارج قواعد التوليد الأصلية للمسودة. يمكنك إضافته إذا كتبت سببًا واضحًا.';
+
+  @override
+  String get examRuleMismatchTitle => 'سبب الحاجة إلى التجاوز';
+
+  @override
+  String examMismatchExpectedType(String value) {
+    return 'النوع المتوقع: $value';
+  }
+
+  @override
+  String examMismatchExpectedDifficulty(String value) {
+    return 'الصعوبة المتوقعة: $value';
+  }
+
+  @override
+  String examMismatchExpectedBloom(String value) {
+    return 'مستوى بلوم المتوقع: $value';
+  }
+
+  @override
+  String examMismatchExpectedChapter(String value) {
+    return 'الفصل المتوقع: $value';
+  }
+
+  @override
+  String examMismatchExpectedGroup(String value) {
+    return 'المجموعة المتوقعة: $value';
+  }
+
+  @override
+  String get examAddQuestionOutsideRulesTitle => 'إضافة سؤال خارج القواعد؟';
+
+  @override
+  String examAddQuestionOutsideRulesBody(
+    String type,
+    String difficulty,
+    String bloom,
+  ) {
+    return 'هذا السؤال نوعه $type، وصعوبته $difficulty، ومستوى بلوم $bloom. لا يطابق قيود التوليد الأصلية للمسودة. لإضافته رغم ذلك، أدخل سبب تجاوز واضحًا لتوثيق التغيير.';
+  }
+
+  @override
+  String get examAddQuestionWithOverride => 'إضافة مع تجاوز';
 
   @override
   String get examDraftSave => 'حفظ';
@@ -16512,10 +16791,55 @@ class AppLocalizationsAr extends AppLocalizations {
   String get examStatus => 'حالة الامتحان';
 
   @override
+  String get examFilters => 'فلاتر الامتحان';
+
+  @override
+  String get examSearchHint => 'ابحث في المسودات والامتحانات المحفوظة';
+
+  @override
+  String get examRecords => 'سجلات الامتحانات';
+
+  @override
+  String get examAllRecords => 'كل السجلات';
+
+  @override
+  String get examDraftRecords => 'سجلات المسودات';
+
+  @override
+  String get examSavedRecords => 'سجلات الامتحانات المحفوظة';
+
+  @override
+  String get examDraftRecordBadge => 'سجل مسودة';
+
+  @override
+  String get examSavedRecordBadge => 'امتحان محفوظ';
+
+  @override
+  String get examSavedDraftStatus => 'محفوظ، غير منشور';
+
+  @override
+  String examActiveFilterCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فلتر نشط',
+      many: '$count فلترًا نشطًا',
+      few: '$count فلاتر نشطة',
+      two: 'فلتران نشطان',
+      one: 'فلتر واحد نشط',
+      zero: 'كل الفلاتر',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get examDateFrom => 'التاريخ من';
 
   @override
   String get examDateTo => 'التاريخ إلى';
+
+  @override
+  String get examExpires => 'تنتهي في';
 
   @override
   String get examDashboardHelp =>
@@ -16572,9 +16896,71 @@ class AppLocalizationsAr extends AppLocalizations {
   String get examMoveSelectedQuestions => 'نقل الأسئلة المحددة';
 
   @override
+  String get examSelectQuestionFirst => 'حدد سؤالًا واحدًا على الأقل أولًا.';
+
+  @override
+  String get examMoveQuestionsFailed => 'تعذر نقل الأسئلة المحددة.';
+
+  @override
+  String get examSelectedQuestionsMoved => 'تم نقل الأسئلة المحددة.';
+
+  @override
+  String get examSavingOrder => 'جارٍ حفظ الترتيب الجديد...';
+
+  @override
+  String examMovingQuestions(int count) {
+    return 'جارٍ نقل $count أسئلة...';
+  }
+
+  @override
   String examSelectedQuestions(int count) {
     return '$count محدد';
   }
+
+  @override
+  String get examUnassignQuestion => 'إلغاء التخصيص';
+
+  @override
+  String get examQuestionActions => 'إجراءات السؤال';
+
+  @override
+  String examQuestionShortNumber(int number) {
+    return 'س$number';
+  }
+
+  @override
+  String get examShowQuestionDetails => 'عرض الإجابة والتفاصيل';
+
+  @override
+  String get examHideQuestionDetails => 'إخفاء الإجابة والتفاصيل';
+
+  @override
+  String get examAnswerAndDetails => 'الإجابة والتفاصيل';
+
+  @override
+  String examOrderNumber(int number) {
+    return 'الترتيب $number';
+  }
+
+  @override
+  String get examUnassignedQuestionsHint =>
+      'أسئلة لم تُخصص لقسم بعد. حددها من هنا ثم انقلها إلى القسم المناسب.';
+
+  @override
+  String get examAllQuestionsAssigned => 'كل الأسئلة مخصصة';
+
+  @override
+  String get examAllQuestionsAssignedHint =>
+      'كل أسئلة المسودة داخل أقسام. استخدم إلغاء التخصيص من بطاقة القسم لإرجاع سؤال إلى هنا.';
+
+  @override
+  String examSectionAssignedQuestions(int count) {
+    return '$count أسئلة مخصصة';
+  }
+
+  @override
+  String get examSectionNoAssignedQuestions =>
+      'لا توجد أسئلة مخصصة لهذا القسم بعد.';
 
   @override
   String get examGroupedPromptShownOnce =>
@@ -16594,6 +16980,58 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get examSnapshotHelp =>
       'الامتحانات المحفوظة تحتفظ بلقطات وقت الحفظ، لذلك لا تغيّر تعديلات بنك الأسئلة اللاحقة هذا الامتحان.';
+
+  @override
+  String get examSavedOverviewTitle => 'نظرة عامة على الامتحان المحفوظ';
+
+  @override
+  String get examSavedOverviewSubtitle =>
+      'راجع اللقطة الثابتة ونص الورقة والأقسام وإجراءات الحالة في عرض واحد مختصر.';
+
+  @override
+  String get examSavedSnapshotLocked =>
+      'تعديلات بنك الأسئلة بعد الحفظ لن تغيّر هذا الامتحان المحفوظ.';
+
+  @override
+  String get examSavedStudentAssignmentNote =>
+      'النشر يغيّر حالة الامتحان فقط؛ ولا يعيّنه للطلاب.';
+
+  @override
+  String get examSavedPaperText => 'نص الورقة';
+
+  @override
+  String get examSavedQuestionSnapshotDetails => 'تفاصيل اللقطة';
+
+  @override
+  String get examSavedSourceGroupPrompt => 'نص مجموعة المصدر';
+
+  @override
+  String get examSavedQuestionMedia => 'وسائط السؤال';
+
+  @override
+  String get examSavedGroupMedia => 'وسائط المجموعة';
+
+  @override
+  String get examSavedNoSections => 'لا توجد أقسام في هذا الامتحان المحفوظ.';
+
+  @override
+  String get examSavedNoQuestions => 'لا توجد أسئلة محفوظة متاحة.';
+
+  @override
+  String get examSavedUnassignedQuestionsHint =>
+      'أسئلة حُفظت خارج أي قسم. تبقى ضمن لقطة الامتحان لكنها ليست جزءًا من قسم.';
+
+  @override
+  String get examGeneratedAt => 'تم التوليد';
+
+  @override
+  String get examSavedAt => 'تم الحفظ';
+
+  @override
+  String get examLifecycleUpdated => 'تم تحديث حالة الامتحان.';
+
+  @override
+  String get examLifecycleReasonHint => 'أضف سببًا مختصرًا لسجل تغيير الحالة.';
 
   @override
   String get examUnassignedQuestions => 'أسئلة غير مخصصة';
@@ -16709,6 +17147,14 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get examValidationItemOrderNonNegative =>
       'لا يمكن أن يكون ترتيب السؤال سالبًا.';
+
+  @override
+  String get examValidationQuestionAlreadyInDraft =>
+      'هذا السؤال موجود بالفعل في المسودة.';
+
+  @override
+  String get examValidationQuestionOutsideRules =>
+      'هذا السؤال لا يطابق قيود التوليد الأصلية للمسودة. استخدم إضافة مع تجاوز واكتب السبب، أو صفِّ الاختيار لنفس النوع والفصل والصعوبة ومستوى بلوم المستخدم في المسودة.';
 
   @override
   String get enumQuestionWritten => 'كتابي';
@@ -16853,13 +17299,33 @@ class AppLocalizationsAr extends AppLocalizations {
       'صمم رأس الورقة والنهاية وخيارات التصدير قبل إنشاء الملف.';
 
   @override
+  String get examPaperStepTemplate => 'القالب';
+
+  @override
+  String get examPaperStepContent => 'نص الورقة';
+
+  @override
+  String get examPaperStepExport => 'المعاينة والتصدير';
+
+  @override
   String get examPaperTemplates => 'قوالب الورق';
+
+  @override
+  String get examPaperTemplateSetupHint =>
+      'اختر نمطا محفوظا، وسم هذه النسخة، وحدد طريقة وضع الحقول في الورقة المطبوعة.';
 
   @override
   String get examPaperTemplate => 'قالب الورقة';
 
   @override
   String get examPaperTemplateName => 'اسم القالب';
+
+  @override
+  String get examPaperNoSavedTemplates =>
+      'لا توجد قوالب محفوظة لهذه المادة بعد. احفظ هذا الإعداد كقالب عندما يصبح جاهزا.';
+
+  @override
+  String get examPaperDefaultTemplateName => 'قالب ورقة الامتحان';
 
   @override
   String get examPaperStructuredZones => 'مناطق منظمة';
@@ -16872,6 +17338,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get examPaperHeaderFields => 'حقول الرأس';
+
+  @override
+  String get examPaperHeaderSetupHint =>
+      'أنشئ المنطقة العلوية التي يراها الطلاب قبل عنوان الامتحان وبياناته.';
+
+  @override
+  String get examPaperLeftColumn => 'العمود الأيسر';
+
+  @override
+  String get examPaperCenterColumn => 'العمود الأوسط';
+
+  @override
+  String get examPaperRightColumn => 'العمود الأيمن';
 
   @override
   String get examPaperHeaderLeft1 => 'سطر الرأس الأيسر 1';
@@ -16901,6 +17380,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get examPaperMetadataRows => 'سطور البيانات';
 
   @override
+  String get examPaperMetadataSetupHint =>
+      'أضف التاريخ والمادة والمدة والعام الجامعي وبيانات الامتحان الأخرى أسفل الرأس.';
+
+  @override
   String get examPaperMetadataLeft1 => 'بيانات يسار 1';
 
   @override
@@ -16926,10 +17409,17 @@ class AppLocalizationsAr extends AppLocalizations {
       'أضف حقلا نصيا ثم اسحبه داخل معاينة الورقة.';
 
   @override
+  String get examPaperAddFreeField => 'إضافة حقل حر';
+
+  @override
   String get examPaperFreeElementText => 'نص الحقل الحر';
 
   @override
   String get examPaperTrailingFields => 'حقول النهاية والتذييل';
+
+  @override
+  String get examPaperFooterSetupHint =>
+      'حدد نص النهاية وسطر الممتحنين ونمط ترقيم الصفحات.';
 
   @override
   String get examPaperEndLine => 'سطر النهاية';
@@ -16944,7 +17434,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get examPaperPageNumberFormat => 'صيغة رقم الصفحة';
 
   @override
+  String get examPaperDefaultEndLine => 'نهاية الأسئلة';
+
+  @override
+  String get examPaperDefaultGoodLuckLine => 'بالتوفيق';
+
+  @override
+  String get examPaperDefaultExaminersLine =>
+      'الممتحنون: ______________________________';
+
+  @override
+  String examPaperDefaultPageNumberFormat(Object page, Object totalPages) {
+    return 'صفحة $page من $totalPages';
+  }
+
+  @override
   String get examPaperLivePreview => 'معاينة الورقة';
+
+  @override
+  String get examPaperPreviewHint =>
+      'تتحدث هذه المعاينة من الحقول بالأعلى وتوضح شكل الصفحة الأولى عند الطباعة.';
+
+  @override
+  String get examPaperExportSetupHint =>
+      'اختر نوع النسخة وما هي السطور المساعدة التي ستظهر في الملف الناتج.';
+
+  @override
+  String get examPaperShowTotalMarks => 'إجمالي درجات الامتحان';
+
+  @override
+  String get examPaperShowQuestionMarks => 'درجات الأسئلة';
 
   @override
   String get examPaperSaveTemplate => 'حفظ القالب';

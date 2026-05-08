@@ -25,6 +25,7 @@ class QuestionFormMenuField<T> extends StatelessWidget {
     this.color = InstructorColors.primary,
     this.enabled = true,
     this.width,
+    this.valueMaxLines = 1,
   });
 
   final String label;
@@ -35,6 +36,7 @@ class QuestionFormMenuField<T> extends StatelessWidget {
   final Color color;
   final bool enabled;
   final double? width;
+  final int valueMaxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +46,8 @@ class QuestionFormMenuField<T> extends StatelessWidget {
         .firstOrNull;
     final child = Container(
       width: width,
-      constraints: const BoxConstraints(minHeight: 58),
-      padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 10, 8),
+      constraints: const BoxConstraints(minHeight: 68),
+      padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 10, 10),
       decoration: BoxDecoration(
         color: InstructorColors.surfaceColor(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -85,7 +87,7 @@ class QuestionFormMenuField<T> extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   selected?.label ?? '',
-                  maxLines: 1,
+                  maxLines: valueMaxLines,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: InstructorColors.textPrimaryColor(isDark),
@@ -120,11 +122,11 @@ class QuestionFormMenuField<T> extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         side: BorderSide(color: InstructorColors.borderColor(isDark)),
       ),
-      onSelected: onChanged,
       itemBuilder: (context) => options
           .map(
             (option) => PopupMenuItem<T>(
               value: option.value,
+              onTap: () => onChanged(option.value),
               child: _QuestionFormMenuItem(
                 label: option.label,
                 icon: option.icon,

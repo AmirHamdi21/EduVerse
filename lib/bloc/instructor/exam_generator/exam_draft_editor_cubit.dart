@@ -23,8 +23,12 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
   final ExamGeneratorService _examGeneratorService;
   final QuestionBankService? _questionBankService;
 
-  Future<void> loadDraft(int draftId) async {
-    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+  Future<void> loadDraft(int draftId, {bool showLoading = true}) async {
+    if (showLoading) {
+      emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+    } else {
+      emitIfOpen(state.copyWith(clearError: true));
+    }
     final result = await _examGeneratorService.getDraft(draftId);
     if (!result.isSuccess || result.data == null) {
       emitIfOpen(
@@ -85,25 +89,25 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       );
       return;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'Section created'),
     );
   }
 
-  Future<void> upsertSection({
+  Future<bool> upsertSection({
     int? sectionId,
     required ExamDraftSectionPayload payload,
   }) async {
     final draft = state.draft;
     if (draft == null || !draft.isEditable) {
       emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
-      return;
+      return false;
     }
     final validation = payload.validate();
     if (validation != null) {
       emitIfOpen(state.copyWith(errorMessage: validation));
-      return;
+      return false;
     }
     emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = sectionId == null
@@ -131,12 +135,13 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
           errorMessage: result.error?.message ?? 'Failed to save section',
         ),
       );
-      return;
+      return false;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'Section saved'),
     );
+    return true;
   }
 
   Future<void> deleteSection(int sectionId) async {
@@ -159,7 +164,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       );
       return;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'Section deleted'),
     );
@@ -191,7 +196,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: result.error?.message));
       return;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
   }
 
   Future<void> addItem({
@@ -206,7 +211,20 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    final existingQuestionIds = {
+      for (final item in draft.items) ...[
+        item.questionId,
+        if (item.question != null) item.question!.id,
+        if (item.question != null) item.question!.questionId,
+      ],
+    };
+    if (existingQuestionIds.contains(questionId)) {
+      emitIfOpen(state.copyWith(errorMessage: 'Question is already in draft'));
+      return;
+    }
+    emitIfOpen(
+      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+    );
     final result = await _examGeneratorService.addItem(
       draftId: draft.id,
       questionId: questionId,
@@ -219,6 +237,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearAction: true,
           errorMessage: result.error?.message ?? 'Failed to add item',
         ),
       );
@@ -612,6 +631,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
         draftId: draft.id,
         itemId: itemId,
         draftSectionId: sectionId,
+        clearDraftSection: sectionId == null,
       );
       if (!result.isSuccess) {
         emitIfOpen(

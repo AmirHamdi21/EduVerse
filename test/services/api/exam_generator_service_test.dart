@@ -71,8 +71,9 @@ void main() {
     ]);
     client.dio.httpClientAdapter = adapter;
 
-    final result = await ExamGeneratorService(coreApiClient: client)
-        .generatePreview(courseId: 1, title: 'Exam');
+    final result = await ExamGeneratorService(
+      coreApiClient: client,
+    ).generatePreview(courseId: 1, title: 'Exam');
 
     expect(result.isFailure, isTrue);
     expect(result.error!.message, contains('Insufficient'));
@@ -91,6 +92,7 @@ void main() {
         'statusCode': 200,
         'data': {'id': 4, 'draftId': 2, 'questionId': 9, 'itemOrder': 0},
       },
+      {'statusCode': 200, 'data': {}},
       {'statusCode': 200, 'data': {}},
     ]);
     client.dio.httpClientAdapter = adapter;
@@ -112,6 +114,7 @@ void main() {
       marks: 5,
       overrideReason: 'Manual replacement',
     );
+    await service.updateItem(draftId: 2, itemId: 4, clearDraftSection: true);
 
     expect(adapter.requests[0].method, 'PATCH');
     expect(adapter.requests[0].path, '/exams/drafts/2/sections/3');
@@ -121,5 +124,7 @@ void main() {
     expect(adapter.requests[3].path, '/exams/drafts/2/items');
     expect(adapter.requests[4].path, '/exams/drafts/2/items/4');
     expect(adapter.requests[4].data, containsPair('replacementQuestionId', 10));
+    expect(adapter.requests[5].path, '/exams/drafts/2/items/4');
+    expect(adapter.requests[5].data, containsPair('draftSectionId', null));
   });
 }

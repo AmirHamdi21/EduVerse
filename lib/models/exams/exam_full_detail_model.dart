@@ -40,7 +40,9 @@ class ExamSnapshotItemModel {
   final Map<String, dynamic> raw;
 
   factory ExamSnapshotItemModel.fromJson(Map<String, dynamic> json) {
-    final snapshot = _map(json['snapshot']).isNotEmpty ? _map(json['snapshot']) : json;
+    final snapshot = _map(json['snapshot']).isNotEmpty
+        ? _map(json['snapshot'])
+        : json;
     return ExamSnapshotItemModel(
       id: _toInt(json['id'] ?? json['itemId'] ?? snapshot['id']),
       itemOrder: _toInt(json['itemOrder'] ?? snapshot['itemOrder']),
@@ -48,18 +50,23 @@ class ExamSnapshotItemModel {
       questionText:
           (snapshot['questionText'] ?? snapshot['text'] ?? json['questionText'])
               ?.toString() ??
-              '',
+          '',
       questionFileId: _nullableInt(snapshot['questionFileId']),
       questionFileCaption: _nullableString(snapshot['questionFileCaption']),
       questionFileAltText: _nullableString(snapshot['questionFileAltText']),
-      questionImagePreviewUrl: _nullableString(snapshot['questionImagePreviewUrl']),
+      questionImagePreviewUrl: _nullableString(
+        snapshot['questionImagePreviewUrl'],
+      ),
       sourceGroupId: _nullableInt(snapshot['sourceGroupId']),
       sourceGroupTitle: _nullableString(snapshot['sourceGroupTitle']),
       sourceGroupPrompt: _nullableString(snapshot['sourceGroupPrompt']),
       sourceGroupFileId: _nullableInt(snapshot['sourceGroupFileId']),
-      sourceGroupImagePreviewUrl:
-          _nullableString(snapshot['sourceGroupImagePreviewUrl']),
-      sourceQuestionVersionId: _nullableInt(snapshot['sourceQuestionVersionId']),
+      sourceGroupImagePreviewUrl: _nullableString(
+        snapshot['sourceGroupImagePreviewUrl'],
+      ),
+      sourceQuestionVersionId: _nullableInt(
+        snapshot['sourceQuestionVersionId'],
+      ),
       snapshotCreatedAt: _nullableDate(
         snapshot['snapshotCreatedAt'] ?? snapshot['createdAt'],
       ),
@@ -92,16 +99,21 @@ class ExamFullSectionModel {
   final List<ExamSnapshotItemModel> items;
   final Map<String, dynamic> raw;
 
-  factory ExamFullSectionModel.fromJson(Map<String, dynamic> json) {
+  factory ExamFullSectionModel.fromJson(
+    Map<String, dynamic> json, {
+    List<ExamSnapshotItemModel>? fallbackItems,
+  }) {
     return ExamFullSectionModel(
       id: _toInt(json['id'] ?? json['sectionId']),
       title: json['title']?.toString() ?? '',
       instructions: _nullableString(json['instructions']),
       totalMarks: _nullableDouble(json['totalMarks']),
-      items: _asList(json['items'])
-          .whereType<Map<String, dynamic>>()
-          .map(ExamSnapshotItemModel.fromJson)
-          .toList(),
+      items:
+          fallbackItems ??
+          _asList(json['items'])
+              .whereType<Map<String, dynamic>>()
+              .map(ExamSnapshotItemModel.fromJson)
+              .toList(),
       raw: json,
     );
   }
@@ -116,6 +128,9 @@ class ExamFullDetailModel {
     this.footerText,
     this.paperTemplateId,
     this.paperTemplateSnapshot,
+    this.seed,
+    this.generatedAt,
+    this.savedAt,
     this.courseCode,
     this.courseName,
     this.sections = const <ExamFullSectionModel>[],
@@ -130,6 +145,9 @@ class ExamFullDetailModel {
   final String? footerText;
   final int? paperTemplateId;
   final Map<String, dynamic>? paperTemplateSnapshot;
+  final String? seed;
+  final DateTime? generatedAt;
+  final DateTime? savedAt;
   final String? courseCode;
   final String? courseName;
   final List<ExamFullSectionModel> sections;
@@ -138,29 +156,69 @@ class ExamFullDetailModel {
 
   factory ExamFullDetailModel.fromJson(Map<String, dynamic> json) {
     final examJson = _map(json['exam']).isNotEmpty ? _map(json['exam']) : json;
+    final topLevelItems = _asList(json['items'])
+        .whereType<Map<String, dynamic>>()
+        .map(ExamSnapshotItemModel.fromJson)
+        .toList();
+    final sectionJsonList = _asList(
+      json['sections'],
+    ).whereType<Map<String, dynamic>>().toList();
+    final sections = sectionJsonList.map((sectionJson) {
+      final sectionId = _toInt(sectionJson['id'] ?? sectionJson['sectionId']);
+      final hasEmbeddedItems = _asList(sectionJson['items']).isNotEmpty;
+      return ExamFullSectionModel.fromJson(
+        sectionJson,
+        fallbackItems: hasEmbeddedItems
+            ? null
+            : topLevelItems
+                  .where((item) => item.sectionId == sectionId)
+                  .toList(),
+      );
+    }).toList();
+    final sectionIds = sections.map((section) => section.id).toSet();
     return ExamFullDetailModel(
       exam: ExamResponseModel.fromJson(examJson),
-      durationMinutes: _nullableInt(json['durationMinutes'] ?? examJson['durationMinutes']),
-      instructions: _nullableString(json['instructions'] ?? examJson['instructions']),
+      durationMinutes: _nullableInt(
+        json['durationMinutes'] ?? examJson['durationMinutes'],
+      ),
+      instructions: _nullableString(
+        json['instructions'] ?? examJson['instructions'],
+      ),
       headerText: _nullableString(json['headerText'] ?? examJson['headerText']),
       footerText: _nullableString(json['footerText'] ?? examJson['footerText']),
       paperTemplateId: _nullableInt(
         json['paperTemplateId'] ?? examJson['paperTemplateId'],
       ),
-      paperTemplateSnapshot: _map(
-        json['paperTemplateSnapshot'] ?? examJson['paperTemplateSnapshot'],
-      ).isEmpty
+      paperTemplateSnapshot:
+          _map(
+            json['paperTemplateSnapshot'] ?? examJson['paperTemplateSnapshot'],
+          ).isEmpty
           ? null
-          : _map(json['paperTemplateSnapshot'] ?? examJson['paperTemplateSnapshot']),
+          : _map(
+              json['paperTemplateSnapshot'] ??
+                  examJson['paperTemplateSnapshot'],
+            ),
+      seed: _nullableString(
+        json['seed'] ?? examJson['seed'] ?? _map(json['snapshot'])['seed'],
+      ),
+      generatedAt: _nullableDate(
+        json['generatedAt'] ??
+            examJson['generatedAt'] ??
+            _map(json['snapshot'])['generatedAt'],
+      ),
+      savedAt: _nullableDate(
+        json['savedAt'] ??
+            examJson['savedAt'] ??
+            _map(json['snapshot'])['savedAt'],
+      ),
       courseCode: _nullableString(_map(json['course'])['code']),
       courseName: _nullableString(_map(json['course'])['name']),
-      sections: _asList(json['sections'])
-          .whereType<Map<String, dynamic>>()
-          .map(ExamFullSectionModel.fromJson)
-          .toList(),
-      unsectionedItems: _asList(json['items'])
-          .whereType<Map<String, dynamic>>()
-          .map(ExamSnapshotItemModel.fromJson)
+      sections: sections,
+      unsectionedItems: topLevelItems
+          .where(
+            (item) =>
+                item.sectionId == null || !sectionIds.contains(item.sectionId),
+          )
           .toList(),
       raw: json,
     );
@@ -197,4 +255,5 @@ String? _nullableString(dynamic value) {
   return text == null || text.isEmpty ? null : text;
 }
 
-List<dynamic> _asList(dynamic value) => value is List ? value : const <dynamic>[];
+List<dynamic> _asList(dynamic value) =>
+    value is List ? value : const <dynamic>[];

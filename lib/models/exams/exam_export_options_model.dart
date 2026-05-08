@@ -8,6 +8,8 @@ class ExamExportOptionsModel {
     this.showCourseCode = true,
     this.pageBreakPerSection = false,
     this.showInstructorName = false,
+    this.showTotalMarks = true,
+    this.showQuestionMarks = true,
     this.answerKeyStyle = ExamAnswerKeyStyle.inline,
     this.paperTemplateId,
     this.paperTemplateSnapshot,
@@ -19,12 +21,15 @@ class ExamExportOptionsModel {
   final bool showCourseCode;
   final bool pageBreakPerSection;
   final bool showInstructorName;
+  final bool showTotalMarks;
+  final bool showQuestionMarks;
   final ExamAnswerKeyStyle answerKeyStyle;
   final int? paperTemplateId;
   final Map<String, dynamic>? paperTemplateSnapshot;
 
   bool get includeAnswerKey =>
-      variant == ExamExportVariant.answerKey || variant == ExamExportVariant.combined;
+      variant == ExamExportVariant.answerKey ||
+      variant == ExamExportVariant.combined;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -35,6 +40,8 @@ class ExamExportOptionsModel {
       'showCourseCode': showCourseCode,
       'pageBreakPerSection': pageBreakPerSection,
       'showInstructorName': showInstructorName,
+      'showTotalMarks': showTotalMarks,
+      'showQuestionMarks': showQuestionMarks,
       'answerKeyStyle': answerKeyStyle.value,
       if (paperTemplateId != null) 'paperTemplateId': paperTemplateId,
       if (paperTemplateSnapshot != null)

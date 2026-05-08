@@ -15716,6 +15716,95 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose course, chapters, rules, weights, and generate a draft from approved questions.';
 
   @override
+  String get examGeneratorInfoTitle => 'Exam Generator Guide';
+
+  @override
+  String get examGeneratorInfoIntro =>
+      'Use approved Question Bank questions to create editable exam drafts, review shortages, adjust items, and finalize saved exams.';
+
+  @override
+  String get examGeneratorInfoApprovedOnly =>
+      'Only approved Question Bank questions are eligible for generation, so draft or rejected questions stay out of the pool.';
+
+  @override
+  String get examGeneratorInfoRules =>
+      'Generation rules decide the course, chapter, group, type, difficulty, Bloom level, count, and weight for the questions.';
+
+  @override
+  String get examGeneratorInfoDraftLifecycle =>
+      'Generated drafts stay editable first. After review, you can finalize them into saved exam records for publishing and export.';
+
+  @override
+  String get examGeneratorViewFullGuide => 'View full guide';
+
+  @override
+  String get examGeneratorGuidePoolTitle => 'Question pool';
+
+  @override
+  String get examGeneratorGuidePoolBody =>
+      'The readiness panel shows approved, grouped, standalone, chapter, and type counts. If availability is low, approve more matching questions or reduce the requested count.';
+
+  @override
+  String get examGeneratorGuideRulesTitle => 'Generation rules';
+
+  @override
+  String get examGeneratorGuideRulesBody =>
+      'Create one or more rules. A rule can pull from the whole course, one chapter, multiple chapters, or a question group while filtering by taxonomy.';
+
+  @override
+  String get examGeneratorGuideModesTitle => 'Simple or sectioned';
+
+  @override
+  String get examGeneratorGuideModesBody =>
+      'Simple exams produce one ordered list. Sectioned exams let you build named sections with their own instructions, marks, and answer policy.';
+
+  @override
+  String get examGeneratorGuideLifecycleTitle => 'Draft lifecycle';
+
+  @override
+  String get examGeneratorGuideLifecycleBody =>
+      'Generate a draft, inspect every selected question, replace weak matches, reorder sections or items, then finalize when the exam is ready.';
+
+  @override
+  String get examGeneratorGuideTipsTitle => 'Instructor tips';
+
+  @override
+  String get examGeneratorGuideTipsBody =>
+      'Use a version code when you need repeatable drafts, keep groups together for case-study prompts, and check availability before generating.';
+
+  @override
+  String get examCreateCoreDetails => 'Core Details';
+
+  @override
+  String get examCreateCoreDetailsHint =>
+      'Name the draft and choose the course that owns the approved question pool.';
+
+  @override
+  String get examCreateSettingsHint =>
+      'Set marks, timing, grouped-question behavior, versioning, and optional exam text.';
+
+  @override
+  String get examCreateRulesHint =>
+      'Define what the generator should pull from the approved pool.';
+
+  @override
+  String get examCreateSectionsHint =>
+      'Build sections, then give each section its own question rules.';
+
+  @override
+  String get examCourseDataLoading =>
+      'Loading chapters and groups for the selected course...';
+
+  @override
+  String get examAddRule => 'Add rule';
+
+  @override
+  String get examAddSection => 'Add section';
+
+  @override
+  String get examCreateModeTitle => 'Exam Structure';
+
+  @override
   String get examGeneratorNoDrafts => 'No Drafts Found';
 
   @override
@@ -15730,6 +15819,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Saved exams will appear here after a draft is finalized.';
 
   @override
+  String get examGeneratorNoRecords => 'No Exams Found';
+
+  @override
+  String get examGeneratorNoRecordsMessage =>
+      'Exam drafts and saved exams that match your filters will appear here.';
+
+  @override
   String get examDraftDetails => 'Exam Draft Details';
 
   @override
@@ -15738,6 +15834,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get examDraftNotEditable =>
       'This draft is expired or finalized and cannot be edited.';
+
+  @override
+  String get examFinalizedDraftTitle => 'This draft was saved';
+
+  @override
+  String get examFinalizedDraftMessage =>
+      'The editable draft is now locked because a saved exam snapshot was created from it. Open the saved exam to review, publish, export, or manage lifecycle actions.';
+
+  @override
+  String get examFinalizedDraftNoSavedExam =>
+      'This finalized draft does not include a saved exam link. Refresh the list, then open the saved exam record from Saved Exams.';
+
+  @override
+  String get examOpenSavedExam => 'Open saved exam';
+
+  @override
+  String get examCreateEditableCopy => 'Create editable copy';
+
+  @override
+  String get examFinalizedDraftRecordBadge => 'Finalized source';
+
+  @override
+  String get examFinalizedDraftOpensSaved => 'Opens the saved exam snapshot.';
 
   @override
   String get examSavedDetails => 'Saved Exam Details';
@@ -16337,6 +16456,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String examShortageNamedLine(String chapter, int required, int available) {
+    return '$chapter: needs $required, available $available';
+  }
+
+  @override
   String get examGenerateDraft => 'Generate Draft';
 
   @override
@@ -16347,6 +16471,159 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get examDraftReorder => 'Reorder';
+
+  @override
+  String get examDraftBuild => 'Build';
+
+  @override
+  String get examDraftReview => 'Review';
+
+  @override
+  String get examDraftOverviewHint =>
+      'Scan readiness, issues, section totals, settings, timing, and paper text in one compact view.';
+
+  @override
+  String get examDraftBuildHint =>
+      'Edit sections, organize questions, and add approved questions from the same workspace.';
+
+  @override
+  String get examDraftReorderHint =>
+      'Drag sections or questions to match the order students will see in the final paper.';
+
+  @override
+  String get examDraftReorderPoolHint =>
+      'Questions outside sections stay together as a separate pool.';
+
+  @override
+  String get examDraftReorderGroupedHint =>
+      'Section questions stay together, so another question cannot split this section in the paper.';
+
+  @override
+  String get examDraftAllQuestionsAssigned =>
+      'All questions are assigned to sections.';
+
+  @override
+  String get examDraftReviewHint =>
+      'Complete the final checklist before saving or regenerate the draft when the current version needs a fresh pass.';
+
+  @override
+  String get examDraftSectionsHint =>
+      'Create or tune section rules without leaving the draft.';
+
+  @override
+  String get examDraftQuestionsHint =>
+      'Review selected questions, move them between sections, or add more approved questions.';
+
+  @override
+  String get examDraftNoSections => 'No sections yet';
+
+  @override
+  String get examDraftNoSectionsHint =>
+      'Create a section when this draft needs organized parts such as MCQ, essay, or answer-any groups.';
+
+  @override
+  String get examDraftNoQuestions => 'No questions yet';
+
+  @override
+  String get examDraftNoQuestionsHint =>
+      'Add approved Question Bank questions to build this draft.';
+
+  @override
+  String get examHideQuestionPicker => 'Hide picker';
+
+  @override
+  String get examDraftReadiness => 'Readiness';
+
+  @override
+  String get examDraftTextContent => 'Paper text';
+
+  @override
+  String get examDraftNoValue => 'Not set';
+
+  @override
+  String get examDraftIssues => 'Issues to review';
+
+  @override
+  String examSectionReviewSummary(int count, double marks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions',
+      one: '1 question',
+      zero: '0 questions',
+    );
+    return '$_temp0 • $marks marks';
+  }
+
+  @override
+  String get examActionReviewImages => 'Review prompt images';
+
+  @override
+  String get examActionMoveUnassigned => 'Move unassigned questions';
+
+  @override
+  String get examCandidatePickerHint =>
+      'Filter the approved pool and tap a question to add it to this draft.';
+
+  @override
+  String get examSearchApprovedQuestionsHint => 'Search approved questions';
+
+  @override
+  String get examQuestionAlreadyInDraft => 'Already in draft';
+
+  @override
+  String get examQuestionAlreadyInDraftHint =>
+      'This question is already included in this draft, so it cannot be added again.';
+
+  @override
+  String get examNeedsOverride => 'Needs override';
+
+  @override
+  String get examNeedsOverrideHint =>
+      'This question is outside the draft\'s original generation rules. You can still add it by giving a reason.';
+
+  @override
+  String get examRuleMismatchTitle => 'Why it needs override';
+
+  @override
+  String examMismatchExpectedType(String value) {
+    return 'Expected type: $value';
+  }
+
+  @override
+  String examMismatchExpectedDifficulty(String value) {
+    return 'Expected difficulty: $value';
+  }
+
+  @override
+  String examMismatchExpectedBloom(String value) {
+    return 'Expected Bloom level: $value';
+  }
+
+  @override
+  String examMismatchExpectedChapter(String value) {
+    return 'Expected chapter: $value';
+  }
+
+  @override
+  String examMismatchExpectedGroup(String value) {
+    return 'Expected group: $value';
+  }
+
+  @override
+  String get examAddQuestionOutsideRulesTitle => 'Add question outside rules?';
+
+  @override
+  String examAddQuestionOutsideRulesBody(
+    String type,
+    String difficulty,
+    String bloom,
+  ) {
+    return 'This question is $type, $difficulty, $bloom. It does not match the draft\'s original generation constraints. To add it anyway, enter a clear override reason so the change is documented.';
+  }
+
+  @override
+  String get examAddQuestionWithOverride => 'Add with override';
 
   @override
   String get examDraftSave => 'Save';
@@ -16583,10 +16860,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get examStatus => 'Exam status';
 
   @override
+  String get examFilters => 'Exam Filters';
+
+  @override
+  String get examSearchHint => 'Search drafts and saved exams';
+
+  @override
+  String get examRecords => 'Exam records';
+
+  @override
+  String get examAllRecords => 'All records';
+
+  @override
+  String get examDraftRecords => 'Draft records';
+
+  @override
+  String get examSavedRecords => 'Saved records';
+
+  @override
+  String get examDraftRecordBadge => 'Draft record';
+
+  @override
+  String get examSavedRecordBadge => 'Saved exam';
+
+  @override
+  String get examSavedDraftStatus => 'Saved, not published';
+
+  @override
+  String examActiveFilterCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count active filters',
+      one: '1 active filter',
+      zero: 'All filters',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get examDateFrom => 'Date from';
 
   @override
   String get examDateTo => 'Date to';
+
+  @override
+  String get examExpires => 'Expires';
 
   @override
   String get examDashboardHelp =>
@@ -16644,9 +16963,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get examMoveSelectedQuestions => 'Move selected questions';
 
   @override
+  String get examSelectQuestionFirst => 'Select at least one question first.';
+
+  @override
+  String get examMoveQuestionsFailed => 'Failed to move selected questions.';
+
+  @override
+  String get examSelectedQuestionsMoved => 'Selected questions moved.';
+
+  @override
+  String get examSavingOrder => 'Saving new order...';
+
+  @override
+  String examMovingQuestions(int count) {
+    return 'Moving $count questions...';
+  }
+
+  @override
   String examSelectedQuestions(int count) {
     return '$count selected';
   }
+
+  @override
+  String get examUnassignQuestion => 'Unassign';
+
+  @override
+  String get examQuestionActions => 'Question actions';
+
+  @override
+  String examQuestionShortNumber(int number) {
+    return 'Q$number';
+  }
+
+  @override
+  String get examShowQuestionDetails => 'Show answer and details';
+
+  @override
+  String get examHideQuestionDetails => 'Hide answer and details';
+
+  @override
+  String get examAnswerAndDetails => 'Answer and details';
+
+  @override
+  String examOrderNumber(int number) {
+    return 'Order $number';
+  }
+
+  @override
+  String get examUnassignedQuestionsHint =>
+      'Questions not assigned to a section yet. Select them here, then move them into the right section.';
+
+  @override
+  String get examAllQuestionsAssigned => 'All questions are assigned';
+
+  @override
+  String get examAllQuestionsAssignedHint =>
+      'Every draft question belongs to a section. Use Unassign from a section card to return a question here.';
+
+  @override
+  String examSectionAssignedQuestions(int count) {
+    return '$count assigned questions';
+  }
+
+  @override
+  String get examSectionNoAssignedQuestions =>
+      'No questions assigned to this section yet.';
 
   @override
   String get examGroupedPromptShownOnce =>
@@ -16666,6 +17047,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get examSnapshotHelp =>
       'Saved exams keep snapshots from save time, so later Question Bank edits do not change this exam.';
+
+  @override
+  String get examSavedOverviewTitle => 'Saved exam overview';
+
+  @override
+  String get examSavedOverviewSubtitle =>
+      'Review the fixed snapshot, paper text, sections, and lifecycle actions in one compact view.';
+
+  @override
+  String get examSavedSnapshotLocked =>
+      'Question Bank edits after save will not change this saved exam.';
+
+  @override
+  String get examSavedStudentAssignmentNote =>
+      'Publishing changes lifecycle status only; it does not assign the exam to students.';
+
+  @override
+  String get examSavedPaperText => 'Paper text';
+
+  @override
+  String get examSavedQuestionSnapshotDetails => 'Snapshot details';
+
+  @override
+  String get examSavedSourceGroupPrompt => 'Source group prompt';
+
+  @override
+  String get examSavedQuestionMedia => 'Question media';
+
+  @override
+  String get examSavedGroupMedia => 'Group media';
+
+  @override
+  String get examSavedNoSections => 'No sections in this saved exam.';
+
+  @override
+  String get examSavedNoQuestions => 'No saved questions are available.';
+
+  @override
+  String get examSavedUnassignedQuestionsHint =>
+      'Questions saved outside any section. They remain in the exam snapshot but are not part of a section.';
+
+  @override
+  String get examGeneratedAt => 'Generated';
+
+  @override
+  String get examSavedAt => 'Saved';
+
+  @override
+  String get examLifecycleUpdated => 'Exam lifecycle updated.';
+
+  @override
+  String get examLifecycleReasonHint =>
+      'Add a short reason for the lifecycle log.';
 
   @override
   String get examUnassignedQuestions => 'Unassigned questions';
@@ -16783,6 +17217,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get examValidationItemOrderNonNegative =>
       'Item order cannot be negative.';
+
+  @override
+  String get examValidationQuestionAlreadyInDraft =>
+      'This question is already in the draft.';
+
+  @override
+  String get examValidationQuestionOutsideRules =>
+      'This question does not match the draft\'s original generation constraints. Use Add with override and enter a reason, or filter the picker to the same type, chapter, difficulty, and Bloom level used by the draft.';
 
   @override
   String get enumQuestionWritten => 'Written';
@@ -16927,13 +17369,33 @@ class AppLocalizationsEn extends AppLocalizations {
       'Design the printable header, trailing notes, and export format before creating the file.';
 
   @override
+  String get examPaperStepTemplate => 'Template';
+
+  @override
+  String get examPaperStepContent => 'Paper text';
+
+  @override
+  String get examPaperStepExport => 'Preview and export';
+
+  @override
   String get examPaperTemplates => 'Paper Templates';
+
+  @override
+  String get examPaperTemplateSetupHint =>
+      'Choose a saved style, name this version, and select how fields sit on the printable paper.';
 
   @override
   String get examPaperTemplate => 'Paper Template';
 
   @override
   String get examPaperTemplateName => 'Template Name';
+
+  @override
+  String get examPaperNoSavedTemplates =>
+      'No saved templates for this course yet. Save this setup as a template when it is ready.';
+
+  @override
+  String get examPaperDefaultTemplateName => 'Exam paper template';
 
   @override
   String get examPaperStructuredZones => 'Structured Zones';
@@ -16946,6 +17408,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get examPaperHeaderFields => 'Header Fields';
+
+  @override
+  String get examPaperHeaderSetupHint =>
+      'Build the top area students will see before the exam title and metadata.';
+
+  @override
+  String get examPaperLeftColumn => 'Left column';
+
+  @override
+  String get examPaperCenterColumn => 'Center column';
+
+  @override
+  String get examPaperRightColumn => 'Right column';
 
   @override
   String get examPaperHeaderLeft1 => 'Header left line 1';
@@ -16975,6 +17450,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get examPaperMetadataRows => 'Metadata Rows';
 
   @override
+  String get examPaperMetadataSetupHint =>
+      'Add date, course, duration, academic year, and other exam facts under the header.';
+
+  @override
   String get examPaperMetadataLeft1 => 'Metadata left line 1';
 
   @override
@@ -17000,10 +17479,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add a text field, then drag it on the paper preview.';
 
   @override
+  String get examPaperAddFreeField => 'Add free field';
+
+  @override
   String get examPaperFreeElementText => 'Free field text';
 
   @override
   String get examPaperTrailingFields => 'Trailing And Footer Fields';
+
+  @override
+  String get examPaperFooterSetupHint =>
+      'Set the closing text, examiner line, and page number pattern.';
 
   @override
   String get examPaperEndLine => 'End line';
@@ -17018,7 +17504,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get examPaperPageNumberFormat => 'Page number format';
 
   @override
+  String get examPaperDefaultEndLine => 'End of questions';
+
+  @override
+  String get examPaperDefaultGoodLuckLine => 'Good Luck';
+
+  @override
+  String get examPaperDefaultExaminersLine =>
+      'Examiners: ______________________________';
+
+  @override
+  String examPaperDefaultPageNumberFormat(Object page, Object totalPages) {
+    return 'Page $page of $totalPages';
+  }
+
+  @override
   String get examPaperLivePreview => 'Live Paper Preview';
+
+  @override
+  String get examPaperPreviewHint =>
+      'This preview updates from the fields above and shows how the first printed page will feel.';
+
+  @override
+  String get examPaperExportSetupHint =>
+      'Choose the copy type and what helper lines appear in the generated file.';
+
+  @override
+  String get examPaperShowTotalMarks => 'Exam total marks';
+
+  @override
+  String get examPaperShowQuestionMarks => 'Question marks';
 
   @override
   String get examPaperSaveTemplate => 'Save Template';

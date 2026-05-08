@@ -73,6 +73,8 @@ class _ModernTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final idleColor = isDark ? Colors.white70 : const Color(0xFF1F2937);
     return InkWell(
       borderRadius: BorderRadius.circular(22),
       onTap: onTap,
@@ -94,7 +96,7 @@ class _ModernTabButton extends StatelessWidget {
             Icon(
               item.icon,
               size: 18,
-              color: selected ? Colors.white : const Color(0xFF1F2937),
+              color: selected ? Colors.white : idleColor,
             ),
             const SizedBox(width: 8),
             Text(
@@ -102,7 +104,7 @@ class _ModernTabButton extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: selected ? Colors.white : const Color(0xFF1F2937),
+                color: selected ? Colors.white : idleColor,
                 fontWeight: FontWeight.w800,
               ),
             ),

@@ -145,7 +145,11 @@ class ExamGeneratorService {
       final list = data is List ? data : const <dynamic>[];
       return list
           .whereType<Map>()
-          .map((item) => ExamPaperTemplateModel.fromJson(Map<String, dynamic>.from(item)))
+          .map(
+            (item) => ExamPaperTemplateModel.fromJson(
+              Map<String, dynamic>.from(item),
+            ),
+          )
           .toList();
     }, fallbackMessage: 'Failed to load paper templates');
   }
@@ -321,10 +325,12 @@ class ExamGeneratorService {
     String? instructions,
     String? headerText,
     String? footerText,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<ExamAvailabilityModel>(() async {
       final response = await _client.dio.post(
         '/exams/generation-availability',
+        cancelToken: cancelToken,
         data: <String, dynamic>{
           'courseId': courseId,
           'title': title.trim().isEmpty ? 'Availability check' : title.trim(),
@@ -449,6 +455,7 @@ class ExamGeneratorService {
     required int itemId,
     int? replacementQuestionId,
     int? draftSectionId,
+    bool clearDraftSection = false,
     double? weight,
     double? weightUnits,
     double? marks,
@@ -461,7 +468,10 @@ class ExamGeneratorService {
         data: <String, dynamic>{
           if (replacementQuestionId != null)
             'replacementQuestionId': replacementQuestionId,
-          if (draftSectionId != null) 'draftSectionId': draftSectionId,
+          if (clearDraftSection)
+            'draftSectionId': null
+          else if (draftSectionId != null)
+            'draftSectionId': draftSectionId,
           if (weight != null) 'weight': weight,
           if (weightUnits != null) 'weightUnits': weightUnits,
           if (marks != null) 'marks': marks,
@@ -662,7 +672,7 @@ class ExamGeneratorService {
       '${directory.path}${Platform.pathSeparator}${export.fileName}',
     );
     await file.writeAsBytes(export.decodedBytes, flush: true);
-      return file.path;
+    return file.path;
   }
 
   Map<String, dynamic> _query({

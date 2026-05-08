@@ -8,8 +8,10 @@ import '../../../models/exams/exam_generator_enums.dart';
 import '../../../models/exams/exam_paper_template_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
+import '../../../widgets/instructor/question_bank/question_form_menu_field.dart';
 import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
+import '../../../widgets/instructor/shared/instructor_colors.dart';
 
 class ExamPaperExportPreviewScreen extends StatefulWidget {
   const ExamPaperExportPreviewScreen({super.key, required this.examId});
@@ -60,6 +62,8 @@ class _ExamPaperExportPreviewScreenState
   bool _studentNameLine = true;
   bool _showCourseCode = true;
   bool _showInstructorName = false;
+  bool _showTotalMarks = true;
+  bool _showQuestionMarks = true;
   bool _pageBreakPerSection = false;
   ExamPaperLayoutMode _layoutMode = ExamPaperLayoutMode.hybrid;
 
@@ -133,6 +137,7 @@ class _ExamPaperExportPreviewScreenState
   }
 
   void _hydrateControllers(ExamPaperTemplateModel template) {
+    final l10n = AppLocalizations.of(context);
     _templateName.text = template.name;
     final header = template.headerJson;
     final trailing = template.trailingJson;
@@ -142,14 +147,13 @@ class _ExamPaperExportPreviewScreenState
     _setZone([_metaLeft1, _metaLeft2, _metaLeft3], header['metadataLeft']);
     _setZone([_metaRight1, _metaRight2, _metaRight3], header['metadataRight']);
     final lines = _list(trailing['lines']);
-    _endLine.text = _valueAt(lines, 0, 'End of questions');
-    _goodLuck.text = _valueAt(lines, 1, 'Good Luck');
+    _endLine.text = _valueAt(lines, 0, l10n.examPaperDefaultEndLine);
+    _goodLuck.text = _valueAt(lines, 1, l10n.examPaperDefaultGoodLuckLine);
     _examiners.text =
-        trailing['examiners']?.toString() ??
-        'Examiners: ______________________________';
+        trailing['examiners']?.toString() ?? l10n.examPaperDefaultExaminersLine;
     _pageNumber.text =
         template.footerJson['pageNumberFormat']?.toString() ??
-        'Page {page} of {totalPages}';
+        l10n.examPaperDefaultPageNumberFormat('{page}', '{totalPages}');
   }
 
   void _setZone(List<TextEditingController> controllers, dynamic raw) {
@@ -175,9 +179,10 @@ class _ExamPaperExportPreviewScreenState
           courseName: _detail?.courseName,
           durationMinutes: _detail?.durationMinutes,
         );
+    final l10n = AppLocalizations.of(context);
     return base.copyWith(
       name: _templateName.text.trim().isEmpty
-          ? 'Exam paper template'
+          ? l10n.examPaperDefaultTemplateName
           : _templateName.text.trim(),
       layoutMode: _layoutMode,
       headerJson: <String, dynamic>{
@@ -326,6 +331,8 @@ class _ExamPaperExportPreviewScreenState
         showCourseCode: _showCourseCode,
         pageBreakPerSection: _pageBreakPerSection,
         showInstructorName: _showInstructorName,
+        showTotalMarks: _showTotalMarks,
+        showQuestionMarks: _showQuestionMarks,
         answerKeyStyle: _answerKeyStyle,
         paperTemplateId: template.id,
         paperTemplateSnapshot: template.toSnapshot(),
@@ -382,9 +389,30 @@ class _ExamPaperExportPreviewScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final canShowActions = !_loading && _error == null && _detail != null;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.examPaperDesignerTitle)),
+      backgroundColor: InstructorColors.background(isDark),
+      appBar: AppBar(
+        title: Text(l10n.examPaperDesignerTitle),
+        actions: [
+          if (canShowActions)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: IconButton.filledTonal(
+                tooltip: l10n.examPaperApplyToExam,
+                onPressed: _working ? null : _applyTemplate,
+                icon: _working
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.check_circle_outline_rounded),
+              ),
+            ),
+        ],
+      ),
       bottomNavigationBar: canShowActions
           ? SafeArea(
               minimum: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -407,7 +435,7 @@ class _ExamPaperExportPreviewScreenState
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(width: 420, child: _editor(context)),
+                      SizedBox(width: 460, child: _editor(context)),
                       Expanded(child: _preview(context)),
                     ],
                   );
@@ -428,203 +456,238 @@ class _ExamPaperExportPreviewScreenState
 
   Widget _editor(BuildContext context, {bool scrollable = true}) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final children = [
       ExamGeneratorHeroHeader(
         title: l10n.examPaperDesignerTitle,
         subtitle: l10n.examPaperDesignerSubtitle,
         stats: {
-          l10n.examExportFormat: _format == ExamExportFormat.pdf
-              ? l10n.examExportPdfDocument
-              : l10n.examExportWordDocument,
+          l10n.examExportFormat: localizedExportFormat(l10n, _format),
           l10n.examExportVariant: localizedExportVariant(l10n, _variant),
         },
+        isDark: isDark,
       ),
       const SizedBox(height: 12),
-      _section(
+      _designerIntro(context),
+      const SizedBox(height: 12),
+      _modernSection(
+        context,
+        icon: Icons.style_outlined,
+        color: InstructorColors.primary,
         title: l10n.examPaperTemplates,
+        subtitle: l10n.examPaperTemplateSetupHint,
         initiallyExpanded: true,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButtonFormField<int>(
-              initialValue:
-                  _templates.any(
-                    (template) => template.id == _currentTemplate?.id,
-                  )
-                  ? _currentTemplate?.id
-                  : null,
-              decoration: InputDecoration(labelText: l10n.examPaperTemplate),
-              items: _templates
-                  .where((template) => template.id != null)
-                  .map(
-                    (template) => DropdownMenuItem<int>(
-                      value: template.id,
-                      child: Text(template.name),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (id) {
-                final selected = _templates.firstWhere(
-                  (template) => template.id == id,
-                  orElse: () => _currentTemplate!,
-                );
-                setState(() {
-                  _currentTemplate = selected;
-                  _layoutMode = selected.layoutMode;
-                });
-                _hydrateControllers(selected);
-              },
+            _templatePicker(context),
+            const SizedBox(height: 12),
+            _paperField(
+              _templateName,
+              l10n.examPaperTemplateName,
+              icon: Icons.edit_note_rounded,
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _templateName,
-              decoration: InputDecoration(
-                labelText: l10n.examPaperTemplateName,
-              ),
-              onChanged: (_) => _refreshTemplate(),
-            ),
-            const SizedBox(height: 10),
-            SegmentedButton<ExamPaperLayoutMode>(
-              segments: [
-                ButtonSegment(
-                  value: ExamPaperLayoutMode.structured,
-                  label: Text(l10n.examPaperStructuredZones),
-                ),
-                ButtonSegment(
-                  value: ExamPaperLayoutMode.free,
-                  label: Text(l10n.examPaperFreeDrag),
-                ),
-                ButtonSegment(
-                  value: ExamPaperLayoutMode.hybrid,
-                  label: Text(l10n.examPaperHybrid),
-                ),
-              ],
-              selected: {_layoutMode},
-              onSelectionChanged: (value) {
-                setState(() => _layoutMode = value.first);
-                _refreshTemplate();
-              },
-            ),
+            const SizedBox(height: 12),
+            _layoutModePicker(context),
           ],
         ),
       ),
-      _section(
+      _modernSection(
+        context,
+        icon: Icons.view_week_outlined,
+        color: InstructorColors.teal,
         title: l10n.examPaperHeaderFields,
+        subtitle: l10n.examPaperHeaderSetupHint,
         initiallyExpanded: true,
-        child: Column(
+        child: _clusterGrid(
+          context,
           children: [
-            _field(_left1, l10n.examPaperHeaderLeft1),
-            _field(_left2, l10n.examPaperHeaderLeft2),
-            _field(_left3, l10n.examPaperHeaderLeft3),
-            _field(_center1, l10n.examPaperHeaderCenter1),
-            _field(_center2, l10n.examPaperHeaderCenter2),
-            _field(_right1, l10n.examPaperHeaderRight1),
-            _field(_right2, l10n.examPaperHeaderRight2),
-            _field(_right3, l10n.examPaperHeaderRight3),
-          ],
-        ),
-      ),
-      _section(
-        title: l10n.examPaperMetadataRows,
-        child: Column(
-          children: [
-            _field(_metaLeft1, l10n.examPaperMetadataLeft1),
-            _field(_metaLeft2, l10n.examPaperMetadataLeft2),
-            _field(_metaLeft3, l10n.examPaperMetadataLeft3),
-            _field(_metaRight1, l10n.examPaperMetadataRight1),
-            _field(_metaRight2, l10n.examPaperMetadataRight2),
-            _field(_metaRight3, l10n.examPaperMetadataRight3),
-          ],
-        ),
-      ),
-      _section(
-        title: l10n.examPaperFreeElements,
-        child: Column(
-          children: [
-            Text(l10n.examPaperFreeElementsHelp),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _freeText,
-                    decoration: InputDecoration(
-                      labelText: l10n.examPaperFreeElementText,
-                    ),
-                  ),
-                ),
-                IconButton.filled(
-                  onPressed: _addFreeElement,
-                  icon: const Icon(Icons.add_rounded),
-                ),
+            _fieldCluster(
+              context,
+              title: l10n.examPaperLeftColumn,
+              icon: Icons.format_align_left_rounded,
+              color: InstructorColors.primary,
+              fields: [
+                _DesignerFieldData(_left1, l10n.examPaperHeaderLeft1),
+                _DesignerFieldData(_left2, l10n.examPaperHeaderLeft2),
+                _DesignerFieldData(_left3, l10n.examPaperHeaderLeft3),
+              ],
+            ),
+            _fieldCluster(
+              context,
+              title: l10n.examPaperCenterColumn,
+              icon: Icons.format_align_center_rounded,
+              color: InstructorColors.info,
+              fields: [
+                _DesignerFieldData(_center1, l10n.examPaperHeaderCenter1),
+                _DesignerFieldData(_center2, l10n.examPaperHeaderCenter2),
+              ],
+            ),
+            _fieldCluster(
+              context,
+              title: l10n.examPaperRightColumn,
+              icon: Icons.format_align_right_rounded,
+              color: InstructorColors.accent,
+              fields: [
+                _DesignerFieldData(_right1, l10n.examPaperHeaderRight1),
+                _DesignerFieldData(_right2, l10n.examPaperHeaderRight2),
+                _DesignerFieldData(_right3, l10n.examPaperHeaderRight3),
               ],
             ),
           ],
         ),
       ),
-      _section(
-        title: l10n.examPaperTrailingFields,
-        child: Column(
+      _modernSection(
+        context,
+        icon: Icons.fact_check_outlined,
+        color: InstructorColors.orange,
+        title: l10n.examPaperMetadataRows,
+        subtitle: l10n.examPaperMetadataSetupHint,
+        child: _clusterGrid(
+          context,
           children: [
-            _field(_endLine, l10n.examPaperEndLine),
-            _field(_goodLuck, l10n.examPaperGoodLuckLine),
-            _field(_examiners, l10n.examPaperExaminersLine),
-            _field(_pageNumber, l10n.examPaperPageNumberFormat),
+            _fieldCluster(
+              context,
+              title: l10n.examPaperLeftColumn,
+              icon: Icons.notes_outlined,
+              color: InstructorColors.orange,
+              fields: [
+                _DesignerFieldData(_metaLeft1, l10n.examPaperMetadataLeft1),
+                _DesignerFieldData(_metaLeft2, l10n.examPaperMetadataLeft2),
+                _DesignerFieldData(_metaLeft3, l10n.examPaperMetadataLeft3),
+              ],
+            ),
+            _fieldCluster(
+              context,
+              title: l10n.examPaperRightColumn,
+              icon: Icons.translate_rounded,
+              color: InstructorColors.teal,
+              fields: [
+                _DesignerFieldData(_metaRight1, l10n.examPaperMetadataRight1),
+                _DesignerFieldData(_metaRight2, l10n.examPaperMetadataRight2),
+                _DesignerFieldData(_metaRight3, l10n.examPaperMetadataRight3),
+              ],
+            ),
           ],
         ),
       ),
-      _section(
-        title: l10n.exportOptions,
+      _modernSection(
+        context,
+        icon: Icons.drag_indicator_rounded,
+        color: InstructorColors.accent,
+        title: l10n.examPaperFreeElements,
+        subtitle: l10n.examPaperFreeElementsHelp,
+        child: Row(
+          children: [
+            Expanded(
+              child: _paperField(
+                _freeText,
+                l10n.examPaperFreeElementText,
+                icon: Icons.title_rounded,
+                onChanged: null,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Tooltip(
+              message: l10n.examPaperAddFreeField,
+              child: IconButton.filled(
+                onPressed: _addFreeElement,
+                icon: const Icon(Icons.add_rounded),
+              ),
+            ),
+          ],
+        ),
+      ),
+      _modernSection(
+        context,
+        icon: Icons.low_priority_outlined,
+        color: InstructorColors.info,
+        title: l10n.examPaperTrailingFields,
+        subtitle: l10n.examPaperFooterSetupHint,
         child: Column(
           children: [
-            DropdownButtonFormField<ExamExportVariant>(
-              initialValue: _variant,
-              decoration: InputDecoration(labelText: l10n.examExportVariant),
-              items: ExamExportVariant.values
-                  .map(
-                    (value) => DropdownMenuItem(
-                      value: value,
-                      child: Text(localizedExportVariant(l10n, value)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) =>
-                  setState(() => _variant = value ?? _variant),
-            ),
-            const SizedBox(height: 10),
-            DropdownButtonFormField<ExamExportFormat>(
-              initialValue: _format,
-              decoration: InputDecoration(labelText: l10n.examExportFormat),
-              items: ExamExportFormat.values
-                  .map(
-                    (value) => DropdownMenuItem(
-                      value: value,
-                      child: Text(localizedExportFormat(l10n, value)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) => setState(() => _format = value ?? _format),
-            ),
-            SwitchListTile(
-              value: _studentNameLine,
-              onChanged: (value) => setState(() => _studentNameLine = value),
-              title: Text(l10n.examStudentNameLine),
-            ),
-            SwitchListTile(
-              value: _showCourseCode,
-              onChanged: (value) => setState(() => _showCourseCode = value),
-              title: Text(l10n.course),
-            ),
-            SwitchListTile(
-              value: _showInstructorName,
-              onChanged: (value) => setState(() => _showInstructorName = value),
-              title: Text(l10n.examInstructorName),
-            ),
-            SwitchListTile(
-              value: _pageBreakPerSection,
-              onChanged: (value) =>
-                  setState(() => _pageBreakPerSection = value),
-              title: Text(l10n.examPageBreakPerSection),
-            ),
+            _fieldGrid(context, [
+              _DesignerFieldData(_endLine, l10n.examPaperEndLine),
+              _DesignerFieldData(_goodLuck, l10n.examPaperGoodLuckLine),
+              _DesignerFieldData(_examiners, l10n.examPaperExaminersLine),
+              _DesignerFieldData(_pageNumber, l10n.examPaperPageNumberFormat),
+            ], icon: Icons.text_snippet_outlined),
+          ],
+        ),
+      ),
+      _modernSection(
+        context,
+        icon: Icons.tune_outlined,
+        color: InstructorColors.cyan,
+        title: l10n.exportOptions,
+        subtitle: l10n.examPaperExportSetupHint,
+        initiallyExpanded: true,
+        child: Column(
+          children: [
+            _optionGrid(context, [
+              _dropdownField<ExamExportVariant>(
+                context,
+                label: l10n.examExportVariant,
+                value: _variant,
+                icon: Icons.person_outline_rounded,
+                items: ExamExportVariant.values,
+                labelFor: (value) => localizedExportVariant(l10n, value),
+                onChanged: (value) =>
+                    setState(() => _variant = value ?? _variant),
+              ),
+              _dropdownField<ExamExportFormat>(
+                context,
+                label: l10n.examExportFormat,
+                value: _format,
+                icon: Icons.picture_as_pdf_outlined,
+                items: ExamExportFormat.values,
+                labelFor: (value) => localizedExportFormat(l10n, value),
+                onChanged: (value) =>
+                    setState(() => _format = value ?? _format),
+              ),
+            ]),
+            const SizedBox(height: 12),
+            _switchGrid(context, [
+              _SwitchSpec(
+                label: l10n.examStudentNameLine,
+                icon: Icons.badge_outlined,
+                value: _studentNameLine,
+                onChanged: (value) => setState(() => _studentNameLine = value),
+              ),
+              _SwitchSpec(
+                label: l10n.course,
+                icon: Icons.school_outlined,
+                value: _showCourseCode,
+                onChanged: (value) => setState(() => _showCourseCode = value),
+              ),
+              _SwitchSpec(
+                label: l10n.examInstructorName,
+                icon: Icons.person_pin_outlined,
+                value: _showInstructorName,
+                onChanged: (value) =>
+                    setState(() => _showInstructorName = value),
+              ),
+              _SwitchSpec(
+                label: l10n.examPaperShowTotalMarks,
+                icon: Icons.score_outlined,
+                value: _showTotalMarks,
+                onChanged: (value) => setState(() => _showTotalMarks = value),
+              ),
+              _SwitchSpec(
+                label: l10n.examPaperShowQuestionMarks,
+                icon: Icons.fact_check_outlined,
+                value: _showQuestionMarks,
+                onChanged: (value) =>
+                    setState(() => _showQuestionMarks = value),
+              ),
+              _SwitchSpec(
+                label: l10n.examPageBreakPerSection,
+                icon: Icons.vertical_split_outlined,
+                value: _pageBreakPerSection,
+                onChanged: (value) =>
+                    setState(() => _pageBreakPerSection = value),
+              ),
+            ]),
           ],
         ),
       ),
@@ -645,30 +708,478 @@ class _ExamPaperExportPreviewScreenState
     );
   }
 
-  Widget _section({
-    required String title,
-    required Widget child,
-    bool initiallyExpanded = false,
-  }) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ExpansionTile(
-        initiallyExpanded: initiallyExpanded,
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
-        childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-        children: [child],
+  Widget _designerIntro(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final steps = [
+      _StepChipData(
+        icon: Icons.style_outlined,
+        label: l10n.examPaperStepTemplate,
+        color: InstructorColors.primary,
+      ),
+      _StepChipData(
+        icon: Icons.edit_note_rounded,
+        label: l10n.examPaperStepContent,
+        color: InstructorColors.teal,
+      ),
+      _StepChipData(
+        icon: Icons.file_download_outlined,
+        label: l10n.examPaperStepExport,
+        color: InstructorColors.accent,
+      ),
+    ];
+    return _DesignerPanel(
+      padding: const EdgeInsets.all(12),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final step in steps)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: step.color.withValues(alpha: isDark ? 0.18 : 0.09),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: step.color.withValues(alpha: isDark ? 0.36 : 0.18),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(step.icon, size: 16, color: step.color),
+                  const SizedBox(width: 6),
+                  Text(
+                    step.label,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }
 
-  Widget _field(TextEditingController controller, String label) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(labelText: label),
-        onChanged: (_) => _refreshTemplate(),
+  Widget _modernSection(
+    BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required Widget child,
+    bool initiallyExpanded = false,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return _DesignerPanel(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.zero,
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: initiallyExpanded,
+          tilePadding: const EdgeInsets.fromLTRB(14, 8, 12, 8),
+          childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+          leading: _DesignerIcon(icon: icon, color: color),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 3),
+            child: Text(
+              subtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                fontWeight: FontWeight.w700,
+                height: 1.25,
+              ),
+            ),
+          ),
+          children: [child],
+        ),
+      ),
+    );
+  }
+
+  Widget _templatePicker(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final hasTemplates = _templates.any((template) => template.id != null);
+    if (!hasTemplates) {
+      return _SoftNotice(
+        icon: Icons.info_outline_rounded,
+        color: InstructorColors.info,
+        text: l10n.examPaperNoSavedTemplates,
+      );
+    }
+    return _dropdownField<int>(
+      context,
+      label: l10n.examPaperTemplate,
+      value: _templates.any((template) => template.id == _currentTemplate?.id)
+          ? _currentTemplate?.id
+          : null,
+      icon: Icons.layers_outlined,
+      items: _templates
+          .where((template) => template.id != null)
+          .map((template) => template.id!)
+          .toList(),
+      labelFor: (id) =>
+          _templates.firstWhere((template) => template.id == id).name,
+      onChanged: (id) {
+        final selected = _templates.firstWhere(
+          (template) => template.id == id,
+          orElse: () => _currentTemplate!,
+        );
+        setState(() {
+          _currentTemplate = selected;
+          _layoutMode = selected.layoutMode;
+        });
+        _hydrateControllers(selected);
+      },
+    );
+  }
+
+  Widget _layoutModePicker(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final options = [
+      _LayoutOption(
+        mode: ExamPaperLayoutMode.structured,
+        icon: Icons.view_column_outlined,
+        label: l10n.examPaperStructuredZones,
+        color: InstructorColors.primary,
+      ),
+      _LayoutOption(
+        mode: ExamPaperLayoutMode.free,
+        icon: Icons.open_with_rounded,
+        label: l10n.examPaperFreeDrag,
+        color: InstructorColors.orange,
+      ),
+      _LayoutOption(
+        mode: ExamPaperLayoutMode.hybrid,
+        icon: Icons.dashboard_customize_outlined,
+        label: l10n.examPaperHybrid,
+        color: InstructorColors.accent,
+      ),
+    ];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final compact = constraints.maxWidth < 520;
+        final itemWidth = compact
+            ? constraints.maxWidth
+            : (constraints.maxWidth - 16) / 3;
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final option in options)
+              SizedBox(
+                width: itemWidth,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    setState(() => _layoutMode = option.mode);
+                    _refreshTemplate();
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _layoutMode == option.mode
+                          ? option.color.withValues(alpha: isDark ? 0.22 : 0.1)
+                          : InstructorColors.surfaceColor(isDark),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _layoutMode == option.mode
+                            ? option.color
+                            : InstructorColors.borderColor(isDark),
+                        width: _layoutMode == option.mode ? 1.4 : 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(option.icon, color: option.color, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            option.label,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: _layoutMode == option.mode
+                                  ? option.color
+                                  : InstructorColors.textPrimaryColor(isDark),
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        if (_layoutMode == option.mode)
+                          Icon(
+                            Icons.check_circle_rounded,
+                            color: option.color,
+                            size: 18,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _clusterGrid(BuildContext context, {required List<Widget> children}) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 760 ? 2 : 1;
+        final width = (constraints.maxWidth - ((columns - 1) * 10)) / columns;
+        return Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            for (final child in children) SizedBox(width: width, child: child),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _fieldCluster(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color color,
+    required List<_DesignerFieldData> fields,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: InstructorColors.surfaceColor(isDark),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: InstructorColors.borderColor(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _DesignerIcon(icon: icon, color: color, size: 36),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(isDark),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          for (final field in fields)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: _paperField(field.controller, field.label),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _fieldGrid(
+    BuildContext context,
+    List<_DesignerFieldData> fields, {
+    IconData? icon,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 640 ? 2 : 1;
+        final width = (constraints.maxWidth - ((columns - 1) * 10)) / columns;
+        return Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            for (final field in fields)
+              SizedBox(
+                width: width,
+                child: _paperField(field.controller, field.label, icon: icon),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _optionGrid(BuildContext context, List<Widget> children) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 640 ? 2 : 1;
+        final width = (constraints.maxWidth - ((columns - 1) * 10)) / columns;
+        return Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            for (final child in children) SizedBox(width: width, child: child),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _switchGrid(BuildContext context, List<_SwitchSpec> specs) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 680 ? 2 : 1;
+        final width = (constraints.maxWidth - ((columns - 1) * 10)) / columns;
+        return Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            for (final spec in specs)
+              SizedBox(width: width, child: _switchTile(context, spec)),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _switchTile(BuildContext context, _SwitchSpec spec) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      constraints: const BoxConstraints(minHeight: 64),
+      padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 8, 10),
+      decoration: BoxDecoration(
+        color: InstructorColors.surfaceColor(isDark),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: InstructorColors.borderColor(isDark)),
+      ),
+      child: Row(
+        children: [
+          _DesignerIcon(icon: spec.icon, color: InstructorColors.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              spec.label,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          Switch(value: spec.value, onChanged: spec.onChanged),
+        ],
+      ),
+    );
+  }
+
+  Widget _dropdownField<T>(
+    BuildContext context, {
+    required String label,
+    required T? value,
+    required IconData icon,
+    required List<T> items,
+    required String Function(T value) labelFor,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return QuestionFormMenuField<T>(
+      label: label,
+      value: value,
+      icon: icon,
+      color: InstructorColors.cyan,
+      valueMaxLines: 2,
+      options: items
+          .map(
+            (item) => QuestionFormMenuOption<T>(
+              value: item,
+              label: labelFor(item),
+              icon: icon,
+            ),
+          )
+          .toList(),
+      onChanged: onChanged,
+    );
+  }
+
+  Widget _paperField(
+    TextEditingController controller,
+    String label, {
+    IconData? icon,
+    ValueChanged<String>? onChanged,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 4, bottom: 6),
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: InstructorColors.textSecondaryColor(isDark),
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              height: 1.15,
+            ),
+          ),
+        ),
+        TextField(
+          controller: controller,
+          decoration: _inputDecoration(
+            context,
+            label: label,
+            icon: icon,
+            showLabel: false,
+          ),
+          minLines: 1,
+          maxLines: 2,
+          onChanged: onChanged ?? (_) => _refreshTemplate(),
+        ),
+      ],
+    );
+  }
+
+  InputDecoration _inputDecoration(
+    BuildContext context, {
+    required String label,
+    IconData? icon,
+    bool showLabel = true,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InputDecoration(
+      labelText: showLabel ? label : null,
+      hintText: showLabel ? null : label,
+      filled: true,
+      fillColor: InstructorColors.surfaceColor(isDark),
+      prefixIcon: icon == null ? null : Icon(icon, size: 20),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: BorderSide(color: InstructorColors.borderColor(isDark)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: BorderSide(color: InstructorColors.borderColor(isDark)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: const BorderSide(
+          color: InstructorColors.primary,
+          width: 1.4,
+        ),
       ),
     );
   }
@@ -678,12 +1189,14 @@ class _ExamPaperExportPreviewScreenState
     final detail = _detail!;
     final template = _buildTemplate();
     final children = [
-      Text(
-        l10n.examPaperLivePreview,
-        style: Theme.of(
-          context,
-        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+      _PanelTitle(
+        icon: Icons.preview_outlined,
+        color: InstructorColors.primary,
+        title: l10n.examPaperLivePreview,
+        subtitle: l10n.examPaperPreviewHint,
       ),
+      const SizedBox(height: 10),
+      _previewOptionSummary(context),
       const SizedBox(height: 12),
       Center(
         child: ConstrainedBox(
@@ -697,6 +1210,7 @@ class _ExamPaperExportPreviewScreenState
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: const Color(0xFFD1D5DB)),
                     boxShadow: const [
                       BoxShadow(
@@ -718,6 +1232,7 @@ class _ExamPaperExportPreviewScreenState
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _paperHeader(template, detail),
+                            _paperExportRows(detail),
                             const SizedBox(height: 16),
                             Expanded(child: _paperQuestions(detail)),
                             _paperTrailing(template),
@@ -726,7 +1241,10 @@ class _ExamPaperExportPreviewScreenState
                               _resolveTokens(
                                 template.footerJson['pageNumberFormat']
                                         ?.toString() ??
-                                    'Page {page} of {totalPages}',
+                                    l10n.examPaperDefaultPageNumberFormat(
+                                      '{page}',
+                                      '{totalPages}',
+                                    ),
                                 detail,
                               ),
                               textAlign: TextAlign.center,
@@ -748,16 +1266,25 @@ class _ExamPaperExportPreviewScreenState
     if (!scrollable) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(18, 8, 18, 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: children,
+        child: _DesignerPanel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: children,
+          ),
         ),
       );
     }
     return ListView(
       padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      children: children,
+      children: [
+        _DesignerPanel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: children,
+          ),
+        ),
+      ],
     );
   }
 
@@ -811,6 +1338,110 @@ class _ExamPaperExportPreviewScreenState
     );
   }
 
+  Widget _previewOptionSummary(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final chips = [
+      _PreviewChipData(
+        icon: Icons.person_outline_rounded,
+        label: localizedExportVariant(l10n, _variant),
+        color: InstructorColors.primary,
+      ),
+      _PreviewChipData(
+        icon: Icons.picture_as_pdf_outlined,
+        label: localizedExportFormat(l10n, _format),
+        color: InstructorColors.orange,
+      ),
+      _PreviewChipData(
+        icon: Icons.badge_outlined,
+        label:
+            '${l10n.examStudentNameLine}: ${_studentNameLine ? l10n.enabled : l10n.disabled}',
+        color: _studentNameLine
+            ? InstructorColors.success
+            : InstructorColors.textTertiary,
+      ),
+      _PreviewChipData(
+        icon: Icons.school_outlined,
+        label:
+            '${l10n.course}: ${_showCourseCode ? l10n.enabled : l10n.disabled}',
+        color: _showCourseCode
+            ? InstructorColors.success
+            : InstructorColors.textTertiary,
+      ),
+      _PreviewChipData(
+        icon: Icons.person_pin_outlined,
+        label:
+            '${l10n.examInstructorName}: ${_showInstructorName ? l10n.enabled : l10n.disabled}',
+        color: _showInstructorName
+            ? InstructorColors.success
+            : InstructorColors.textTertiary,
+      ),
+      _PreviewChipData(
+        icon: Icons.score_outlined,
+        label:
+            '${l10n.examPaperShowTotalMarks}: ${_showTotalMarks ? l10n.enabled : l10n.disabled}',
+        color: _showTotalMarks
+            ? InstructorColors.success
+            : InstructorColors.textTertiary,
+      ),
+      _PreviewChipData(
+        icon: Icons.fact_check_outlined,
+        label:
+            '${l10n.examPaperShowQuestionMarks}: ${_showQuestionMarks ? l10n.enabled : l10n.disabled}',
+        color: _showQuestionMarks
+            ? InstructorColors.success
+            : InstructorColors.textTertiary,
+      ),
+      _PreviewChipData(
+        icon: Icons.vertical_split_outlined,
+        label:
+            '${l10n.examPageBreakPerSection}: ${_pageBreakPerSection ? l10n.enabled : l10n.disabled}',
+        color: _pageBreakPerSection
+            ? InstructorColors.success
+            : InstructorColors.textTertiary,
+      ),
+    ];
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final chip in chips)
+          _PreviewOptionChip(
+            icon: chip.icon,
+            label: chip.label,
+            color: chip.color,
+          ),
+      ],
+    );
+  }
+
+  Widget _paperExportRows(ExamFullDetailModel detail) {
+    final l10n = AppLocalizations.of(context);
+    final rows = <String>[
+      if (_studentNameLine)
+        '${l10n.examStudentNameLine}: ______________________________',
+      if (_showCourseCode)
+        '${l10n.course}: ${[detail.courseCode, detail.courseName].where((value) => value != null && value.trim().isNotEmpty).join(' - ')}',
+      if (_showInstructorName)
+        '${l10n.examInstructorName}: ______________________________',
+      if (_showTotalMarks)
+        '${l10n.totalMarks}: ${detail.exam.totalMarks ?? '-'}',
+    ];
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final row in rows)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 3),
+              child: Text(row, style: const TextStyle(fontSize: 10)),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _zoneText(dynamic raw, ExamFullDetailModel detail, TextAlign align) {
     return Column(
       crossAxisAlignment: align == TextAlign.right
@@ -845,10 +1476,21 @@ class _ExamPaperExportPreviewScreenState
         for (var i = 0; i < previewItems.length; i++)
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: QuestionFormattedText(
-              text: '${i + 1}. ${previewItems[i].questionText}',
-              fallback: '${i + 1}. Question snapshot',
-              style: const TextStyle(fontSize: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                QuestionFormattedText(
+                  text: '${i + 1}. ${previewItems[i].questionText}',
+                  fallback:
+                      '${i + 1}. ${AppLocalizations.of(context).questions}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                if (_showQuestionMarks)
+                  Text(
+                    '${AppLocalizations.of(context).marks}: ${previewItems[i].marks ?? '-'}',
+                    style: const TextStyle(fontSize: 10),
+                  ),
+              ],
             ),
           ),
       ],
@@ -912,45 +1554,52 @@ class _ExamPaperExportPreviewScreenState
     final l10n = AppLocalizations.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         final compact = constraints.maxWidth < 640;
+        final secondaryActions = [
+          _ActionSpec(
+            label: l10n.examPaperSaveTemplate,
+            icon: Icons.save_outlined,
+            onPressed: _working || _currentTemplate?.id == null
+                ? null
+                : () => _saveTemplate(saveAsNew: false),
+          ),
+          _ActionSpec(
+            label: l10n.examPaperSaveAsTemplate,
+            icon: Icons.save_as_outlined,
+            onPressed: _working ? null : () => _saveTemplate(saveAsNew: true),
+          ),
+          _ActionSpec(
+            label: l10n.examPaperResetDefault,
+            icon: Icons.restart_alt_rounded,
+            onPressed: _working ? null : _resetDefaultTemplate,
+          ),
+        ];
         return Material(
-          color: Theme.of(context).cardColor,
-          elevation: 10,
-          borderRadius: BorderRadius.circular(18),
+          color: InstructorColors.cardColor(isDark),
+          elevation: 14,
+          shadowColor: Colors.black.withValues(alpha: isDark ? 0.45 : 0.16),
+          borderRadius: BorderRadius.circular(22),
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             child: compact
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _compactAction(
-                            tooltip: l10n.examPaperSaveTemplate,
-                            icon: Icons.save_outlined,
-                            onPressed: _working || _currentTemplate?.id == null
-                                ? null
-                                : () => _saveTemplate(saveAsNew: false),
-                          ),
-                          _compactAction(
-                            tooltip: l10n.examPaperSaveAsTemplate,
-                            icon: Icons.save_as_outlined,
-                            onPressed: _working
-                                ? null
-                                : () => _saveTemplate(saveAsNew: true),
-                          ),
-                          _compactAction(
-                            tooltip: l10n.examPaperResetDefault,
-                            icon: Icons.restart_alt_rounded,
-                            onPressed: _working ? null : _resetDefaultTemplate,
-                          ),
-                          _compactAction(
-                            tooltip: l10n.examPaperApplyToExam,
-                            icon: Icons.check_circle_outline,
-                            onPressed: _working ? null : _applyTemplate,
-                          ),
-                        ],
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (final action in secondaryActions)
+                              Padding(
+                                padding: const EdgeInsetsDirectional.only(
+                                  end: 8,
+                                ),
+                                child: _actionPill(context, action),
+                              ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
@@ -976,30 +1625,8 @@ class _ExamPaperExportPreviewScreenState
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      OutlinedButton.icon(
-                        onPressed: _working || _currentTemplate?.id == null
-                            ? null
-                            : () => _saveTemplate(saveAsNew: false),
-                        icon: const Icon(Icons.save_outlined),
-                        label: Text(l10n.examPaperSaveTemplate),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: _working
-                            ? null
-                            : () => _saveTemplate(saveAsNew: true),
-                        icon: const Icon(Icons.save_as_outlined),
-                        label: Text(l10n.examPaperSaveAsTemplate),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: _working ? null : _resetDefaultTemplate,
-                        icon: const Icon(Icons.restart_alt_rounded),
-                        label: Text(l10n.examPaperResetDefault),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: _working ? null : _applyTemplate,
-                        icon: const Icon(Icons.check_circle_outline),
-                        label: Text(l10n.examPaperApplyToExam),
-                      ),
+                      for (final action in secondaryActions)
+                        _actionPill(context, action),
                       FilledButton.icon(
                         onPressed: _working ? null : _export,
                         icon: _working
@@ -1021,26 +1648,34 @@ class _ExamPaperExportPreviewScreenState
     );
   }
 
-  Widget _compactAction({
-    required String tooltip,
-    required IconData icon,
-    required VoidCallback? onPressed,
-  }) {
-    return Tooltip(
-      message: tooltip,
-      child: IconButton.outlined(onPressed: onPressed, icon: Icon(icon)),
+  Widget _actionPill(BuildContext context, _ActionSpec action) {
+    return OutlinedButton.icon(
+      onPressed: action.onPressed,
+      icon: Icon(action.icon, size: 18),
+      label: Text(action.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      style: OutlinedButton.styleFrom(
+        visualDensity: VisualDensity.compact,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        side: BorderSide(
+          color: InstructorColors.borderColor(
+            Theme.of(context).brightness == Brightness.dark,
+          ),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
     );
   }
 
   String _resolveTokens(String value, ExamFullDetailModel detail) {
     final now = DateTime.now();
+    final l10n = AppLocalizations.of(context);
     final replacements = <String, String>{
       'courseCode': detail.courseCode ?? '',
       'courseName': detail.courseName ?? detail.exam.title,
       'examTitle': detail.exam.title,
       'duration': detail.durationMinutes == null
           ? ''
-          : '${detail.durationMinutes} minutes',
+          : '${detail.durationMinutes} ${l10n.minutes}',
       'date': now.toIso8601String().split('T').first,
       'academicYear': '${now.year}/${now.year + 1}',
       'page': '1',
@@ -1058,4 +1693,270 @@ class _ExamPaperExportPreviewScreenState
     if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '') ?? 0;
   }
+}
+
+class _DesignerPanel extends StatelessWidget {
+  const _DesignerPanel({
+    required this.child,
+    this.padding = const EdgeInsets.all(16),
+    this.margin = EdgeInsets.zero,
+  });
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry margin;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: margin,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: InstructorColors.borderColor(isDark)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+class _PanelTitle extends StatelessWidget {
+  const _PanelTitle({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _DesignerIcon(icon: icon, color: color),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  color: InstructorColors.textPrimaryColor(isDark),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: InstructorColors.textSecondaryColor(isDark),
+                  height: 1.28,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DesignerIcon extends StatelessWidget {
+  const _DesignerIcon({
+    required this.icon,
+    required this.color,
+    this.size = 42,
+  });
+
+  final IconData icon;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.18 : 0.1),
+        borderRadius: BorderRadius.circular(size / 3),
+      ),
+      child: Icon(icon, color: color, size: size * 0.5),
+    );
+  }
+}
+
+class _SoftNotice extends StatelessWidget {
+  const _SoftNotice({
+    required this.icon,
+    required this.color,
+    required this.text,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.16 : 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DesignerFieldData {
+  const _DesignerFieldData(this.controller, this.label);
+
+  final TextEditingController controller;
+  final String label;
+}
+
+class _LayoutOption {
+  const _LayoutOption({
+    required this.mode,
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final ExamPaperLayoutMode mode;
+  final IconData icon;
+  final String label;
+  final Color color;
+}
+
+class _SwitchSpec {
+  const _SwitchSpec({
+    required this.label,
+    required this.icon,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+}
+
+class _ActionSpec {
+  const _ActionSpec({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback? onPressed;
+}
+
+class _PreviewOptionChip extends StatelessWidget {
+  const _PreviewOptionChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.18 : 0.09),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: color),
+          const SizedBox(width: 5),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PreviewChipData {
+  const _PreviewChipData({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+}
+
+class _StepChipData {
+  const _StepChipData({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
 }

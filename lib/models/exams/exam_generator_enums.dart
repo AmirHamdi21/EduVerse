@@ -83,7 +83,7 @@ enum ExamGroupSelectionMode {
 }
 
 enum ExamExportFormat {
-  htmlDoc('html_doc'),
+  htmlDoc('docx'),
   pdf('pdf');
 
   const ExamExportFormat(this.value);
