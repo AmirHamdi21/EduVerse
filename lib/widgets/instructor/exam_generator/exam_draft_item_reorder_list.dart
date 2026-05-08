@@ -25,6 +25,7 @@ class ExamDraftItemReorderList extends StatefulWidget {
 
 class _ExamDraftItemReorderListState extends State<ExamDraftItemReorderList> {
   late List<ExamDraftItemModel> _items = _orderedItems(widget.items);
+  final Set<int> _collapsedSectionIds = <int>{};
   bool _isSaving = false;
 
   @override
@@ -96,6 +97,12 @@ class _ExamDraftItemReorderListState extends State<ExamDraftItemReorderList> {
         blockIndex: index,
         questionCount: block.items.length,
         firstQuestionNumber: firstQuestionNumber,
+        isCollapsed: _collapsedSectionIds.contains(block.section.id),
+        onToggleCollapsed: () => setState(() {
+          if (!_collapsedSectionIds.add(block.section.id)) {
+            _collapsedSectionIds.remove(block.section.id);
+          }
+        }),
         child: block.items.isEmpty
             ? _EmptyReorderCard(
                 icon: Icons.check_circle_outline_rounded,
@@ -275,6 +282,8 @@ class _ReorderSectionBlockCard extends StatelessWidget {
     required this.blockIndex,
     required this.questionCount,
     required this.firstQuestionNumber,
+    required this.isCollapsed,
+    required this.onToggleCollapsed,
     required this.child,
   });
 
@@ -282,6 +291,8 @@ class _ReorderSectionBlockCard extends StatelessWidget {
   final int blockIndex;
   final int questionCount;
   final int firstQuestionNumber;
+  final bool isCollapsed;
+  final VoidCallback onToggleCollapsed;
   final Widget child;
 
   @override
@@ -350,10 +361,33 @@ class _ReorderSectionBlockCard extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
+              Tooltip(
+                message: isCollapsed
+                    ? l10n.examExpandSectionQuestions
+                    : l10n.examCollapseSectionQuestions,
+                child: IconButton.filledTonal(
+                  onPressed: onToggleCollapsed,
+                  icon: AnimatedRotation(
+                    turns: isCollapsed ? 0 : 0.5,
+                    duration: const Duration(milliseconds: 160),
+                    child: const Icon(Icons.keyboard_arrow_down_rounded),
+                  ),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 12),
-          child,
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: child,
+            ),
+            crossFadeState: isCollapsed
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            duration: const Duration(milliseconds: 180),
+          ),
         ],
       ),
     );

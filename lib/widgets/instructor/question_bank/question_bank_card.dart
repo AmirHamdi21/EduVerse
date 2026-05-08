@@ -222,8 +222,9 @@ class _QuestionCardBody extends StatelessWidget {
         QuestionFormattedText(
           text: title,
           fallback: l10n.questionBankImageQuestion,
-          maxLines: 2,
+          maxLines: 4,
           overflow: TextOverflow.ellipsis,
+          clipMathToMaxLines: true,
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w900,

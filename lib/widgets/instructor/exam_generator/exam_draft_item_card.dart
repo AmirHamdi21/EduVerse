@@ -346,6 +346,7 @@ class _QuestionDetails extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final question = item.question;
+    final media = _draftQuestionMediaItems(context, item);
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Container(
@@ -364,21 +365,24 @@ class _QuestionDetails extends StatelessWidget {
               title: l10n.examAnswerAndDetails,
             ),
             const SizedBox(height: 10),
-            if (_imageUrl != null) ...[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: _ImagePreview(imageUrl: _imageUrl!),
+            if (media.isNotEmpty) ...[
+              _DetailTitle(
+                icon: Icons.image_outlined,
+                title: l10n.examSavedQuestionMedia,
               ),
-              if ((question?.questionFileCaption ?? '').trim().isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Text(
-                  question!.questionFileCaption!,
-                  style: TextStyle(
-                    color: InstructorColors.textSecondaryColor(isDark),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+              const SizedBox(height: 8),
+              for (final mediaItem in media) ...[
+                _ImagePreview(imageUrl: mediaItem.url, title: mediaItem.label),
+                const SizedBox(height: 10),
               ],
+            ],
+            if ((item.sourceGroupPrompt ?? '').trim().isNotEmpty) ...[
+              _DetailTitle(
+                icon: Icons.folder_copy_outlined,
+                title: l10n.examSavedSourceGroupPrompt,
+              ),
+              const SizedBox(height: 8),
+              QuestionFormattedText(text: item.sourceGroupPrompt, fallback: ''),
               const SizedBox(height: 12),
             ],
             _AnswerContent(item: item),
@@ -411,12 +415,6 @@ class _QuestionDetails extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String? get _imageUrl {
-    final value =
-        item.questionImagePreviewUrl ?? item.question?.questionImageUrl;
-    return value == null || value.isEmpty ? null : value;
   }
 }
 
@@ -469,6 +467,53 @@ class _AnswerContent extends StatelessWidget {
       fallback: l10n.qbNoAnswerProvided,
     );
   }
+}
+
+class _DraftMediaItem {
+  const _DraftMediaItem({required this.url, required this.label});
+
+  final String url;
+  final String label;
+}
+
+List<_DraftMediaItem> _draftQuestionMediaItems(
+  BuildContext context,
+  ExamDraftItemModel item,
+) {
+  final l10n = AppLocalizations.of(context);
+  final media = <_DraftMediaItem>[];
+  final seen = <String>{};
+
+  void add(String? url, String label) {
+    final value = url?.trim();
+    if (value == null || value.isEmpty || !seen.add(value)) return;
+    media.add(_DraftMediaItem(url: value, label: label));
+  }
+
+  add(
+    item.questionImagePreviewUrl ?? item.question?.questionImageUrl,
+    item.question?.questionFileCaption ??
+        item.question?.questionFileAltText ??
+        l10n.questionBankImageQuestion,
+  );
+  for (final attachment in item.supportingAttachments) {
+    add(
+      attachment.previewUrl,
+      attachment.caption ?? attachment.altText ?? l10n.attachments,
+    );
+  }
+  for (final attachment in item.question?.attachments ?? const []) {
+    add(
+      attachment.imageUrl,
+      attachment.caption ?? attachment.altText ?? l10n.attachments,
+    );
+  }
+  add(
+    item.sourceGroupImagePreviewUrl,
+    item.sourceGroupTitle ?? l10n.examSavedGroupMedia,
+  );
+
+  return media;
 }
 
 class _AnswerOptionTile extends StatelessWidget {
@@ -739,34 +784,229 @@ class _IconBox extends StatelessWidget {
 }
 
 class _ImagePreview extends StatelessWidget {
-  const _ImagePreview({required this.imageUrl});
+  const _ImagePreview({required this.imageUrl, this.title});
 
   final String imageUrl;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final image = _imageWidget();
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => _showDraftImagePreview(context, imageUrl, title),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(borderRadius: BorderRadius.circular(16), child: image),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Icon(
+                Icons.zoom_out_map_rounded,
+                size: 16,
+                color: InstructorColors.textSecondaryColor(isDark),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  title == null || title!.trim().isEmpty
+                      ? l10n.examPreviewImage
+                      : '${l10n.examPreviewImage} • $title',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorColors.textSecondaryColor(isDark),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _imageWidget({BoxFit fit = BoxFit.cover, double height = 180}) {
     if (imageUrl.startsWith('data:image')) {
       final comma = imageUrl.indexOf(',');
       if (comma > -1) {
         return Image.memory(
           base64Decode(imageUrl.substring(comma + 1)),
           width: double.infinity,
-          height: 180,
-          fit: BoxFit.cover,
+          height: height,
+          fit: fit,
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded || frame != null) return child;
+            return _DraftImageLoadingBox(height: height);
+          },
+          errorBuilder: (_, __, ___) => _DraftImageErrorBox(height: height),
         );
       }
     }
     return Image.network(
       imageUrl,
       width: double.infinity,
-      height: 180,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => const SizedBox(
-        height: 120,
-        child: Center(child: Icon(Icons.image_not_supported_outlined)),
+      height: height,
+      fit: fit,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _DraftImageLoadingBox(height: height);
+      },
+      errorBuilder: (_, __, ___) => _DraftImageErrorBox(height: height),
+    );
+  }
+}
+
+class _DraftImageLoadingBox extends StatefulWidget {
+  const _DraftImageLoadingBox({required this.height});
+
+  final double height;
+
+  @override
+  State<_DraftImageLoadingBox> createState() => _DraftImageLoadingBoxState();
+}
+
+class _DraftImageLoadingBoxState extends State<_DraftImageLoadingBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat(reverse: true);
+
+  late final Animation<double> _pulse = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInOut,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      height: widget.height,
+      alignment: Alignment.center,
+      color: InstructorColors.primary.withValues(alpha: isDark ? 0.14 : 0.08),
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 0.45, end: 1).animate(_pulse),
+        child: Container(
+          width: 62,
+          height: 62,
+          decoration: BoxDecoration(
+            color: InstructorColors.primary.withValues(
+              alpha: isDark ? 0.18 : 0.12,
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.6,
+                color: InstructorColors.primary,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
+}
+
+class _DraftImageErrorBox extends StatelessWidget {
+  const _DraftImageErrorBox({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      height: height,
+      alignment: Alignment.center,
+      color: InstructorColors.primary.withValues(alpha: isDark ? 0.14 : 0.08),
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color: InstructorColors.textSecondaryColor(isDark),
+      ),
+    );
+  }
+}
+
+Future<void> _showDraftImagePreview(
+  BuildContext context,
+  String imageUrl,
+  String? title,
+) {
+  final l10n = AppLocalizations.of(context);
+  return showDialog<void>(
+    context: context,
+    builder: (context) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return Dialog(
+        insetPadding: const EdgeInsets.all(16),
+        backgroundColor: InstructorColors.cardColor(isDark),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title?.trim().isNotEmpty == true
+                            ? title!.trim()
+                            : l10n.examPreviewImage,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: InstructorColors.textPrimaryColor(isDark),
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: InteractiveViewer(
+                    minScale: 0.7,
+                    maxScale: 4,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: _ImagePreview(imageUrl: imageUrl)._imageWidget(
+                        fit: BoxFit.contain,
+                        height: MediaQuery.sizeOf(context).height * 0.72,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class _InfoPill extends StatelessWidget {

@@ -32415,6 +32415,30 @@ abstract class AppLocalizations {
   /// **'Questions saved outside any section. They remain in the exam snapshot but are not part of a section.'**
   String get examSavedUnassignedQuestionsHint;
 
+  /// No description provided for @examPreviewImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview image'**
+  String get examPreviewImage;
+
+  /// No description provided for @examQuestionAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Question attachment'**
+  String get examQuestionAttachments;
+
+  /// No description provided for @examCollapseSectionQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse section questions'**
+  String get examCollapseSectionQuestions;
+
+  /// No description provided for @examExpandSectionQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand section questions'**
+  String get examExpandSectionQuestions;
+
   /// No description provided for @examGeneratedAt.
   ///
   /// In en, this message translates to:

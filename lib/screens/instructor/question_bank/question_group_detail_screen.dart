@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +15,8 @@ import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
+import '../../../services/api_service.dart';
+import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 import 'question_bank_create_screen.dart';
@@ -420,7 +424,10 @@ class _GroupImagePreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final imageUrl = group.sharedImageUrl;
+    final imageUrl = _resolveGroupImageUrl(
+      group.sharedImageUrl,
+      group.sharedFileId,
+    );
     final caption = group.sharedFileCaption?.trim();
     final altText = group.sharedFileAltText?.trim();
     return Container(
@@ -503,16 +510,10 @@ class _GroupImagePreviewCard extends StatelessWidget {
               onTap: () => _showImagePreview(context, imageUrl),
               child: AspectRatio(
                 aspectRatio: 16 / 9,
-                child: Image.network(
-                  imageUrl,
+                child: _GroupSharedImage(
+                  imageUrl: imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Center(
-                    child: Icon(
-                      Icons.broken_image_outlined,
-                      color: InstructorColors.textSecondaryColor(isDark),
-                      size: 42,
-                    ),
-                  ),
+                  isDark: isDark,
                 ),
               ),
             ),
@@ -555,7 +556,10 @@ class _GroupImagePreviewCard extends StatelessWidget {
         insetPadding: const EdgeInsets.all(18),
         backgroundColor: Colors.transparent,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680),
+          constraints: BoxConstraints(
+            maxWidth: 760,
+            maxHeight: MediaQuery.sizeOf(context).height * 0.88,
+          ),
           child: Container(
             decoration: BoxDecoration(
               color: InstructorColors.cardColor(isDark),
@@ -596,11 +600,13 @@ class _GroupImagePreviewCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: InteractiveViewer(
-                    child: Image.network(
-                      imageUrl,
+                    minScale: 0.7,
+                    maxScale: 4,
+                    child: _GroupSharedImage(
+                      imageUrl: imageUrl,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.broken_image_outlined, size: 64),
+                      isDark: isDark,
+                      height: MediaQuery.sizeOf(context).height * 0.72,
                     ),
                   ),
                 ),
@@ -608,6 +614,170 @@ class _GroupImagePreviewCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _GroupSharedImage extends StatelessWidget {
+  const _GroupSharedImage({
+    required this.imageUrl,
+    required this.fit,
+    required this.isDark,
+    this.height,
+  });
+
+  final String imageUrl;
+  final BoxFit fit;
+  final bool isDark;
+  final double? height;
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl.startsWith('data:image')) {
+      final comma = imageUrl.indexOf(',');
+      if (comma > -1) {
+        try {
+          return Image.memory(
+            base64Decode(imageUrl.substring(comma + 1)),
+            width: double.infinity,
+            height: height,
+            fit: fit,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+              if (wasSynchronouslyLoaded || frame != null) return child;
+              return _GroupImageLoadingBox(isDark: isDark, height: height);
+            },
+            errorBuilder: (_, __, ___) =>
+                _GroupImageErrorBox(isDark: isDark, height: height),
+          );
+        } on FormatException {
+          return _GroupImageErrorBox(isDark: isDark, height: height);
+        }
+      }
+    }
+
+    if (_requiresGroupImageAuth(imageUrl)) {
+      return FutureBuilder<String?>(
+        future: StorageService().getAccessToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return _GroupImageLoadingBox(isDark: isDark, height: height);
+          }
+          final token = snapshot.data;
+          if (token == null || token.isEmpty) {
+            return _GroupImageErrorBox(isDark: isDark, height: height);
+          }
+          return _networkImage(<String, String>{
+            'Authorization': 'Bearer $token',
+          });
+        },
+      );
+    }
+
+    return _networkImage(null);
+  }
+
+  Widget _networkImage(Map<String, String>? headers) {
+    return Image.network(
+      imageUrl,
+      headers: headers,
+      width: double.infinity,
+      height: height,
+      fit: fit,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _GroupImageLoadingBox(isDark: isDark, height: height);
+      },
+      errorBuilder: (_, __, ___) =>
+          _GroupImageErrorBox(isDark: isDark, height: height),
+    );
+  }
+}
+
+String? _resolveGroupImageUrl(String? imageUrl, int? fileId) {
+  final trimmed = imageUrl?.trim();
+  if (trimmed != null && trimmed.isNotEmpty) return trimmed;
+  if (fileId == null || fileId <= 0) return null;
+  return '${ApiService.baseUrl}/files/$fileId/download';
+}
+
+bool _requiresGroupImageAuth(String url) {
+  return url.contains('/api/files/') ||
+      url.startsWith('${ApiService.baseUrl}/files/');
+}
+
+class _GroupImageLoadingBox extends StatefulWidget {
+  const _GroupImageLoadingBox({required this.isDark, this.height});
+
+  final bool isDark;
+  final double? height;
+
+  @override
+  State<_GroupImageLoadingBox> createState() => _GroupImageLoadingBoxState();
+}
+
+class _GroupImageLoadingBoxState extends State<_GroupImageLoadingBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat(reverse: true);
+
+  late final Animation<double> _pulse = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInOut,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: widget.height,
+      constraints: widget.height == null
+          ? const BoxConstraints.expand()
+          : const BoxConstraints(),
+      alignment: Alignment.center,
+      color: InstructorColors.accent.withValues(
+        alpha: widget.isDark ? 0.16 : 0.08,
+      ),
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 0.45, end: 1).animate(_pulse),
+        child: const SizedBox(
+          width: 28,
+          height: 28,
+          child: CircularProgressIndicator(strokeWidth: 2.5),
+        ),
+      ),
+    );
+  }
+}
+
+class _GroupImageErrorBox extends StatelessWidget {
+  const _GroupImageErrorBox({required this.isDark, this.height});
+
+  final bool isDark;
+  final double? height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: height,
+      constraints: height == null
+          ? const BoxConstraints.expand()
+          : const BoxConstraints(),
+      alignment: Alignment.center,
+      color: InstructorColors.accent.withValues(alpha: isDark ? 0.16 : 0.08),
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color: InstructorColors.textSecondaryColor(isDark),
+        size: 42,
       ),
     );
   }

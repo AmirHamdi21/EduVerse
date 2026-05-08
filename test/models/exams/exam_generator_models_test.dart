@@ -92,4 +92,38 @@ void main() {
     expect(detail.unsectionedItems, hasLength(1));
     expect(detail.unsectionedItems.single.questionText, 'Unassigned');
   });
+
+  test('parses saved exam snapshot source question metadata', () {
+    final detail = ExamFullDetailModel.fromJson(<String, dynamic>{
+      'id': 10,
+      'courseId': 4,
+      'title': 'Final',
+      'status': 'draft',
+      'items': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'id': 1,
+          'sectionId': null,
+          'itemOrder': 0,
+          'snapshot': <String, dynamic>{
+            'sourceQuestionId': 42,
+            'questionText': 'MCQ with image',
+            'questionFileId': 88,
+            'questionImagePreviewUrl': null,
+            'sharedFileId': 99,
+            'sharedImageUrl': 'https://example.com/group.png',
+            'optionsJson': <Map<String, dynamic>>[
+              <String, dynamic>{'optionText': 'A', 'isCorrect': true},
+              <String, dynamic>{'optionText': 'B', 'isCorrect': false},
+            ],
+          },
+        },
+      ],
+    });
+
+    final item = detail.unsectionedItems.single;
+    expect(item.sourceQuestionId, 42);
+    expect(item.questionFileId, 88);
+    expect(item.sourceGroupFileId, 99);
+    expect(item.sourceGroupImagePreviewUrl, 'https://example.com/group.png');
+  });
 }

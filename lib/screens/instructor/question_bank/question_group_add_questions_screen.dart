@@ -444,13 +444,10 @@ class _QuestionGroupAddQuestionsViewState
       valid = _rows.every((row) => row.error == null);
     });
     if (!valid) return;
-    final created = await context
-        .read<QuestionGroupCubit>()
-        .addGroupedQuestions(payloads);
+    final cubit = context.read<QuestionGroupCubit>();
+    final created = await cubit.addGroupedQuestions(payloads);
     if (!created || !mounted) return;
-    setState(() {
-      _rows = const [QuestionBulkRowModel(localId: 1)];
-    });
+    _goToFreshGroupDetails(this.context, cubit.state.group?.id);
   }
 
   Future<void> _showCreateChapter(
@@ -501,7 +498,7 @@ class _QuestionGroupAddQuestionsViewState
     final cubit = context.read<QuestionGroupCubit>();
     final groupId = cubit.state.group?.id;
     if (cubit.state.createdQuestions.isNotEmpty && groupId != null) {
-      context.go('/instructor/question-bank/groups/$groupId');
+      _goToFreshGroupDetails(context, groupId);
       return;
     }
     if (_hasPendingUploads(_rows)) {
@@ -525,6 +522,12 @@ class _QuestionGroupAddQuestionsViewState
       await _discardPendingUploads(context);
     }
     if (context.mounted) context.pop();
+  }
+
+  void _goToFreshGroupDetails(BuildContext context, int? groupId) {
+    if (groupId == null || !context.mounted) return;
+    final refresh = DateTime.now().microsecondsSinceEpoch;
+    context.go('/instructor/question-bank/groups/$groupId?refresh=$refresh');
   }
 
   bool _hasPendingUploads(List<QuestionBulkRowModel> rows) {
@@ -743,9 +746,12 @@ class _GroupedCreateResultPanel extends StatelessWidget {
                   isDark: isDark,
                   onPressed: groupId == null
                       ? null
-                      : () => context.go(
-                          '/instructor/question-bank/groups/$groupId',
-                        ),
+                      : () {
+                          final refresh = DateTime.now().microsecondsSinceEpoch;
+                          context.go(
+                            '/instructor/question-bank/groups/$groupId?refresh=$refresh',
+                          );
+                        },
                 ),
                 _ResultActionButton(
                   label: l10n.qbCreateMoreQuestions,

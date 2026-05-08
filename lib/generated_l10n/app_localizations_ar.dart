@@ -17022,6 +17022,18 @@ class AppLocalizationsAr extends AppLocalizations {
       'أسئلة حُفظت خارج أي قسم. تبقى ضمن لقطة الامتحان لكنها ليست جزءًا من قسم.';
 
   @override
+  String get examPreviewImage => 'معاينة الصورة';
+
+  @override
+  String get examQuestionAttachments => 'مرفق السؤال';
+
+  @override
+  String get examCollapseSectionQuestions => 'طي أسئلة القسم';
+
+  @override
+  String get examExpandSectionQuestions => 'توسيع أسئلة القسم';
+
+  @override
   String get examGeneratedAt => 'تم التوليد';
 
   @override

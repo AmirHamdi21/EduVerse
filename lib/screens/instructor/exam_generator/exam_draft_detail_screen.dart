@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +21,8 @@ import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
 import '../../../services/api/question_bank_service.dart';
+import '../../../services/api_service.dart';
+import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
 import '../../../widgets/instructor/question_bank/question_bank_localized_labels.dart';
 import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
@@ -554,6 +558,7 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
                 '${l10n.qbGroups} ${item.sourceGroupId}',
             prompt: item.sourceGroupPrompt ?? group?.sharedPrompt,
             imageUrl: item.sourceGroupImagePreviewUrl,
+            fileId: item.sourceGroupFileId,
           ),
         );
         widgets.add(const SizedBox(height: 10));
@@ -2664,16 +2669,19 @@ class _GroupPromptHeader extends StatelessWidget {
     required this.title,
     required this.prompt,
     required this.imageUrl,
+    required this.fileId,
   });
 
   final String title;
   final String? prompt;
   final String? imageUrl;
+  final int? fileId;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final resolvedImageUrl = _resolveGroupHeaderImageUrl(imageUrl, fileId);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -2686,21 +2694,26 @@ class _GroupPromptHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          imageUrl == null
+          resolvedImageUrl == null
               ? _IconBubble(
                   icon: Icons.folder_copy_outlined,
                   color: InstructorColors.accent,
                 )
-              : ClipRRect(
+              : InkWell(
                   borderRadius: BorderRadius.circular(14),
-                  child: Image.network(
-                    imageUrl!,
-                    width: 42,
-                    height: 42,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _IconBubble(
-                      icon: Icons.folder_copy_outlined,
-                      color: InstructorColors.accent,
+                  onTap: () => _showGroupHeaderImagePreview(
+                    context,
+                    resolvedImageUrl,
+                    title,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: _GroupHeaderImage(
+                      imageUrl: resolvedImageUrl,
+                      width: 42,
+                      height: 42,
+                      fit: BoxFit.cover,
+                      isDark: isDark,
                     ),
                   ),
                 ),
@@ -2730,6 +2743,242 @@ class _GroupPromptHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+String? _resolveGroupHeaderImageUrl(String? imageUrl, int? fileId) {
+  final trimmed = imageUrl?.trim();
+  if (trimmed != null && trimmed.isNotEmpty) return trimmed;
+  if (fileId == null || fileId <= 0) return null;
+  return '${ApiService.baseUrl}/files/$fileId/download';
+}
+
+class _GroupHeaderImage extends StatelessWidget {
+  const _GroupHeaderImage({
+    required this.imageUrl,
+    required this.width,
+    required this.height,
+    required this.fit,
+    required this.isDark,
+  });
+
+  final String imageUrl;
+  final double width;
+  final double height;
+  final BoxFit fit;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl.startsWith('data:image')) {
+      final comma = imageUrl.indexOf(',');
+      if (comma > -1) {
+        try {
+          return Image.memory(
+            base64Decode(imageUrl.substring(comma + 1)),
+            width: width,
+            height: height,
+            fit: fit,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+              if (wasSynchronouslyLoaded || frame != null) return child;
+              return _GroupHeaderImageLoadingBox(
+                width: width,
+                height: height,
+                isDark: isDark,
+              );
+            },
+            errorBuilder: (_, __, ___) => _GroupHeaderImageErrorBox(
+              width: width,
+              height: height,
+              isDark: isDark,
+            ),
+          );
+        } on FormatException {
+          return _GroupHeaderImageErrorBox(
+            width: width,
+            height: height,
+            isDark: isDark,
+          );
+        }
+      }
+    }
+
+    if (_requiresImageAuth(imageUrl)) {
+      return FutureBuilder<String?>(
+        future: StorageService().getAccessToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return _GroupHeaderImageLoadingBox(
+              width: width,
+              height: height,
+              isDark: isDark,
+            );
+          }
+          final token = snapshot.data;
+          if (token == null || token.isEmpty) {
+            return _GroupHeaderImageErrorBox(
+              width: width,
+              height: height,
+              isDark: isDark,
+            );
+          }
+          return _networkImage(<String, String>{
+            'Authorization': 'Bearer $token',
+          });
+        },
+      );
+    }
+
+    return _networkImage(null);
+  }
+
+  Widget _networkImage(Map<String, String>? headers) {
+    return Image.network(
+      imageUrl,
+      headers: headers,
+      width: width,
+      height: height,
+      fit: fit,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _GroupHeaderImageLoadingBox(
+          width: width,
+          height: height,
+          isDark: isDark,
+        );
+      },
+      errorBuilder: (_, __, ___) => _GroupHeaderImageErrorBox(
+        width: width,
+        height: height,
+        isDark: isDark,
+      ),
+    );
+  }
+}
+
+class _GroupHeaderImageLoadingBox extends StatelessWidget {
+  const _GroupHeaderImageLoadingBox({
+    required this.width,
+    required this.height,
+    required this.isDark,
+  });
+
+  final double width;
+  final double height;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      alignment: Alignment.center,
+      color: InstructorColors.accent.withValues(alpha: isDark ? 0.18 : 0.1),
+      child: const SizedBox(
+        width: 18,
+        height: 18,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    );
+  }
+}
+
+class _GroupHeaderImageErrorBox extends StatelessWidget {
+  const _GroupHeaderImageErrorBox({
+    required this.width,
+    required this.height,
+    required this.isDark,
+  });
+
+  final double width;
+  final double height;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      alignment: Alignment.center,
+      color: InstructorColors.accent.withValues(alpha: isDark ? 0.18 : 0.1),
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color: InstructorColors.textSecondaryColor(isDark),
+        size: 20,
+      ),
+    );
+  }
+}
+
+bool _requiresImageAuth(String url) {
+  return url.contains('/api/files/') ||
+      url.startsWith('${ApiService.baseUrl}/files/');
+}
+
+Future<void> _showGroupHeaderImagePreview(
+  BuildContext context,
+  String imageUrl,
+  String title,
+) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  return showDialog<void>(
+    context: context,
+    builder: (context) => Dialog(
+      insetPadding: const EdgeInsets.all(16),
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: 760,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.88,
+        ),
+        decoration: BoxDecoration(
+          color: InstructorColors.cardColor(isDark),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: InstructorColors.borderColor(isDark)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Flexible(
+                child: InteractiveViewer(
+                  minScale: 0.7,
+                  maxScale: 4,
+                  child: _GroupHeaderImage(
+                    imageUrl: imageUrl,
+                    width: double.infinity,
+                    height: MediaQuery.sizeOf(context).height * 0.72,
+                    fit: BoxFit.contain,
+                    isDark: isDark,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class _IconBubble extends StatelessWidget {

@@ -79,8 +79,22 @@ class ExamDraftItemModel {
       sourceGroupTitle: _nullableString(json['sourceGroupTitle']),
       sourceGroupPrompt: _nullableString(json['sourceGroupPrompt']),
       sourceGroupType: _nullableString(json['sourceGroupType']),
-      sourceGroupFileId: _nullableInt(json['sourceGroupFileId']),
-      sourceGroupImagePreviewUrl: _nullableString(json['sourceGroupImagePreviewUrl']),
+      sourceGroupFileId: _nullableInt(
+        json['sourceGroupFileId'] ?? json['sharedFileId'],
+      ),
+      sourceGroupImagePreviewUrl: _nullableString(
+        json['sourceGroupImagePreviewUrl'] ??
+            json['sourceGroupImageUrl'] ??
+            json['sharedImageUrl'] ??
+            json['sharedFileUrl'] ??
+            json['sharedFileImageUrl'] ??
+            _map(json['sourceGroupFile'])['imageUrl'] ??
+            _map(json['sourceGroupFile'])['url'] ??
+            _map(json['sourceGroupFile'])['downloadUrl'] ??
+            _map(json['sharedFile'])['imageUrl'] ??
+            _map(json['sharedFile'])['url'] ??
+            _map(json['sharedFile'])['downloadUrl'],
+      ),
       questionImagePreviewUrl: _nullableString(json['questionImagePreviewUrl']),
       supportingAttachments: _asList(json['supportingAttachments'])
           .whereType<Map<String, dynamic>>()
@@ -154,7 +168,8 @@ String? _nullableString(dynamic value) {
   return text == null || text.isEmpty ? null : text;
 }
 
-List<dynamic> _asList(dynamic value) => value is List ? value : const <dynamic>[];
+List<dynamic> _asList(dynamic value) =>
+    value is List ? value : const <dynamic>[];
 
 Map<String, dynamic> _map(dynamic value) {
   if (value is Map<String, dynamic>) return value;

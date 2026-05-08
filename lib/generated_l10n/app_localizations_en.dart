@@ -17089,6 +17089,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Questions saved outside any section. They remain in the exam snapshot but are not part of a section.';
 
   @override
+  String get examPreviewImage => 'Preview image';
+
+  @override
+  String get examQuestionAttachments => 'Question attachment';
+
+  @override
+  String get examCollapseSectionQuestions => 'Collapse section questions';
+
+  @override
+  String get examExpandSectionQuestions => 'Expand section questions';
+
+  @override
   String get examGeneratedAt => 'Generated';
 
   @override

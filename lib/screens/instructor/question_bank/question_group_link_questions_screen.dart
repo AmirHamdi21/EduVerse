@@ -334,7 +334,10 @@ class _QuestionGroupLinkQuestionsViewState
       _selected.toList(),
     );
     if (ok && context.mounted) {
-      context.go('/instructor/question-bank/groups/${group.id}');
+      final refresh = DateTime.now().microsecondsSinceEpoch;
+      context.go(
+        '/instructor/question-bank/groups/${group.id}?refresh=$refresh',
+      );
     }
   }
 

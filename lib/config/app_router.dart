@@ -957,7 +957,11 @@ class AppRouter {
               body: Center(child: Text('Invalid question group route')),
             );
           }
-          return QuestionGroupDetailScreen(groupId: groupId);
+          final refreshToken = state.uri.queryParameters['refresh'];
+          return QuestionGroupDetailScreen(
+            key: ValueKey('question-group-detail-$groupId-$refreshToken'),
+            groupId: groupId,
+          );
         },
       ),
       GoRoute(

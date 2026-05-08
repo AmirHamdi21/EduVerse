@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../models/exams/exam_full_detail_model.dart';
+import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
+import '../../../services/api/question_bank_service.dart';
+import '../../../services/api_service.dart';
+import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
 import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
@@ -777,7 +781,9 @@ class _SavedQuestionCardState extends State<_SavedQuestionCard> {
                     ),
                     AnimatedCrossFade(
                       firstChild: const SizedBox.shrink(),
-                      secondChild: _SavedQuestionDetails(item: widget.item),
+                      secondChild: _expanded
+                          ? _SavedQuestionDetails(item: widget.item)
+                          : const SizedBox.shrink(),
                       crossFadeState: _expanded
                           ? CrossFadeState.showSecond
                           : CrossFadeState.showFirst,
@@ -923,16 +929,52 @@ class _SavedQuestionCardState extends State<_SavedQuestionCard> {
   }
 }
 
-class _SavedQuestionDetails extends StatelessWidget {
+class _SavedQuestionDetails extends StatefulWidget {
   const _SavedQuestionDetails({required this.item});
 
   final ExamSnapshotItemModel item;
 
   @override
+  State<_SavedQuestionDetails> createState() => _SavedQuestionDetailsState();
+}
+
+class _SavedQuestionDetailsState extends State<_SavedQuestionDetails> {
+  late final Future<QuestionBankQuestionModel?> _sourceQuestionFuture =
+      _loadSourceQuestion();
+
+  Future<QuestionBankQuestionModel?> _loadSourceQuestion() async {
+    final sourceQuestionId = widget.item.sourceQuestionId;
+    if (sourceQuestionId == null || sourceQuestionId <= 0) return null;
+    final service = QuestionBankService(coreApiClient: CoreApiClient());
+    final result = await service.getQuestion(sourceQuestionId);
+    return result.data;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return FutureBuilder<QuestionBankQuestionModel?>(
+      future: _sourceQuestionFuture,
+      builder: (context, snapshot) =>
+          _buildDetails(context, sourceQuestion: snapshot.data),
+    );
+  }
+
+  Widget _buildDetails(
+    BuildContext context, {
+    QuestionBankQuestionModel? sourceQuestion,
+  }) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final answers = _answerWidgets(context, item);
+    final answers = _answerWidgets(
+      context,
+      widget.item,
+      sourceQuestion: sourceQuestion,
+    );
+    final media = _questionMediaItems(
+      context,
+      widget.item,
+      sourceQuestion: sourceQuestion,
+    );
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Container(
@@ -952,16 +994,24 @@ class _SavedQuestionDetails extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             ...answers,
-            if (item.questionImagePreviewUrl != null) ...[
+            if (media.isNotEmpty) ...[
               const SizedBox(height: 12),
               _DetailSectionTitle(
                 icon: Icons.image_outlined,
                 title: l10n.examSavedQuestionMedia,
               ),
               const SizedBox(height: 8),
-              _ImagePreview(url: item.questionImagePreviewUrl!),
+              ...media.map(
+                (mediaItem) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _ImagePreview(
+                    url: mediaItem.url,
+                    title: mediaItem.label,
+                  ),
+                ),
+              ),
             ],
-            if ((item.sourceGroupPrompt ?? '').trim().isNotEmpty) ...[
+            if ((widget.item.sourceGroupPrompt ?? '').trim().isNotEmpty) ...[
               const SizedBox(height: 12),
               _DetailSectionTitle(
                 icon: Icons.folder_copy_outlined,
@@ -969,7 +1019,7 @@ class _SavedQuestionDetails extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               QuestionFormattedText(
-                text: item.sourceGroupPrompt,
+                text: widget.item.sourceGroupPrompt,
                 fallback: l10n.examQuestionSnapshot,
                 style: TextStyle(
                   color: InstructorColors.textPrimaryColor(isDark),
@@ -977,17 +1027,21 @@ class _SavedQuestionDetails extends StatelessWidget {
                 ),
               ),
             ],
-            if (item.sourceGroupImagePreviewUrl != null) ...[
+            if (_sourceGroupImageUrls(widget.item).isNotEmpty) ...[
               const SizedBox(height: 12),
               _DetailSectionTitle(
                 icon: Icons.photo_library_outlined,
                 title: l10n.examSavedGroupMedia,
               ),
               const SizedBox(height: 8),
-              _ImagePreview(url: item.sourceGroupImagePreviewUrl!),
+              _ImagePreview(
+                url: _sourceGroupImageUrls(widget.item).first,
+                fallbackUrls: _sourceGroupImageUrls(widget.item).skip(1),
+                title: l10n.examSavedGroupMedia,
+              ),
             ],
             const SizedBox(height: 12),
-            _SnapshotMeta(item: item),
+            _SnapshotMeta(item: widget.item),
           ],
         ),
       ),
@@ -1570,8 +1624,9 @@ class _SoftTextBlock extends StatelessWidget {
           Icon(icon, color: color, size: 20),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              text,
+            child: QuestionFormattedText(
+              text: text,
+              fallback: text,
               style: TextStyle(
                 color: InstructorColors.textPrimaryColor(isDark),
                 fontWeight: FontWeight.w700,
@@ -1715,28 +1770,288 @@ class _ActionChipButton extends StatelessWidget {
 }
 
 class _ImagePreview extends StatelessWidget {
-  const _ImagePreview({required this.url});
+  const _ImagePreview({
+    required this.url,
+    this.fallbackUrls = const [],
+    this.title,
+  });
 
   final String url;
+  final Iterable<String> fallbackUrls;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
-    final child = _imageFromUrl(url, width: double.infinity, height: 180);
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final child = _imageFromUrls(
+      <String>[url, ...fallbackUrls],
+      width: double.infinity,
+      height: 180,
+    );
     if (child == null) return const SizedBox.shrink();
-    return ClipRRect(borderRadius: BorderRadius.circular(16), child: child);
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => _showImagePreviewDialog(
+        context,
+        url,
+        title,
+        fallbackUrls: fallbackUrls,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(borderRadius: BorderRadius.circular(16), child: child),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Icon(
+                Icons.zoom_out_map_rounded,
+                size: 16,
+                color: InstructorColors.textSecondaryColor(isDark),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  title == null || title!.trim().isEmpty
+                      ? l10n.examPreviewImage
+                      : '${l10n.examPreviewImage} • $title',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorColors.textSecondaryColor(isDark),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
-List<Widget> _answerWidgets(BuildContext context, ExamSnapshotItemModel item) {
+Future<void> _showImagePreviewDialog(
+  BuildContext context,
+  String url,
+  String? title, {
+  Iterable<String> fallbackUrls = const [],
+}) {
+  final l10n = AppLocalizations.of(context);
+  final image = _imageFromUrls(
+    <String>[url, ...fallbackUrls],
+    width: double.infinity,
+    height: MediaQuery.sizeOf(context).height * 0.72,
+    fit: BoxFit.contain,
+  );
+  if (image == null) return Future.value();
+  return showDialog<void>(
+    context: context,
+    builder: (context) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return Dialog(
+        insetPadding: const EdgeInsets.all(16),
+        backgroundColor: InstructorColors.cardColor(isDark),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title?.trim().isNotEmpty == true
+                            ? title!.trim()
+                            : l10n.examPreviewImage,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: InstructorColors.textPrimaryColor(isDark),
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: InteractiveViewer(
+                    minScale: 0.7,
+                    maxScale: 4,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: image,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+List<_SavedMediaItem> _questionMediaItems(
+  BuildContext context,
+  ExamSnapshotItemModel item, {
+  QuestionBankQuestionModel? sourceQuestion,
+}) {
+  final l10n = AppLocalizations.of(context);
+  final snapshot = _snapshotMap(item);
+  final media = <_SavedMediaItem>[];
+  final seenUrls = <String>{};
+  final seenFileIds = <int>{};
+
+  void addMedia(String? url, String label, {int? fileId}) {
+    if (url == null || url.trim().isEmpty) return;
+    final normalized = _normalizeImageUrl(url);
+    if (normalized == null || !seenUrls.add(normalized)) return;
+    if (fileId != null && !seenFileIds.add(fileId)) return;
+    media.add(_SavedMediaItem(url: normalized, label: label));
+  }
+
+  final mainUrl =
+      sourceQuestion?.questionImageUrl ??
+      item.questionImagePreviewUrl ??
+      _firstImageUrl(snapshot, const [
+        'questionImagePreviewUrl',
+        'questionImageUrl',
+        'imageUrl',
+        'previewUrl',
+        'url',
+        'questionFile',
+        'file',
+        'image',
+      ]) ??
+      _downloadUrlForFileId(
+        item.questionFileId ?? _nullableInt(snapshot['questionFileId']),
+      );
+  addMedia(
+    mainUrl,
+    item.questionFileCaption ??
+        item.questionFileAltText ??
+        sourceQuestion?.questionFileCaption ??
+        sourceQuestion?.questionFileAltText ??
+        l10n.examSavedQuestionMedia,
+    fileId: item.questionFileId ?? _nullableInt(snapshot['questionFileId']),
+  );
+  var index = 1;
+  for (final attachment in sourceQuestion?.attachments ?? const []) {
+    final fileId = attachment.fileId;
+    final imageUrl = attachment.imageUrl;
+    final resolvedUrl = imageUrl != null && _normalizeImageUrl(imageUrl) != null
+        ? imageUrl
+        : _downloadUrlForFileId(fileId);
+    addMedia(
+      resolvedUrl,
+      attachment.caption ??
+          attachment.altText ??
+          '${l10n.examQuestionAttachments} $index',
+      fileId: fileId,
+    );
+    index++;
+  }
+  final attachments = _firstList(snapshot, const [
+    'attachmentsJson',
+    'attachments',
+  ]).whereType<Map>().map((value) => Map<String, dynamic>.from(value));
+  for (final attachment in attachments) {
+    final fileId = _nullableInt(attachment['fileId']);
+    final url =
+        _firstImageUrl(attachment, const [
+          'previewUrl',
+          'questionImagePreviewUrl',
+          'questionImageUrl',
+          'imageUrl',
+          'url',
+          'fileUrl',
+          'downloadUrl',
+          'file',
+          'image',
+        ]) ??
+        _downloadUrlForFileId(fileId);
+    if (url == null) continue;
+    final label =
+        _firstText(attachment, const ['caption', 'altText', 'label']) ??
+        '${l10n.examQuestionAttachments} $index';
+    addMedia(url, label, fileId: fileId);
+    index++;
+  }
+  return media;
+}
+
+List<String> _sourceGroupImageUrls(ExamSnapshotItemModel item) {
+  final snapshot = _snapshotMap(item);
+  final fileId =
+      item.sourceGroupFileId ??
+      _nullableInt(snapshot['sourceGroupFileId']) ??
+      _nullableInt(snapshot['sharedFileId']);
+  final candidates = <String?>[
+    _downloadUrlForFileId(fileId),
+    item.sourceGroupImagePreviewUrl,
+    _firstImageUrl(snapshot, const [
+      'sourceGroupImagePreviewUrl',
+      'sourceGroupImageUrl',
+      'sourceGroupFile',
+      'sourceGroupImage',
+      'groupImagePreviewUrl',
+      'groupImageUrl',
+      'sharedImageUrl',
+      'sharedFileUrl',
+      'sharedFileImageUrl',
+      'sharedFile',
+      'file',
+    ]),
+  ];
+  return _normalizedImageCandidates(candidates);
+}
+
+List<String> _normalizedImageCandidates(Iterable<String?> values) {
+  final seen = <String>{};
+  final urls = <String>[];
+  for (final value in values) {
+    if (value == null || value.trim().isEmpty) continue;
+    final normalized = _normalizeImageUrl(value);
+    if (normalized == null || !seen.add(normalized)) continue;
+    urls.add(normalized);
+  }
+  return urls;
+}
+
+class _SavedMediaItem {
+  const _SavedMediaItem({required this.url, required this.label});
+
+  final String url;
+  final String label;
+}
+
+List<Widget> _answerWidgets(
+  BuildContext context,
+  ExamSnapshotItemModel item, {
+  QuestionBankQuestionModel? sourceQuestion,
+}) {
   final l10n = AppLocalizations.of(context);
   final snapshot = _snapshotMap(item);
   final optionMaps = _firstList(snapshot, const [
+    'optionsJson',
     'options',
     'answers',
     'choices',
     'questionOptions',
   ]).whereType<Map>().map((value) => Map<String, dynamic>.from(value)).toList();
   final blanks = _firstList(snapshot, const [
+    'fillBlanksJson',
     'fillBlanks',
     'blanks',
     'fillBlankAnswers',
@@ -1774,6 +2089,16 @@ List<Widget> _answerWidgets(BuildContext context, ExamSnapshotItemModel item) {
         ),
       );
     }
+  } else if (sourceQuestion?.options.isNotEmpty == true) {
+    for (final option in sourceQuestion!.options) {
+      widgets.add(
+        _AnswerLine(
+          text: option.optionText,
+          isCorrect: option.isCorrect,
+          correctLabel: l10n.correct,
+        ),
+      );
+    }
   } else if (blanks.isNotEmpty) {
     for (final blank in blanks) {
       final key = _firstText(blank, const ['blankKey', 'key', 'label']);
@@ -1786,6 +2111,12 @@ List<Widget> _answerWidgets(BuildContext context, ExamSnapshotItemModel item) {
       if (text == null) continue;
       widgets.add(_AnswerLine(text: key == null ? text : '$key: $text'));
     }
+  } else if (sourceQuestion?.fillBlanks.isNotEmpty == true) {
+    for (final blank in sourceQuestion!.fillBlanks) {
+      widgets.add(
+        _AnswerLine(text: '${blank.blankKey}: ${blank.acceptableAnswer}'),
+      );
+    }
   } else if (answerText != null) {
     widgets.add(
       _AnswerLine(
@@ -1794,15 +2125,24 @@ List<Widget> _answerWidgets(BuildContext context, ExamSnapshotItemModel item) {
         correctLabel: l10n.correct,
       ),
     );
+  } else if ((sourceQuestion?.expectedAnswerText ?? '').trim().isNotEmpty) {
+    widgets.add(
+      _AnswerLine(
+        text: sourceQuestion!.expectedAnswerText!,
+        isCorrect: true,
+        correctLabel: l10n.correct,
+      ),
+    );
   }
-  if (hints != null) {
+  final resolvedHints = hints ?? sourceQuestion?.hints;
+  if (resolvedHints != null && resolvedHints.trim().isNotEmpty) {
     widgets.add(
       Padding(
         padding: const EdgeInsets.only(top: 8),
         child: _SoftTextBlock(
           icon: Icons.lightbulb_outline_rounded,
           color: InstructorColors.accent,
-          text: '${l10n.qbQuestionHints}: $hints',
+          text: '${l10n.qbQuestionHints}: $resolvedHints',
         ),
       ),
     );
@@ -1851,8 +2191,11 @@ class _AnswerLine extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              isCorrect && correctLabel != null ? '$correctLabel: $text' : text,
+            child: QuestionFormattedText(
+              text: isCorrect && correctLabel != null
+                  ? '$correctLabel: $text'
+                  : text,
+              fallback: text,
               style: TextStyle(
                 color: InstructorColors.textPrimaryColor(isDark),
                 fontWeight: FontWeight.w700,
@@ -1877,6 +2220,56 @@ Map<String, dynamic> _asMap(dynamic value) {
   return const <String, dynamic>{};
 }
 
+String? _firstImageUrl(Map<String, dynamic> source, List<String> keys) {
+  for (final key in keys) {
+    final url = _imageUrlFromValue(source[key]);
+    if (url != null) return url;
+  }
+  return null;
+}
+
+String? _imageUrlFromValue(dynamic value) {
+  final direct = _nullableText(value);
+  if (direct != null) return _normalizeImageUrl(direct);
+  final map = _asMap(value);
+  if (map.isEmpty) return null;
+  return _firstImageUrl(map, const [
+    'previewUrl',
+    'questionImagePreviewUrl',
+    'imageUrl',
+    'url',
+    'fileUrl',
+    'downloadUrl',
+    'publicUrl',
+    'signedUrl',
+    'filePath',
+    'storagePath',
+  ]);
+}
+
+String? _downloadUrlForFileId(int? fileId) {
+  if (fileId == null || fileId <= 0) return null;
+  return '${ApiService.baseUrl}/files/$fileId/download';
+}
+
+String? _normalizeImageUrl(String value) {
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) return null;
+  if (trimmed.startsWith('data:image') ||
+      trimmed.startsWith('http://') ||
+      trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  final apiBase = ApiService.baseUrl;
+  final origin = apiBase.endsWith('/api')
+      ? apiBase.substring(0, apiBase.length - 4)
+      : apiBase;
+  if (trimmed.startsWith('/api/')) return '$origin$trimmed';
+  if (trimmed.startsWith('/')) return '$origin$trimmed';
+  if (trimmed.startsWith('api/')) return '$origin/$trimmed';
+  return null;
+}
+
 String? _firstText(Map<String, dynamic> source, List<String> keys) {
   for (final key in keys) {
     final value = source[key];
@@ -1894,6 +2287,18 @@ String? _firstText(Map<String, dynamic> source, List<String> keys) {
   return null;
 }
 
+String? _nullableText(dynamic value) {
+  final text = value?.toString().trim();
+  return text == null || text.isEmpty || text == 'null' ? null : text;
+}
+
+int? _nullableInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  return int.tryParse(value.toString());
+}
+
 List<dynamic> _firstList(Map<String, dynamic> source, List<String> keys) {
   for (final key in keys) {
     final value = source[key];
@@ -1909,41 +2314,254 @@ bool _truthy(dynamic value) {
   return text == 'true' || text == '1' || text == 'yes';
 }
 
-Widget? _imageFromUrl(
-  String? url, {
+Widget? _imageFromUrls(
+  Iterable<String?> urls, {
   required double width,
   required double height,
+  BoxFit fit = BoxFit.cover,
 }) {
-  if (url == null || url.isEmpty) return null;
-  if (url.startsWith('data:image')) {
-    final comma = url.indexOf(',');
+  final candidates = _normalizedImageCandidates(urls);
+  if (candidates.isEmpty) return null;
+  return _FallbackImage(
+    urls: candidates,
+    width: width,
+    height: height,
+    fit: fit,
+  );
+}
+
+Widget? _imageFromSingleUrl(
+  String resolvedUrl, {
+  required double width,
+  required double height,
+  required BoxFit fit,
+  VoidCallback? onError,
+}) {
+  if (resolvedUrl.startsWith('data:image')) {
+    final comma = resolvedUrl.indexOf(',');
     if (comma > -1) {
       try {
-        final bytes = base64Decode(url.substring(comma + 1));
+        final bytes = base64Decode(resolvedUrl.substring(comma + 1));
         return Image.memory(
           bytes,
           width: width,
           height: height,
-          fit: BoxFit.cover,
+          fit: fit,
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded || frame != null) return child;
+            return _ImageLoadingBox(width: width, height: height);
+          },
+          errorBuilder: (_, __, ___) {
+            onError?.call();
+            return _ImageErrorBox(width: width, height: height);
+          },
         );
       } on FormatException {
+        onError?.call();
         return null;
       }
     }
   }
-  return Image.network(
-    url,
+  return _AuthenticatedImage(
+    url: resolvedUrl,
     width: width,
     height: height,
-    fit: BoxFit.cover,
-    errorBuilder: (_, __, ___) => Container(
+    fit: fit,
+    onError: onError,
+  );
+}
+
+class _FallbackImage extends StatefulWidget {
+  const _FallbackImage({
+    required this.urls,
+    required this.width,
+    required this.height,
+    required this.fit,
+  });
+
+  final List<String> urls;
+  final double width;
+  final double height;
+  final BoxFit fit;
+
+  @override
+  State<_FallbackImage> createState() => _FallbackImageState();
+}
+
+class _FallbackImageState extends State<_FallbackImage> {
+  var _index = 0;
+
+  @override
+  void didUpdateWidget(covariant _FallbackImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.urls.join('\u0000') != widget.urls.join('\u0000')) {
+      _index = 0;
+    }
+  }
+
+  void _tryNext() {
+    if (_index >= widget.urls.length - 1) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _index >= widget.urls.length - 1) return;
+      setState(() => _index++);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final image = _imageFromSingleUrl(
+      widget.urls[_index],
+      width: widget.width,
+      height: widget.height,
+      fit: widget.fit,
+      onError: _tryNext,
+    );
+    return image ?? _ImageErrorBox(width: widget.width, height: widget.height);
+  }
+}
+
+class _AuthenticatedImage extends StatelessWidget {
+  const _AuthenticatedImage({
+    required this.url,
+    required this.width,
+    required this.height,
+    required this.fit,
+    this.onError,
+  });
+
+  final String url;
+  final double width;
+  final double height;
+  final BoxFit fit;
+  final VoidCallback? onError;
+
+  @override
+  Widget build(BuildContext context) {
+    final requiresAuth =
+        url.contains('/api/files/') ||
+        url.startsWith('${ApiService.baseUrl}/files/');
+    if (!requiresAuth) return _networkImage(null);
+    return FutureBuilder<String?>(
+      future: StorageService().getAccessToken(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return _ImageLoadingBox(width: width, height: height);
+        }
+        final token = snapshot.data;
+        if (token == null || token.isEmpty) {
+          return _ImageErrorBox(width: width, height: height);
+        }
+        return _networkImage(<String, String>{
+          'Authorization': 'Bearer $token',
+        });
+      },
+    );
+  }
+
+  Widget _networkImage(Map<String, String>? headers) {
+    return Image.network(
+      url,
+      headers: headers,
+      width: width,
+      height: height,
+      fit: fit,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _ImageLoadingBox(width: width, height: height);
+      },
+      errorBuilder: (_, __, ___) => _handleError(width: width, height: height),
+    );
+  }
+
+  Widget _handleError({required double width, required double height}) {
+    onError?.call();
+    return _ImageErrorBox(width: width, height: height);
+  }
+}
+
+class _ImageLoadingBox extends StatefulWidget {
+  const _ImageLoadingBox({required this.width, required this.height});
+
+  final double width;
+  final double height;
+
+  @override
+  State<_ImageLoadingBox> createState() => _ImageLoadingBoxState();
+}
+
+class _ImageLoadingBoxState extends State<_ImageLoadingBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat(reverse: true);
+
+  late final Animation<double> _pulse = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInOut,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      alignment: Alignment.center,
+      color: InstructorColors.primary.withValues(alpha: isDark ? 0.14 : 0.08),
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 0.45, end: 1).animate(_pulse),
+        child: Container(
+          width: 62,
+          height: 62,
+          decoration: BoxDecoration(
+            color: InstructorColors.primary.withValues(
+              alpha: isDark ? 0.18 : 0.12,
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.6,
+                color: InstructorColors.primary,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageErrorBox extends StatelessWidget {
+  const _ImageErrorBox({required this.width, required this.height});
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
       width: width,
       height: height,
       alignment: Alignment.center,
-      color: InstructorColors.primary.withValues(alpha: 0.08),
-      child: const Icon(Icons.image_not_supported_outlined),
-    ),
-  );
+      color: InstructorColors.primary.withValues(alpha: isDark ? 0.14 : 0.08),
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color: InstructorColors.textSecondaryColor(isDark),
+      ),
+    );
+  }
 }
 
 int _questionCount(ExamFullDetailModel detail) {

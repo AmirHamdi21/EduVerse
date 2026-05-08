@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -5,6 +7,8 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_group_model.dart';
 import '../../../models/question_bank/question_bank_upload_response.dart';
+import '../../../services/api_service.dart';
+import '../../../services/storage_service.dart';
 import '../shared/instructor_colors.dart';
 import 'question_bank_localized_labels.dart';
 import 'question_core_section.dart';
@@ -73,6 +77,10 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final groupImagePreviewUrl = _resolveFormGroupImageUrl(
+      _sharedImageUrl,
+      _sharedFileId,
+    );
     return Column(
       children: [
         QuestionSectionCard(
@@ -98,17 +106,16 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
             const SizedBox(height: 12),
             _GroupImagePanel(
               fileId: _sharedFileId,
-              imageUrl: _sharedImageUrl,
               isUploading: _isUploading || widget.isSubmitting,
               isDark: isDark,
               onPick: widget.onUploadSharedImage == null
                   ? null
                   : _pickSharedImage,
-              onPreview: _sharedImageUrl == null
+              onPreview: groupImagePreviewUrl == null
                   ? null
                   : () => _showImagePreview(
                       context,
-                      imageUrl: _sharedImageUrl!,
+                      imageUrl: groupImagePreviewUrl,
                       title: _caption.text.trim().isNotEmpty
                           ? _caption.text
                           : '${l10n.qbGroupImage}: $_sharedFileId',
@@ -249,7 +256,10 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
         insetPadding: const EdgeInsets.all(18),
         backgroundColor: Colors.transparent,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680),
+          constraints: BoxConstraints(
+            maxWidth: 760,
+            maxHeight: MediaQuery.sizeOf(context).height * 0.88,
+          ),
           child: Container(
             decoration: BoxDecoration(
               color: InstructorColors.cardColor(isDark),
@@ -298,11 +308,13 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
                 ),
                 Flexible(
                   child: InteractiveViewer(
-                    child: Image.network(
-                      imageUrl,
+                    minScale: 0.7,
+                    maxScale: 4,
+                    child: _GroupFormPreviewImage(
+                      imageUrl: imageUrl,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.broken_image_outlined, size: 64),
+                      height: MediaQuery.sizeOf(context).height * 0.72,
+                      isDark: isDark,
                     ),
                   ),
                 ),
@@ -341,10 +353,140 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
   }
 }
 
+class _GroupFormPreviewImage extends StatelessWidget {
+  const _GroupFormPreviewImage({
+    required this.imageUrl,
+    required this.fit,
+    required this.height,
+    required this.isDark,
+  });
+
+  final String imageUrl;
+  final BoxFit fit;
+  final double height;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl.startsWith('data:image')) {
+      final comma = imageUrl.indexOf(',');
+      if (comma > -1) {
+        try {
+          return Image.memory(
+            base64Decode(imageUrl.substring(comma + 1)),
+            width: double.infinity,
+            height: height,
+            fit: fit,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+              if (wasSynchronouslyLoaded || frame != null) return child;
+              return _GroupFormImageLoadingBox(height: height, isDark: isDark);
+            },
+            errorBuilder: (_, __, ___) =>
+                _GroupFormImageErrorBox(height: height, isDark: isDark),
+          );
+        } on FormatException {
+          return _GroupFormImageErrorBox(height: height, isDark: isDark);
+        }
+      }
+    }
+
+    if (_requiresFormGroupImageAuth(imageUrl)) {
+      return FutureBuilder<String?>(
+        future: StorageService().getAccessToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return _GroupFormImageLoadingBox(height: height, isDark: isDark);
+          }
+          final token = snapshot.data;
+          if (token == null || token.isEmpty) {
+            return _GroupFormImageErrorBox(height: height, isDark: isDark);
+          }
+          return _networkImage(<String, String>{
+            'Authorization': 'Bearer $token',
+          });
+        },
+      );
+    }
+
+    return _networkImage(null);
+  }
+
+  Widget _networkImage(Map<String, String>? headers) {
+    return Image.network(
+      imageUrl,
+      headers: headers,
+      width: double.infinity,
+      height: height,
+      fit: fit,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _GroupFormImageLoadingBox(height: height, isDark: isDark);
+      },
+      errorBuilder: (_, __, ___) =>
+          _GroupFormImageErrorBox(height: height, isDark: isDark),
+    );
+  }
+}
+
+String? _resolveFormGroupImageUrl(String? imageUrl, int? fileId) {
+  final trimmed = imageUrl?.trim();
+  if (trimmed != null && trimmed.isNotEmpty) return trimmed;
+  if (fileId == null || fileId <= 0) return null;
+  return '${ApiService.baseUrl}/files/$fileId/download';
+}
+
+bool _requiresFormGroupImageAuth(String url) {
+  return url.contains('/api/files/') ||
+      url.startsWith('${ApiService.baseUrl}/files/');
+}
+
+class _GroupFormImageLoadingBox extends StatelessWidget {
+  const _GroupFormImageLoadingBox({required this.height, required this.isDark});
+
+  final double height;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: height,
+      alignment: Alignment.center,
+      color: InstructorColors.accent.withValues(alpha: isDark ? 0.16 : 0.08),
+      child: const SizedBox(
+        width: 28,
+        height: 28,
+        child: CircularProgressIndicator(strokeWidth: 2.5),
+      ),
+    );
+  }
+}
+
+class _GroupFormImageErrorBox extends StatelessWidget {
+  const _GroupFormImageErrorBox({required this.height, required this.isDark});
+
+  final double height;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: height,
+      alignment: Alignment.center,
+      color: InstructorColors.accent.withValues(alpha: isDark ? 0.16 : 0.08),
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color: InstructorColors.textSecondaryColor(isDark),
+        size: 44,
+      ),
+    );
+  }
+}
+
 class _GroupImagePanel extends StatelessWidget {
   const _GroupImagePanel({
     required this.fileId,
-    required this.imageUrl,
     required this.isUploading,
     required this.isDark,
     required this.onPick,
@@ -353,7 +495,6 @@ class _GroupImagePanel extends StatelessWidget {
   });
 
   final int? fileId;
-  final String? imageUrl;
   final bool isUploading;
   final bool isDark;
   final VoidCallback? onPick;
@@ -443,7 +584,7 @@ class _GroupImagePanel extends StatelessWidget {
                   hasImage ? Icons.sync_rounded : Icons.upload_rounded,
                 ),
               ),
-              if (hasImage && imageUrl != null) ...[
+              if (hasImage && onPreview != null) ...[
                 const SizedBox(width: 6),
                 IconButton(
                   tooltip: l10n.qbGroupImage,

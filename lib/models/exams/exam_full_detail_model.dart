@@ -10,6 +10,7 @@ class ExamSnapshotItemModel {
     this.questionFileCaption,
     this.questionFileAltText,
     this.questionImagePreviewUrl,
+    this.sourceQuestionId,
     this.sourceGroupId,
     this.sourceGroupTitle,
     this.sourceGroupPrompt,
@@ -29,6 +30,7 @@ class ExamSnapshotItemModel {
   final String? questionFileCaption;
   final String? questionFileAltText;
   final String? questionImagePreviewUrl;
+  final int? sourceQuestionId;
   final int? sourceGroupId;
   final String? sourceGroupTitle;
   final String? sourceGroupPrompt;
@@ -57,12 +59,25 @@ class ExamSnapshotItemModel {
       questionImagePreviewUrl: _nullableString(
         snapshot['questionImagePreviewUrl'],
       ),
+      sourceQuestionId: _nullableInt(snapshot['sourceQuestionId']),
       sourceGroupId: _nullableInt(snapshot['sourceGroupId']),
       sourceGroupTitle: _nullableString(snapshot['sourceGroupTitle']),
       sourceGroupPrompt: _nullableString(snapshot['sourceGroupPrompt']),
-      sourceGroupFileId: _nullableInt(snapshot['sourceGroupFileId']),
+      sourceGroupFileId: _nullableInt(
+        snapshot['sourceGroupFileId'] ?? snapshot['sharedFileId'],
+      ),
       sourceGroupImagePreviewUrl: _nullableString(
-        snapshot['sourceGroupImagePreviewUrl'],
+        snapshot['sourceGroupImagePreviewUrl'] ??
+            snapshot['sourceGroupImageUrl'] ??
+            snapshot['sharedImageUrl'] ??
+            snapshot['sharedFileUrl'] ??
+            snapshot['sharedFileImageUrl'] ??
+            _map(snapshot['sourceGroupFile'])['imageUrl'] ??
+            _map(snapshot['sourceGroupFile'])['url'] ??
+            _map(snapshot['sourceGroupFile'])['downloadUrl'] ??
+            _map(snapshot['sharedFile'])['imageUrl'] ??
+            _map(snapshot['sharedFile'])['url'] ??
+            _map(snapshot['sharedFile'])['downloadUrl'],
       ),
       sourceQuestionVersionId: _nullableInt(
         snapshot['sourceQuestionVersionId'],
