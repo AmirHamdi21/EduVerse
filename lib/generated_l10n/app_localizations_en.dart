@@ -500,6 +500,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawerLearning => 'Learning';
 
   @override
+  String get drawerTeaching => 'Teaching';
+
+  @override
+  String get drawerAssessment => 'Assessment';
+
+  @override
   String get drawerAiTools => 'AI tools';
 
   @override
@@ -507,6 +513,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drawerAccount => 'Account';
+
+  @override
+  String get activeInstructor => 'Active instructor';
+
+  @override
+  String get searchStudentsCourses => 'Search students, courses...';
+
+  @override
+  String get assigns => 'Assigns';
+
+  @override
+  String get qBank => 'Q. Bank';
+
+  @override
+  String get examGen => 'Exam Gen';
+
+  @override
+  String get grading => 'Grading';
+
+  @override
+  String get discuss => 'Discuss';
+
+  @override
+  String get noPendingItems => 'No pending items';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get ai => 'AI';
+
+  @override
+  String get roster => 'Roster';
 
   @override
   String get retry => 'Retry';

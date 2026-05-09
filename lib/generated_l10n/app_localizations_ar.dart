@@ -499,6 +499,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get drawerLearning => 'التعلم';
 
   @override
+  String get drawerTeaching => 'التدريس';
+
+  @override
+  String get drawerAssessment => 'التقييم';
+
+  @override
   String get drawerAiTools => 'أدوات الذكاء الاصطناعي';
 
   @override
@@ -506,6 +512,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get drawerAccount => 'الحساب';
+
+  @override
+  String get activeInstructor => 'مدرس نشط';
+
+  @override
+  String get searchStudentsCourses => 'ابحث عن الطلاب والمقررات...';
+
+  @override
+  String get assigns => 'المهام';
+
+  @override
+  String get qBank => 'بنك الأسئلة';
+
+  @override
+  String get examGen => 'مولد الامتحان';
+
+  @override
+  String get grading => 'التصحيح';
+
+  @override
+  String get discuss => 'النقاش';
+
+  @override
+  String get noPendingItems => 'لا توجد عناصر معلقة';
+
+  @override
+  String get home => 'الرئيسية';
+
+  @override
+  String get ai => 'الذكاء الاصطناعي';
+
+  @override
+  String get roster => 'القائمة';
 
   @override
   String get retry => 'إعادة المحاولة';

@@ -76,7 +76,7 @@ import 'package:edu_verse/screens/ta/assignments/ta_assignments_screen.dart';
 import 'package:edu_verse/screens/ta/assignments/ta_assignment_detail_screen.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart' as quiz_models;
 // Instructor screens
-import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
+import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_v9_screen.dart';
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
 import 'package:edu_verse/screens/instructor/grading_center/grading_center_screen.dart';
 import 'package:edu_verse/screens/instructor/assignments/instructor_assignments_screen.dart';
@@ -127,7 +127,7 @@ import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/models/discussion/discussion_models.dart';
 import 'package:edu_verse/features/ai_assistant/domain/ai_assistant_models.dart';
 // TA, Admin, IT Admin screens (placeholders for development)
-import 'package:edu_verse/screens/ta/ta_dashboard_screen.dart';
+import 'package:edu_verse/screens/ta/ta_dashboard_v9_screen.dart';
 import 'package:edu_verse/screens/ta/courses/ta_courses_list_screen.dart';
 import 'package:edu_verse/screens/ta/courses/ta_course_detail_screen.dart';
 import 'package:edu_verse/screens/ta/labs/ta_labs_list_screen.dart';
@@ -774,7 +774,7 @@ class AppRouter {
       // ============ INSTRUCTOR ROUTES ============
       GoRoute(
         path: '/instructor/dashboard',
-        builder: (context, state) => const InstructorDashboardScreen(),
+        builder: (context, state) => const InstructorDashboardV9Screen(),
       ),
       GoRoute(
         path: '/instructor/courses',
@@ -1416,7 +1416,7 @@ class AppRouter {
       // ============ TA ROUTES (Placeholder) ============
       GoRoute(
         path: '/ta/dashboard',
-        builder: (context, state) => const TADashboardScreen(),
+        builder: (context, state) => const TADashboardV9Screen(),
       ),
       GoRoute(
         path: '/ta/courses',

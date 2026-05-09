@@ -1046,6 +1046,18 @@ abstract class AppLocalizations {
   /// **'Learning'**
   String get drawerLearning;
 
+  /// No description provided for @drawerTeaching.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching'**
+  String get drawerTeaching;
+
+  /// No description provided for @drawerAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessment'**
+  String get drawerAssessment;
+
   /// No description provided for @drawerAiTools.
   ///
   /// In en, this message translates to:
@@ -1063,6 +1075,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account'**
   String get drawerAccount;
+
+  /// No description provided for @activeInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Active instructor'**
+  String get activeInstructor;
+
+  /// No description provided for @searchStudentsCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Search students, courses...'**
+  String get searchStudentsCourses;
+
+  /// No description provided for @assigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigns'**
+  String get assigns;
+
+  /// No description provided for @qBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Q. Bank'**
+  String get qBank;
+
+  /// No description provided for @examGen.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Gen'**
+  String get examGen;
+
+  /// No description provided for @grading.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading'**
+  String get grading;
+
+  /// No description provided for @discuss.
+  ///
+  /// In en, this message translates to:
+  /// **'Discuss'**
+  String get discuss;
+
+  /// No description provided for @noPendingItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending items'**
+  String get noPendingItems;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @ai.
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get ai;
+
+  /// No description provided for @roster.
+  ///
+  /// In en, this message translates to:
+  /// **'Roster'**
+  String get roster;
 
   /// No description provided for @retry.
   ///
