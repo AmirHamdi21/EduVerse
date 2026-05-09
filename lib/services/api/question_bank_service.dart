@@ -427,12 +427,45 @@ class QuestionBankService {
     required List<int> questionIds,
     required String action,
     String? comment,
+    bool allMatchingFilters = false,
+    List<int> excludeQuestionIds = const <int>[],
+    int? expectedQuestionCount,
+    int? courseId,
+    int? chapterId,
+    QuestionBankType? questionType,
+    QuestionBankDifficulty? difficulty,
+    BloomLevel? bloomLevel,
+    QuestionBankStatus? status,
+    String? search,
+    bool? hasAttachments,
+    int? groupId,
   }) {
     return RetryHelper.execute<List<QuestionBankQuestionModel>>(() async {
       final response = await _client.dio.post(
         '/question-bank/questions/status/batch',
+        options: Options(
+          sendTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(minutes: 2),
+        ),
         data: <String, dynamic>{
-          'questionIds': questionIds,
+          if (!allMatchingFilters) 'questionIds': questionIds,
+          if (allMatchingFilters) ...{
+            'allMatchingFilters': true,
+            if (excludeQuestionIds.isNotEmpty)
+              'excludeQuestionIds': excludeQuestionIds,
+            if (courseId != null) 'courseId': courseId,
+            if (chapterId != null) 'chapterId': chapterId,
+            if (questionType != null) 'questionType': questionType.value,
+            if (difficulty != null) 'difficulty': difficulty.value,
+            if (bloomLevel != null) 'bloomLevel': bloomLevel.value,
+            if (status != null) 'status': status.value,
+            if (search != null && search.trim().isNotEmpty)
+              'search': search.trim(),
+            if (hasAttachments != null) 'hasAttachments': hasAttachments,
+            if (groupId != null) 'groupId': groupId,
+          },
+          if (expectedQuestionCount != null)
+            'expectedQuestionCount': expectedQuestionCount,
           'action': action,
           if (comment != null && comment.trim().isNotEmpty)
             'comment': comment.trim(),

@@ -14,6 +14,7 @@ import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
 import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class ExamSavedDetailScreen extends StatefulWidget {
   const ExamSavedDetailScreen({super.key, required this.examId});
@@ -131,6 +132,12 @@ class _ExamSavedDetailScreenState extends State<ExamSavedDetailScreen> {
     return Scaffold(
       backgroundColor: InstructorColors.background(isDark),
       appBar: AppBar(
+        leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          onPressed: () =>
+              safeFeatureBack(context, '/instructor/exam-generator'),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        ),
         title: Text(l10n.examSavedDetails),
         actions: [
           Padding(

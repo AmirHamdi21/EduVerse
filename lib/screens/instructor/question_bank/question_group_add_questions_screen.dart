@@ -9,6 +9,7 @@ import '../../../bloc/instructor/question_bank/question_group_cubit.dart';
 import '../../../bloc/instructor/question_bank/question_group_state.dart';
 import '../../../models/question_bank/question_attachment_payload.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
+import '../../../models/question_bank/question_bank_form_payload.dart';
 import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../models/question_bank/question_bulk_row_model.dart';
 import '../../../services/api/core_api_client.dart';
@@ -16,6 +17,7 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 import 'question_bank_create_screen.dart';
 
 class QuestionGroupAddQuestionsScreen extends StatelessWidget {
@@ -61,6 +63,7 @@ class _QuestionGroupAddQuestionsView extends StatefulWidget {
 class _QuestionGroupAddQuestionsViewState
     extends State<_QuestionGroupAddQuestionsView> {
   int _nextRowId = 2;
+  int _pendingFileSeed = -1;
   List<QuestionBulkRowModel> _rows = const [QuestionBulkRowModel(localId: 1)];
 
   @override
@@ -277,15 +280,16 @@ class _QuestionGroupAddQuestionsViewState
     int localId,
     String path,
   ) async {
-    final fileId = await context.read<QuestionGroupCubit>().uploadQuestionImage(
-      path,
-    );
-    if (fileId == null || !mounted) return;
     setState(() {
       _rows = [
         for (final row in _rows)
           if (row.localId == localId)
-            row.copyWith(questionFileId: fileId, clearError: true)
+            row.copyWith(
+              questionFileId: _nextPendingFileId(),
+              questionImageLocalPath: path,
+              questionImageUrl: null,
+              clearError: true,
+            )
           else
             row,
       ];
@@ -297,7 +301,7 @@ class _QuestionGroupAddQuestionsViewState
     QuestionBulkRowModel row,
   ) async {
     final fileId = row.questionFileId;
-    if (fileId != null) {
+    if (fileId != null && fileId > 0) {
       await context.read<QuestionGroupCubit>().deleteUploadedQuestionImage(
         fileId,
       );
@@ -326,11 +330,13 @@ class _QuestionGroupAddQuestionsViewState
   ) async {
     final attachments = <QuestionAttachmentPayload>[];
     for (final path in paths) {
-      final fileId = await context
-          .read<QuestionGroupCubit>()
-          .uploadQuestionImage(path);
-      if (fileId == null || !mounted) return;
-      attachments.add(QuestionAttachmentPayload(fileId: fileId));
+      attachments.add(
+        QuestionAttachmentPayload(
+          fileId: _nextPendingFileId(),
+          fileName: _fileNameFromPath(path),
+          localPath: path,
+        ),
+      );
     }
     setState(() {
       _rows = _rows
@@ -376,9 +382,11 @@ class _QuestionGroupAddQuestionsViewState
     int localId,
     int fileId,
   ) async {
-    await context.read<QuestionGroupCubit>().deleteUploadedQuestionImage(
-      fileId,
-    );
+    if (fileId > 0) {
+      await context.read<QuestionGroupCubit>().deleteUploadedQuestionImage(
+        fileId,
+      );
+    }
     setState(() {
       _rows = _rows
           .map(
@@ -445,7 +453,21 @@ class _QuestionGroupAddQuestionsViewState
     });
     if (!valid) return;
     final cubit = context.read<QuestionGroupCubit>();
-    final created = await cubit.addGroupedQuestions(payloads);
+    final uploadedFileIds = <int>[];
+    final preparedPayloads = await _uploadPendingMedia(
+      context,
+      _rows,
+      courseId,
+      uploadedFileIds,
+    );
+    if (preparedPayloads == null) {
+      await cubit.discardUploadedQuestionImages(uploadedFileIds);
+      return;
+    }
+    final created = await cubit.addGroupedQuestions(preparedPayloads);
+    if (!created) {
+      await cubit.discardUploadedQuestionImages(uploadedFileIds);
+    }
     if (!created || !mounted) return;
     _goToFreshGroupDetails(this.context, cubit.state.group?.id);
   }
@@ -521,7 +543,14 @@ class _QuestionGroupAddQuestionsViewState
       if (!discard || !context.mounted) return;
       await _discardPendingUploads(context);
     }
-    if (context.mounted) context.pop();
+    if (context.mounted) {
+      safeFeatureBack(
+        context,
+        groupId == null
+            ? '/instructor/question-bank/groups'
+            : '/instructor/question-bank/groups/$groupId',
+      );
+    }
   }
 
   void _goToFreshGroupDetails(BuildContext context, int? groupId) {
@@ -542,13 +571,64 @@ class _QuestionGroupAddQuestionsViewState
     final fileIds = <int>{};
     for (final row in _rows) {
       final questionFileId = row.questionFileId;
-      if (questionFileId != null) fileIds.add(questionFileId);
+      if (questionFileId != null && questionFileId > 0) {
+        fileIds.add(questionFileId);
+      }
       for (final attachment in row.attachments) {
         final fileId = attachment.fileId;
-        if (fileId != null) fileIds.add(fileId);
+        if (fileId != null && fileId > 0) fileIds.add(fileId);
       }
     }
     await cubit.discardUploadedQuestionImages(fileIds);
+  }
+
+  Future<List<QuestionBankFormPayload>?> _uploadPendingMedia(
+    BuildContext context,
+    List<QuestionBulkRowModel> rows,
+    int courseId,
+    List<int> uploadedFileIds,
+  ) async {
+    final cubit = context.read<QuestionGroupCubit>();
+    final payloads = <QuestionBankFormPayload>[];
+    for (final row in rows) {
+      var prepared = row;
+      final questionLocalPath = row.questionImageLocalPath;
+      if ((row.questionFileId == null || row.questionFileId! <= 0) &&
+          questionLocalPath != null &&
+          questionLocalPath.trim().isNotEmpty) {
+        final fileId = await cubit.uploadQuestionImage(questionLocalPath);
+        if (fileId == null) return null;
+        uploadedFileIds.add(fileId);
+        prepared = prepared.copyWith(questionFileId: fileId);
+      }
+
+      final attachments = <QuestionAttachmentPayload>[];
+      for (final attachment in row.attachments) {
+        var fileId = attachment.fileId;
+        final localPath = attachment.localPath;
+        if ((fileId == null || fileId <= 0) &&
+            localPath != null &&
+            localPath.trim().isNotEmpty) {
+          fileId = await cubit.uploadQuestionImage(localPath);
+          if (fileId == null) return null;
+          uploadedFileIds.add(fileId);
+        }
+        attachments.add(attachment.copyWith(fileId: fileId));
+      }
+      payloads.add(
+        prepared
+            .copyWith(attachments: attachments)
+            .toPayload(courseId: courseId, defaultChapterId: null),
+      );
+    }
+    return payloads;
+  }
+
+  int _nextPendingFileId() => _pendingFileSeed--;
+
+  String _fileNameFromPath(String path) {
+    final parts = path.split(RegExp(r'[\\/]'));
+    return parts.isEmpty ? path : parts.last;
   }
 
   String _courseLabel(dynamic group, QuestionBankState state) {

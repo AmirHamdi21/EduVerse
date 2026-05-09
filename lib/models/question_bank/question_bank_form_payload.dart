@@ -13,6 +13,7 @@ class QuestionBankFormPayload {
     required this.bloomLevel,
     this.questionText,
     this.questionFileId,
+    this.questionImageLocalPath,
     this.questionFileCaption,
     this.questionFileAltText,
     this.expectedAnswerText,
@@ -30,6 +31,7 @@ class QuestionBankFormPayload {
   final BloomLevel bloomLevel;
   final String? questionText;
   final int? questionFileId;
+  final String? questionImageLocalPath;
   final String? questionFileCaption;
   final String? questionFileAltText;
   final String? expectedAnswerText;
@@ -131,7 +133,10 @@ class QuestionBankFormPayload {
   String? validate() {
     if (courseId == null || courseId! <= 0) return 'Course is required';
     if (chapterId == null || chapterId! <= 0) return 'Chapter is required';
-    final hasPrompt = _hasText(questionText) || questionFileId != null;
+    final hasPrompt =
+        _hasText(questionText) ||
+        questionFileId != null ||
+        _hasText(questionImageLocalPath);
     if (!hasPrompt) return 'Question text or image is required';
     for (final attachment in attachments) {
       final attachmentError = attachment.validate();

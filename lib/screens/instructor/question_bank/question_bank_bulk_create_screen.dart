@@ -12,6 +12,7 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 import 'question_bank_create_screen.dart';
 
 class QuestionBankBulkCreateScreen extends StatelessWidget {
@@ -373,7 +374,9 @@ class _QuestionBankBulkCreateView extends StatelessWidget {
       if (!discard || !context.mounted) return;
       await cubit.discardPendingUploads();
     }
-    if (context.mounted) context.pop();
+    if (context.mounted) {
+      safeFeatureBack(context, '/instructor/question-bank');
+    }
   }
 
   bool _hasPendingUploads(List<dynamic> rows) {

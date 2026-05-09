@@ -10,6 +10,7 @@ class QuestionAttachmentPayload {
     this.isPrimary = false,
     this.fileName,
     this.imageUrl,
+    this.localPath,
   });
 
   final int? fileId;
@@ -20,6 +21,7 @@ class QuestionAttachmentPayload {
   final bool isPrimary;
   final String? fileName;
   final String? imageUrl;
+  final String? localPath;
 
   QuestionAttachmentPayload copyWith({
     int? fileId,
@@ -30,6 +32,7 @@ class QuestionAttachmentPayload {
     bool? isPrimary,
     String? fileName,
     String? imageUrl,
+    String? localPath,
   }) {
     return QuestionAttachmentPayload(
       fileId: fileId ?? this.fileId,
@@ -40,6 +43,7 @@ class QuestionAttachmentPayload {
       isPrimary: isPrimary ?? this.isPrimary,
       fileName: fileName ?? this.fileName,
       imageUrl: imageUrl ?? this.imageUrl,
+      localPath: localPath ?? this.localPath,
     );
   }
 
@@ -55,7 +59,9 @@ class QuestionAttachmentPayload {
   }
 
   String? validate({bool requireFileId = true}) {
-    if (requireFileId && (fileId == null || fileId! <= 0)) {
+    if (requireFileId &&
+        (fileId == null || fileId! <= 0) &&
+        !_hasText(localPath)) {
       return 'File id is required';
     }
     if (displayOrder < 0) return 'Display order cannot be negative';

@@ -13,6 +13,7 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class QuestionGroupsScreen extends StatelessWidget {
   const QuestionGroupsScreen({super.key});
@@ -65,7 +66,8 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
             Icons.arrow_back_ios_new_rounded,
             color: InstructorColors.textPrimaryColor(isDark),
           ),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              safeFeatureBack(context, '/instructor/question-bank'),
         ),
         title: Text(
           l10n.qbGroups,

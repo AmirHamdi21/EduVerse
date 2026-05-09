@@ -18,6 +18,7 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class QuestionGroupLinkQuestionsScreen extends StatelessWidget {
   const QuestionGroupLinkQuestionsScreen({super.key, required this.groupId});
@@ -99,7 +100,15 @@ class _QuestionGroupLinkQuestionsViewState
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () {
+            final groupId = context.read<QuestionGroupCubit>().state.group?.id;
+            safeFeatureBack(
+              context,
+              groupId == null
+                  ? '/instructor/question-bank/groups'
+                  : '/instructor/question-bank/groups/$groupId',
+            );
+          },
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: InstructorColors.textPrimaryColor(isDark),

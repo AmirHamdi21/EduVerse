@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -231,14 +233,17 @@ class QuestionBulkRowCard extends StatelessWidget {
                             questionFileAltText: '',
                           ),
                         ),
-                    onPreview: row.questionImageUrl == null
+                    onPreview:
+                        row.questionImageUrl == null &&
+                            row.questionImageLocalPath == null
                         ? null
                         : () => _showImagePreview(
                             context,
-                            imageUrl: row.questionImageUrl!,
+                            imageUrl: row.questionImageUrl,
+                            localPath: row.questionImageLocalPath,
                             title: row.questionFileCaption.trim().isNotEmpty
                                 ? row.questionFileCaption
-                                : '${l10n.questionBankImageQuestion}: ${row.questionFileId}',
+                                : _questionImageLabel(l10n),
                           ),
                   ),
                   const SizedBox(height: 12),
@@ -420,6 +425,21 @@ class QuestionBulkRowCard extends StatelessWidget {
     }
   }
 
+  String _questionImageLabel(AppLocalizations l10n) {
+    final localPath = row.questionImageLocalPath;
+    final fileId = row.questionFileId;
+    if (fileId != null &&
+        fileId <= 0 &&
+        localPath != null &&
+        localPath.trim().isNotEmpty) {
+      return _fileNameFromPath(localPath);
+    }
+    if (fileId != null) {
+      return '${l10n.questionBankImageQuestion}: $fileId';
+    }
+    return l10n.questionBankImageQuestion;
+  }
+
   Future<void> _pickQuestionImage() async {
     final picked = await FilePicker.platform.pickFiles(type: FileType.image);
     final path = picked?.files.single.path;
@@ -428,7 +448,8 @@ class QuestionBulkRowCard extends StatelessWidget {
 
   Future<void> _showImagePreview(
     BuildContext context, {
-    required String imageUrl,
+    String? imageUrl,
+    String? localPath,
     required String title,
   }) async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -487,12 +508,23 @@ class QuestionBulkRowCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: InteractiveViewer(
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.broken_image_outlined, size: 64),
-                    ),
+                    child: localPath != null && localPath.trim().isNotEmpty
+                        ? Image.file(
+                            File(localPath),
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.broken_image_outlined,
+                              size: 64,
+                            ),
+                          )
+                        : Image.network(
+                            imageUrl ?? '',
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.broken_image_outlined,
+                              size: 64,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -573,6 +605,7 @@ class _BulkQuestionImagePanel extends StatelessWidget {
         ? l10n.qbReplaceQuestionImage
         : l10n.qbUploadQuestionImage;
     final color = hasImage ? InstructorColors.teal : InstructorColors.primary;
+    final imageLabel = _imageLabel(l10n);
 
     return Material(
       color: Colors.transparent,
@@ -619,9 +652,7 @@ class _BulkQuestionImagePanel extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      hasImage
-                          ? '${l10n.questionBankImageQuestion} #${row.questionFileId}'
-                          : l10n.image,
+                      hasImage ? imageLabel : l10n.image,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -682,4 +713,24 @@ class _BulkQuestionImagePanel extends StatelessWidget {
       ),
     );
   }
+
+  String _imageLabel(AppLocalizations l10n) {
+    final localPath = row.questionImageLocalPath;
+    final fileId = row.questionFileId;
+    if (fileId != null &&
+        fileId <= 0 &&
+        localPath != null &&
+        localPath.trim().isNotEmpty) {
+      return _fileNameFromPath(localPath);
+    }
+    if (fileId != null) {
+      return '${l10n.questionBankImageQuestion} #$fileId';
+    }
+    return l10n.image;
+  }
+}
+
+String _fileNameFromPath(String path) {
+  final parts = path.split(RegExp(r'[\\/]'));
+  return parts.isEmpty ? path : parts.last;
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -148,7 +150,9 @@ class QuestionPendingAttachmentManager extends StatelessWidget {
                   onRemove: attachment.fileId == null
                       ? null
                       : () => onRemove(attachment.fileId!),
-                  onPreview: attachment.imageUrl == null
+                  onPreview:
+                      attachment.imageUrl == null &&
+                          attachment.localPath == null
                       ? null
                       : () => _showPreview(context, attachment),
                 );
@@ -224,11 +228,9 @@ class QuestionPendingAttachmentManager extends StatelessWidget {
                     ),
                     Flexible(
                       child: InteractiveViewer(
-                        child: Image.network(
-                          attachment.imageUrl!,
+                        child: _AttachmentImage(
+                          attachment: attachment,
                           fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) =>
-                              const Icon(Icons.broken_image_outlined, size: 64),
                         ),
                       ),
                     ),
@@ -286,19 +288,21 @@ class _PendingAttachmentCard extends StatelessWidget {
                   onTap: onPreview,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: attachment.imageUrl == null
+                    child:
+                        attachment.imageUrl == null &&
+                            attachment.localPath == null
                         ? const SizedBox(
                             width: 56,
                             height: 56,
                             child: Icon(Icons.image_outlined),
                           )
-                        : Image.network(
-                            attachment.imageUrl!,
+                        : SizedBox(
                             width: 56,
                             height: 56,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                const Icon(Icons.broken_image_outlined),
+                            child: _AttachmentImage(
+                              attachment: attachment,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                   ),
                 ),
@@ -368,5 +372,35 @@ class _PendingAttachmentCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _AttachmentImage extends StatelessWidget {
+  const _AttachmentImage({required this.attachment, required this.fit});
+
+  final QuestionAttachmentPayload attachment;
+  final BoxFit fit;
+
+  @override
+  Widget build(BuildContext context) {
+    final localPath = attachment.localPath;
+    if (localPath != null && localPath.trim().isNotEmpty) {
+      return Image.file(
+        File(localPath),
+        fit: fit,
+        errorBuilder: (_, __, ___) =>
+            const Icon(Icons.broken_image_outlined, size: 64),
+      );
+    }
+    final imageUrl = attachment.imageUrl;
+    if (imageUrl != null && imageUrl.trim().isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        fit: fit,
+        errorBuilder: (_, __, ___) =>
+            const Icon(Icons.broken_image_outlined, size: 64),
+      );
+    }
+    return const Icon(Icons.image_outlined);
   }
 }

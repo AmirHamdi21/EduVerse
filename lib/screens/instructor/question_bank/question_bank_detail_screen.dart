@@ -14,6 +14,7 @@ import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 import '../../../widgets/instructor/shared/instructor_modern_tab_strip.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class QuestionBankDetailScreen extends StatelessWidget {
   const QuestionBankDetailScreen({super.key, required this.questionId});
@@ -61,7 +62,8 @@ class _QuestionBankDetailViewState extends State<_QuestionBankDetailView> {
             Icons.arrow_back_ios_new_rounded,
             color: InstructorColors.textPrimaryColor(isDark),
           ),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              safeFeatureBack(context, '/instructor/question-bank'),
         ),
         title: Text(
           l10n.questionBankQuestionDetails,

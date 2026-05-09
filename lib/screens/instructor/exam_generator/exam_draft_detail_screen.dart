@@ -28,6 +28,7 @@ import '../../../widgets/instructor/question_bank/question_bank_localized_labels
 import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 import '../../../widgets/instructor/shared/instructor_modern_tab_strip.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class ExamDraftDetailScreen extends StatelessWidget {
   const ExamDraftDetailScreen({super.key, required this.draftId});
@@ -83,6 +84,12 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
     return Scaffold(
       backgroundColor: InstructorColors.background(isDark),
       appBar: AppBar(
+        leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          onPressed: () =>
+              safeFeatureBack(context, '/instructor/exam-generator'),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        ),
         title: Text(l10n.examDraftDetails),
         actions: [
           BlocBuilder<ExamDraftEditorCubit, ExamDraftEditorState>(

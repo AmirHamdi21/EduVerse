@@ -228,7 +228,7 @@ class _InstructorQuestionBankViewState
             );
           }
 
-          return RefreshIndicator(
+          final content = RefreshIndicator(
             color: InstructorColors.primary,
             onRefresh: () => context.read<QuestionBankCubit>().refresh(),
             child: ListView(
@@ -324,6 +324,20 @@ class _InstructorQuestionBankViewState
               ],
             ),
           );
+
+          return Stack(
+            children: [
+              content,
+              if (state.activeBatchAction != null)
+                Positioned.fill(
+                  child: _BatchMutationOverlay(
+                    action: state.activeBatchAction!,
+                    selectedCount: state.selectedQuestionCount,
+                    isDark: isDark,
+                  ),
+                ),
+            ],
+          );
         },
       ),
     );
@@ -390,7 +404,9 @@ class _InstructorQuestionBankViewState
       onEdit: () =>
           context.push('/instructor/question-bank/${question.id}/edit'),
       selectionMode: state.isSelectionMode,
-      isSelected: state.selectedQuestionIds.contains(question.id),
+      isSelected: context.read<QuestionBankCubit>().isQuestionSelected(
+        question.id,
+      ),
       onSelectionChanged: (_) => context
           .read<QuestionBankCubit>()
           .toggleQuestionSelection(question.id),
@@ -1064,21 +1080,30 @@ class _BatchActionBar extends StatelessWidget {
     final cubit = context.read<QuestionBankCubit>();
     final visibleIds = state.questions.map((question) => question.id).toSet();
     final visibleCount = visibleIds.length;
-    final selectedVisibleCount = visibleIds
-        .where(state.selectedQuestionIds.contains)
-        .length;
+    final selectedVisibleCount = state.isAllMatchingQuestionsSelected
+        ? visibleIds
+              .where((id) => !state.excludedQuestionIds.contains(id))
+              .length
+        : visibleIds.where(state.selectedQuestionIds.contains).length;
     final selectedQuestions = state.questions
-        .where((question) => state.selectedQuestionIds.contains(question.id))
+        .where((question) => cubit.isQuestionSelected(question.id))
         .toList();
     final allVisibleSelected =
         visibleCount > 0 && selectedVisibleCount == visibleCount;
+    final canSelectAllMatching =
+        !state.isAllMatchingQuestionsSelected &&
+        allVisibleSelected &&
+        state.total > visibleCount;
     final canAct = state.hasSelectedQuestions && !state.isMutating;
     final canRestore =
         canAct &&
-        selectedQuestions.isNotEmpty &&
-        selectedQuestions.every(
-          (question) => question.status == QuestionBankStatus.archived,
-        );
+        (state.isAllMatchingQuestionsSelected
+            ? state.selectedStatus == QuestionBankStatus.archived
+            : selectedQuestions.isNotEmpty &&
+                  selectedQuestions.every(
+                    (question) =>
+                        question.status == QuestionBankStatus.archived,
+                  ));
     final actions = <_BatchAction>[
       _BatchAction(
         label: l10n.submitForReview,
@@ -1152,7 +1177,7 @@ class _BatchActionBar extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.qbSelectedCount(state.selectedQuestionIds.length),
+                      l10n.qbSelectedCount(state.selectedQuestionCount),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -1163,7 +1188,9 @@ class _BatchActionBar extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      l10n.qbChapterQuestionCount(visibleCount),
+                      state.isAllMatchingQuestionsSelected
+                          ? l10n.qbChapterQuestionCount(state.total)
+                          : l10n.qbChapterQuestionCount(visibleCount),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -1186,6 +1213,17 @@ class _BatchActionBar extends StatelessWidget {
               ),
             ],
           ),
+          if (canSelectAllMatching) ...[
+            const SizedBox(height: 10),
+            _SelectAllMatchingButton(
+              count: state.total,
+              isDark: isDark,
+              onPressed: cubit.selectAllMatchingQuestions,
+            ),
+          ] else if (state.isAllMatchingQuestionsSelected) ...[
+            const SizedBox(height: 10),
+            _AllMatchingSelectedNotice(count: state.selectedQuestionCount),
+          ],
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -1194,6 +1232,191 @@ class _BatchActionBar extends StatelessWidget {
               for (final action in actions)
                 _BatchActionPill(action: action, isDark: isDark),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BatchMutationOverlay extends StatelessWidget {
+  const _BatchMutationOverlay({
+    required this.action,
+    required this.selectedCount,
+    required this.isDark,
+  });
+
+  final String action;
+  final int selectedCount;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final actionLabel = _labelForAction(l10n, action);
+
+    return AbsorbPointer(
+      child: Container(
+        color: Colors.black.withValues(alpha: isDark ? 0.48 : 0.32),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(24),
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.96, end: 1),
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          builder: (context, scale, child) =>
+              Transform.scale(scale: scale, child: child),
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 360),
+              padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+              decoration: BoxDecoration(
+                color: InstructorColors.cardColor(isDark),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: InstructorColors.primary.withValues(
+                    alpha: isDark ? 0.35 : 0.18,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.14),
+                    blurRadius: 26,
+                    offset: const Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 42,
+                    height: 42,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                      color: InstructorColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Applying $actionLabel',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Your action is being applied to ${l10n.qbSelectedCount(selectedCount).toLowerCase()}. Please wait until all selected questions are updated.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textSecondaryColor(isDark),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _labelForAction(AppLocalizations l10n, String action) {
+    switch (action) {
+      case 'submit-for-review':
+        return l10n.submitForReview.toLowerCase();
+      case 'approve':
+        return l10n.qbApprove.toLowerCase();
+      case 'archive':
+        return l10n.archive.toLowerCase();
+      case 'restore':
+        return l10n.restore.toLowerCase();
+      default:
+        return 'selected action';
+    }
+  }
+}
+
+class _SelectAllMatchingButton extends StatelessWidget {
+  const _SelectAllMatchingButton({
+    required this.count,
+    required this.isDark,
+    required this.onPressed,
+  });
+
+  final int count;
+  final bool isDark;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: InstructorColors.primary,
+        side: BorderSide(
+          color: InstructorColors.primary.withValues(alpha: 0.42),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        backgroundColor: InstructorColors.primary.withValues(
+          alpha: isDark ? 0.1 : 0.04,
+        ),
+      ),
+      onPressed: onPressed,
+      icon: const Icon(Icons.select_all_rounded, size: 18),
+      label: Text(
+        'Select all $count matching questions',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+      ),
+    );
+  }
+}
+
+class _AllMatchingSelectedNotice extends StatelessWidget {
+  const _AllMatchingSelectedNotice({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: InstructorColors.primary.withValues(alpha: isDark ? 0.16 : 0.07),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: InstructorColors.primary.withValues(alpha: 0.28),
+        ),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.done_all_rounded,
+            color: InstructorColors.primary,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'All $count matching questions are selected',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ],
       ),

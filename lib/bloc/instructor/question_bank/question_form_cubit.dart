@@ -17,6 +17,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
       super(const QuestionFormState());
 
   final QuestionBankService _questionBankService;
+  int _pendingFileSeed = -1;
 
   Future<void> initializeCreate({int? courseId}) async {
     emitIfOpen(
@@ -189,24 +190,12 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
 
   Future<void> uploadQuestionImage(String path) async {
     emitIfOpen(
-      state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
-    );
-    final result = await _questionBankService.uploadQuestionImage(path);
-    if (!result.isSuccess || result.data == null) {
-      emitIfOpen(
-        state.copyWith(
-          isUploading: false,
-          errorMessage: result.error?.message ?? 'Upload failed',
-        ),
-      );
-      return;
-    }
-    emitIfOpen(
       state.copyWith(
-        isUploading: false,
-        questionFileId: result.data!.fileId,
-        questionImageUrl: result.data!.imageUrl,
-        successMessage: 'questionImageUploaded',
+        questionFileId: _nextPendingFileId(),
+        questionImageLocalPath: path,
+        clearQuestionImageUrl: true,
+        clearError: true,
+        clearSuccess: true,
       ),
     );
   }
@@ -216,7 +205,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
     emitIfOpen(
       state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
     );
-    if (fileId != null && state.originalQuestion == null) {
+    if (fileId != null && fileId > 0 && state.originalQuestion == null) {
       await _questionBankService.deleteUploadedFile(fileId);
     }
     emitIfOpen(
@@ -232,37 +221,23 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
 
   Future<void> uploadCreateAttachments(List<String> paths) async {
     if (paths.isEmpty) return;
-    emitIfOpen(
-      state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
-    );
     final next = [...state.attachments];
     for (final path in paths) {
-      final result = await _questionBankService.uploadQuestionImage(path);
-      if (!result.isSuccess || result.data == null) {
-        emitIfOpen(
-          state.copyWith(
-            isUploading: false,
-            attachments: next,
-            errorMessage: result.error?.message ?? 'Upload failed',
-          ),
-        );
-        return;
-      }
       next.add(
         QuestionAttachmentPayload(
-          fileId: result.data!.fileId,
+          fileId: _nextPendingFileId(),
           displayOrder: next.length,
           isPrimary: next.isEmpty,
-          fileName: result.data!.fileName,
-          imageUrl: result.data!.imageUrl,
+          fileName: _fileNameFromPath(path),
+          localPath: path,
         ),
       );
     }
     emitIfOpen(
       state.copyWith(
-        isUploading: false,
         attachments: _normalizeAttachmentOrders(next),
-        successMessage: 'questionImageUploaded',
+        clearError: true,
+        clearSuccess: true,
       ),
     );
   }
@@ -271,7 +246,9 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
     emitIfOpen(
       state.copyWith(isUploading: true, clearError: true, clearSuccess: true),
     );
-    await _questionBankService.deleteUploadedFile(fileId);
+    if (fileId > 0) {
+      await _questionBankService.deleteUploadedFile(fileId);
+    }
     emitIfOpen(
       state.copyWith(
         isUploading: false,
@@ -328,14 +305,22 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
         clearValidation: true,
       ),
     );
+    final uploadedFileIds = <int>[];
+    final preparedPayload = await _uploadPendingMedia(payload, uploadedFileIds);
+    if (preparedPayload == null) {
+      await _discardUploadedFiles(uploadedFileIds);
+      return false;
+    }
+
     final original = state.originalQuestion;
     final result = original == null
-        ? await _questionBankService.createQuestion(payload)
+        ? await _questionBankService.createQuestion(preparedPayload)
         : await _questionBankService.updateQuestion(
             questionId: original.id,
-            dirtyPayload: payload.toDirtyUpdateJson(original),
+            dirtyPayload: preparedPayload.toDirtyUpdateJson(original),
           );
     if (!result.isSuccess || result.data == null) {
+      await _discardUploadedFiles(uploadedFileIds);
       emitIfOpen(
         state.copyWith(
           isSaving: false,
@@ -394,10 +379,12 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
     if (!hasDiscardableUploads) return;
     final fileIds = <int>{};
     final questionFileId = state.questionFileId;
-    if (questionFileId != null) fileIds.add(questionFileId);
+    if (questionFileId != null && questionFileId > 0) {
+      fileIds.add(questionFileId);
+    }
     for (final attachment in state.attachments) {
       final fileId = attachment.fileId;
-      if (fileId != null) fileIds.add(fileId);
+      if (fileId != null && fileId > 0) fileIds.add(fileId);
     }
     for (final fileId in fileIds) {
       await _questionBankService.deleteUploadedFile(fileId);
@@ -423,6 +410,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
       bloomLevel: state.bloomLevel,
       questionText: state.questionText,
       questionFileId: state.questionFileId,
+      questionImageLocalPath: state.questionImageLocalPath,
       questionFileCaption: state.questionFileCaption,
       questionFileAltText: state.questionFileAltText,
       expectedAnswerText: state.expectedAnswerText,
@@ -433,6 +421,85 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
           ? state.attachments
           : const <QuestionAttachmentPayload>[],
     );
+  }
+
+  Future<QuestionBankFormPayload?> _uploadPendingMedia(
+    QuestionBankFormPayload payload,
+    List<int> uploadedFileIds,
+  ) async {
+    var questionFileId = payload.questionFileId;
+    if ((questionFileId == null || questionFileId <= 0) &&
+        payload.questionImageLocalPath != null) {
+      final result = await _questionBankService.uploadQuestionImage(
+        payload.questionImageLocalPath!,
+      );
+      if (!result.isSuccess || result.data == null) {
+        emitIfOpen(
+          state.copyWith(
+            isSaving: false,
+            errorMessage: result.error?.message ?? 'questionImageUploadFailed',
+          ),
+        );
+        return null;
+      }
+      questionFileId = result.data!.fileId;
+      uploadedFileIds.add(questionFileId);
+    }
+
+    final attachments = <QuestionAttachmentPayload>[];
+    for (final attachment in payload.attachments) {
+      var fileId = attachment.fileId;
+      if ((fileId == null || fileId <= 0) && attachment.localPath != null) {
+        final result = await _questionBankService.uploadQuestionImage(
+          attachment.localPath!,
+        );
+        if (!result.isSuccess || result.data == null) {
+          emitIfOpen(
+            state.copyWith(
+              isSaving: false,
+              errorMessage: result.error?.message ?? 'attachmentUploadFailed',
+            ),
+          );
+          return null;
+        }
+        fileId = result.data!.fileId;
+        uploadedFileIds.add(fileId);
+      }
+      attachments.add(attachment.copyWith(fileId: fileId));
+    }
+
+    return QuestionBankFormPayload(
+      courseId: payload.courseId,
+      chapterId: payload.chapterId,
+      questionType: payload.questionType,
+      difficulty: payload.difficulty,
+      bloomLevel: payload.bloomLevel,
+      questionText: payload.questionText,
+      questionFileId: questionFileId,
+      questionFileCaption: payload.questionFileCaption,
+      questionFileAltText: payload.questionFileAltText,
+      expectedAnswerText: payload.expectedAnswerText,
+      hints: payload.hints,
+      status: payload.status,
+      options: payload.options,
+      fillBlanks: payload.fillBlanks,
+      attachments: attachments,
+    );
+  }
+
+  Future<void> _discardUploadedFiles(Iterable<int> fileIds) async {
+    for (final fileId in fileIds.toSet()) {
+      if (fileId > 0) {
+        await _questionBankService.deleteUploadedFile(fileId);
+      }
+    }
+  }
+
+  int _nextPendingFileId() => _pendingFileSeed--;
+
+  String _fileNameFromPath(String path) {
+    final parts = path.split(RegExp(r'[\\/]'));
+    return parts.isEmpty ? path : parts.last;
   }
 
   List<QuestionAttachmentPayload> _normalizeAttachmentOrders(

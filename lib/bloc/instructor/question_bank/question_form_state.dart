@@ -25,6 +25,7 @@ class QuestionFormState extends Equatable {
     this.questionText = '',
     this.questionFileId,
     this.questionImageUrl,
+    this.questionImageLocalPath,
     this.questionFileCaption = '',
     this.questionFileAltText = '',
     this.expectedAnswerText = '',
@@ -54,6 +55,7 @@ class QuestionFormState extends Equatable {
   final String questionText;
   final int? questionFileId;
   final String? questionImageUrl;
+  final String? questionImageLocalPath;
   final String questionFileCaption;
   final String questionFileAltText;
   final String expectedAnswerText;
@@ -84,6 +86,8 @@ class QuestionFormState extends Equatable {
     String? questionText,
     int? questionFileId,
     String? questionImageUrl,
+    bool clearQuestionImageUrl = false,
+    String? questionImageLocalPath,
     bool clearQuestionFile = false,
     String? questionFileCaption,
     String? questionFileAltText,
@@ -117,7 +121,12 @@ class QuestionFormState extends Equatable {
           : questionFileId ?? this.questionFileId,
       questionImageUrl: clearQuestionFile
           ? null
+          : clearQuestionImageUrl
+          ? null
           : questionImageUrl ?? this.questionImageUrl,
+      questionImageLocalPath: clearQuestionFile
+          ? null
+          : questionImageLocalPath ?? this.questionImageLocalPath,
       questionFileCaption: questionFileCaption ?? this.questionFileCaption,
       questionFileAltText: questionFileAltText ?? this.questionFileAltText,
       expectedAnswerText: expectedAnswerText ?? this.expectedAnswerText,
@@ -149,6 +158,7 @@ class QuestionFormState extends Equatable {
     questionText,
     questionFileId,
     questionImageUrl,
+    questionImageLocalPath,
     questionFileCaption,
     questionFileAltText,
     expectedAnswerText,

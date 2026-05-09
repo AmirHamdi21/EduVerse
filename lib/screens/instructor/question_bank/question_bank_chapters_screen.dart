@@ -1,7 +1,6 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../bloc/instructor/question_bank/question_bank_cubit.dart';
 import '../../../bloc/instructor/question_bank/question_bank_state.dart';
@@ -12,6 +11,7 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class QuestionBankChaptersScreen extends StatelessWidget {
   const QuestionBankChaptersScreen({super.key});
@@ -66,7 +66,8 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
             Icons.arrow_back_ios_new_rounded,
             color: InstructorColors.textPrimaryColor(isDark),
           ),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              safeFeatureBack(context, '/instructor/question-bank'),
         ),
         title: Text(
           l10n.qbManageChapters,

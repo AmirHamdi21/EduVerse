@@ -14,6 +14,7 @@ class QuestionBankState extends Equatable {
     this.isMutating = false,
     this.errorMessage,
     this.actionMessage,
+    this.activeBatchAction,
     this.teachingCourses = const <TeachingCourseModel>[],
     this.chapters = const <CourseChapterModel>[],
     this.questions = const <QuestionBankQuestionModel>[],
@@ -33,6 +34,8 @@ class QuestionBankState extends Equatable {
     this.stats = const QuestionBankStatsModel(),
     this.chapterQuestionCounts = const <int, int>{},
     this.selectedQuestionIds = const <int>{},
+    this.excludedQuestionIds = const <int>{},
+    this.isAllMatchingQuestionsSelected = false,
     this.isSelectionMode = false,
   });
 
@@ -41,6 +44,7 @@ class QuestionBankState extends Equatable {
   final bool isMutating;
   final String? errorMessage;
   final String? actionMessage;
+  final String? activeBatchAction;
   final List<TeachingCourseModel> teachingCourses;
   final List<CourseChapterModel> chapters;
   final List<QuestionBankQuestionModel> questions;
@@ -60,6 +64,8 @@ class QuestionBankState extends Equatable {
   final QuestionBankStatsModel stats;
   final Map<int, int> chapterQuestionCounts;
   final Set<int> selectedQuestionIds;
+  final Set<int> excludedQuestionIds;
+  final bool isAllMatchingQuestionsSelected;
   final bool isSelectionMode;
 
   bool get hasMore => page * limit < total;
@@ -69,7 +75,10 @@ class QuestionBankState extends Equatable {
   int get rejectedCount => stats.rejected;
   int get archivedCount => stats.archived;
   int get attachedOrGroupedCount => stats.attachedOrGrouped;
-  bool get hasSelectedQuestions => selectedQuestionIds.isNotEmpty;
+  int get selectedQuestionCount => isAllMatchingQuestionsSelected
+      ? (total - excludedQuestionIds.length).clamp(0, total).toInt()
+      : selectedQuestionIds.length;
+  bool get hasSelectedQuestions => selectedQuestionCount > 0;
 
   QuestionBankState copyWith({
     bool? isLoading,
@@ -77,8 +86,10 @@ class QuestionBankState extends Equatable {
     bool? isMutating,
     String? errorMessage,
     String? actionMessage,
+    String? activeBatchAction,
     bool clearError = false,
     bool clearAction = false,
+    bool clearActiveBatchAction = false,
     List<TeachingCourseModel>? teachingCourses,
     List<CourseChapterModel>? chapters,
     List<QuestionBankQuestionModel>? questions,
@@ -106,8 +117,11 @@ class QuestionBankState extends Equatable {
     QuestionBankStatsModel? stats,
     Map<int, int>? chapterQuestionCounts,
     Set<int>? selectedQuestionIds,
+    Set<int>? excludedQuestionIds,
+    bool? isAllMatchingQuestionsSelected,
     bool? isSelectionMode,
     bool clearSelectedQuestionIds = false,
+    bool clearExcludedQuestionIds = false,
   }) {
     return QuestionBankState(
       isLoading: isLoading ?? this.isLoading,
@@ -115,6 +129,9 @@ class QuestionBankState extends Equatable {
       isMutating: isMutating ?? this.isMutating,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       actionMessage: clearAction ? null : actionMessage ?? this.actionMessage,
+      activeBatchAction: clearActiveBatchAction
+          ? null
+          : activeBatchAction ?? this.activeBatchAction,
       teachingCourses: teachingCourses ?? this.teachingCourses,
       chapters: chapters ?? this.chapters,
       questions: questions ?? this.questions,
@@ -151,6 +168,11 @@ class QuestionBankState extends Equatable {
       selectedQuestionIds: clearSelectedQuestionIds
           ? const <int>{}
           : selectedQuestionIds ?? this.selectedQuestionIds,
+      excludedQuestionIds: clearExcludedQuestionIds
+          ? const <int>{}
+          : excludedQuestionIds ?? this.excludedQuestionIds,
+      isAllMatchingQuestionsSelected:
+          isAllMatchingQuestionsSelected ?? this.isAllMatchingQuestionsSelected,
       isSelectionMode: isSelectionMode ?? this.isSelectionMode,
     );
   }
@@ -162,6 +184,7 @@ class QuestionBankState extends Equatable {
     isMutating,
     errorMessage,
     actionMessage,
+    activeBatchAction,
     teachingCourses,
     chapters,
     questions,
@@ -181,6 +204,8 @@ class QuestionBankState extends Equatable {
     stats,
     chapterQuestionCounts,
     selectedQuestionIds,
+    excludedQuestionIds,
+    isAllMatchingQuestionsSelected,
     isSelectionMode,
   ];
 }

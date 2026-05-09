@@ -23,6 +23,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
   final QuestionBankService _questionBankService;
   final EnrollmentService _enrollmentService;
   int _courseRequestVersion = 0;
+  int _pendingFileSeed = -1;
 
   Future<void> initialize() async {
     emitIfOpen(state.copyWith(isLoading: true, clearError: true));
@@ -208,32 +209,16 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     required int localId,
     required String path,
   }) async {
-    emitIfOpen(
-      state.copyWith(isSubmitting: true, clearError: true, clearSuccess: true),
-    );
-    final result = await _questionBankService.uploadQuestionImage(path);
-    if (!result.isSuccess || result.data == null) {
-      emitIfOpen(
-        state.copyWith(
-          isSubmitting: false,
-          errorMessage: result.error?.message ?? 'questionImageUploadFailed',
-        ),
-      );
-      return;
-    }
     final rows = state.rows.map((row) {
       if (row.localId != localId) return row;
       return row.copyWith(
-        questionFileId: result.data!.fileId,
-        questionImageUrl: result.data!.imageUrl,
+        questionFileId: _nextPendingFileId(),
+        questionImageLocalPath: path,
+        questionImageUrl: null,
       );
     }).toList();
     emitIfOpen(
-      state.copyWith(
-        isSubmitting: false,
-        rows: rows,
-        successMessage: 'questionImageUploaded',
-      ),
+      state.copyWith(rows: rows, clearError: true, clearSuccess: true),
     );
   }
 
@@ -245,7 +230,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     emitIfOpen(
       state.copyWith(isSubmitting: true, clearError: true, clearSuccess: true),
     );
-    if (row.questionFileId != null) {
+    if (row.questionFileId != null && row.questionFileId! > 0) {
       await _questionBankService.deleteUploadedFile(row.questionFileId!);
     }
     emitIfOpen(
@@ -273,32 +258,18 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     required List<String> paths,
   }) async {
     if (paths.isEmpty) return;
-    emitIfOpen(
-      state.copyWith(isSubmitting: true, clearError: true, clearSuccess: true),
-    );
     final uploaded = <QuestionAttachmentPayload>[];
     for (final path in paths) {
-      final result = await _questionBankService.uploadQuestionImage(path);
-      if (!result.isSuccess || result.data == null) {
-        emitIfOpen(
-          state.copyWith(
-            isSubmitting: false,
-            errorMessage: result.error?.message ?? 'attachmentUploadFailed',
-          ),
-        );
-        return;
-      }
       uploaded.add(
         QuestionAttachmentPayload(
-          fileId: result.data!.fileId,
-          fileName: result.data!.fileName,
-          imageUrl: result.data!.imageUrl,
+          fileId: _nextPendingFileId(),
+          fileName: _fileNameFromPath(path),
+          localPath: path,
         ),
       );
     }
     emitIfOpen(
       state.copyWith(
-        isSubmitting: false,
         rows: state.rows
             .map(
               (row) => row.localId == localId
@@ -311,7 +282,8 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
                   : row,
             )
             .toList(),
-        successMessage: 'questionImageUploaded',
+        clearError: true,
+        clearSuccess: true,
       ),
     );
   }
@@ -320,7 +292,9 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     required int localId,
     required int fileId,
   }) async {
-    await _questionBankService.deleteUploadedFile(fileId);
+    if (fileId > 0) {
+      await _questionBankService.deleteUploadedFile(fileId);
+    }
     emitIfOpen(
       state.copyWith(
         rows: state.rows
@@ -451,11 +425,27 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
         clearFailureReport: true,
       ),
     );
+    final uploadedByRowIndex = <int, List<int>>{};
+    final preparedRows = await _uploadPendingRowsMedia(
+      rows,
+      uploadedByRowIndex,
+    );
+    if (preparedRows == null) {
+      await _discardUploadedFiles(
+        uploadedByRowIndex.values.expand((ids) => ids),
+      );
+      return false;
+    }
     final result = await _questionBankService.bulkCreateQuestionsDetailed(
       courseId: courseId,
-      questions: rows.map((row) => row.toPayload(courseId: courseId)).toList(),
+      questions: preparedRows
+          .map((row) => row.toPayload(courseId: courseId))
+          .toList(),
     );
     if (!result.isSuccess) {
+      await _discardUploadedFiles(
+        uploadedByRowIndex.values.expand((ids) => ids),
+      );
       final message = result.error?.message ?? 'bulkCreateFailed';
       emitIfOpen(
         state.copyWith(
@@ -482,6 +472,10 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     final failedRows = rowsWithBackendFailures
         .where((row) => row.error != null)
         .toList();
+    final failedIndexes = failureByRow.keys.toSet();
+    await _discardUploadedFiles(
+      failedIndexes.expand((index) => uploadedByRowIndex[index] ?? const []),
+    );
     final allCreated = [...state.createdQuestions, ...?detailed?.created];
     emitIfOpen(
       state.copyWith(
@@ -527,10 +521,12 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     final fileIds = <int>{};
     for (final row in state.rows) {
       final questionFileId = row.questionFileId;
-      if (questionFileId != null) fileIds.add(questionFileId);
+      if (questionFileId != null && questionFileId > 0) {
+        fileIds.add(questionFileId);
+      }
       for (final attachment in row.attachments) {
         final fileId = attachment.fileId;
-        if (fileId != null) fileIds.add(fileId);
+        if (fileId != null && fileId > 0) fileIds.add(fileId);
       }
     }
     for (final fileId in fileIds) {
@@ -606,5 +602,93 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
       return rows.map((row) => row.copyWith(clearChapter: true)).toList();
     }
     return rows.map((row) => row.copyWith(chapterId: chapterId)).toList();
+  }
+
+  Future<List<QuestionBulkRowModel>?> _uploadPendingRowsMedia(
+    List<QuestionBulkRowModel> rows,
+    Map<int, List<int>> uploadedByRowIndex,
+  ) async {
+    final preparedRows = <QuestionBulkRowModel>[];
+    for (var index = 0; index < rows.length; index++) {
+      final uploadedForRow = uploadedByRowIndex.putIfAbsent(
+        index,
+        () => <int>[],
+      );
+      final prepared = await _uploadPendingRowMedia(
+        rows[index],
+        uploadedForRow,
+      );
+      if (prepared == null) return null;
+      preparedRows.add(prepared);
+    }
+    return preparedRows;
+  }
+
+  Future<QuestionBulkRowModel?> _uploadPendingRowMedia(
+    QuestionBulkRowModel row,
+    List<int> uploadedFileIds,
+  ) async {
+    var prepared = row;
+    final questionLocalPath = row.questionImageLocalPath;
+    if ((row.questionFileId == null || row.questionFileId! <= 0) &&
+        questionLocalPath != null &&
+        questionLocalPath.trim().isNotEmpty) {
+      final result = await _questionBankService.uploadQuestionImage(
+        questionLocalPath,
+      );
+      if (!result.isSuccess || result.data == null) {
+        emitIfOpen(
+          state.copyWith(
+            isSubmitting: false,
+            errorMessage: result.error?.message ?? 'questionImageUploadFailed',
+          ),
+        );
+        return null;
+      }
+      final fileId = result.data!.fileId;
+      uploadedFileIds.add(fileId);
+      prepared = prepared.copyWith(questionFileId: fileId);
+    }
+
+    final attachments = <QuestionAttachmentPayload>[];
+    for (final attachment in row.attachments) {
+      var fileId = attachment.fileId;
+      final localPath = attachment.localPath;
+      if ((fileId == null || fileId <= 0) &&
+          localPath != null &&
+          localPath.trim().isNotEmpty) {
+        final result = await _questionBankService.uploadQuestionImage(
+          localPath,
+        );
+        if (!result.isSuccess || result.data == null) {
+          emitIfOpen(
+            state.copyWith(
+              isSubmitting: false,
+              errorMessage: result.error?.message ?? 'attachmentUploadFailed',
+            ),
+          );
+          return null;
+        }
+        fileId = result.data!.fileId;
+        uploadedFileIds.add(fileId);
+      }
+      attachments.add(attachment.copyWith(fileId: fileId));
+    }
+    return prepared.copyWith(attachments: attachments);
+  }
+
+  Future<void> _discardUploadedFiles(Iterable<int> fileIds) async {
+    for (final fileId in fileIds.toSet()) {
+      if (fileId > 0) {
+        await _questionBankService.deleteUploadedFile(fileId);
+      }
+    }
+  }
+
+  int _nextPendingFileId() => _pendingFileSeed--;
+
+  String _fileNameFromPath(String path) {
+    final parts = path.split(RegExp(r'[\\/]'));
+    return parts.isEmpty ? path : parts.last;
   }
 }

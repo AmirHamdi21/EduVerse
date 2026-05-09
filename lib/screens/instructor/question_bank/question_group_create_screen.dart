@@ -9,13 +9,12 @@ import '../../../bloc/instructor/question_bank/question_group_cubit.dart';
 import '../../../bloc/instructor/question_bank/question_group_state.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
-import '../../../models/question_bank/question_bank_upload_response.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
-import 'question_bank_create_screen.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class QuestionGroupCreateScreen extends StatelessWidget {
   const QuestionGroupCreateScreen({super.key});
@@ -56,9 +55,6 @@ class _QuestionGroupCreateView extends StatefulWidget {
 }
 
 class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
-  final Set<int> _pendingUploadIds = <int>{};
-  bool _saved = false;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -142,39 +138,49 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
                       return QuestionGroupFormCard(
                         key: ValueKey(bankState.selectedCourseId),
                         courseId: bankState.selectedCourseId,
-                        onUploadSharedImage: (path) =>
-                            _uploadGroupImage(context, path),
-                        onRemoveSharedImage: (fileId) async {
-                          _pendingUploadIds.remove(fileId);
-                          await context
-                              .read<QuestionGroupCubit>()
-                              .deleteUploadedQuestionImage(fileId);
-                        },
                         isSubmitting: groupState.isMutating,
                         onSubmit:
                             ({
                               title,
                               sharedPrompt,
                               sharedFileId,
+                              sharedImageLocalPath,
                               sharedFileCaption,
                               sharedFileAltText,
                               required QuestionGroupType groupType,
                             }) async {
                               final courseId = bankState.selectedCourseId;
                               if (courseId == null) return;
-                              final id = await context
-                                  .read<QuestionGroupCubit>()
-                                  .createGroup(
-                                    courseId: courseId,
-                                    title: title,
-                                    sharedPrompt: sharedPrompt,
-                                    sharedFileId: sharedFileId,
-                                    sharedFileCaption: sharedFileCaption,
-                                    sharedFileAltText: sharedFileAltText,
-                                    groupType: groupType,
+                              final cubit = context.read<QuestionGroupCubit>();
+                              final uploadedFileId =
+                                  await _uploadSharedImageIfNeeded(
+                                    context,
+                                    sharedImageLocalPath,
                                   );
+                              if (sharedImageLocalPath != null &&
+                                  uploadedFileId == null) {
+                                return;
+                              }
+                              final resolvedSharedFileId =
+                                  uploadedFileId ??
+                                  ((sharedFileId ?? 0) > 0
+                                      ? sharedFileId
+                                      : null);
+                              final id = await cubit.createGroup(
+                                courseId: courseId,
+                                title: title,
+                                sharedPrompt: sharedPrompt,
+                                sharedFileId: resolvedSharedFileId,
+                                sharedFileCaption: sharedFileCaption,
+                                sharedFileAltText: sharedFileAltText,
+                                groupType: groupType,
+                              );
+                              if (id == null && uploadedFileId != null) {
+                                await cubit.deleteUploadedQuestionImage(
+                                  uploadedFileId,
+                                );
+                              }
                               if (id != null && context.mounted) {
-                                _saved = true;
                                 context.go(
                                   '/instructor/question-bank/groups/$id',
                                 );
@@ -192,42 +198,21 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
     );
   }
 
-  Future<QuestionBankUploadResponse?> _uploadGroupImage(
+  Future<int?> _uploadSharedImageIfNeeded(
     BuildContext context,
-    String path,
+    String? path,
   ) async {
+    if (path == null || path.trim().isEmpty) return null;
     final upload = await context.read<QuestionGroupCubit>().uploadGroupImage(
       path,
     );
-    final fileId = upload?.fileId;
-    if (fileId != null) _pendingUploadIds.add(fileId);
-    return upload;
+    return upload?.fileId;
   }
 
   Future<void> _handleBack(BuildContext context) async {
-    if (!_saved && _pendingUploadIds.isNotEmpty) {
-      final l10n = AppLocalizations.of(context);
-      final discard =
-          await showDialog<bool>(
-            context: context,
-            builder: (context) => QuestionFormDecisionDialog(
-              title: l10n.qbDiscardUploadsTitle,
-              message: l10n.qbDiscardUploadsBody,
-              icon: Icons.cloud_off_outlined,
-              color: InstructorColors.error,
-              primaryLabel: l10n.discard,
-              secondaryLabel: l10n.cancel,
-              onPrimary: () => Navigator.of(context).pop(true),
-              onSecondary: () => Navigator.of(context).pop(false),
-            ),
-          ) ??
-          false;
-      if (!discard || !context.mounted) return;
-      await context.read<QuestionGroupCubit>().discardUploadedQuestionImages(
-        _pendingUploadIds,
-      );
+    if (context.mounted) {
+      safeFeatureBack(context, '/instructor/question-bank/groups');
     }
-    if (context.mounted) context.pop();
   }
 
   String _selectedCourseLabel(QuestionBankState state) {

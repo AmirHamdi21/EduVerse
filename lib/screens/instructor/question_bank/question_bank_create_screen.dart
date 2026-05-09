@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 
 class QuestionBankCreateScreen extends StatelessWidget {
   const QuestionBankCreateScreen({super.key});
@@ -145,7 +148,9 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
       if (!discard || !context.mounted) return;
       await cubit.discardPendingUploads();
     }
-    if (context.mounted) context.pop();
+    if (context.mounted) {
+      safeFeatureBack(context, '/instructor/question-bank');
+    }
   }
 
   Future<void> _showCreateSuccessActions(BuildContext context) async {
@@ -320,14 +325,17 @@ class QuestionFormBody extends StatelessWidget {
               onPick: () => _pickQuestionImage(context),
               onRemove: () =>
                   context.read<QuestionFormCubit>().removeQuestionImage(),
-              onPreview: state.questionImageUrl == null
+              onPreview:
+                  state.questionImageUrl == null &&
+                      state.questionImageLocalPath == null
                   ? null
                   : () => _showQuestionImagePreview(
                       context,
-                      imageUrl: state.questionImageUrl!,
+                      imageUrl: state.questionImageUrl,
+                      localPath: state.questionImageLocalPath,
                       title: state.questionFileCaption.trim().isNotEmpty
                           ? state.questionFileCaption
-                          : '${l10n.questionBankImageQuestion}: ${state.questionFileId}',
+                          : _questionImageLabel(l10n),
                     ),
             ),
             if (state.questionFileId != null) ...[
@@ -335,14 +343,17 @@ class QuestionFormBody extends StatelessWidget {
               Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: state.questionImageUrl == null
+                  onTap:
+                      state.questionImageUrl == null &&
+                          state.questionImageLocalPath == null
                       ? null
                       : () => _showQuestionImagePreview(
                           context,
-                          imageUrl: state.questionImageUrl!,
+                          imageUrl: state.questionImageUrl,
+                          localPath: state.questionImageLocalPath,
                           title: state.questionFileCaption.trim().isNotEmpty
                               ? state.questionFileCaption
-                              : '${l10n.questionBankImageQuestion}: ${state.questionFileId}',
+                              : _questionImageLabel(l10n),
                         ),
                   borderRadius: BorderRadius.circular(14),
                   child: Container(
@@ -365,11 +376,12 @@ class QuestionFormBody extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            '${l10n.questionBankImageQuestion}: ${state.questionFileId}',
+                            _questionImageLabel(l10n),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (state.questionImageUrl != null)
+                        if (state.questionImageUrl != null ||
+                            state.questionImageLocalPath != null)
                           const Icon(
                             Icons.visibility_outlined,
                             color: InstructorColors.primary,
@@ -575,6 +587,21 @@ class QuestionFormBody extends StatelessWidget {
     return state.courseId?.toString() ?? '';
   }
 
+  String _questionImageLabel(AppLocalizations l10n) {
+    final localPath = state.questionImageLocalPath;
+    final fileId = state.questionFileId;
+    if (fileId != null &&
+        fileId <= 0 &&
+        localPath != null &&
+        localPath.trim().isNotEmpty) {
+      return _fileNameFromPath(localPath);
+    }
+    if (fileId != null) {
+      return '${l10n.questionBankImageQuestion}: $fileId';
+    }
+    return l10n.questionBankImageQuestion;
+  }
+
   Future<void> _pickQuestionImage(BuildContext context) async {
     final picked = await FilePicker.platform.pickFiles(type: FileType.image);
     final path = picked?.files.single.path;
@@ -585,7 +612,8 @@ class QuestionFormBody extends StatelessWidget {
 
   Future<void> _showQuestionImagePreview(
     BuildContext context, {
-    required String imageUrl,
+    String? imageUrl,
+    String? localPath,
     required String title,
   }) async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -644,12 +672,23 @@ class QuestionFormBody extends StatelessWidget {
                 ),
                 Flexible(
                   child: InteractiveViewer(
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.broken_image_outlined, size: 64),
-                    ),
+                    child: localPath != null && localPath.trim().isNotEmpty
+                        ? Image.file(
+                            File(localPath),
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.broken_image_outlined,
+                              size: 64,
+                            ),
+                          )
+                        : Image.network(
+                            imageUrl ?? '',
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.broken_image_outlined,
+                              size: 64,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -725,6 +764,7 @@ class _QuestionImageUploadPanel extends StatelessWidget {
         ? l10n.qbReplaceQuestionImage
         : l10n.qbUploadQuestionImage;
     final color = hasImage ? InstructorColors.teal : InstructorColors.primary;
+    final imageLabel = _imageLabel(l10n);
 
     return Material(
       color: Colors.transparent,
@@ -779,9 +819,7 @@ class _QuestionImageUploadPanel extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      hasImage
-                          ? '${l10n.questionBankImageQuestion} #${state.questionFileId}'
-                          : l10n.image,
+                      hasImage ? imageLabel : l10n.image,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -842,6 +880,26 @@ class _QuestionImageUploadPanel extends StatelessWidget {
       ),
     );
   }
+
+  String _imageLabel(AppLocalizations l10n) {
+    final localPath = state.questionImageLocalPath;
+    final fileId = state.questionFileId;
+    if (fileId != null &&
+        fileId <= 0 &&
+        localPath != null &&
+        localPath.trim().isNotEmpty) {
+      return _fileNameFromPath(localPath);
+    }
+    if (fileId != null) {
+      return '${l10n.questionBankImageQuestion} #$fileId';
+    }
+    return l10n.image;
+  }
+}
+
+String _fileNameFromPath(String path) {
+  final parts = path.split(RegExp(r'[\\/]'));
+  return parts.isEmpty ? path : parts.last;
 }
 
 class _QuestionFormSubmitBar extends StatelessWidget {

@@ -147,7 +147,7 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
     return result.data!.id;
   }
 
-  Future<void> updateGroup({
+  Future<bool> updateGroup({
     required int groupId,
     String? title,
     String? sharedPrompt,
@@ -177,7 +177,7 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
           errorMessage: result.error?.message ?? 'groupUpdateFailed',
         ),
       );
-      return;
+      return false;
     }
     emitIfOpen(
       state.copyWith(
@@ -186,6 +186,7 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
         actionMessage: 'groupSaved',
       ),
     );
+    return true;
   }
 
   Future<QuestionBankUploadResponse?> uploadGroupImage(String path) async {
@@ -246,7 +247,9 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
 
   Future<void> discardUploadedQuestionImages(Iterable<int> fileIds) async {
     for (final fileId in fileIds.toSet()) {
-      await _questionBankService.deleteUploadedFile(fileId);
+      if (fileId > 0) {
+        await _questionBankService.deleteUploadedFile(fileId);
+      }
     }
   }
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_group_model.dart';
-import '../../../models/question_bank/question_bank_upload_response.dart';
 import '../../../services/api_service.dart';
 import '../../../services/storage_service.dart';
 import '../shared/instructor_colors.dart';
@@ -20,8 +20,6 @@ class QuestionGroupFormCard extends StatefulWidget {
     this.initial,
     required this.courseId,
     required this.onSubmit,
-    this.onUploadSharedImage,
-    this.onRemoveSharedImage,
     this.isSubmitting = false,
   });
 
@@ -31,14 +29,12 @@ class QuestionGroupFormCard extends StatefulWidget {
     String? title,
     String? sharedPrompt,
     int? sharedFileId,
+    String? sharedImageLocalPath,
     String? sharedFileCaption,
     String? sharedFileAltText,
     required QuestionGroupType groupType,
   })
   onSubmit;
-  final Future<QuestionBankUploadResponse?> Function(String path)?
-  onUploadSharedImage;
-  final Future<void> Function(int fileId)? onRemoveSharedImage;
   final bool isSubmitting;
 
   @override
@@ -62,7 +58,8 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
   );
   late int? _sharedFileId = widget.initial?.sharedFileId;
   late String? _sharedImageUrl = widget.initial?.sharedImageUrl;
-  bool _isUploading = false;
+  String? _sharedImageLocalPath;
+  int _pendingFileSeed = -1;
 
   @override
   void dispose() {
@@ -77,10 +74,10 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final groupImagePreviewUrl = _resolveFormGroupImageUrl(
-      _sharedImageUrl,
-      _sharedFileId,
-    );
+    final groupImagePreviewUrl =
+        _sharedImageLocalPath ??
+        _resolveFormGroupImageUrl(_sharedImageUrl, _sharedFileId);
+    final groupImageLabel = _groupImageLabel(l10n);
     return Column(
       children: [
         QuestionSectionCard(
@@ -106,11 +103,10 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
             const SizedBox(height: 12),
             _GroupImagePanel(
               fileId: _sharedFileId,
-              isUploading: _isUploading || widget.isSubmitting,
+              imageLabel: groupImageLabel,
+              isUploading: widget.isSubmitting,
               isDark: isDark,
-              onPick: widget.onUploadSharedImage == null
-                  ? null
-                  : _pickSharedImage,
+              onPick: _pickSharedImage,
               onPreview: groupImagePreviewUrl == null
                   ? null
                   : () => _showImagePreview(
@@ -118,7 +114,7 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
                       imageUrl: groupImagePreviewUrl,
                       title: _caption.text.trim().isNotEmpty
                           ? _caption.text
-                          : '${l10n.qbGroupImage}: $_sharedFileId',
+                          : groupImageLabel,
                     ),
               onRemove: _sharedFileId == null ? null : _removeSharedImage,
             ),
@@ -176,6 +172,7 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
                     title: _title.text,
                     sharedPrompt: _prompt.text,
                     sharedFileId: _sharedFileId,
+                    sharedImageLocalPath: _sharedImageLocalPath,
                     sharedFileCaption: _caption.text,
                     sharedFileAltText: _altText.text,
                     groupType: _type,
@@ -218,30 +215,40 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
   Future<void> _pickSharedImage() async {
     final picked = await FilePicker.platform.pickFiles(type: FileType.image);
     final path = picked?.files.single.path;
-    if (path == null || widget.onUploadSharedImage == null) return;
-    setState(() => _isUploading = true);
-    final upload = await widget.onUploadSharedImage!(path);
-    if (!mounted) return;
+    if (path == null) return;
     setState(() {
-      _sharedFileId = upload?.fileId ?? _sharedFileId;
-      _sharedImageUrl = upload?.imageUrl ?? _sharedImageUrl;
-      _isUploading = false;
+      _sharedFileId = _nextPendingFileId();
+      _sharedImageLocalPath = path;
+      _sharedImageUrl = null;
     });
   }
 
   Future<void> _removeSharedImage() async {
     final fileId = _sharedFileId;
     if (fileId == null) return;
-    setState(() => _isUploading = true);
-    await widget.onRemoveSharedImage?.call(fileId);
     if (!mounted) return;
     setState(() {
       _sharedFileId = null;
       _sharedImageUrl = null;
+      _sharedImageLocalPath = null;
       _caption.clear();
       _altText.clear();
-      _isUploading = false;
     });
+  }
+
+  int _nextPendingFileId() => _pendingFileSeed--;
+
+  String _groupImageLabel(AppLocalizations l10n) {
+    final fileId = _sharedFileId;
+    final localPath = _sharedImageLocalPath;
+    if (fileId != null &&
+        fileId <= 0 &&
+        localPath != null &&
+        localPath.trim().isNotEmpty) {
+      return _fileNameFromPath(localPath);
+    }
+    if (fileId != null) return '${l10n.qbGroupImage} #$fileId';
+    return l10n.qbGroupImage;
   }
 
   Future<void> _showImagePreview(
@@ -390,6 +397,21 @@ class _GroupFormPreviewImage extends StatelessWidget {
       }
     }
 
+    if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+      return Image.file(
+        File(imageUrl),
+        width: double.infinity,
+        height: height,
+        fit: fit,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded || frame != null) return child;
+          return _GroupFormImageLoadingBox(height: height, isDark: isDark);
+        },
+        errorBuilder: (_, __, ___) =>
+            _GroupFormImageErrorBox(height: height, isDark: isDark),
+      );
+    }
+
     if (_requiresFormGroupImageAuth(imageUrl)) {
       return FutureBuilder<String?>(
         future: StorageService().getAccessToken(),
@@ -440,6 +462,11 @@ bool _requiresFormGroupImageAuth(String url) {
       url.startsWith('${ApiService.baseUrl}/files/');
 }
 
+String _fileNameFromPath(String path) {
+  final parts = path.split(RegExp(r'[\\/]'));
+  return parts.isEmpty ? path : parts.last;
+}
+
 class _GroupFormImageLoadingBox extends StatelessWidget {
   const _GroupFormImageLoadingBox({required this.height, required this.isDark});
 
@@ -487,6 +514,7 @@ class _GroupFormImageErrorBox extends StatelessWidget {
 class _GroupImagePanel extends StatelessWidget {
   const _GroupImagePanel({
     required this.fileId,
+    required this.imageLabel,
     required this.isUploading,
     required this.isDark,
     required this.onPick,
@@ -495,6 +523,7 @@ class _GroupImagePanel extends StatelessWidget {
   });
 
   final int? fileId;
+  final String imageLabel;
   final bool isUploading;
   final bool isDark;
   final VoidCallback? onPick;
@@ -559,7 +588,7 @@ class _GroupImagePanel extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      hasImage ? '${l10n.qbGroupImage} #$fileId' : l10n.image,
+                      hasImage ? imageLabel : l10n.image,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

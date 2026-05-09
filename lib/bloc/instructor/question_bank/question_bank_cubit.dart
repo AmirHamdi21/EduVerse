@@ -81,6 +81,9 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
         clearSelectedCourse: courseId == null,
         clearSelectedChapter: true,
         clearGroup: true,
+        clearSelectedQuestionIds: true,
+        clearExcludedQuestionIds: true,
+        isAllMatchingQuestionsSelected: false,
         page: 1,
         questions: const [],
       ),
@@ -127,6 +130,9 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
         page: 1,
         isLoading: false,
         isLoadingMore: false,
+        clearSelectedQuestionIds: true,
+        clearExcludedQuestionIds: true,
+        isAllMatchingQuestionsSelected: false,
         clearError: true,
       ),
     );
@@ -405,11 +411,27 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
       state.copyWith(
         isSelectionMode: enabled,
         clearSelectedQuestionIds: !enabled,
+        clearExcludedQuestionIds: !enabled,
+        isAllMatchingQuestionsSelected: enabled
+            ? state.isAllMatchingQuestionsSelected
+            : false,
       ),
     );
   }
 
   void toggleQuestionSelection(int questionId) {
+    if (state.isAllMatchingQuestionsSelected) {
+      final excluded = Set<int>.from(state.excludedQuestionIds);
+      if (excluded.contains(questionId)) {
+        excluded.remove(questionId);
+      } else {
+        excluded.add(questionId);
+      }
+      emitIfOpen(
+        state.copyWith(excludedQuestionIds: excluded, isSelectionMode: true),
+      );
+      return;
+    }
     final selected = Set<int>.from(state.selectedQuestionIds);
     if (selected.contains(questionId)) {
       selected.remove(questionId);
@@ -426,46 +448,103 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
 
   void setCurrentQuestionsSelected(bool selected) {
     final currentIds = state.questions.map((question) => question.id).toSet();
-    final next = Set<int>.from(state.selectedQuestionIds);
     if (selected) {
-      next.addAll(currentIds);
+      final next = Set<int>.from(state.selectedQuestionIds)..addAll(currentIds);
+      emitIfOpen(
+        state.copyWith(
+          selectedQuestionIds: next,
+          clearExcludedQuestionIds: true,
+          isAllMatchingQuestionsSelected: false,
+          isSelectionMode: true,
+        ),
+      );
     } else {
-      next.removeAll(currentIds);
+      final next = Set<int>.from(state.selectedQuestionIds)
+        ..removeAll(currentIds);
+      emitIfOpen(
+        state.copyWith(
+          selectedQuestionIds: next,
+          clearExcludedQuestionIds: true,
+          isAllMatchingQuestionsSelected: false,
+          isSelectionMode: true,
+        ),
+      );
     }
+  }
+
+  void selectAllMatchingQuestions() {
+    if (state.total <= 0) return;
     emitIfOpen(
       state.copyWith(
-        selectedQuestionIds: next,
-        isSelectionMode: next.isNotEmpty || state.isSelectionMode,
+        selectedQuestionIds: const <int>{},
+        clearExcludedQuestionIds: true,
+        isAllMatchingQuestionsSelected: true,
+        isSelectionMode: true,
       ),
     );
   }
 
   Future<void> batchStatusAction(String action) async {
-    if (state.selectedQuestionIds.isEmpty) return;
-    emitIfOpen(state.copyWith(isMutating: true, clearAction: true));
+    if (!state.hasSelectedQuestions) return;
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeBatchAction: action,
+        clearAction: true,
+        clearError: true,
+      ),
+    );
     final result = await _questionBankService.batchStatusAction(
       questionIds: state.selectedQuestionIds.toList(),
       action: action,
+      allMatchingFilters: state.isAllMatchingQuestionsSelected,
+      excludeQuestionIds: state.excludedQuestionIds.toList(),
+      expectedQuestionCount: state.selectedQuestionCount,
+      courseId: state.selectedCourseId,
+      chapterId: state.selectedChapterId,
+      questionType: state.selectedType,
+      difficulty: state.selectedDifficulty,
+      bloomLevel: state.selectedBloomLevel,
+      status: state.selectedStatus,
+      search: state.search,
+      hasAttachments: state.hasAttachments,
+      groupId: state.selectedGroupId,
     );
     if (!result.isSuccess) {
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearActiveBatchAction: true,
           errorMessage:
               result.error?.message ?? 'Failed to update selected questions',
         ),
       );
       return;
     }
-    await _loadDependent(resetPage: true);
+    await _refreshAfterBatchAction();
     emitIfOpen(
       state.copyWith(
         isMutating: false,
+        clearActiveBatchAction: true,
         isSelectionMode: false,
         clearSelectedQuestionIds: true,
+        clearExcludedQuestionIds: true,
+        isAllMatchingQuestionsSelected: false,
         actionMessage: 'questionsBatchUpdated',
       ),
     );
+  }
+
+  bool isQuestionSelected(int questionId) {
+    if (state.isAllMatchingQuestionsSelected) {
+      return !state.excludedQuestionIds.contains(questionId);
+    }
+    return state.selectedQuestionIds.contains(questionId);
+  }
+
+  Future<void> _refreshAfterBatchAction() async {
+    await loadQuestions(refresh: true, quiet: true, refreshStats: true);
+    await Future.wait(<Future<void>>[loadChapters(), loadGroups()]);
   }
 
   Future<void> deleteQuestion(int questionId) async {
