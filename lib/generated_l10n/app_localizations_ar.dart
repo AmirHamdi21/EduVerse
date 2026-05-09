@@ -467,6 +467,50 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attendance => 'الحضور';
 
   @override
+  String get quickAccess => 'وصول سريع';
+
+  @override
+  String get searchCoursesTasks => 'ابحث في المقررات والمهام...';
+
+  @override
+  String welcomeBackName(String name) {
+    return 'مرحبًا بعودتك، $name';
+  }
+
+  @override
+  String get term => 'الفصل';
+
+  @override
+  String get insight => 'رؤية';
+
+  @override
+  String get noCoursesYet => 'لا توجد مقررات بعد';
+
+  @override
+  String get noUpcomingTasks => 'لا توجد مهام قادمة';
+
+  @override
+  String get activeLearner => 'متعلم نشط';
+
+  @override
+  String get drawerOverview => 'نظرة عامة';
+
+  @override
+  String get drawerLearning => 'التعلم';
+
+  @override
+  String get drawerAiTools => 'أدوات الذكاء الاصطناعي';
+
+  @override
+  String get drawerCommunication => 'التواصل';
+
+  @override
+  String get drawerAccount => 'الحساب';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
   String get myCoursesSection => 'موادي';
 
   @override
@@ -2772,9 +2816,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorLoadingNotes => 'خطأ في تحميل الملاحظات';
-
-  @override
-  String get retry => 'إعادة المحاولة';
 
   @override
   String get dismiss => 'رفض';

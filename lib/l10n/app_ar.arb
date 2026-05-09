@@ -155,6 +155,28 @@
   "semesterProgress": "تقدم الفصل الدراسي",
   "upcomingDeadline": "آخر موعد قادم",
   "attendance": "الحضور",
+  "quickAccess": "وصول سريع",
+  "searchCoursesTasks": "ابحث في المقررات والمهام...",
+  "welcomeBackName": "مرحبًا بعودتك، {name}",
+  "@welcomeBackName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "term": "الفصل",
+  "next": "التالي",
+  "insight": "رؤية",
+  "noCoursesYet": "لا توجد مقررات بعد",
+  "noUpcomingTasks": "لا توجد مهام قادمة",
+  "activeLearner": "متعلم نشط",
+  "drawerOverview": "نظرة عامة",
+  "drawerLearning": "التعلم",
+  "drawerAiTools": "أدوات الذكاء الاصطناعي",
+  "drawerCommunication": "التواصل",
+  "drawerAccount": "الحساب",
+  "retry": "إعادة المحاولة",
   "myCoursesSection": "دوراتي",
   "toDoSmartReminders": "قائمة المهام / التذكيرات الذكية",
   "performanceInsights": "رؤى الأداء",

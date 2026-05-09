@@ -713,52 +713,82 @@ class StudentDiscussionEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: studentDiscussionCardDecoration(isDark),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  gradient: studentDiscussionHeaderGradient(isDark),
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Icon(icon, color: Colors.white, size: 30),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final hasTightHeight =
+            constraints.hasBoundedHeight && constraints.maxHeight < 280;
+        final outerPadding = hasTightHeight
+            ? const EdgeInsets.symmetric(horizontal: 18, vertical: 10)
+            : const EdgeInsets.all(24);
+        final innerPadding = hasTightHeight ? 16.0 : 24.0;
+        final iconSize = hasTightHeight ? 44.0 : 68.0;
+        final iconRadius = hasTightHeight ? 16.0 : 22.0;
+        final iconGlyphSize = hasTightHeight ? 23.0 : 30.0;
+        final titleSize = hasTightHeight ? 16.0 : 18.0;
+        final messageSize = hasTightHeight ? 12.0 : 13.0;
+        final titleGap = hasTightHeight ? 8.0 : 18.0;
+        final messageGap = hasTightHeight ? 5.0 : 8.0;
+        final actionGap = hasTightHeight ? 8.0 : 18.0;
+
+        final content = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              width: iconSize,
+              height: iconSize,
+              decoration: BoxDecoration(
+                gradient: studentDiscussionHeaderGradient(isDark),
+                borderRadius: BorderRadius.circular(iconRadius),
               ),
-              const SizedBox(height: 18),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: StudentDiscussionPalette.textPrimaryColor(isDark),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                ),
+              child: Icon(icon, color: Colors.white, size: iconGlyphSize),
+            ),
+            SizedBox(height: titleGap),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: hasTightHeight ? 2 : null,
+              overflow: hasTightHeight ? TextOverflow.ellipsis : null,
+              style: TextStyle(
+                color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                fontSize: titleSize,
+                fontWeight: FontWeight.w800,
               ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: StudentDiscussionPalette.textSecondaryColor(isDark),
-                  fontSize: 13,
-                  height: 1.45,
-                ),
+            ),
+            SizedBox(height: messageGap),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              maxLines: hasTightHeight ? 2 : null,
+              overflow: hasTightHeight ? TextOverflow.ellipsis : null,
+              style: TextStyle(
+                color: StudentDiscussionPalette.textSecondaryColor(isDark),
+                fontSize: messageSize,
+                height: 1.35,
               ),
-              if (action != null) ...<Widget>[
-                const SizedBox(height: 18),
-                action!,
-              ],
+            ),
+            if (action != null) ...<Widget>[
+              SizedBox(height: actionGap),
+              FittedBox(fit: BoxFit.scaleDown, child: action!),
             ],
+          ],
+        );
+
+        return Center(
+          child: Padding(
+            padding: outerPadding,
+            child: Container(
+              padding: EdgeInsets.all(innerPadding),
+              decoration: studentDiscussionCardDecoration(isDark),
+              child: hasTightHeight
+                  ? SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: content,
+                    )
+                  : content,
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

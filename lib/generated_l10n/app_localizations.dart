@@ -986,6 +986,90 @@ abstract class AppLocalizations {
   /// **'Attendance'**
   String get attendance;
 
+  /// No description provided for @quickAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick access'**
+  String get quickAccess;
+
+  /// No description provided for @searchCoursesTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses, tasks...'**
+  String get searchCoursesTasks;
+
+  /// No description provided for @welcomeBackName.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back, {name}'**
+  String welcomeBackName(String name);
+
+  /// No description provided for @term.
+  ///
+  /// In en, this message translates to:
+  /// **'Term'**
+  String get term;
+
+  /// No description provided for @insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Insight'**
+  String get insight;
+
+  /// No description provided for @noCoursesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses yet'**
+  String get noCoursesYet;
+
+  /// No description provided for @noUpcomingTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming tasks'**
+  String get noUpcomingTasks;
+
+  /// No description provided for @activeLearner.
+  ///
+  /// In en, this message translates to:
+  /// **'Active learner'**
+  String get activeLearner;
+
+  /// No description provided for @drawerOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get drawerOverview;
+
+  /// No description provided for @drawerLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get drawerLearning;
+
+  /// No description provided for @drawerAiTools.
+  ///
+  /// In en, this message translates to:
+  /// **'AI tools'**
+  String get drawerAiTools;
+
+  /// No description provided for @drawerCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get drawerCommunication;
+
+  /// No description provided for @drawerAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get drawerAccount;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
   /// No description provided for @myCoursesSection.
   ///
   /// In en, this message translates to:
@@ -5443,12 +5527,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error Loading Notes'**
   String get errorLoadingNotes;
-
-  /// No description provided for @retry.
-  ///
-  /// In en, this message translates to:
-  /// **'Retry'**
-  String get retry;
 
   /// No description provided for @dismiss.
   ///

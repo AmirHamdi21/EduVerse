@@ -38,7 +38,7 @@ import 'package:edu_verse/screens/student/labs_screen.dart';
 import 'package:edu_verse/screens/student/notifications/notifications_screen.dart';
 import 'package:edu_verse/screens/student/announcements/student_announcements_screen.dart';
 import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
-import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
+import 'package:edu_verse/screens/student/student_dashboard_v7_screen.dart';
 import 'package:edu_verse/screens/student/course_details_screen.dart';
 import 'package:edu_verse/screens/student/course_instructor_info_screen.dart';
 import 'package:edu_verse/screens/student/tasks_screen.dart';
@@ -330,7 +330,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const StudentDashboardScreen(),
+        builder: (context, state) => const StudentDashboardV7Screen(),
       ),
       GoRoute(
         path: '/courses',
