@@ -46,7 +46,6 @@ import 'package:edu_verse/screens/student/voice_to_text/voice_to_text_screen.dar
 import 'package:edu_verse/screens/student/attendance/attendance_screen.dart';
 import 'package:edu_verse/screens/student/summarizer/summarizer_screen.dart';
 import 'package:edu_verse/screens/student/gamification/gamification_screen.dart';
-import 'package:edu_verse/screens/student/ai_chat/ai_chat_screen.dart';
 import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/screens/student/student_registration_screen.dart';
@@ -91,7 +90,6 @@ import 'package:edu_verse/screens/instructor/announcements/announcement_manager_
 import 'package:edu_verse/screens/instructor/attendance/attendance_manager_screen.dart';
 import 'package:edu_verse/screens/instructor/create_assignment_screen.dart';
 import 'package:edu_verse/screens/instructor/reports/reports_analytics_screen.dart';
-import 'package:edu_verse/screens/instructor/ai_teaching/ai_teaching_screen.dart';
 import 'package:edu_verse/screens/instructor/upload_materials/upload_materials_screen.dart';
 import 'package:edu_verse/screens/instructor/calendar/instructor_calendar_screen.dart';
 import 'package:edu_verse/screens/instructor/search/instructor_search_screen.dart';
@@ -103,11 +101,31 @@ import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_course_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussion_post_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/instructor_question_bank_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_bulk_create_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_chapters_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_create_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_bank_edit_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_create_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_add_questions_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_edit_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_link_questions_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_groups_screen.dart';
+import 'package:edu_verse/models/question_bank/question_bank_enums.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/instructor_exam_generator_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_draft_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_generator_create_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_generator_info_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_paper_export_preview_screen.dart';
+import 'package:edu_verse/screens/instructor/exam_generator/exam_saved_detail_screen.dart';
 import 'package:edu_verse/models/assignments/assignment_model.dart'
     as assignment_models;
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/models/discussion/discussion_models.dart';
+import 'package:edu_verse/features/ai_assistant/domain/ai_assistant_models.dart';
 // TA, Admin, IT Admin screens (placeholders for development)
 import 'package:edu_verse/screens/ta/ta_dashboard_screen.dart';
 import 'package:edu_verse/screens/ta/courses/ta_courses_list_screen.dart';
@@ -126,7 +144,6 @@ import 'package:edu_verse/screens/ta/search/ta_search_screen.dart';
 import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
 import 'package:edu_verse/screens/ta/announcements/ta_announcement_manager_screen.dart';
 import 'package:edu_verse/screens/ta/roster/ta_roster_screen.dart';
-import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
 import 'package:edu_verse/screens/ta/discussions/ta_discussions_screen.dart';
 import 'package:edu_verse/screens/ta/discussions/ta_course_discussions_screen.dart';
 import 'package:edu_verse/screens/ta/discussions/ta_discussion_post_detail_screen.dart';
@@ -194,6 +211,7 @@ import 'package:edu_verse/screens/it_admin/it_error_logs_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_database_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_cloud_services_screen.dart';
 import 'package:edu_verse/screens/it_admin/search/it_search_screen.dart';
+import 'package:edu_verse/features/ai_assistant/presentation/ai_assistant_history_screen.dart';
 import 'package:edu_verse/screens/shared/shared_chat_screen.dart';
 import 'package:edu_verse/screens/shared/discussion_screen.dart';
 import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
@@ -513,7 +531,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ai-chat',
-        builder: (context, state) => const AiChatScreen(),
+        builder: (context, state) {
+          final user = authRouteNotifier.user;
+          return AiAssistantEntryScreen(
+            role: AiAssistantRole.student,
+            userId: user?.userId ?? 0,
+            userDisplayName: user?.displayName ?? 'Student',
+          );
+        },
       ),
       GoRoute(
         path: '/calendar',
@@ -815,6 +840,207 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/instructor/question-bank',
+        builder: (context, state) {
+          final query = state.uri.queryParameters;
+          T? enumValue<T>(
+            List<T> values,
+            String? raw,
+            String Function(T) value,
+          ) {
+            if (raw == null || raw.isEmpty) return null;
+            for (final item in values) {
+              if (value(item) == raw) return item;
+            }
+            return null;
+          }
+
+          String? firstCsv(String? value) {
+            if (value == null || value.isEmpty) return null;
+            return value.split(',').first;
+          }
+
+          return InstructorQuestionBankScreen(
+            initialCourseId: _parsePositiveInt(query['courseId']),
+            initialChapterId: _parsePositiveInt(
+              query['chapterId'] ?? firstCsv(query['chapterIds']),
+            ),
+            initialGroupId: _parsePositiveInt(
+              query['groupId'] ?? firstCsv(query['groupIds']),
+            ),
+            initialType: enumValue(
+              QuestionBankType.values,
+              query['questionType'] ?? query['type'],
+              (item) => item.value,
+            ),
+            initialDifficulty: enumValue(
+              QuestionBankDifficulty.values,
+              query['difficulty'],
+              (item) => item.value,
+            ),
+            initialBloomLevel: enumValue(
+              BloomLevel.values,
+              query['bloomLevel'],
+              (item) => item.value,
+            ),
+            initialStatus: enumValue(
+              QuestionBankStatus.values,
+              query['status'],
+              (item) => item.value,
+            ),
+            initialSearch: query['search'],
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/create',
+        builder: (context, state) => const QuestionBankCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/bulk-create',
+        builder: (context, state) => const QuestionBankBulkCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/chapters',
+        builder: (context, state) => const QuestionBankChaptersScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups',
+        builder: (context, state) => const QuestionGroupsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/create',
+        builder: (context, state) => const QuestionGroupCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId/edit',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid group id')),
+            );
+          }
+          return QuestionGroupEditScreen(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId/add-questions',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question group route')),
+            );
+          }
+          return QuestionGroupAddQuestionsScreen(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId/link-questions',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question group route')),
+            );
+          }
+          return QuestionGroupLinkQuestionsScreen(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId',
+        builder: (context, state) {
+          final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
+          if (groupId == null || groupId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question group route')),
+            );
+          }
+          final refreshToken = state.uri.queryParameters['refresh'];
+          return QuestionGroupDetailScreen(
+            key: ValueKey('question-group-detail-$groupId-$refreshToken'),
+            groupId: groupId,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/:questionId/edit',
+        builder: (context, state) {
+          final questionId = int.tryParse(
+            state.pathParameters['questionId'] ?? '',
+          );
+          if (questionId == null || questionId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question edit route')),
+            );
+          }
+          return QuestionBankEditScreen(questionId: questionId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/:questionId',
+        builder: (context, state) {
+          final questionId = int.tryParse(
+            state.pathParameters['questionId'] ?? '',
+          );
+          if (questionId == null || questionId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid question detail route')),
+            );
+          }
+          return QuestionBankDetailScreen(questionId: questionId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator',
+        builder: (context, state) => const InstructorExamGeneratorScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/create',
+        builder: (context, state) => const ExamGeneratorCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/info',
+        builder: (context, state) => const ExamGeneratorInfoScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/drafts/:draftId',
+        builder: (context, state) {
+          final draftId = int.tryParse(state.pathParameters['draftId'] ?? '');
+          if (draftId == null || draftId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid draft detail route')),
+            );
+          }
+          return ExamDraftDetailScreen(draftId: draftId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/exams/:examId/paper-export',
+        builder: (context, state) {
+          final examId = int.tryParse(state.pathParameters['examId'] ?? '');
+          if (examId == null || examId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid exam paper export route')),
+            );
+          }
+          return ExamPaperExportPreviewScreen(examId: examId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exam-generator/exams/:examId',
+        builder: (context, state) {
+          final examId = int.tryParse(state.pathParameters['examId'] ?? '');
+          if (examId == null || examId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid exam detail route')),
+            );
+          }
+          return ExamSavedDetailScreen(examId: examId);
+        },
+      ),
+      GoRoute(
         path: '/instructor/assignments/create',
         builder: (context, state) {
           assignment_models.AssignmentModel? assignment;
@@ -1020,7 +1246,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/instructor/ai-teaching',
-        builder: (context, state) => const AITeachingScreen(),
+        builder: (context, state) {
+          final user = authRouteNotifier.user;
+          return AiAssistantEntryScreen(
+            role: AiAssistantRole.instructor,
+            userId: user?.userId ?? 0,
+            userDisplayName: user?.displayName ?? 'Instructor',
+          );
+        },
       ),
       GoRoute(
         path: '/instructor/upload-materials',
@@ -1418,7 +1651,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ta/ai-assistant',
-        builder: (context, state) => const TAAIAssistantScreen(),
+        builder: (context, state) {
+          final user = authRouteNotifier.user;
+          return AiAssistantEntryScreen(
+            role: AiAssistantRole.ta,
+            userId: user?.userId ?? 0,
+            userDisplayName: user?.displayName ?? 'Teaching Assistant',
+          );
+        },
       ),
       GoRoute(
         path: '/ta/messages',

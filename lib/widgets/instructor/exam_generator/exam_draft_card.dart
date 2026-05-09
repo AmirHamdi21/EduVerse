@@ -1,0 +1,309 @@
+import 'package:flutter/material.dart';
+
+import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/exams/exam_draft_model.dart';
+import '../../../models/exams/exam_generator_enums.dart';
+import '../shared/instructor_colors.dart';
+import 'exam_generator_localized_labels.dart';
+
+class ExamDraftCard extends StatelessWidget {
+  const ExamDraftCard({
+    super.key,
+    required this.draft,
+    required this.onTap,
+    this.courseLabel,
+  });
+
+  final ExamDraftModel draft;
+  final VoidCallback onTap;
+  final String? courseLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = _draftColor(draft.status);
+    final status = localizedDraftStatus(l10n, draft.status);
+    final isFinalizedSource =
+        draft.status == ExamDraftStatus.finalized &&
+        draft.finalizedExamId != null;
+    final subtitle = courseLabel?.trim().isNotEmpty == true
+        ? courseLabel!.trim()
+        : '${l10n.course} ${draft.courseId}';
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: InstructorColors.cardColor(isDark),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: InstructorColors.borderColor(isDark)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: IntrinsicHeight(
+                child: Row(
+                  children: [
+                    Container(width: 5, color: color),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: color.withValues(
+                                      alpha: isDark ? 0.18 : 0.1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Icon(
+                                    Icons.description_outlined,
+                                    color: color,
+                                    size: 22,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _RecordBadge(
+                                        label: isFinalizedSource
+                                            ? l10n.examFinalizedDraftRecordBadge
+                                            : l10n.examDraftRecordBadge,
+                                        color: isFinalizedSource
+                                            ? InstructorColors.success
+                                            : InstructorColors.primary,
+                                        isDark: isDark,
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        draft.title,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color:
+                                              InstructorColors.textPrimaryColor(
+                                                isDark,
+                                              ),
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w900,
+                                          height: 1.15,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        subtitle,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color:
+                                              InstructorColors.textSecondaryColor(
+                                                isDark,
+                                              ),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: InstructorColors.textTertiaryColor(
+                                    isDark,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                _InfoPill(
+                                  icon: Icons.radio_button_checked_rounded,
+                                  label: status,
+                                  color: color,
+                                  isDark: isDark,
+                                ),
+                                _InfoPill(
+                                  icon: Icons.quiz_outlined,
+                                  label:
+                                      '${draft.items.length} ${l10n.questions}',
+                                  color: InstructorColors.teal,
+                                  isDark: isDark,
+                                ),
+                                _InfoPill(
+                                  icon: Icons.view_agenda_outlined,
+                                  label:
+                                      '${draft.sections.length} ${l10n.sections}',
+                                  color: InstructorColors.accent,
+                                  isDark: isDark,
+                                ),
+                                if (draft.totalMarks != null)
+                                  _InfoPill(
+                                    icon: Icons.grade_outlined,
+                                    label:
+                                        '${_formatNumber(draft.totalMarks!)} ${l10n.examMarks}',
+                                    color: InstructorColors.orange,
+                                    isDark: isDark,
+                                  ),
+                                if (isFinalizedSource)
+                                  _InfoPill(
+                                    icon: Icons.fact_check_outlined,
+                                    label: l10n.examFinalizedDraftOpensSaved,
+                                    color: InstructorColors.success,
+                                    isDark: isDark,
+                                  )
+                                else
+                                  _InfoPill(
+                                    icon: Icons.schedule_rounded,
+                                    label:
+                                        '${l10n.examExpires}: ${_formatDate(draft.expiresAt)}',
+                                    color: draft.isExpired
+                                        ? InstructorColors.error
+                                        : InstructorColors.info,
+                                    isDark: isDark,
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _draftColor(ExamDraftStatus status) {
+    switch (status) {
+      case ExamDraftStatus.open:
+        return InstructorColors.primary;
+      case ExamDraftStatus.finalized:
+        return InstructorColors.success;
+      case ExamDraftStatus.expired:
+        return InstructorColors.warning;
+      case ExamDraftStatus.cancelled:
+        return InstructorColors.textSecondary;
+      case ExamDraftStatus.failed:
+        return InstructorColors.error;
+    }
+  }
+}
+
+class _RecordBadge extends StatelessWidget {
+  const _RecordBadge({
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
+
+  final String label;
+  final Color color;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.18 : 0.1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: color,
+          fontSize: 11.5,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoPill extends StatelessWidget {
+  const _InfoPill({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.18 : 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: color),
+          const SizedBox(width: 5),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w900,
+                fontSize: 12.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _formatDate(DateTime date) {
+  final local = date.toLocal();
+  final month = local.month.toString().padLeft(2, '0');
+  final day = local.day.toString().padLeft(2, '0');
+  return '${local.year}-$month-$day';
+}
+
+String _formatNumber(num value) {
+  if (value == value.roundToDouble()) return value.toInt().toString();
+  return value.toStringAsFixed(1);
+}

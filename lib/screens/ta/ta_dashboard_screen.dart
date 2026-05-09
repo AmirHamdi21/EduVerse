@@ -178,7 +178,7 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
         context.push('/ta/discussions');
         break;
       case 'ask_ai':
-        context.push('/ai-chat');
+        context.push('/ta/ai-assistant');
         break;
     }
   }
@@ -251,7 +251,7 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
                   isDark: isDark,
                   onViewFullInsights: () =>
                       _showSnackBar(l10n.taViewFullInsights),
-                  onAskAIHelp: () => context.push('/ai-chat'),
+                  onAskAIHelp: () => context.push('/ta/ai-assistant'),
                 ),
                 const SizedBox(height: 24),
                 TAQuickActionsGrid(
