@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:open_file/open_file.dart';
@@ -657,6 +659,40 @@ class ExamGeneratorService {
     return RetryHelper.execute<String>(() async {
       return _saveExportFile(export);
     }, fallbackMessage: 'Failed to save exported exam');
+  }
+
+  Future<ServiceResult<String>> saveClientPdfFile({
+    required String fileName,
+    required Uint8List bytes,
+  }) {
+    return RetryHelper.execute<String>(() async {
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}${Platform.pathSeparator}$fileName');
+      await file.writeAsBytes(bytes, flush: true);
+      return file.path;
+    }, fallbackMessage: 'Failed to save exported exam');
+  }
+
+  Future<ServiceResult<Map<String, dynamic>>> registerClientPdfExport({
+    required int examId,
+    required String filePath,
+    required ExamExportOptionsModel options,
+  }) {
+    return RetryHelper.execute<Map<String, dynamic>>(() async {
+      final response = await _client.dio.post(
+        '/exams/$examId/client-export',
+        data: FormData.fromMap(<String, dynamic>{
+          'format': ExamExportFormat.pdf.value,
+          'variant': options.variant.value,
+          'optionsSnapshot': jsonEncode(options.toJson()),
+          'file': await MultipartFile.fromFile(
+            filePath,
+            filename: filePath.split(Platform.pathSeparator).last,
+          ),
+        }),
+      );
+      return _map(response.data);
+    }, fallbackMessage: 'Failed to register exported PDF');
   }
 
   Future<ServiceResult<String>> openExportFile(String filePath) {

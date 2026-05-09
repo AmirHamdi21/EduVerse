@@ -6,6 +6,7 @@ import '../../../models/exams/exam_export_options_model.dart';
 import '../../../models/exams/exam_full_detail_model.dart';
 import '../../../models/exams/exam_generator_enums.dart';
 import '../../../models/exams/exam_paper_template_model.dart';
+import '../../../services/exam_client_pdf_export_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
 import '../../../widgets/instructor/question_bank/question_form_menu_field.dart';
@@ -29,6 +30,8 @@ class _ExamPaperExportPreviewScreenState
   late final ExamGeneratorService _service = ExamGeneratorService(
     coreApiClient: CoreApiClient(),
   );
+  final ExamClientPdfExportService _clientPdfExportService =
+      const ExamClientPdfExportService();
 
   final _templateName = TextEditingController();
   final _left1 = TextEditingController();
@@ -323,38 +326,79 @@ class _ExamPaperExportPreviewScreenState
       examId: widget.examId,
       template: template,
     );
-    final result = await _service.exportExam(
-      examId: widget.examId,
-      options: ExamExportOptionsModel(
-        format: _format,
-        variant: _variant,
-        studentNameLine: _studentNameLine,
-        showCourseCode: _showCourseCode,
-        pageBreakPerSection: _pageBreakPerSection,
-        showInstructorName: _showInstructorName,
-        showTotalMarks: _showTotalMarks,
-        showQuestionMarks: _showQuestionMarks,
-        answerKeyStyle: _answerKeyStyle,
-        paperTemplateId: template.id,
-        paperTemplateSnapshot: template.toSnapshot(),
-      ),
+    if (!mounted) return;
+    final options = ExamExportOptionsModel(
+      format: _format,
+      variant: _variant,
+      studentNameLine: _studentNameLine,
+      showCourseCode: _showCourseCode,
+      pageBreakPerSection: _pageBreakPerSection,
+      showInstructorName: _showInstructorName,
+      showTotalMarks: _showTotalMarks,
+      showQuestionMarks: _showQuestionMarks,
+      answerKeyStyle: _answerKeyStyle,
+      paperTemplateId: template.id,
+      paperTemplateSnapshot: template.toSnapshot(),
     );
     String? filePath;
-    if (result.data != null) {
-      final save = await _service.saveExportFile(result.data!);
+    String? registrationWarning;
+    String? exportError;
+    if (_format == ExamExportFormat.pdf) {
+      final generated = await _clientPdfExportService.generate(
+        context: context,
+        detail: _detail!,
+        template: template,
+        options: options,
+      );
+      final save = await _service.saveClientPdfFile(
+        fileName: generated.fileName,
+        bytes: generated.bytes,
+      );
       filePath = save.data;
+      exportError = save.error?.message;
+      if (filePath != null) {
+        final registration = await _service.registerClientPdfExport(
+          examId: widget.examId,
+          filePath: filePath,
+          options: options,
+        );
+        if (registration.data == null) {
+          registrationWarning =
+              registration.error?.message ??
+              'PDF was created locally, but export history was not registered.';
+        }
+      }
+    } else {
+      final result = await _service.exportExam(
+        examId: widget.examId,
+        options: options,
+      );
+      if (result.data != null) {
+        final save = await _service.saveExportFile(result.data!);
+        filePath = save.data;
+        exportError = save.error?.message;
+      } else {
+        exportError = result.error?.message;
+      }
     }
     if (!mounted) return;
     setState(() => _working = false);
     if (filePath == null) {
-      _snack(result.error?.message ?? l10n.examPaperExportFailed);
+      _snack(exportError ?? l10n.examPaperExportFailed);
       return;
+    }
+    if (registrationWarning != null) {
+      _snack(registrationWarning);
     }
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.examPaperExportReady),
-        content: Text(l10n.examPaperExportReadyMessage),
+        content: Text(
+          registrationWarning == null
+              ? l10n.examPaperExportReadyMessage
+              : '${l10n.examPaperExportReadyMessage}\n\n$registrationWarning',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
