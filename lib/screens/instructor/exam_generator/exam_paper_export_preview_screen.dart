@@ -10,6 +10,7 @@ import '../../../services/exam_client_pdf_export_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/exam_generator_service.dart';
 import '../../../widgets/instructor/question_bank/question_form_menu_field.dart';
+import '../../../widgets/instructor/question_bank/question_bank_mutation_overlay.dart';
 import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
@@ -59,6 +60,9 @@ class _ExamPaperExportPreviewScreenState
   ExamPaperTemplateModel? _currentTemplate;
   bool _loading = true;
   bool _working = false;
+  _PaperDesignerAction? _activeAction;
+  double _exportProgress = 0;
+  String _exportProgressMessage = 'Preparing export';
   String? _error;
   ExamExportVariant _variant = ExamExportVariant.student;
   ExamExportFormat _format = ExamExportFormat.pdf;
@@ -268,23 +272,53 @@ class _ExamPaperExportPreviewScreenState
     setState(() => _currentTemplate = template.copyWith(headerJson: header));
   }
 
-  Future<void> _saveTemplate({required bool saveAsNew}) async {
-    setState(() => _working = true);
+  Future<void> _confirmAndSaveTemplate({required bool saveAsNew}) async {
+    final action = saveAsNew
+        ? _PaperDesignerAction.saveAsTemplate
+        : _PaperDesignerAction.saveTemplate;
+    final confirmed = await _confirmPaperAction(action);
+    if (!confirmed || !mounted) return;
+    await _saveTemplate(saveAsNew: saveAsNew, action: action);
+  }
+
+  Future<void> _saveTemplate({
+    required bool saveAsNew,
+    required _PaperDesignerAction action,
+  }) async {
+    final successMessage = AppLocalizations.of(context).examPaperTemplateSaved;
+    setState(() {
+      _working = true;
+      _activeAction = action;
+    });
     final template = _buildTemplate().copyWith(clearId: saveAsNew);
-    final result = saveAsNew || _currentTemplate?.id == null
-        ? await _service.createPaperTemplate(template)
-        : await _service.updatePaperTemplate(template);
-    if (!mounted) return;
-    setState(() => _working = false);
-    if (result.data != null) {
-      setState(() => _currentTemplate = result.data);
-      await _load();
+    String? message;
+    Object? thrownError;
+    try {
+      final result = saveAsNew || _currentTemplate?.id == null
+          ? await _service.createPaperTemplate(template)
+          : await _service.updatePaperTemplate(template);
+      if (!mounted) return;
+      if (result.data != null) {
+        setState(() => _currentTemplate = result.data);
+        await _load();
+      }
+      message = result.error?.message ?? successMessage;
+    } catch (error) {
+      thrownError = error;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _working = false;
+          _activeAction = null;
+        });
+      }
     }
     if (!mounted) return;
-    _snack(
-      result.error?.message ??
-          AppLocalizations.of(context).examPaperTemplateSaved,
-    );
+    if (thrownError != null) {
+      await _showPaperActionError(action, thrownError.toString());
+      return;
+    }
+    if (message != null) _snack(message);
   }
 
   void _resetDefaultTemplate() {
@@ -303,126 +337,490 @@ class _ExamPaperExportPreviewScreenState
     _hydrateControllers(template);
   }
 
+  Future<void> _confirmAndApplyTemplate() async {
+    final confirmed = await _confirmPaperAction(_PaperDesignerAction.apply);
+    if (!confirmed || !mounted) return;
+    await _applyTemplate();
+  }
+
   Future<void> _applyTemplate() async {
+    final successMessage = AppLocalizations.of(
+      context,
+    ).examPaperTemplateApplied;
     final template = _buildTemplate();
-    setState(() => _working = true);
-    final result = await _service.applyPaperTemplate(
-      examId: widget.examId,
-      template: template,
-    );
+    setState(() {
+      _working = true;
+      _activeAction = _PaperDesignerAction.apply;
+    });
+    String? message;
+    Object? thrownError;
+    try {
+      final result = await _service.applyPaperTemplate(
+        examId: widget.examId,
+        template: template,
+      );
+      message = result.error?.message ?? successMessage;
+    } catch (error) {
+      thrownError = error;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _working = false;
+          _activeAction = null;
+        });
+      }
+    }
     if (!mounted) return;
-    setState(() => _working = false);
-    _snack(
-      result.error?.message ??
-          AppLocalizations.of(context).examPaperTemplateApplied,
-    );
+    if (thrownError != null) {
+      await _showPaperActionError(
+        _PaperDesignerAction.apply,
+        thrownError.toString(),
+      );
+      return;
+    }
+    if (message != null) _snack(message);
+  }
+
+  Future<void> _confirmAndExport() async {
+    final confirmed = await _confirmPaperAction(_PaperDesignerAction.export);
+    if (!confirmed || !mounted) return;
+    await _export();
   }
 
   Future<void> _export() async {
     final l10n = AppLocalizations.of(context);
     final template = _buildTemplate();
-    setState(() => _working = true);
-    await _service.applyPaperTemplate(
-      examId: widget.examId,
-      template: template,
-    );
-    if (!mounted) return;
-    final options = ExamExportOptionsModel(
-      format: _format,
-      variant: _variant,
-      studentNameLine: _studentNameLine,
-      showCourseCode: _showCourseCode,
-      pageBreakPerSection: _pageBreakPerSection,
-      showInstructorName: _showInstructorName,
-      showTotalMarks: _showTotalMarks,
-      showQuestionMarks: _showQuestionMarks,
-      answerKeyStyle: _answerKeyStyle,
-      paperTemplateId: template.id,
-      paperTemplateSnapshot: template.toSnapshot(),
-    );
+    setState(() {
+      _working = true;
+      _activeAction = _PaperDesignerAction.export;
+      _exportProgress = 0.03;
+      _exportProgressMessage = 'Applying paper design';
+    });
     String? filePath;
-    String? registrationWarning;
     String? exportError;
-    if (_format == ExamExportFormat.pdf) {
-      final generated = await _clientPdfExportService.generate(
-        context: context,
-        detail: _detail!,
+    Object? thrownError;
+    try {
+      final applyResult = await _service.applyPaperTemplate(
+        examId: widget.examId,
         template: template,
-        options: options,
       );
-      final save = await _service.saveClientPdfFile(
-        fileName: generated.fileName,
-        bytes: generated.bytes,
-      );
-      filePath = save.data;
-      exportError = save.error?.message;
-      if (filePath != null) {
-        final registration = await _service.registerClientPdfExport(
-          examId: widget.examId,
-          filePath: filePath,
-          options: options,
+      if (!mounted) return;
+      if (applyResult.data == null) {
+        exportError =
+            applyResult.error?.message ??
+            'Could not apply the current paper template before export.';
+      } else {
+        final options = ExamExportOptionsModel(
+          format: _format,
+          variant: _variant,
+          studentNameLine: _studentNameLine,
+          showCourseCode: _showCourseCode,
+          pageBreakPerSection: _pageBreakPerSection,
+          showInstructorName: _showInstructorName,
+          showTotalMarks: _showTotalMarks,
+          showQuestionMarks: _showQuestionMarks,
+          answerKeyStyle: _answerKeyStyle,
+          paperTemplateId: template.id,
+          paperTemplateSnapshot: template.toSnapshot(),
         );
-        if (registration.data == null) {
-          registrationWarning =
-              registration.error?.message ??
-              'PDF was created locally, but export history was not registered.';
+        if (_format == ExamExportFormat.pdf) {
+          final generated = await _clientPdfExportService.generate(
+            context: context,
+            detail: _detail!,
+            template: template,
+            options: options,
+            onProgress: _updateExportProgress,
+          );
+          _updateExportProgress(0.98, 'Saving PDF file');
+          final save = await _service.saveClientPdfFile(
+            fileName: generated.fileName,
+            bytes: generated.bytes,
+          );
+          filePath = save.data;
+          exportError = save.error?.message;
+          if (filePath != null) {
+            _updateExportProgress(1, 'Finishing export');
+            final pdfFilePath = filePath;
+            final registration = await _service.registerClientPdfExport(
+              examId: widget.examId,
+              filePath: pdfFilePath,
+              options: options,
+            );
+            if (registration.data == null) {
+              debugPrint(
+                'PDF export history registration failed: '
+                '${registration.error?.message ?? 'Unknown error'}',
+              );
+            }
+          }
+        } else {
+          _updateExportProgress(0.35, 'Requesting Word export');
+          final result = await _service.exportExam(
+            examId: widget.examId,
+            options: options,
+          );
+          if (result.data != null) {
+            _updateExportProgress(0.86, 'Saving exported file');
+            final save = await _service.saveExportFile(result.data!);
+            filePath = save.data;
+            exportError = save.error?.message;
+          } else {
+            exportError = result.error?.message;
+          }
         }
       }
-    } else {
-      final result = await _service.exportExam(
-        examId: widget.examId,
-        options: options,
-      );
-      if (result.data != null) {
-        final save = await _service.saveExportFile(result.data!);
-        filePath = save.data;
-        exportError = save.error?.message;
-      } else {
-        exportError = result.error?.message;
+    } catch (error) {
+      thrownError = error;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _working = false;
+          _activeAction = null;
+          _exportProgress = 0;
+          _exportProgressMessage = 'Preparing export';
+        });
       }
     }
     if (!mounted) return;
-    setState(() => _working = false);
-    if (filePath == null) {
-      _snack(exportError ?? l10n.examPaperExportFailed);
+    if (thrownError != null) {
+      await _showPaperActionError(
+        _PaperDesignerAction.export,
+        thrownError.toString(),
+      );
       return;
     }
-    if (registrationWarning != null) {
-      _snack(registrationWarning);
+    if (filePath == null) {
+      await _showPaperActionError(
+        _PaperDesignerAction.export,
+        exportError ?? l10n.examPaperExportFailed,
+      );
+      return;
     }
+    await _showExportReadyDialog(filePath);
+  }
+
+  void _updateExportProgress(double progress, String message) {
+    if (!mounted) return;
+    setState(() {
+      _exportProgress = progress.clamp(0, 1);
+      _exportProgressMessage = message;
+    });
+  }
+
+  Future<void> _showExportReadyDialog(String filePath) async {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.examPaperExportReady),
+        backgroundColor: InstructorColors.cardColor(isDark),
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            _DesignerIcon(
+              icon: Icons.check_circle_outline_rounded,
+              color: InstructorColors.success,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                l10n.examPaperExportReady,
+                style: TextStyle(
+                  color: InstructorColors.textPrimaryColor(isDark),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.examPaperExportReadyMessage,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                height: 1.35,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 22),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(l10n.done),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await Share.shareXFiles([XFile(filePath)]);
+                    },
+                    icon: const Icon(Icons.ios_share_rounded, size: 18),
+                    label: Text(l10n.examPaperShareFile),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _service.openExportFile(filePath);
+                },
+                icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                label: Text(l10n.examPaperOpenFile),
+              ),
+            ),
+          ],
+        ),
+        actions: const [],
+      ),
+    );
+  }
+
+  Future<bool> _confirmPaperAction(_PaperDesignerAction action) async {
+    final config = _paperActionConfig(action);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            backgroundColor: InstructorColors.cardColor(isDark),
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            title: Row(
+              children: [
+                _DesignerIcon(icon: config.icon, color: config.color),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    config.title,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            content: Text(
+              config.message,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                height: 1.35,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(AppLocalizations.of(context).cancel),
+              ),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: config.color,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                icon: Icon(config.icon, size: 18),
+                label: Text(config.confirmLabel),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future<void> _showPaperActionError(
+    _PaperDesignerAction action,
+    String message,
+  ) async {
+    final config = _paperActionConfig(action);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: InstructorColors.cardColor(isDark),
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            _DesignerIcon(
+              icon: Icons.error_outline_rounded,
+              color: InstructorColors.error,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '${config.confirmLabel} failed',
+                style: TextStyle(
+                  color: InstructorColors.textPrimaryColor(isDark),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
+        ),
         content: Text(
-          registrationWarning == null
-              ? l10n.examPaperExportReadyMessage
-              : '${l10n.examPaperExportReadyMessage}\n\n$registrationWarning',
+          _cleanErrorMessage(message),
+          style: TextStyle(
+            color: InstructorColors.textSecondaryColor(isDark),
+            height: 1.35,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.done),
-          ),
-          OutlinedButton.icon(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await Share.shareXFiles([XFile(filePath!)]);
-            },
-            icon: const Icon(Icons.ios_share_rounded),
-            label: Text(l10n.examPaperShareFile),
-          ),
-          FilledButton.icon(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _service.openExportFile(filePath!);
-            },
-            icon: const Icon(Icons.open_in_new_rounded),
-            label: Text(l10n.examPaperOpenFile),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: InstructorColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(AppLocalizations.of(context).done),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  String _cleanErrorMessage(String message) {
+    final trimmed = message.trim();
+    if (trimmed.isEmpty) return AppLocalizations.of(context).operationFailed;
+    final lower = trimmed.toLowerCase();
+    if (lower.contains('dioexception') ||
+        lower.contains('stateerror') ||
+        lower.contains('sendtimeout') ||
+        lower.contains('receivetimeout') ||
+        lower.contains('connection timeout') ||
+        lower.contains('requestoptions')) {
+      return 'The request took longer than expected. Please try again in a moment.';
+    }
+    return trimmed.replaceFirst(RegExp(r'^Exception:\s*'), '');
+  }
+
+  _PaperActionConfig _paperActionConfig(_PaperDesignerAction action) {
+    switch (action) {
+      case _PaperDesignerAction.saveTemplate:
+        return const _PaperActionConfig(
+          title: 'Save paper template?',
+          message:
+              'The current paper design will update the selected template.',
+          confirmLabel: 'Save',
+          loadingTitle: 'Saving template',
+          loadingMessage:
+              'Please wait until the paper template is saved and refreshed.',
+          icon: Icons.save_outlined,
+          color: InstructorColors.primary,
+        );
+      case _PaperDesignerAction.saveAsTemplate:
+        return const _PaperActionConfig(
+          title: 'Save as new template?',
+          message:
+              'A new reusable paper template will be created from the current design.',
+          confirmLabel: 'Save',
+          loadingTitle: 'Saving template',
+          loadingMessage:
+              'Please wait until the new paper template is saved and refreshed.',
+          icon: Icons.save_as_outlined,
+          color: InstructorColors.primary,
+        );
+      case _PaperDesignerAction.apply:
+        return const _PaperActionConfig(
+          title: 'Apply paper design?',
+          message:
+              'The current paper layout and export settings will be saved to this exam.',
+          confirmLabel: 'Apply',
+          loadingTitle: 'Applying design',
+          loadingMessage:
+              'Please wait until the paper design is applied to this exam.',
+          icon: Icons.check_circle_outline_rounded,
+          color: InstructorColors.success,
+        );
+      case _PaperDesignerAction.export:
+        return const _PaperActionConfig(
+          title: 'Export exam paper?',
+          message:
+              'The current paper design will be applied first, then the exam paper file will be generated.',
+          confirmLabel: 'Export',
+          loadingTitle: 'Exporting paper',
+          loadingMessage:
+              'PDF generation can take a moment for image or LaTeX-heavy exams. Please wait until the file is ready.',
+          icon: Icons.download_rounded,
+          color: InstructorColors.teal,
+        );
+    }
+  }
+
+  Widget _buildContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return _loading
+        ? const Padding(
+            padding: EdgeInsets.all(20),
+            child: ExamGeneratorSkeletons(itemCount: 4),
+          )
+        : _error != null || _detail == null
+        ? _PaperDesignerErrorState(
+            message: _error ?? l10n.examPaperExportFailed,
+            onRetry: _load,
+          )
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth >= 980;
+              if (wide) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 460, child: _editor(context)),
+                    Expanded(child: _preview(context)),
+                  ],
+                );
+              }
+              return ListView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.only(bottom: 18),
+                children: [
+                  _editor(context, scrollable: false),
+                  _preview(context, scrollable: false),
+                ],
+              );
+            },
+          );
   }
 
   void _snack(String message) {
@@ -436,15 +834,20 @@ class _ExamPaperExportPreviewScreenState
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canShowActions = !_loading && _error == null && _detail != null;
+    final activeConfig = _activeAction == null
+        ? null
+        : _paperActionConfig(_activeAction!);
     return Scaffold(
       backgroundColor: InstructorColors.background(isDark),
       appBar: AppBar(
         leading: IconButton(
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          onPressed: () => safeFeatureBack(
-            context,
-            '/instructor/exam-generator/exams/${widget.examId}',
-          ),
+          onPressed: _working
+              ? null
+              : () => safeFeatureBack(
+                  context,
+                  '/instructor/exam-generator/exams/${widget.examId}',
+                ),
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
         title: Text(l10n.examPaperDesignerTitle),
@@ -454,14 +857,8 @@ class _ExamPaperExportPreviewScreenState
               padding: const EdgeInsetsDirectional.only(end: 8),
               child: IconButton.filledTonal(
                 tooltip: l10n.examPaperApplyToExam,
-                onPressed: _working ? null : _applyTemplate,
-                icon: _working
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.check_circle_outline_rounded),
+                onPressed: _working ? null : _confirmAndApplyTemplate,
+                icon: const Icon(Icons.check_circle_outline_rounded),
               ),
             ),
         ],
@@ -472,38 +869,27 @@ class _ExamPaperExportPreviewScreenState
               child: _bottomBar(context),
             )
           : null,
-      body: _loading
-          ? const Padding(
-              padding: EdgeInsets.all(20),
-              child: ExamGeneratorSkeletons(itemCount: 4),
+      body: Stack(
+        children: [
+          _buildContent(context),
+          if (_working &&
+              _activeAction == _PaperDesignerAction.export &&
+              activeConfig != null)
+            _PaperExportProgressOverlay(
+              title: activeConfig.loadingTitle,
+              message: _exportProgressMessage,
+              progress: _exportProgress,
+              isDark: isDark,
             )
-          : _error != null || _detail == null
-          ? Center(
-              child: FilledButton(onPressed: _load, child: Text(l10n.retry)),
-            )
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final wide = constraints.maxWidth >= 980;
-                if (wide) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(width: 460, child: _editor(context)),
-                      Expanded(child: _preview(context)),
-                    ],
-                  );
-                }
-                return ListView(
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  padding: const EdgeInsets.only(bottom: 18),
-                  children: [
-                    _editor(context, scrollable: false),
-                    _preview(context, scrollable: false),
-                  ],
-                );
-              },
+          else if (_working && activeConfig != null)
+            QuestionBankMutationOverlay(
+              title: activeConfig.loadingTitle,
+              message: activeConfig.loadingMessage,
+              color: activeConfig.color,
+              isDark: isDark,
             ),
+        ],
+      ),
     );
   }
 
@@ -1615,12 +2001,14 @@ class _ExamPaperExportPreviewScreenState
             icon: Icons.save_outlined,
             onPressed: _working || _currentTemplate?.id == null
                 ? null
-                : () => _saveTemplate(saveAsNew: false),
+                : () => _confirmAndSaveTemplate(saveAsNew: false),
           ),
           _ActionSpec(
             label: l10n.examPaperSaveAsTemplate,
             icon: Icons.save_as_outlined,
-            onPressed: _working ? null : () => _saveTemplate(saveAsNew: true),
+            onPressed: _working
+                ? null
+                : () => _confirmAndSaveTemplate(saveAsNew: true),
           ),
           _ActionSpec(
             label: l10n.examPaperResetDefault,
@@ -1658,16 +2046,8 @@ class _ExamPaperExportPreviewScreenState
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton.icon(
-                          onPressed: _working ? null : _export,
-                          icon: _working
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(Icons.download_rounded),
+                          onPressed: _working ? null : _confirmAndExport,
+                          icon: const Icon(Icons.download_rounded),
                           label: Text(l10n.examPaperExportAfterPreview),
                         ),
                       ),
@@ -1681,16 +2061,8 @@ class _ExamPaperExportPreviewScreenState
                       for (final action in secondaryActions)
                         _actionPill(context, action),
                       FilledButton.icon(
-                        onPressed: _working ? null : _export,
-                        icon: _working
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.download_rounded),
+                        onPressed: _working ? null : _confirmAndExport,
+                        icon: const Icon(Icons.download_rounded),
                         label: Text(l10n.examPaperExportAfterPreview),
                       ),
                     ],
@@ -1745,6 +2117,222 @@ class _ExamPaperExportPreviewScreenState
   double _num(dynamic value) {
     if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '') ?? 0;
+  }
+}
+
+enum _PaperDesignerAction { saveTemplate, saveAsTemplate, apply, export }
+
+class _PaperActionConfig {
+  const _PaperActionConfig({
+    required this.title,
+    required this.message,
+    required this.confirmLabel,
+    required this.loadingTitle,
+    required this.loadingMessage,
+    required this.icon,
+    required this.color,
+  });
+
+  final String title;
+  final String message;
+  final String confirmLabel;
+  final String loadingTitle;
+  final String loadingMessage;
+  final IconData icon;
+  final Color color;
+}
+
+class _PaperDesignerErrorState extends StatelessWidget {
+  const _PaperDesignerErrorState({
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 360),
+          padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+          decoration: BoxDecoration(
+            color: InstructorColors.cardColor(isDark),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: InstructorColors.borderColor(isDark)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.24 : 0.08),
+                blurRadius: 26,
+                offset: const Offset(0, 16),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const _DesignerIcon(
+                    icon: Icons.error_outline_rounded,
+                    color: InstructorColors.error,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.operationFailed,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                message,
+                style: TextStyle(
+                  color: InstructorColors.textSecondaryColor(isDark),
+                  fontWeight: FontWeight.w700,
+                  height: 1.35,
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: Text(l10n.retry),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PaperExportProgressOverlay extends StatelessWidget {
+  const _PaperExportProgressOverlay({
+    required this.title,
+    required this.message,
+    required this.progress,
+    required this.isDark,
+  });
+
+  final String title;
+  final String message;
+  final double progress;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final clampedProgress = progress.clamp(0, 1).toDouble();
+    return AbsorbPointer(
+      child: Container(
+        color: Colors.black.withValues(alpha: isDark ? 0.48 : 0.28),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(24),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 340),
+          padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+          decoration: BoxDecoration(
+            color: InstructorColors.cardColor(isDark),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: InstructorColors.teal.withValues(
+                alpha: isDark ? 0.34 : 0.18,
+              ),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.12),
+                blurRadius: 26,
+                offset: const Offset(0, 16),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: InstructorColors.teal.withValues(
+                        alpha: isDark ? 0.2 : 0.1,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.picture_as_pdf_outlined,
+                      color: InstructorColors.teal,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: clampedProgress,
+                  minHeight: 9,
+                  color: InstructorColors.teal,
+                  backgroundColor: InstructorColors.teal.withValues(
+                    alpha: isDark ? 0.18 : 0.1,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: InstructorColors.textSecondaryColor(isDark),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  height: 1.35,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '${(clampedProgress * 100).round()}%',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: InstructorColors.teal,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

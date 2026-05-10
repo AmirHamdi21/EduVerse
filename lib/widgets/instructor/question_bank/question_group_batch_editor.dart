@@ -23,6 +23,8 @@ class QuestionGroupBatchEditor extends StatelessWidget {
     this.onAttachmentChanged,
     this.onRemoveAttachment,
     this.onReorderAttachments,
+    this.collapsedRowIds = const <int>{},
+    this.onToggleCollapsed,
     this.isBusy = false,
   });
 
@@ -39,6 +41,8 @@ class QuestionGroupBatchEditor extends StatelessWidget {
   final void Function(int localId, int fileId)? onRemoveAttachment;
   final void Function(int localId, List<int> orderedFileIds)?
   onReorderAttachments;
+  final Set<int> collapsedRowIds;
+  final ValueChanged<int>? onToggleCollapsed;
   final bool isBusy;
 
   @override
@@ -76,6 +80,10 @@ class QuestionGroupBatchEditor extends StatelessWidget {
               onRemove: rows.length <= 1
                   ? null
                   : () => onRemoveRow(row.localId),
+              isCollapsed: collapsedRowIds.contains(row.localId),
+              onToggleCollapsed: onToggleCollapsed == null
+                  ? null
+                  : () => onToggleCollapsed!(row.localId),
             ),
           )
           .toList(),

@@ -115,6 +115,38 @@ void main() {
     },
   );
 
+  test('status action parses wrapped question response data', () async {
+    final client = CoreApiClient.test();
+    final adapter = _QueueAdapter([
+      {
+        'statusCode': 200,
+        'data': {
+          'message': 'Question approved successfully',
+          'data': {
+            'id': 9,
+            'questionId': 9,
+            'courseId': 2,
+            'chapterId': 3,
+            'questionType': 'mcq',
+            'difficulty': 'easy',
+            'bloomLevel': 'remembering',
+            'status': 'approved',
+          },
+        },
+      },
+    ]);
+    client.dio.httpClientAdapter = adapter;
+
+    final result = await QuestionBankService(
+      coreApiClient: client,
+    ).statusAction(questionId: 9, action: 'approve');
+
+    expect(result.isSuccess, isTrue);
+    expect(adapter.requests.single.path, '/question-bank/questions/9/approve');
+    expect(result.data!.id, 9);
+    expect(result.data!.status, QuestionBankStatus.approved);
+  });
+
   test('attachments and grouped batch use exact payload shapes', () async {
     final client = CoreApiClient.test();
     final adapter = _QueueAdapter([

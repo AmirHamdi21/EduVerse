@@ -14,6 +14,7 @@ import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 import '../../../widgets/instructor/shared/safe_feature_back.dart';
+import 'question_bank_create_screen.dart';
 
 class QuestionGroupsScreen extends StatelessWidget {
   const QuestionGroupsScreen({super.key});
@@ -43,6 +44,8 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
   final TextEditingController _search = TextEditingController();
   int? _chapterId;
   QuestionGroupType? _groupType;
+  bool _hasCompletedInitialLoad = false;
+  int? _deletingGroupId;
 
   @override
   void dispose() {
@@ -127,7 +130,12 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
           }
         },
         builder: (context, state) {
-          if (state.isLoading && state.groups.isEmpty) {
+          final showInitialSkeleton =
+              state.isLoading &&
+              state.groups.isEmpty &&
+              !_hasCompletedInitialLoad;
+          if (!state.isLoading) _hasCompletedInitialLoad = true;
+          if (showInitialSkeleton) {
             return const SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(16, 12, 16, 32),
               child: QuestionBankSkeletons(itemCount: 4),
@@ -144,7 +152,7 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
             (sum, group) => sum + group.approvedQuestions,
           );
 
-          return RefreshIndicator(
+          final content = RefreshIndicator(
             onRefresh: () => context.read<QuestionBankCubit>().refresh(),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 110),
@@ -166,6 +174,7 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
                   search: _search,
                   chapterId: _chapterId,
                   groupType: _groupType,
+                  isLoading: state.isLoading && _hasCompletedInitialLoad,
                   onSearchChanged: (_) => setState(() {}),
                   onCourseChanged: (courseId) {
                     setState(() => _chapterId = null);
@@ -211,12 +220,14 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
                       child: _ModernGroupCard(
                         group: group,
                         courseLabel: _courseLabelForGroup(state, group),
+                        isBusy: _deletingGroupId == group.id,
                         onTap: () => context.push(
                           '/instructor/question-bank/groups/${group.id}',
                         ),
                         onEdit: () => context.push(
                           '/instructor/question-bank/groups/${group.id}/edit',
                         ),
+                        onDelete: () => _deleteGroup(context, group.id),
                         onAddGrouped: () => context.push(
                           '/instructor/question-bank/groups/${group.id}/add-questions',
                         ),
@@ -229,9 +240,49 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
               ],
             ),
           );
+          return Stack(
+            children: [
+              content,
+              if (_deletingGroupId != null)
+                Positioned.fill(
+                  child: QuestionBankMutationOverlay(
+                    title: 'Deleting group',
+                    message: 'Please wait until the group is deleted.',
+                    isDark: isDark,
+                    color: InstructorColors.error,
+                  ),
+                ),
+            ],
+          );
         },
       ),
     );
+  }
+
+  Future<void> _deleteGroup(BuildContext context, int groupId) async {
+    final l10n = AppLocalizations.of(context);
+    final ok =
+        await showDialog<bool>(
+          context: context,
+          builder: (context) => QuestionFormDecisionDialog(
+            title: l10n.qbDeleteGroup,
+            message: l10n.qbGroupDeleteBody,
+            icon: Icons.delete_outline_rounded,
+            color: InstructorColors.error,
+            primaryLabel: l10n.qbDeleteGroup,
+            secondaryLabel: l10n.cancel,
+            onPrimary: () => Navigator.of(context).pop(true),
+            onSecondary: () => Navigator.of(context).pop(false),
+          ),
+        ) ??
+        false;
+    if (!ok || !context.mounted) return;
+    setState(() => _deletingGroupId = groupId);
+    try {
+      await context.read<QuestionBankCubit>().deleteGroup(groupId);
+    } finally {
+      if (mounted) setState(() => _deletingGroupId = null);
+    }
   }
 
   List<QuestionBankGroupModel> _visibleGroups(QuestionBankState state) {
@@ -293,6 +344,7 @@ class _GroupFilterPanel extends StatelessWidget {
     required this.search,
     required this.chapterId,
     required this.groupType,
+    required this.isLoading,
     required this.onSearchChanged,
     required this.onCourseChanged,
     required this.onChapterChanged,
@@ -304,6 +356,7 @@ class _GroupFilterPanel extends StatelessWidget {
   final TextEditingController search;
   final int? chapterId;
   final QuestionGroupType? groupType;
+  final bool isLoading;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<int?> onCourseChanged;
   final ValueChanged<int?> onChapterChanged;
@@ -410,6 +463,13 @@ class _GroupFilterPanel extends StatelessWidget {
                 icon: const Icon(Icons.refresh_rounded, size: 18),
                 label: Text(l10n.clearFilters),
               ),
+            ),
+          ],
+          if (isLoading) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: const LinearProgressIndicator(minHeight: 3),
             ),
           ],
         ],
@@ -718,16 +778,20 @@ class _ModernGroupCard extends StatelessWidget {
   const _ModernGroupCard({
     required this.group,
     required this.courseLabel,
+    required this.isBusy,
     required this.onTap,
     required this.onEdit,
+    required this.onDelete,
     required this.onAddGrouped,
     required this.onAddExisting,
   });
 
   final QuestionBankGroupModel group;
   final String courseLabel;
+  final bool isBusy;
   final VoidCallback onTap;
   final VoidCallback onEdit;
+  final VoidCallback onDelete;
   final VoidCallback onAddGrouped;
   final VoidCallback onAddExisting;
 
@@ -741,7 +805,7 @@ class _ModernGroupCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: isBusy ? null : onTap,
         borderRadius: BorderRadius.circular(22),
         child: Container(
           clipBehavior: Clip.antiAlias,
@@ -842,16 +906,33 @@ class _ModernGroupCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    IconButton(
-                      tooltip: l10n.qbEditGroup,
-                      onPressed: onEdit,
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(
-                          alpha: isDark ? 0.12 : 0.78,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          tooltip: l10n.qbEditGroup,
+                          onPressed: isBusy ? null : onEdit,
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white.withValues(
+                              alpha: isDark ? 0.12 : 0.78,
+                            ),
+                            foregroundColor: InstructorColors.primary,
+                          ),
+                          icon: const Icon(Icons.edit_rounded),
                         ),
-                        foregroundColor: InstructorColors.primary,
-                      ),
-                      icon: const Icon(Icons.edit_rounded),
+                        const SizedBox(width: 6),
+                        IconButton(
+                          tooltip: l10n.qbDeleteGroup,
+                          onPressed: isBusy ? null : onDelete,
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white.withValues(
+                              alpha: isDark ? 0.12 : 0.78,
+                            ),
+                            foregroundColor: InstructorColors.error,
+                          ),
+                          icon: const Icon(Icons.delete_outline_rounded),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -914,24 +995,39 @@ class _ModernGroupCard extends StatelessWidget {
                       ),
                     ],
                     const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.end,
-                      children: [
-                        _CardActionChip(
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final compact = constraints.maxWidth < 380;
+                        final addGrouped = _CardActionChip(
                           label: l10n.qbGroupedBatchCreate,
                           icon: Icons.playlist_add_rounded,
                           color: InstructorColors.primary,
-                          onPressed: onAddGrouped,
-                        ),
-                        _CardActionChip(
+                          onPressed: isBusy ? null : onAddGrouped,
+                        );
+                        final addExisting = _CardActionChip(
                           label: l10n.qbAddExistingQuestions,
                           icon: Icons.add_link_rounded,
                           color: InstructorColors.accent,
-                          onPressed: onAddExisting,
-                        ),
-                      ],
+                          onPressed: isBusy ? null : onAddExisting,
+                        );
+                        if (compact) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              addGrouped,
+                              const SizedBox(height: 8),
+                              addExisting,
+                            ],
+                          );
+                        }
+                        return Row(
+                          children: [
+                            Expanded(child: addGrouped),
+                            const SizedBox(width: 10),
+                            Expanded(child: addExisting),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -1084,27 +1180,32 @@ class _CardActionChip extends StatelessWidget {
   final String label;
   final IconData icon;
   final Color color;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        backgroundColor: color.withValues(alpha: isDark ? 0.15 : 0.08),
-        foregroundColor: color,
-        side: BorderSide(color: color.withValues(alpha: 0.22)),
-        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
-        minimumSize: const Size(0, 40),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      ),
-      icon: Icon(icon, size: 17),
-      label: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(fontWeight: FontWeight.w900),
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: color.withValues(alpha: isDark ? 0.15 : 0.08),
+          foregroundColor: color,
+          side: BorderSide(color: color.withValues(alpha: 0.22)),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+        icon: Icon(icon, size: 17),
+        label: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.w900),
+        ),
       ),
     );
   }

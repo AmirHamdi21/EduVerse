@@ -56,6 +56,8 @@ class _QuestionGroupEditView extends StatefulWidget {
 }
 
 class _QuestionGroupEditViewState extends State<_QuestionGroupEditView> {
+  bool _isSavingGroup = false;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -114,71 +116,60 @@ class _QuestionGroupEditViewState extends State<_QuestionGroupEditView> {
                 children: const [QuestionBankSkeletons(itemCount: 3)],
               );
             }
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
+            return Stack(
               children: [
-                QuestionFormHero(
-                  title: l10n.qbEditGroup,
-                  subtitle: group.title?.trim().isNotEmpty == true
-                      ? group.title!
-                      : l10n.qbSharedPrompt,
-                  tiles: {
-                    l10n.course: _courseLabel(group, bankState),
-                    l10n.qbGroupType: localizedGroupType(l10n, group.groupType),
-                  },
-                ),
-                const SizedBox(height: 18),
-                QuestionGroupFormCard(
-                  initial: group,
-                  courseId: group.courseId,
-                  isSubmitting: state.isMutating,
-                  onSubmit:
-                      ({
-                        title,
-                        sharedPrompt,
-                        sharedFileId,
-                        sharedImageLocalPath,
-                        sharedFileCaption,
-                        sharedFileAltText,
-                        required QuestionGroupType groupType,
-                      }) async {
-                        final cubit = context.read<QuestionGroupCubit>();
-                        final uploadedFileId = await _uploadSharedImageIfNeeded(
-                          context,
-                          sharedImageLocalPath,
-                        );
-                        if (sharedImageLocalPath != null &&
-                            uploadedFileId == null) {
-                          return;
-                        }
-                        final resolvedSharedFileId =
-                            uploadedFileId ??
-                            ((sharedFileId ?? 0) > 0 ? sharedFileId : null);
-                        final saved = await cubit.updateGroup(
-                          groupId: group.id,
-                          title: title,
-                          sharedPrompt: sharedPrompt,
-                          sharedFileId: resolvedSharedFileId,
-                          sharedFileCaption: sharedFileCaption,
-                          sharedFileAltText: sharedFileAltText,
-                          groupType: groupType,
-                          clearSharedFile:
-                              group.sharedFileId != null &&
-                              resolvedSharedFileId == null,
-                        );
-                        if (!saved && uploadedFileId != null) {
-                          await cubit.deleteUploadedQuestionImage(
-                            uploadedFileId,
-                          );
-                        }
-                        if (!saved) return;
-                        if (context.mounted) {
-                          context.go(
-                            '/instructor/question-bank/groups/${group.id}',
-                          );
-                        }
+                ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
+                  children: [
+                    QuestionFormHero(
+                      title: l10n.qbEditGroup,
+                      subtitle: group.title?.trim().isNotEmpty == true
+                          ? group.title!
+                          : l10n.qbSharedPrompt,
+                      tiles: {
+                        l10n.course: _courseLabel(group, bankState),
+                        l10n.qbGroupType: localizedGroupType(
+                          l10n,
+                          group.groupType,
+                        ),
                       },
+                    ),
+                    const SizedBox(height: 18),
+                    QuestionGroupFormCard(
+                      initial: group,
+                      courseId: group.courseId,
+                      isSubmitting: _isSavingGroup || state.isMutating,
+                      onSubmit:
+                          ({
+                            title,
+                            sharedPrompt,
+                            sharedFileId,
+                            sharedImageLocalPath,
+                            sharedFileCaption,
+                            sharedFileAltText,
+                            required QuestionGroupType groupType,
+                          }) => _submitGroup(
+                            context,
+                            group,
+                            title: title,
+                            sharedPrompt: sharedPrompt,
+                            sharedFileId: sharedFileId,
+                            sharedImageLocalPath: sharedImageLocalPath,
+                            sharedFileCaption: sharedFileCaption,
+                            sharedFileAltText: sharedFileAltText,
+                            groupType: groupType,
+                          ),
+                    ),
+                  ],
                 ),
+                if (_isSavingGroup)
+                  Positioned.fill(
+                    child: QuestionBankMutationOverlay(
+                      title: 'Saving group',
+                      message: 'Please wait until the group is saved.',
+                      isDark: isDark,
+                    ),
+                  ),
               ],
             );
           },
@@ -194,8 +185,57 @@ class _QuestionGroupEditViewState extends State<_QuestionGroupEditView> {
     if (path == null || path.trim().isEmpty) return null;
     final upload = await context.read<QuestionGroupCubit>().uploadGroupImage(
       path,
+      showSuccessMessage: false,
     );
     return upload?.fileId;
+  }
+
+  Future<void> _submitGroup(
+    BuildContext context,
+    QuestionBankGroupModel group, {
+    String? title,
+    String? sharedPrompt,
+    int? sharedFileId,
+    String? sharedImageLocalPath,
+    String? sharedFileCaption,
+    String? sharedFileAltText,
+    required QuestionGroupType groupType,
+  }) async {
+    if (_isSavingGroup) return;
+    setState(() => _isSavingGroup = true);
+    final cubit = context.read<QuestionGroupCubit>();
+    int? uploadedFileId;
+    try {
+      uploadedFileId = await _uploadSharedImageIfNeeded(
+        context,
+        sharedImageLocalPath,
+      );
+      if (sharedImageLocalPath != null && uploadedFileId == null) return;
+      final resolvedSharedFileId =
+          uploadedFileId ?? ((sharedFileId ?? 0) > 0 ? sharedFileId : null);
+      final saved = await cubit.updateGroup(
+        groupId: group.id,
+        title: title,
+        sharedPrompt: sharedPrompt,
+        sharedFileId: resolvedSharedFileId,
+        sharedFileCaption: sharedFileCaption,
+        sharedFileAltText: sharedFileAltText,
+        groupType: groupType,
+        clearSharedFile:
+            group.sharedFileId != null && resolvedSharedFileId == null,
+      );
+      if (!saved && uploadedFileId != null) {
+        await cubit.deleteUploadedQuestionImage(
+          uploadedFileId,
+          showSuccessMessage: false,
+        );
+      }
+      if (saved && context.mounted) {
+        context.go('/instructor/question-bank/groups/${group.id}');
+      }
+    } finally {
+      if (mounted) setState(() => _isSavingGroup = false);
+    }
   }
 
   Future<void> _handleBack(BuildContext context) async {

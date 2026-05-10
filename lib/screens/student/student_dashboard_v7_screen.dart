@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:edu_verse/bloc/assignments/assignment_bloc.dart';
 import 'package:edu_verse/bloc/assignments/assignment_event.dart';
 import 'package:edu_verse/bloc/assignments/assignment_state.dart';
@@ -147,9 +145,16 @@ class _CenteredDashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final maxWidth = screenWidth >= 1100
+        ? 960.0
+        : screenWidth >= 700
+        ? (screenWidth - 96).clamp(620.0, 860.0)
+        : 460.0;
+
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 460),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: child,
       ),
     );
@@ -440,22 +445,27 @@ class _StudentV7QuickAccessCard extends StatelessWidget {
         children: [
           _SectionHeader(title: l10n.quickAccess, isDark: isDark),
           const SizedBox(height: 10),
-          GridView.builder(
-            itemCount: actions.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              childAspectRatio: 0.82,
-            ),
-            itemBuilder: (context, index) {
-              final action = actions[index];
-              return _QuickActionTile(
-                action: action,
-                isDark: isDark,
-                onTap: () => context.push(action.route),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = constraints.maxWidth < 340 ? 3 : 4;
+              return GridView.builder(
+                itemCount: actions.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: constraints.maxWidth >= 700 ? 1.05 : 0.82,
+                ),
+                itemBuilder: (context, index) {
+                  final action = actions[index];
+                  return _QuickActionTile(
+                    action: action,
+                    isDark: isDark,
+                    onTap: () => context.push(action.route),
+                  );
+                },
               );
             },
           ),
@@ -747,7 +757,9 @@ class _StudentV7BottomNav extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width >= 700 ? 760 : 460,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: items
@@ -782,40 +794,27 @@ class _GlassPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-        child: Container(
-          width: double.infinity,
-          padding: padding,
-          decoration: BoxDecoration(
-            color: _DashboardColors.glassSurface(isDark),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: _DashboardColors.glassBorder(isDark),
-              width: isDark ? 1.1 : 1.2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.20)
-                    : _DashboardColors.primaryBlue.withValues(alpha: 0.08),
-                blurRadius: isDark ? 14 : 22,
-                spreadRadius: isDark ? 0 : 1,
-                offset: const Offset(0, 10),
-              ),
-              if (!isDark)
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.85),
-                  blurRadius: 1,
-                  offset: const Offset(0, -1),
-                ),
-            ],
-          ),
-          child: child,
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: _DashboardColors.glassSurface(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: _DashboardColors.glassBorder(isDark),
+          width: isDark ? 1.1 : 1.2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.16)
+                : _DashboardColors.primaryBlue.withValues(alpha: 0.06),
+            blurRadius: isDark ? 10 : 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
+      child: child,
     );
   }
 }

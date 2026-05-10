@@ -167,7 +167,7 @@ class _QuestionGroupLinkQuestionsViewState
               _candidates.isNotEmpty &&
               visibleSelectedCount == _candidates.length;
 
-          return ListView(
+          final content = ListView(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
             children: [
               QuestionFormHero(
@@ -254,9 +254,6 @@ class _QuestionGroupLinkQuestionsViewState
                     : () => _submitLink(context, state),
               ),
               const SizedBox(height: 16),
-              if (_loadingCandidates)
-                const LinearProgressIndicator(minHeight: 3),
-              if (_loadingCandidates) const SizedBox(height: 12),
               if (_candidates.isEmpty)
                 QuestionBankEmptyState(
                   title: l10n.questionBankEmptyTitle,
@@ -283,6 +280,18 @@ class _QuestionGroupLinkQuestionsViewState
                         },
                       ),
                   ],
+                ),
+            ],
+          );
+          return Stack(
+            children: [
+              content,
+              if (state.isMutating)
+                Positioned.fill(
+                  child: _LinkMutationOverlay(
+                    selectedCount: _selected.length,
+                    isDark: isDark,
+                  ),
                 ),
             ],
           );
@@ -1178,6 +1187,92 @@ class _SelectionPanel extends StatelessWidget {
   }
 }
 
+class _LinkMutationOverlay extends StatelessWidget {
+  const _LinkMutationOverlay({
+    required this.selectedCount,
+    required this.isDark,
+  });
+
+  final int selectedCount;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AbsorbPointer(
+      child: Container(
+        color: Colors.black.withValues(alpha: isDark ? 0.48 : 0.32),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(24),
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.96, end: 1),
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          builder: (context, scale, child) =>
+              Transform.scale(scale: scale, child: child),
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 360),
+              padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+              decoration: BoxDecoration(
+                color: InstructorColors.cardColor(isDark),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: InstructorColors.primary.withValues(
+                    alpha: isDark ? 0.35 : 0.18,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.14),
+                    blurRadius: 26,
+                    offset: const Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 42,
+                    height: 42,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                      color: InstructorColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.qbLinkSelectedQuestions,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Linking ${l10n.qbSelectedCount(selectedCount).toLowerCase()} to this group. Please wait until the selected questions are updated.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textSecondaryColor(isDark),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _CandidateQuestionCard extends StatelessWidget {
   const _CandidateQuestionCard({
     required this.question,
@@ -1250,6 +1345,7 @@ class _CandidateQuestionCard extends StatelessWidget {
                               text: question.questionText,
                               fallback:
                                   '${l10n.questionBankImageQuestion} ${question.id}',
+                              clipMathToMaxLines: true,
                               style: TextStyle(
                                 color: InstructorColors.textPrimaryColor(
                                   isDark,

@@ -65,6 +65,8 @@ class _QuestionGroupAddQuestionsViewState
   int _nextRowId = 2;
   int _pendingFileSeed = -1;
   List<QuestionBulkRowModel> _rows = const [QuestionBulkRowModel(localId: 1)];
+  final Set<int> _collapsedRows = <int>{};
+  bool _creatingQuestions = false;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +128,7 @@ class _QuestionGroupAddQuestionsViewState
             }
             _ensureDefaultChapter(state);
             final hasCreated = state.createdQuestions.isNotEmpty;
-            return ListView(
+            final content = ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
               children: [
                 QuestionFormHero(
@@ -170,6 +172,8 @@ class _QuestionGroupAddQuestionsViewState
                     onReorderAttachments: _reorderGroupedQuestionAttachments,
                     onAddRow: _addRow,
                     onRemoveRow: _removeRow,
+                    collapsedRowIds: _collapsedRows,
+                    onToggleCollapsed: _toggleRow,
                   ),
                   const SizedBox(height: 14),
                   SizedBox(
@@ -214,6 +218,20 @@ class _QuestionGroupAddQuestionsViewState
                   _GroupedCreateResultPanel(state: state),
               ],
             );
+            return Stack(
+              children: [
+                content,
+                if (_creatingQuestions)
+                  Positioned.fill(
+                    child: QuestionBankMutationOverlay(
+                      title: 'Creating questions',
+                      message:
+                          'Please wait until the grouped questions are created.',
+                      isDark: isDark,
+                    ),
+                  ),
+              ],
+            );
           },
         ),
       ),
@@ -234,9 +252,18 @@ class _QuestionGroupAddQuestionsViewState
     });
   }
 
+  void _toggleRow(int localId) {
+    setState(() {
+      if (!_collapsedRows.add(localId)) {
+        _collapsedRows.remove(localId);
+      }
+    });
+  }
+
   void _removeRow(int localId) {
     if (_rows.length <= 1) return;
     setState(() {
+      _collapsedRows.remove(localId);
       _rows = _rows.where((row) => row.localId != localId).toList();
     });
   }
@@ -452,24 +479,31 @@ class _QuestionGroupAddQuestionsViewState
       valid = _rows.every((row) => row.error == null);
     });
     if (!valid) return;
+    setState(() => _creatingQuestions = true);
     final cubit = context.read<QuestionGroupCubit>();
     final uploadedFileIds = <int>[];
-    final preparedPayloads = await _uploadPendingMedia(
-      context,
-      _rows,
-      courseId,
-      uploadedFileIds,
-    );
-    if (preparedPayloads == null) {
-      await cubit.discardUploadedQuestionImages(uploadedFileIds);
-      return;
+    var didNavigate = false;
+    try {
+      final preparedPayloads = await _uploadPendingMedia(
+        context,
+        _rows,
+        courseId,
+        uploadedFileIds,
+      );
+      if (preparedPayloads == null) {
+        await cubit.discardUploadedQuestionImages(uploadedFileIds);
+        return;
+      }
+      final created = await cubit.addGroupedQuestions(preparedPayloads);
+      if (!created) {
+        await cubit.discardUploadedQuestionImages(uploadedFileIds);
+      }
+      if (!created || !mounted) return;
+      didNavigate = true;
+      _goToFreshGroupDetails(this.context, cubit.state.group?.id);
+    } finally {
+      if (mounted && !didNavigate) setState(() => _creatingQuestions = false);
     }
-    final created = await cubit.addGroupedQuestions(preparedPayloads);
-    if (!created) {
-      await cubit.discardUploadedQuestionImages(uploadedFileIds);
-    }
-    if (!created || !mounted) return;
-    _goToFreshGroupDetails(this.context, cubit.state.group?.id);
   }
 
   Future<void> _showCreateChapter(
@@ -596,7 +630,10 @@ class _QuestionGroupAddQuestionsViewState
       if ((row.questionFileId == null || row.questionFileId! <= 0) &&
           questionLocalPath != null &&
           questionLocalPath.trim().isNotEmpty) {
-        final fileId = await cubit.uploadQuestionImage(questionLocalPath);
+        final fileId = await cubit.uploadQuestionImage(
+          questionLocalPath,
+          showSuccessMessage: false,
+        );
         if (fileId == null) return null;
         uploadedFileIds.add(fileId);
         prepared = prepared.copyWith(questionFileId: fileId);
@@ -609,7 +646,10 @@ class _QuestionGroupAddQuestionsViewState
         if ((fileId == null || fileId <= 0) &&
             localPath != null &&
             localPath.trim().isNotEmpty) {
-          fileId = await cubit.uploadQuestionImage(localPath);
+          fileId = await cubit.uploadQuestionImage(
+            localPath,
+            showSuccessMessage: false,
+          );
           if (fileId == null) return null;
           uploadedFileIds.add(fileId);
         }

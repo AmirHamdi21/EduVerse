@@ -13,6 +13,8 @@ import '../models/exams/exam_full_detail_model.dart';
 import '../models/exams/exam_paper_template_model.dart';
 import '../widgets/instructor/question_bank/question_text_renderer.dart';
 
+typedef ExamPdfExportProgress = void Function(double progress, String message);
+
 class ExamClientPdfExportResult {
   const ExamClientPdfExportResult({
     required this.fileName,
@@ -31,7 +33,7 @@ class ExamClientPdfExportService {
   static const double _pageWidth = 794;
   static const double _pageHeight = 1123;
   static const double _pagePadding = 48;
-  static const double _pixelRatio = 3;
+  static const double _pixelRatio = 2.4;
   static const double _availableContentHeight =
       _pageHeight - (_pagePadding * 2);
 
@@ -40,20 +42,39 @@ class ExamClientPdfExportService {
     required ExamFullDetailModel detail,
     required ExamPaperTemplateModel template,
     required ExamExportOptionsModel options,
+    ExamPdfExportProgress? onProgress,
   }) async {
+    onProgress?.call(0.04, 'Preparing paper content');
     final blocks = _buildBlocks(context, detail, template, options);
+    await Future<void>.delayed(Duration.zero);
+    if (!context.mounted) {
+      throw StateError('Export screen was disposed before PDF generation.');
+    }
+    onProgress?.call(0.1, 'Loading paper media');
+    // The mounted guard immediately above protects this context use.
+    // ignore: use_build_context_synchronously
     await _precacheExportImages(context, detail);
     if (!context.mounted) {
       throw StateError('Export screen was disposed before PDF generation.');
     }
+    onProgress?.call(0.18, 'Paginating exam paper');
     final pages = await _paginate(context, detail, template, blocks, options);
     if (!context.mounted) {
       throw StateError('Export screen was disposed before PDF capture.');
     }
     final pageImages = <Uint8List>[];
     for (var index = 0; index < pages.length; index++) {
+      if (!context.mounted) {
+        throw StateError('Export screen was disposed before PDF capture.');
+      }
+      onProgress?.call(
+        0.24 + (index / pages.length * 0.56),
+        'Rendering page ${index + 1} of ${pages.length}',
+      );
       pageImages.add(
         await _capturePage(
+          // The method checks context.mounted before each capture.
+          // ignore: use_build_context_synchronously
           context,
           _A4ExportPage(
             detail: detail,
@@ -66,8 +87,10 @@ class ExamClientPdfExportService {
           ),
         ),
       );
+      await Future<void>.delayed(const Duration(milliseconds: 18));
     }
 
+    onProgress?.call(0.86, 'Building PDF file');
     final document = pw.Document();
     for (final imageBytes in pageImages) {
       final image = pw.MemoryImage(imageBytes);
@@ -80,6 +103,7 @@ class ExamClientPdfExportService {
       );
     }
 
+    onProgress?.call(0.96, 'Finalizing export');
     return ExamClientPdfExportResult(
       fileName: 'exam-${detail.exam.id}.pdf',
       mimeType: 'application/pdf',
@@ -226,11 +250,14 @@ class ExamClientPdfExportService {
       ),
     );
     overlay.insert(entry);
-    await _waitForPaint();
-    final box = key.currentContext?.findRenderObject() as RenderBox?;
-    final height = box?.size.height ?? double.infinity;
-    entry.remove();
-    return height <= _availableContentHeight - 12;
+    try {
+      await _waitForPaint();
+      final box = key.currentContext?.findRenderObject() as RenderBox?;
+      final height = box?.size.height ?? double.infinity;
+      return height <= _availableContentHeight - 12;
+    } finally {
+      entry.remove();
+    }
   }
 
   Future<Uint8List> _capturePage(BuildContext context, Widget page) async {
@@ -242,13 +269,19 @@ class ExamClientPdfExportService {
       ),
     );
     overlay.insert(entry);
-    await _waitForPaint();
-    final boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    final image = await boundary.toImage(pixelRatio: _pixelRatio);
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    entry.remove();
-    return byteData!.buffer.asUint8List();
+    try {
+      await _waitForPaint();
+      final boundary =
+          key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: _pixelRatio);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) {
+        throw StateError('PDF page capture failed.');
+      }
+      return byteData.buffer.asUint8List();
+    } finally {
+      entry.remove();
+    }
   }
 
   Future<void> _waitForPaint() async {

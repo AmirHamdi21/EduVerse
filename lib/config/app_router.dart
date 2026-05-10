@@ -975,7 +975,10 @@ class AppRouter {
               body: Center(child: Text('Invalid question edit route')),
             );
           }
-          return QuestionBankEditScreen(questionId: questionId);
+          return QuestionBankEditScreen(
+            questionId: questionId,
+            returnPath: state.uri.queryParameters['returnTo'],
+          );
         },
       ),
       GoRoute(

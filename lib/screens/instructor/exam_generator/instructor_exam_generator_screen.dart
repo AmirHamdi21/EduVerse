@@ -13,6 +13,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/exam_generator_service.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
+import '../../../widgets/instructor/question_bank/question_bank_mutation_overlay.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 import 'exam_generator_info_screen.dart';
 
@@ -45,6 +46,38 @@ class _InstructorExamGeneratorView extends StatelessWidget {
       appBar: AppBar(
         title: Text(l10n.examGenerator),
         actions: [
+          BlocBuilder<ExamGeneratorCubit, ExamGeneratorState>(
+            buildWhen: (previous, current) =>
+                previous.selectionMode != current.selectionMode ||
+                previous.drafts != current.drafts ||
+                previous.exams != current.exams ||
+                previous.selectedListKind != current.selectedListKind ||
+                previous.selectedDraftStatus != current.selectedDraftStatus ||
+                previous.selectedExamStatus != current.selectedExamStatus ||
+                previous.search != current.search,
+            builder: (context, state) {
+              final records = _recordsFor(state);
+              if (records.isEmpty) return const SizedBox.shrink();
+              return IconButton(
+                tooltip: state.selectionMode
+                    ? 'Clear selection'
+                    : 'Select exam records',
+                onPressed: () {
+                  final cubit = context.read<ExamGeneratorCubit>();
+                  if (state.selectionMode) {
+                    cubit.setSelectionMode(false);
+                  } else {
+                    cubit.setSelectionMode(true);
+                  }
+                },
+                icon: Icon(
+                  state.selectionMode
+                      ? Icons.close_rounded
+                      : Icons.checklist_rounded,
+                ),
+              );
+            },
+          ),
           IconButton(
             tooltip: l10n.examGeneratorInfoTitle,
             onPressed: () => showExamGeneratorInfoSheet(context),
@@ -68,54 +101,90 @@ class _InstructorExamGeneratorView extends StatelessWidget {
       floatingActionButton: _CreateDraftFab(
         onPressed: () => context.push('/instructor/exam-generator/create'),
       ),
-      body: BlocBuilder<ExamGeneratorCubit, ExamGeneratorState>(
+      body: BlocConsumer<ExamGeneratorCubit, ExamGeneratorState>(
+        listenWhen: (previous, current) =>
+            previous.errorMessage != current.errorMessage ||
+            previous.actionMessage != current.actionMessage,
+        listener: (context, state) {
+          final message = state.errorMessage ?? state.actionMessage;
+          if (message == null || message.isEmpty) return;
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
+        },
         builder: (context, state) {
-          if (state.isLoading && state.drafts.isEmpty && state.exams.isEmpty) {
-            return const Padding(
-              padding: EdgeInsets.all(20),
-              child: ExamGeneratorSkeletons(itemCount: 5),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: () => context.read<ExamGeneratorCubit>().refresh(),
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
-              children: [
-                ExamGeneratorHeroHeader(
-                  title: l10n.examGeneratorHeroTitle,
-                  subtitle: l10n.examGeneratorHeroSubtitle,
-                  isDark: isDark,
-                  stats: {
-                    l10n.drafts:
-                        (state.stats?.openDrafts ?? state.drafts.length)
-                            .toString(),
-                    l10n.savedExams:
-                        (state.stats?.savedExams ?? state.exams.length)
-                            .toString(),
-                    l10n.examPublished: (state.stats?.publishedExams ?? 0)
-                        .toString(),
-                    l10n.examApprovedPool:
-                        (state.stats?.approvedQuestionPool ?? 0).toString(),
-                  },
-                ),
-                const SizedBox(height: 14),
-                _PoolReadinessPanel(state: state),
-                const SizedBox(height: 14),
-                _FilterPanel(state: state, onPickDate: _pickDate),
-                if (state.isRefreshing) ...[
-                  const SizedBox(height: 10),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: const LinearProgressIndicator(minHeight: 3),
+          final body =
+              state.isLoading &&
+                  state.drafts.isEmpty &&
+                  state.exams.isEmpty &&
+                  !state.isRefreshing
+              ? const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: ExamGeneratorSkeletons(itemCount: 5),
+                )
+              : RefreshIndicator(
+                  onRefresh: () =>
+                      context.read<ExamGeneratorCubit>().refresh(quiet: true),
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
+                    children: [
+                      ExamGeneratorHeroHeader(
+                        title: l10n.examGeneratorHeroTitle,
+                        subtitle: l10n.examGeneratorHeroSubtitle,
+                        isDark: isDark,
+                        stats: {
+                          l10n.drafts:
+                              (state.stats?.openDrafts ?? state.drafts.length)
+                                  .toString(),
+                          l10n.savedExams:
+                              (state.stats?.savedExams ?? state.exams.length)
+                                  .toString(),
+                          l10n.examPublished: (state.stats?.publishedExams ?? 0)
+                              .toString(),
+                          l10n.examApprovedPool:
+                              (state.stats?.approvedQuestionPool ?? 0)
+                                  .toString(),
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      _PoolReadinessPanel(state: state),
+                      const SizedBox(height: 14),
+                      _FilterPanel(state: state, onPickDate: _pickDate),
+                      if (state.isRefreshing) ...[
+                        const SizedBox(height: 10),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: const LinearProgressIndicator(minHeight: 3),
+                        ),
+                      ],
+                      if (state.selectionMode) ...[
+                        const SizedBox(height: 14),
+                        _ExamSelectionActionBar(state: state),
+                      ],
+                      const SizedBox(height: 14),
+                      if (state.errorMessage != null &&
+                          state.drafts.isEmpty &&
+                          state.exams.isEmpty)
+                        Center(child: Text(state.errorMessage!))
+                      else
+                        _CombinedExamList(state: state),
+                    ],
                   ),
-                ],
-                const SizedBox(height: 14),
-                if (state.errorMessage != null)
-                  Center(child: Text(state.errorMessage!))
-                else
-                  _CombinedExamList(state: state),
-              ],
-            ),
+                );
+          return Stack(
+            children: [
+              body,
+              if (state.activeMutationAction != null)
+                Positioned.fill(
+                  child: QuestionBankMutationOverlay(
+                    title: _mutationTitle(state.activeMutationAction!),
+                    message:
+                        'Please wait until the selected exam records are updated.',
+                    isDark: isDark,
+                    color: _mutationColor(state.activeMutationAction!),
+                  ),
+                ),
+            ],
           );
         },
       ),
@@ -277,24 +346,294 @@ class _PoolReadinessPanel extends StatelessWidget {
           const SizedBox(height: 10),
           LayoutBuilder(
             builder: (context, constraints) {
-              final width = (constraints.maxWidth - 16) / 3;
+              if (constraints.maxWidth >= 330) {
+                return Row(
+                  children: [
+                    for (var index = 0; index < chips.length; index++) ...[
+                      if (index > 0) const SizedBox(width: 8),
+                      Expanded(child: chips[index]),
+                    ],
+                  ],
+                );
+              }
               return Wrap(
+                alignment: WrapAlignment.center,
                 spacing: 8,
                 runSpacing: 8,
                 children: chips
-                    .map(
-                      (chip) =>
-                          SizedBox(width: width.clamp(90, 220), child: chip),
-                    )
+                    .map((chip) => SizedBox(width: 130, child: chip))
                     .toList(),
               );
             },
           ),
           if (breakdown.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Wrap(spacing: 8, runSpacing: 8, children: breakdown),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final chipWidth = constraints.maxWidth >= 360
+                    ? (constraints.maxWidth - 8) / 2
+                    : constraints.maxWidth;
+                return Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: breakdown
+                      .map(
+                        (chip) => SizedBox(
+                          width: chipWidth.clamp(130, 190).toDouble(),
+                          child: chip,
+                        ),
+                      )
+                      .toList(),
+                );
+              },
+            ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _ExamSelectionActionBar extends StatelessWidget {
+  const _ExamSelectionActionBar({required this.state});
+
+  final ExamGeneratorState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final draftCount = state.selectedDraftIds.length;
+    final examCount = state.selectedExamIds.length;
+    final records = _recordsFor(state);
+    final visibleDraftIds = records
+        .where((record) => record.draft != null)
+        .map((record) => record.draft!.id)
+        .toSet();
+    final visibleExamIds = records
+        .where((record) => record.exam != null)
+        .map((record) => record.exam!.id)
+        .toSet();
+    final visibleCount = visibleDraftIds.length + visibleExamIds.length;
+    final selectedVisibleCount =
+        visibleDraftIds.where(state.selectedDraftIds.contains).length +
+        visibleExamIds.where(state.selectedExamIds.contains).length;
+    final allVisibleSelected =
+        visibleCount > 0 && selectedVisibleCount == visibleCount;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: InstructorColors.primary.withValues(alpha: 0.28),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: InstructorColors.primary.withValues(
+                    alpha: isDark ? 0.18 : 0.1,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.checklist_rounded,
+                  color: InstructorColors.primary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '${state.selectedCount} selected',
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(isDark),
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () =>
+                    context.read<ExamGeneratorCubit>().clearSelection(),
+                icon: const Icon(Icons.close_rounded, size: 18),
+                label: const Text('Clear'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: visibleCount == 0
+                ? null
+                : () {
+                    final cubit = context.read<ExamGeneratorCubit>();
+                    if (allVisibleSelected) {
+                      cubit.clearSelection();
+                    } else {
+                      cubit.selectVisibleRecords(
+                        draftIds: visibleDraftIds,
+                        examIds: visibleExamIds,
+                      );
+                    }
+                  },
+            icon: Icon(
+              allVisibleSelected
+                  ? Icons.check_box_rounded
+                  : Icons.check_box_outline_blank_rounded,
+            ),
+            label: Text(
+              allVisibleSelected
+                  ? 'Clear selected visible records'
+                  : 'Select all visible records',
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: InstructorColors.primary,
+              side: BorderSide(
+                color: InstructorColors.primary.withValues(alpha: 0.35),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _SelectionActionPill(
+                label: draftCount == 1
+                    ? 'Save draft'
+                    : 'Save $draftCount drafts',
+                icon: Icons.save_outlined,
+                color: InstructorColors.success,
+                enabled: draftCount > 0 && !state.isMutating,
+                onTap: () async {
+                  final confirmed = await _confirmExamRecordAction(
+                    context,
+                    action: _ExamConfirmAction.save,
+                    count: draftCount,
+                  );
+                  if (!confirmed || !context.mounted) return;
+                  await context.read<ExamGeneratorCubit>().saveSelectedDrafts();
+                },
+              ),
+              _SelectionActionPill(
+                label: 'Publish',
+                icon: Icons.publish_outlined,
+                color: InstructorColors.success,
+                enabled: examCount > 0 && !state.isMutating,
+                onTap: () async {
+                  final confirmed = await _confirmExamRecordAction(
+                    context,
+                    action: _ExamConfirmAction.publish,
+                    count: examCount,
+                  );
+                  if (!confirmed || !context.mounted) return;
+                  await context
+                      .read<ExamGeneratorCubit>()
+                      .applySelectedExamLifecycle('publish');
+                },
+              ),
+              _SelectionActionPill(
+                label: 'Unpublish',
+                icon: Icons.undo_rounded,
+                color: InstructorColors.primary,
+                enabled: examCount > 0 && !state.isMutating,
+                onTap: () async {
+                  final confirmed = await _confirmExamRecordAction(
+                    context,
+                    action: _ExamConfirmAction.unpublish,
+                    count: examCount,
+                  );
+                  if (!confirmed || !context.mounted) return;
+                  await context
+                      .read<ExamGeneratorCubit>()
+                      .applySelectedExamLifecycle('unpublish');
+                },
+              ),
+              _SelectionActionPill(
+                label: 'Archive',
+                icon: Icons.archive_outlined,
+                color: InstructorColors.orange,
+                enabled: examCount > 0 && !state.isMutating,
+                onTap: () async {
+                  final confirmed = await _confirmExamRecordAction(
+                    context,
+                    action: _ExamConfirmAction.archive,
+                    count: examCount,
+                  );
+                  if (!confirmed || !context.mounted) return;
+                  await context
+                      .read<ExamGeneratorCubit>()
+                      .applySelectedExamLifecycle('archive');
+                },
+              ),
+              _SelectionActionPill(
+                label: 'Delete',
+                icon: Icons.delete_outline_rounded,
+                color: InstructorColors.error,
+                enabled: state.selectedCount > 0 && !state.isMutating,
+                onTap: () async {
+                  final confirmed = await _confirmExamRecordAction(
+                    context,
+                    action: _ExamConfirmAction.delete,
+                    count: state.selectedCount,
+                  );
+                  if (!confirmed || !context.mounted) return;
+                  await context
+                      .read<ExamGeneratorCubit>()
+                      .deleteSelectedRecords();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SelectionActionPill extends StatelessWidget {
+  const _SelectionActionPill({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final effectiveColor = enabled
+        ? color
+        : InstructorColors.textTertiaryColor(isDark);
+    return OutlinedButton.icon(
+      onPressed: enabled ? onTap : null,
+      icon: Icon(icon, size: 18),
+      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: effectiveColor,
+        side: BorderSide(
+          color: effectiveColor.withValues(alpha: enabled ? 0.45 : 0.18),
+        ),
+        backgroundColor: effectiveColor.withValues(alpha: isDark ? 0.12 : 0.08),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
@@ -380,14 +719,52 @@ class _CombinedExamList extends StatelessWidget {
               ? ExamDraftCard(
                   draft: record.draft!,
                   courseLabel: _courseLabelFor(state, record.draft!.courseId),
-                  onTap: () => context.push(_draftRoute(record.draft!)),
+                  selected: state.selectedDraftIds.contains(record.draft!.id),
+                  selectionMode: state.selectionMode,
+                  onTap: () {
+                    if (state.selectionMode) {
+                      context.read<ExamGeneratorCubit>().toggleDraftSelection(
+                        record.draft!.id,
+                      );
+                    } else {
+                      context.push(_draftRoute(record.draft!));
+                    }
+                  },
+                  onLongPress: () {
+                    if (state.selectionMode) {
+                      context.read<ExamGeneratorCubit>().toggleDraftSelection(
+                        record.draft!.id,
+                      );
+                    } else {
+                      _showDraftActions(context, record.draft!);
+                    }
+                  },
                 )
               : ExamSavedCard(
                   exam: record.exam!,
                   courseLabel: _courseLabelFor(state, record.exam!.courseId),
-                  onTap: () => context.push(
-                    '/instructor/exam-generator/exams/${record.exam!.id}',
-                  ),
+                  selected: state.selectedExamIds.contains(record.exam!.id),
+                  selectionMode: state.selectionMode,
+                  onTap: () {
+                    if (state.selectionMode) {
+                      context.read<ExamGeneratorCubit>().toggleExamSelection(
+                        record.exam!.id,
+                      );
+                    } else {
+                      context.push(
+                        '/instructor/exam-generator/exams/${record.exam!.id}',
+                      );
+                    }
+                  },
+                  onLongPress: () {
+                    if (state.selectionMode) {
+                      context.read<ExamGeneratorCubit>().toggleExamSelection(
+                        record.exam!.id,
+                      );
+                    } else {
+                      _showExamActions(context, record.exam!);
+                    }
+                  },
                 ),
         ),
         if (_hasMoreVisible(state))
@@ -411,6 +788,381 @@ class _CombinedExamList extends StatelessWidget {
       ],
     );
   }
+}
+
+void _showDraftActions(BuildContext context, ExamDraftModel draft) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  showModalBottomSheet<void>(
+    context: context,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) => _ExamActionSheet(
+      title: draft.title,
+      subtitle: 'Draft',
+      isDark: isDark,
+      actions: [
+        _ExamSheetAction(
+          label: draft.isEditable ? 'Edit draft' : 'View draft',
+          icon: Icons.visibility_outlined,
+          color: InstructorColors.primary,
+          onTap: () {
+            Navigator.of(sheetContext).pop();
+            context.push(_draftRoute(draft));
+          },
+        ),
+        _ExamSheetAction(
+          label: 'Select',
+          icon: Icons.check_circle_outline_rounded,
+          color: InstructorColors.accent,
+          onTap: () {
+            Navigator.of(sheetContext).pop();
+            context.read<ExamGeneratorCubit>().toggleDraftSelection(draft.id);
+          },
+        ),
+        _ExamSheetAction(
+          label: 'Save draft',
+          icon: Icons.save_outlined,
+          color: InstructorColors.success,
+          onTap: () async {
+            Navigator.of(sheetContext).pop();
+            final confirmed = await _confirmExamRecordAction(
+              context,
+              action: _ExamConfirmAction.save,
+              count: 1,
+            );
+            if (!confirmed || !context.mounted) return;
+            final cubit = context.read<ExamGeneratorCubit>();
+            cubit.selectVisibleRecords(
+              draftIds: <int>[draft.id],
+              examIds: const <int>[],
+            );
+            await cubit.saveSelectedDrafts();
+          },
+        ),
+        _ExamSheetAction(
+          label: 'Delete draft',
+          icon: Icons.delete_outline_rounded,
+          color: InstructorColors.error,
+          onTap: () async {
+            Navigator.of(sheetContext).pop();
+            final confirmed = await _confirmExamRecordAction(
+              context,
+              action: _ExamConfirmAction.delete,
+              count: 1,
+            );
+            if (!confirmed || !context.mounted) return;
+            await context.read<ExamGeneratorCubit>().deleteDraftRecord(
+              draft.id,
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+void _showExamActions(BuildContext context, ExamResponseModel exam) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  showModalBottomSheet<void>(
+    context: context,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) => _ExamActionSheet(
+      title: exam.title,
+      subtitle: 'Saved exam',
+      isDark: isDark,
+      actions: [
+        _ExamSheetAction(
+          label: 'View exam',
+          icon: Icons.visibility_outlined,
+          color: InstructorColors.primary,
+          onTap: () {
+            Navigator.of(sheetContext).pop();
+            context.push('/instructor/exam-generator/exams/${exam.id}');
+          },
+        ),
+        _ExamSheetAction(
+          label: 'Select',
+          icon: Icons.check_circle_outline_rounded,
+          color: InstructorColors.accent,
+          onTap: () {
+            Navigator.of(sheetContext).pop();
+            context.read<ExamGeneratorCubit>().toggleExamSelection(exam.id);
+          },
+        ),
+        _ExamSheetAction(
+          label: exam.status == ExamStatus.published ? 'Unpublish' : 'Publish',
+          icon: exam.status == ExamStatus.published
+              ? Icons.undo_rounded
+              : Icons.publish_outlined,
+          color: InstructorColors.success,
+          onTap: () async {
+            Navigator.of(sheetContext).pop();
+            final action = exam.status == ExamStatus.published
+                ? _ExamConfirmAction.unpublish
+                : _ExamConfirmAction.publish;
+            final confirmed = await _confirmExamRecordAction(
+              context,
+              action: action,
+              count: 1,
+            );
+            if (!confirmed || !context.mounted) return;
+            final cubit = context.read<ExamGeneratorCubit>();
+            cubit.selectVisibleRecords(
+              draftIds: const <int>[],
+              examIds: <int>[exam.id],
+            );
+            await cubit.applySelectedExamLifecycle(
+              exam.status == ExamStatus.published ? 'unpublish' : 'publish',
+            );
+          },
+        ),
+        _ExamSheetAction(
+          label: 'Archive',
+          icon: Icons.archive_outlined,
+          color: InstructorColors.orange,
+          onTap: () async {
+            Navigator.of(sheetContext).pop();
+            final confirmed = await _confirmExamRecordAction(
+              context,
+              action: _ExamConfirmAction.archive,
+              count: 1,
+            );
+            if (!confirmed || !context.mounted) return;
+            final cubit = context.read<ExamGeneratorCubit>();
+            cubit.selectVisibleRecords(
+              draftIds: const <int>[],
+              examIds: <int>[exam.id],
+            );
+            await cubit.applySelectedExamLifecycle('archive');
+          },
+        ),
+        _ExamSheetAction(
+          label: 'Delete exam',
+          icon: Icons.delete_outline_rounded,
+          color: InstructorColors.error,
+          onTap: () async {
+            Navigator.of(sheetContext).pop();
+            final confirmed = await _confirmExamRecordAction(
+              context,
+              action: _ExamConfirmAction.delete,
+              count: 1,
+            );
+            if (!confirmed || !context.mounted) return;
+            await context.read<ExamGeneratorCubit>().deleteExamRecord(exam.id);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+class _ExamActionSheet extends StatelessWidget {
+  const _ExamActionSheet({
+    required this.title,
+    required this.subtitle,
+    required this.actions,
+    required this.isDark,
+  });
+
+  final String title;
+  final String subtitle;
+  final List<_ExamSheetAction> actions;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
+        decoration: BoxDecoration(
+          color: InstructorColors.cardColor(isDark),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: InstructorColors.borderColor(isDark)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 42,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: InstructorColors.textTertiaryColor(
+                    isDark,
+                  ).withValues(alpha: 0.35),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...actions.map(
+              (action) => ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(action.icon, color: action.color),
+                title: Text(
+                  action.label,
+                  style: TextStyle(
+                    color: action.color,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                onTap: action.onTap,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExamSheetAction {
+  const _ExamSheetAction({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+}
+
+enum _ExamConfirmAction { save, publish, unpublish, archive, delete }
+
+Future<bool> _confirmExamRecordAction(
+  BuildContext context, {
+  required _ExamConfirmAction action,
+  required int count,
+}) async {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  final config = _confirmationConfig(action, count);
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      backgroundColor: InstructorColors.cardColor(isDark),
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      title: Text(
+        config.title,
+        style: TextStyle(
+          color: InstructorColors.textPrimaryColor(isDark),
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+      content: Text(
+        config.message,
+        style: TextStyle(
+          color: InstructorColors.textSecondaryColor(isDark),
+          height: 1.35,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: config.color),
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: Text(config.confirmLabel),
+        ),
+      ],
+    ),
+  );
+  return result ?? false;
+}
+
+_ExamConfirmationConfig _confirmationConfig(
+  _ExamConfirmAction action,
+  int count,
+) {
+  final plural = count == 1 ? 'record' : 'records';
+  switch (action) {
+    case _ExamConfirmAction.save:
+      return _ExamConfirmationConfig(
+        title: count == 1 ? 'Save draft?' : 'Save selected drafts?',
+        message: count == 1
+            ? 'This draft will be saved as a finalized exam record.'
+            : '$count drafts will be saved as finalized exam records.',
+        confirmLabel: 'Save',
+        color: InstructorColors.success,
+      );
+    case _ExamConfirmAction.publish:
+      return _ExamConfirmationConfig(
+        title: count == 1 ? 'Publish exam?' : 'Publish selected exams?',
+        message: count == 1
+            ? 'This saved exam will become published.'
+            : '$count saved exams will become published.',
+        confirmLabel: 'Publish',
+        color: InstructorColors.success,
+      );
+    case _ExamConfirmAction.unpublish:
+      return _ExamConfirmationConfig(
+        title: count == 1 ? 'Unpublish exam?' : 'Unpublish selected exams?',
+        message: count == 1
+            ? 'This exam will move back to saved draft status.'
+            : '$count exams will move back to saved draft status.',
+        confirmLabel: 'Unpublish',
+        color: InstructorColors.primary,
+      );
+    case _ExamConfirmAction.archive:
+      return _ExamConfirmationConfig(
+        title: count == 1 ? 'Archive exam?' : 'Archive selected exams?',
+        message: count == 1
+            ? 'This exam will be moved to archived exams.'
+            : '$count exams will be moved to archived exams.',
+        confirmLabel: 'Archive',
+        color: InstructorColors.orange,
+      );
+    case _ExamConfirmAction.delete:
+      return _ExamConfirmationConfig(
+        title: count == 1 ? 'Delete record?' : 'Delete selected records?',
+        message: count == 1
+            ? 'This exam $plural will be permanently deleted.'
+            : '$count exam $plural will be permanently deleted.',
+        confirmLabel: 'Delete',
+        color: InstructorColors.error,
+      );
+  }
+}
+
+class _ExamConfirmationConfig {
+  const _ExamConfirmationConfig({
+    required this.title,
+    required this.message,
+    required this.confirmLabel,
+    required this.color,
+  });
+
+  final String title;
+  final String message;
+  final String confirmLabel;
+  final Color color;
 }
 
 class _ExamRecord {
@@ -1235,4 +1987,36 @@ String _prettyBucketLabel(String value) {
             : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}',
       )
       .join(' ');
+}
+
+String _mutationTitle(String action) {
+  switch (action) {
+    case 'save':
+      return 'Saving drafts';
+    case 'publish':
+      return 'Publishing exams';
+    case 'unpublish':
+      return 'Unpublishing exams';
+    case 'archive':
+      return 'Archiving exams';
+    case 'delete':
+      return 'Deleting records';
+    default:
+      return 'Updating exams';
+  }
+}
+
+Color _mutationColor(String action) {
+  switch (action) {
+    case 'save':
+    case 'publish':
+      return InstructorColors.success;
+    case 'archive':
+      return InstructorColors.orange;
+    case 'delete':
+      return InstructorColors.error;
+    case 'unpublish':
+    default:
+      return InstructorColors.primary;
+  }
 }

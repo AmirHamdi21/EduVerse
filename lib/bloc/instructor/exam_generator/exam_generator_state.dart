@@ -17,12 +17,16 @@ class ExamGeneratorState extends Equatable {
     this.isPoolLoading = false,
     this.isLoadingMore = false,
     this.isMutating = false,
+    this.isSelectionMode = false,
     this.errorMessage,
     this.actionMessage,
+    this.activeMutationAction,
     this.shortages = const <ExamShortageModel>[],
     this.teachingCourses = const <TeachingCourseModel>[],
     this.drafts = const <ExamDraftModel>[],
     this.exams = const <ExamResponseModel>[],
+    this.selectedDraftIds = const <int>[],
+    this.selectedExamIds = const <int>[],
     this.stats,
     this.readiness,
     this.selectedCourseId,
@@ -44,12 +48,16 @@ class ExamGeneratorState extends Equatable {
   final bool isPoolLoading;
   final bool isLoadingMore;
   final bool isMutating;
+  final bool isSelectionMode;
   final String? errorMessage;
   final String? actionMessage;
+  final String? activeMutationAction;
   final List<ExamShortageModel> shortages;
   final List<TeachingCourseModel> teachingCourses;
   final List<ExamDraftModel> drafts;
   final List<ExamResponseModel> exams;
+  final List<int> selectedDraftIds;
+  final List<int> selectedExamIds;
   final ExamStatsModel? stats;
   final ExamGenerationReadinessModel? readiness;
   final int? selectedCourseId;
@@ -67,6 +75,8 @@ class ExamGeneratorState extends Equatable {
 
   bool get hasMoreDrafts => draftPage < draftTotalPages;
   bool get hasMoreExams => examPage < examTotalPages;
+  bool get selectionMode => isSelectionMode;
+  int get selectedCount => selectedDraftIds.length + selectedExamIds.length;
 
   ExamGeneratorState copyWith({
     bool? isLoading,
@@ -74,15 +84,21 @@ class ExamGeneratorState extends Equatable {
     bool? isPoolLoading,
     bool? isLoadingMore,
     bool? isMutating,
+    bool? isSelectionMode,
     String? errorMessage,
     String? actionMessage,
+    String? activeMutationAction,
     bool clearError = false,
     bool clearAction = false,
+    bool clearActiveMutationAction = false,
     List<ExamShortageModel>? shortages,
     bool clearShortages = false,
     List<TeachingCourseModel>? teachingCourses,
     List<ExamDraftModel>? drafts,
     List<ExamResponseModel>? exams,
+    List<int>? selectedDraftIds,
+    List<int>? selectedExamIds,
+    bool clearSelection = false,
     ExamStatsModel? stats,
     bool clearStats = false,
     ExamGenerationReadinessModel? readiness,
@@ -111,12 +127,22 @@ class ExamGeneratorState extends Equatable {
       isPoolLoading: isPoolLoading ?? this.isPoolLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isMutating: isMutating ?? this.isMutating,
+      isSelectionMode: isSelectionMode ?? this.isSelectionMode,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       actionMessage: clearAction ? null : actionMessage ?? this.actionMessage,
+      activeMutationAction: clearActiveMutationAction
+          ? null
+          : activeMutationAction ?? this.activeMutationAction,
       shortages: clearShortages ? const [] : shortages ?? this.shortages,
       teachingCourses: teachingCourses ?? this.teachingCourses,
       drafts: drafts ?? this.drafts,
       exams: exams ?? this.exams,
+      selectedDraftIds: clearSelection
+          ? const <int>[]
+          : selectedDraftIds ?? this.selectedDraftIds,
+      selectedExamIds: clearSelection
+          ? const <int>[]
+          : selectedExamIds ?? this.selectedExamIds,
       stats: clearStats ? null : stats ?? this.stats,
       readiness: clearReadiness ? null : readiness ?? this.readiness,
       selectedCourseId: clearCourse
@@ -147,12 +173,16 @@ class ExamGeneratorState extends Equatable {
     isPoolLoading,
     isLoadingMore,
     isMutating,
+    isSelectionMode,
     errorMessage,
     actionMessage,
+    activeMutationAction,
     shortages,
     teachingCourses,
     drafts,
     exams,
+    selectedDraftIds,
+    selectedExamIds,
     stats,
     readiness,
     selectedCourseId,

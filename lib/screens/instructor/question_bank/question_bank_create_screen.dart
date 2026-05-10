@@ -175,6 +175,7 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
             Navigator.of(dialogContext).pop();
             context.go('/instructor/question-bank/${question.id}');
           }
+          return ok;
         },
         onApprove: () async {
           final ok = await cubit.statusSavedQuestion('approve');
@@ -182,6 +183,7 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
             Navigator.of(dialogContext).pop();
             context.go('/instructor/question-bank/${question.id}');
           }
+          return ok;
         },
       ),
     );
@@ -235,6 +237,10 @@ class QuestionFormBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasQuestionImage =
+        state.questionFileId != null ||
+        state.questionImageUrl != null ||
+        state.questionImageLocalPath != null;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
       children: [
@@ -393,30 +399,32 @@ class QuestionFormBody extends StatelessWidget {
                 ),
               ),
             ],
-            const SizedBox(height: 12),
-            TextFormField(
-              initialValue: state.questionFileCaption,
-              decoration: _decoration(
-                context,
-                l10n.qbImageCaption,
-                icon: Icons.closed_caption_outlined,
+            if (hasQuestionImage) ...[
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: state.questionFileCaption,
+                decoration: _decoration(
+                  context,
+                  l10n.qbImageCaption,
+                  icon: Icons.closed_caption_outlined,
+                ),
+                onChanged: (value) => context
+                    .read<QuestionFormCubit>()
+                    .updateCore(questionFileCaption: value),
               ),
-              onChanged: (value) => context
-                  .read<QuestionFormCubit>()
-                  .updateCore(questionFileCaption: value),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              initialValue: state.questionFileAltText,
-              decoration: _decoration(
-                context,
-                l10n.qbImageAltText,
-                icon: Icons.accessibility_new_outlined,
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: state.questionFileAltText,
+                decoration: _decoration(
+                  context,
+                  l10n.qbImageAltText,
+                  icon: Icons.accessibility_new_outlined,
+                ),
+                onChanged: (value) => context
+                    .read<QuestionFormCubit>()
+                    .updateCore(questionFileAltText: value),
               ),
-              onChanged: (value) => context
-                  .read<QuestionFormCubit>()
-                  .updateCore(questionFileAltText: value),
-            ),
+            ],
             if (state.originalQuestion == null) ...[
               const SizedBox(height: 12),
               QuestionPendingAttachmentManager(
@@ -1102,7 +1110,7 @@ class QuestionFormDecisionDialog extends StatelessWidget {
   }
 }
 
-class _QuestionCreatedDialog extends StatelessWidget {
+class _QuestionCreatedDialog extends StatefulWidget {
   const _QuestionCreatedDialog({
     required this.onReviewLater,
     required this.onView,
@@ -1112,8 +1120,25 @@ class _QuestionCreatedDialog extends StatelessWidget {
 
   final VoidCallback onReviewLater;
   final VoidCallback onView;
-  final Future<void> Function() onSubmitForReview;
-  final Future<void> Function() onApprove;
+  final Future<bool> Function() onSubmitForReview;
+  final Future<bool> Function() onApprove;
+
+  @override
+  State<_QuestionCreatedDialog> createState() => _QuestionCreatedDialogState();
+}
+
+class _QuestionCreatedDialogState extends State<_QuestionCreatedDialog> {
+  String? _activeAction;
+
+  Future<void> _runAction(
+    String action,
+    Future<bool> Function() callback,
+  ) async {
+    if (_activeAction != null) return;
+    setState(() => _activeAction = action);
+    final ok = await callback();
+    if (!ok && mounted) setState(() => _activeAction = null);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1124,125 +1149,213 @@ class _QuestionCreatedDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: InstructorColors.cardColor(isDark),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: InstructorColors.borderColor(isDark)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.26 : 0.12),
-                blurRadius: 24,
-                offset: const Offset(0, 12),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          InstructorColors.success,
-                          InstructorColors.teal,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(17),
-                    ),
-                    child: const Icon(
-                      Icons.check_rounded,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.qbQuestionCreatedDraftTitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: InstructorColors.textPrimaryColor(isDark),
-                            fontSize: 19,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          l10n.qbQuestionCreatedDraftBody,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: InstructorColors.textSecondaryColor(isDark),
-                            fontWeight: FontWeight.w700,
-                            height: 1.25,
-                          ),
-                        ),
-                      ],
-                    ),
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: InstructorColors.cardColor(isDark),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: InstructorColors.borderColor(isDark)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.26 : 0.12),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final narrow = constraints.maxWidth < 420;
-                  final width = narrow
-                      ? constraints.maxWidth
-                      : (constraints.maxWidth - 10) / 2;
-                  return Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      _QuestionCreatedAction(
-                        width: width,
-                        label: l10n.qbReviewLater,
-                        icon: Icons.schedule_rounded,
-                        color: InstructorColors.textSecondary,
-                        isDark: isDark,
-                        onTap: onReviewLater,
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              InstructorColors.success,
+                              InstructorColors.teal,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(17),
+                        ),
+                        child: const Icon(
+                          Icons.check_rounded,
+                          color: Colors.white,
+                          size: 25,
+                        ),
                       ),
-                      _QuestionCreatedAction(
-                        width: width,
-                        label: l10n.qbViewQuestion,
-                        icon: Icons.visibility_outlined,
-                        color: InstructorColors.primary,
-                        isDark: isDark,
-                        onTap: onView,
-                      ),
-                      _QuestionCreatedAction(
-                        width: width,
-                        label: l10n.submitForReview,
-                        icon: Icons.outbox_rounded,
-                        color: InstructorColors.info,
-                        isDark: isDark,
-                        onTap: () {
-                          onSubmitForReview();
-                        },
-                      ),
-                      _QuestionCreatedAction(
-                        width: width,
-                        label: l10n.qbApprove,
-                        icon: Icons.verified_rounded,
-                        color: InstructorColors.success,
-                        isDark: isDark,
-                        onTap: () {
-                          onApprove();
-                        },
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.qbQuestionCreatedDraftTitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
+                                fontSize: 19,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              l10n.qbQuestionCreatedDraftBody,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: InstructorColors.textSecondaryColor(
+                                  isDark,
+                                ),
+                                fontWeight: FontWeight.w700,
+                                height: 1.25,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
-                  );
-                },
+                  ),
+                  const SizedBox(height: 18),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final narrow = constraints.maxWidth < 420;
+                      final width = narrow
+                          ? constraints.maxWidth
+                          : (constraints.maxWidth - 10) / 2;
+                      return Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          _QuestionCreatedAction(
+                            width: width,
+                            label: l10n.qbReviewLater,
+                            icon: Icons.schedule_rounded,
+                            color: InstructorColors.textSecondary,
+                            isDark: isDark,
+                            onTap: widget.onReviewLater,
+                          ),
+                          _QuestionCreatedAction(
+                            width: width,
+                            label: l10n.qbViewQuestion,
+                            icon: Icons.visibility_outlined,
+                            color: InstructorColors.primary,
+                            isDark: isDark,
+                            onTap: widget.onView,
+                          ),
+                          _QuestionCreatedAction(
+                            width: width,
+                            label: l10n.submitForReview,
+                            icon: Icons.outbox_rounded,
+                            color: InstructorColors.info,
+                            isDark: isDark,
+                            onTap: () => _runAction(
+                              'submit-for-review',
+                              widget.onSubmitForReview,
+                            ),
+                          ),
+                          _QuestionCreatedAction(
+                            width: width,
+                            label: l10n.qbApprove,
+                            icon: Icons.verified_rounded,
+                            color: InstructorColors.success,
+                            isDark: isDark,
+                            onTap: () =>
+                                _runAction('approve', widget.onApprove),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            if (_activeAction != null)
+              Positioned.fill(
+                child: _CreatedQuestionMutationOverlay(
+                  action: _activeAction!,
+                  isDark: isDark,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CreatedQuestionMutationOverlay extends StatelessWidget {
+  const _CreatedQuestionMutationOverlay({
+    required this.action,
+    required this.isDark,
+  });
+
+  final String action;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label = action == 'approve' ? l10n.qbApprove : l10n.submitForReview;
+    return AbsorbPointer(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: isDark ? 0.48 : 0.28),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(24),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 320),
+          padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+          decoration: BoxDecoration(
+            color: InstructorColors.cardColor(isDark),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: InstructorColors.primary.withValues(
+                alpha: isDark ? 0.35 : 0.18,
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                width: 42,
+                height: 42,
+                child: CircularProgressIndicator(
+                  strokeWidth: 4,
+                  color: InstructorColors.primary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Applying ${label.toLowerCase()}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: InstructorColors.textPrimaryColor(isDark),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Please wait until the question is updated.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: InstructorColors.textSecondaryColor(isDark),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  height: 1.35,
+                ),
               ),
             ],
           ),

@@ -11,12 +11,18 @@ class ExamDraftCard extends StatelessWidget {
     super.key,
     required this.draft,
     required this.onTap,
+    this.onLongPress,
     this.courseLabel,
+    this.selectionMode = false,
+    this.selected = false,
   });
 
   final ExamDraftModel draft;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final String? courseLabel;
+  final bool selectionMode;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +43,7 @@ class ExamDraftCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
+          onLongPress: onLongPress,
           borderRadius: BorderRadius.circular(20),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -44,7 +51,12 @@ class ExamDraftCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: InstructorColors.cardColor(isDark),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: InstructorColors.borderColor(isDark)),
+                border: Border.all(
+                  color: selected
+                      ? InstructorColors.primary
+                      : InstructorColors.borderColor(isDark),
+                  width: selected ? 1.6 : 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
@@ -129,10 +141,16 @@ class ExamDraftCard extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 8),
                                 Icon(
-                                  Icons.chevron_right_rounded,
-                                  color: InstructorColors.textTertiaryColor(
-                                    isDark,
-                                  ),
+                                  selectionMode
+                                      ? (selected
+                                            ? Icons.check_circle_rounded
+                                            : Icons.radio_button_unchecked)
+                                      : Icons.chevron_right_rounded,
+                                  color: selected
+                                      ? InstructorColors.primary
+                                      : InstructorColors.textTertiaryColor(
+                                          isDark,
+                                        ),
                                 ),
                               ],
                             ),
@@ -150,14 +168,14 @@ class ExamDraftCard extends StatelessWidget {
                                 _InfoPill(
                                   icon: Icons.quiz_outlined,
                                   label:
-                                      '${draft.items.length} ${l10n.questions}',
+                                      '${draft.itemCount ?? draft.items.length} ${l10n.questions}',
                                   color: InstructorColors.teal,
                                   isDark: isDark,
                                 ),
                                 _InfoPill(
                                   icon: Icons.view_agenda_outlined,
                                   label:
-                                      '${draft.sections.length} ${l10n.sections}',
+                                      '${draft.sectionCount ?? draft.sections.length} ${l10n.sections}',
                                   color: InstructorColors.accent,
                                   isDark: isDark,
                                 ),

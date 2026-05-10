@@ -82,12 +82,12 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
     await refresh();
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh({bool quiet = false}) async {
     await Future.wait(<Future<void>>[
       loadStats(),
       loadReadiness(),
-      loadDrafts(refresh: true, quiet: state.drafts.isNotEmpty),
-      loadExams(refresh: true, quiet: state.exams.isNotEmpty),
+      loadDrafts(refresh: true, quiet: quiet || state.drafts.isNotEmpty),
+      loadExams(refresh: true, quiet: quiet || state.exams.isNotEmpty),
     ]);
   }
 
@@ -190,6 +190,8 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
         isRefreshing: refreshRemote,
         isLoading: false,
         isLoadingMore: false,
+        isSelectionMode: false,
+        clearSelection: true,
         clearError: true,
       ),
     );
@@ -197,9 +199,248 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
     if (!refreshRemote) return;
     _filterDebounce = Timer(const Duration(milliseconds: 80), () {
       if (!isClosed) {
-        refresh();
+        refresh(quiet: true);
       }
     });
+  }
+
+  void toggleDraftSelection(int draftId) {
+    final nextDraftIds = _toggleId(state.selectedDraftIds, draftId);
+    emitIfOpen(
+      state.copyWith(
+        isSelectionMode: true,
+        selectedDraftIds: nextDraftIds,
+        clearError: true,
+      ),
+    );
+  }
+
+  void toggleExamSelection(int examId) {
+    final nextExamIds = _toggleId(state.selectedExamIds, examId);
+    emitIfOpen(
+      state.copyWith(
+        isSelectionMode: true,
+        selectedExamIds: nextExamIds,
+        clearError: true,
+      ),
+    );
+  }
+
+  void setSelectionMode(bool enabled) {
+    emitIfOpen(
+      state.copyWith(
+        isSelectionMode: enabled,
+        clearSelection: !enabled,
+        clearError: true,
+      ),
+    );
+  }
+
+  void selectVisibleRecords({
+    required Iterable<int> draftIds,
+    required Iterable<int> examIds,
+  }) {
+    emitIfOpen(
+      state.copyWith(
+        isSelectionMode: true,
+        selectedDraftIds: _sortedIds(draftIds),
+        selectedExamIds: _sortedIds(examIds),
+        clearError: true,
+      ),
+    );
+  }
+
+  void clearSelection() {
+    emitIfOpen(state.copyWith(clearSelection: true, clearError: true));
+  }
+
+  Future<bool> deleteSelectedRecords() async {
+    final draftIds = List<int>.from(state.selectedDraftIds);
+    final examIds = List<int>.from(state.selectedExamIds);
+    if (draftIds.isEmpty && examIds.isEmpty) return false;
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'delete',
+        clearAction: true,
+        clearError: true,
+      ),
+    );
+    final result = await _examGeneratorService.batchDeleteRecords(
+      draftIds: draftIds,
+      examIds: examIds,
+    );
+    if (!result.isSuccess) {
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          errorMessage:
+              result.error?.message ?? 'Failed to delete selected records',
+          clearActiveMutationAction: true,
+        ),
+      );
+      return false;
+    }
+    _removeDeletedRecords(draftIds: draftIds, examIds: examIds);
+    await refresh(quiet: true);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        actionMessage: 'Selected exam records deleted',
+        isSelectionMode: false,
+        clearSelection: true,
+        clearActiveMutationAction: true,
+      ),
+    );
+    return true;
+  }
+
+  Future<bool> deleteDraftRecord(int draftId) async {
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'delete',
+        clearAction: true,
+        clearError: true,
+      ),
+    );
+    final result = await _examGeneratorService.deleteDraft(draftId);
+    if (!result.isSuccess) {
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          errorMessage: result.error?.message ?? 'Failed to delete draft',
+          clearActiveMutationAction: true,
+        ),
+      );
+      return false;
+    }
+    _removeDeletedRecords(draftIds: <int>[draftId]);
+    await refresh(quiet: true);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        actionMessage: 'Draft deleted',
+        isSelectionMode: false,
+        clearSelection: true,
+        clearActiveMutationAction: true,
+      ),
+    );
+    return true;
+  }
+
+  Future<bool> deleteExamRecord(int examId) async {
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'delete',
+        clearAction: true,
+        clearError: true,
+      ),
+    );
+    final result = await _examGeneratorService.deleteExam(examId);
+    if (!result.isSuccess) {
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          errorMessage: result.error?.message ?? 'Failed to delete exam',
+          clearActiveMutationAction: true,
+        ),
+      );
+      return false;
+    }
+    _removeDeletedRecords(examIds: <int>[examId]);
+    await refresh(quiet: true);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        actionMessage: 'Exam deleted',
+        isSelectionMode: false,
+        clearSelection: true,
+        clearActiveMutationAction: true,
+      ),
+    );
+    return true;
+  }
+
+  Future<bool> saveSelectedDrafts() async {
+    final draftIds = List<int>.from(state.selectedDraftIds);
+    if (draftIds.isEmpty) return false;
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'save',
+        clearAction: true,
+        clearError: true,
+      ),
+    );
+    final result = await _examGeneratorService.batchSaveDrafts(draftIds);
+    if (!result.isSuccess) {
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          errorMessage: result.error?.message ?? 'Failed to save drafts',
+          clearActiveMutationAction: true,
+        ),
+      );
+      return false;
+    }
+    _draftCache.removeWhere((id, draft) => draftIds.contains(id));
+    await refresh(quiet: true);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        actionMessage: 'Selected drafts saved',
+        isSelectionMode: false,
+        clearSelection: true,
+        clearActiveMutationAction: true,
+      ),
+    );
+    return true;
+  }
+
+  Future<bool> applySelectedExamLifecycle(String action) async {
+    final examIds = List<int>.from(state.selectedExamIds);
+    if (examIds.isEmpty) return false;
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: action,
+        clearAction: true,
+        clearError: true,
+      ),
+    );
+    final updated = <ExamResponseModel>[];
+    for (final examId in examIds) {
+      final result = await _examGeneratorService.lifecycle(
+        examId: examId,
+        action: action,
+      );
+      if (!result.isSuccess || result.data == null) {
+        emitIfOpen(
+          state.copyWith(
+            isMutating: false,
+            errorMessage:
+                result.error?.message ?? 'Failed to update selected exams',
+            clearActiveMutationAction: true,
+          ),
+        );
+        return false;
+      }
+      updated.add(result.data!);
+    }
+    _cacheExams(updated);
+    await refresh(quiet: true);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        actionMessage: _bulkLifecycleMessage(action),
+        isSelectionMode: false,
+        clearSelection: true,
+        clearActiveMutationAction: true,
+      ),
+    );
+    return true;
   }
 
   Future<void> loadDrafts({
@@ -427,6 +668,61 @@ class ExamGeneratorCubit extends Cubit<ExamGeneratorState>
           DateTime.fromMillisecondsSinceEpoch(a.id);
       return bDate.compareTo(aDate);
     });
+  }
+
+  List<int> _toggleId(List<int> ids, int id) {
+    final next = ids.toSet();
+    next.contains(id) ? next.remove(id) : next.add(id);
+    return _sortedIds(next);
+  }
+
+  List<int> _sortedIds(Iterable<int> ids) {
+    return ids.where((id) => id > 0).toSet().toList()..sort();
+  }
+
+  void _removeDeletedRecords({
+    List<int> draftIds = const <int>[],
+    List<int> examIds = const <int>[],
+  }) {
+    final deletedDraftIds = draftIds.toSet();
+    final deletedExamIds = examIds.toSet();
+    for (final id in deletedDraftIds) {
+      _draftCache.remove(id);
+    }
+    for (final id in deletedExamIds) {
+      _examCache.remove(id);
+    }
+    if (deletedExamIds.isNotEmpty) {
+      _draftCache.removeWhere(
+        (_, draft) =>
+            draft.finalizedExamId != null &&
+            deletedExamIds.contains(draft.finalizedExamId),
+      );
+    }
+    final nextState = _withLocalPreview(
+      state.copyWith(
+        selectedDraftIds: state.selectedDraftIds
+            .where((id) => !deletedDraftIds.contains(id))
+            .toList(),
+        selectedExamIds: state.selectedExamIds
+            .where((id) => !deletedExamIds.contains(id))
+            .toList(),
+      ),
+    );
+    emitIfOpen(nextState);
+  }
+
+  String _bulkLifecycleMessage(String action) {
+    switch (action) {
+      case 'publish':
+        return 'Selected exams published';
+      case 'unpublish':
+        return 'Selected exams moved to draft';
+      case 'archive':
+        return 'Selected exams archived';
+      default:
+        return 'Selected exams updated';
+    }
   }
 
   bool _matchesDate(DateTime date, ExamGeneratorState filters) {

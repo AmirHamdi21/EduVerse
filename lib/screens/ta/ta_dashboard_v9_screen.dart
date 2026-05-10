@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
 import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_state.dart';
@@ -277,9 +275,16 @@ class _CenteredTAContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final maxWidth = screenWidth >= 1100
+        ? 960.0
+        : screenWidth >= 700
+        ? (screenWidth - 96).clamp(620.0, 860.0)
+        : 460.0;
+
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 560),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: child,
       ),
     );
@@ -588,19 +593,24 @@ class _TAV9QuickActionsCard extends StatelessWidget {
         children: [
           _SectionHeader(title: 'Quick actions', isDark: isDark),
           const SizedBox(height: 12),
-          GridView.builder(
-            itemCount: actions.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              childAspectRatio: 0.76,
-            ),
-            itemBuilder: (context, index) {
-              final action = actions[index];
-              return _QuickActionTile(action: action, isDark: isDark);
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = constraints.maxWidth < 340 ? 2 : 4;
+              return GridView.builder(
+                itemCount: actions.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: constraints.maxWidth >= 700 ? 1.12 : 0.76,
+                ),
+                itemBuilder: (context, index) {
+                  final action = actions[index];
+                  return _QuickActionTile(action: action, isDark: isDark);
+                },
+              );
             },
           ),
         ],
@@ -1044,56 +1054,47 @@ class _TAV9BottomNav extends StatelessWidget {
       const _BottomItem(Icons.auto_awesome_rounded, 'AI', '/ta/ai-assistant'),
     ];
 
-    return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          height: 68,
-          decoration: BoxDecoration(
-            color: _TAV9Colors.bottomBar(isDark),
-            border: Border(
-              top: BorderSide(color: _TAV9Colors.hairline(isDark)),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: items.map((item) {
-              final active = GoRouterState.of(context).uri.path == item.route;
-              return Expanded(
-                child: InkWell(
-                  onTap: active ? null : () => context.go(item.route),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        item.icon,
-                        color: active
-                            ? _TAV9Colors.primary
-                            : _TAV9Colors.mutedText(isDark),
-                        size: 21,
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        item.label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: active
-                              ? _TAV9Colors.primary
-                              : _TAV9Colors.mutedText(isDark),
-                          fontSize: 10,
-                          fontWeight: active
-                              ? FontWeight.w800
-                              : FontWeight.w700,
-                        ),
-                      ),
-                    ],
+    return Container(
+      height: 68,
+      decoration: BoxDecoration(
+        color: _TAV9Colors.bottomBar(isDark),
+        border: Border(top: BorderSide(color: _TAV9Colors.hairline(isDark))),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: items.map((item) {
+          final active = GoRouterState.of(context).uri.path == item.route;
+          return Expanded(
+            child: InkWell(
+              onTap: active ? null : () => context.go(item.route),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    item.icon,
+                    color: active
+                        ? _TAV9Colors.primary
+                        : _TAV9Colors.mutedText(isDark),
+                    size: 21,
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
+                  const SizedBox(height: 3),
+                  Text(
+                    item.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: active
+                          ? _TAV9Colors.primary
+                          : _TAV9Colors.mutedText(isDark),
+                      fontSize: 10,
+                      fontWeight: active ? FontWeight.w800 : FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -1112,28 +1113,22 @@ class _GlassPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          width: double.infinity,
-          padding: padding,
-          decoration: BoxDecoration(
-            color: _TAV9Colors.glassSurface(isDark),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: _TAV9Colors.glassBorder(isDark)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.05),
-                blurRadius: 22,
-                offset: const Offset(0, 12),
-              ),
-            ],
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: _TAV9Colors.glassSurface(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: _TAV9Colors.glassBorder(isDark)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.14 : 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
   }
 }

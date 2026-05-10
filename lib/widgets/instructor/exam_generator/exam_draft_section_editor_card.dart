@@ -190,7 +190,7 @@ class _ExamDraftSectionEditorCardState
                       )
                     : const Icon(Icons.save_outlined),
                 label: Text(
-                  widget.isSubmitting ? l10n.examSavingOrder : l10n.save,
+                  widget.isSubmitting ? l10n.savingChanges : l10n.save,
                 ),
               ),
               if (widget.onCancel != null)

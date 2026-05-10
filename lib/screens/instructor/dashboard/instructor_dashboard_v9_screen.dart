@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
 import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
 import 'package:edu_verse/bloc/instructor/instructor_courses_event.dart';
@@ -269,9 +267,16 @@ class _CenteredInstructorContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final maxWidth = screenWidth >= 1100
+        ? 960.0
+        : screenWidth >= 700
+        ? (screenWidth - 96).clamp(620.0, 860.0)
+        : 460.0;
+
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 460),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: child,
       ),
     );
@@ -625,12 +630,12 @@ class _InstructorV9QuickActionsCard extends StatelessWidget {
         route: '/instructor/labs',
         color: InstructorColors.cyan,
       ),
-      _QuickAction(
-        icon: Icons.analytics_outlined,
-        label: l10n.analytics,
-        route: '/instructor/reports',
-        color: InstructorColors.primaryDark,
-      ),
+      // _QuickAction(
+      //   icon: Icons.analytics_outlined,
+      //   label: l10n.analytics,
+      //   route: '/instructor/reports',
+      //   color: InstructorColors.primaryDark,
+      // ),
       _QuickAction(
         icon: Icons.forum_outlined,
         label: l10n.discuss,
@@ -647,22 +652,31 @@ class _InstructorV9QuickActionsCard extends StatelessWidget {
         children: [
           _SectionHeader(title: l10n.quickActions, isDark: isDark),
           const SizedBox(height: 10),
-          GridView.builder(
-            itemCount: actions.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 6,
-              childAspectRatio: 0.72,
-            ),
-            itemBuilder: (context, index) {
-              final action = actions[index];
-              return _QuickActionTile(
-                action: action,
-                isDark: isDark,
-                onTap: () => context.push(action.route),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = constraints.maxWidth < 360
+                  ? 3
+                  : constraints.maxWidth < 430
+                  ? 4
+                  : 5;
+              return GridView.builder(
+                itemCount: actions.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 6,
+                  childAspectRatio: constraints.maxWidth >= 700 ? 1.0 : 0.72,
+                ),
+                itemBuilder: (context, index) {
+                  final action = actions[index];
+                  return _QuickActionTile(
+                    action: action,
+                    isDark: isDark,
+                    onTap: () => context.push(action.route),
+                  );
+                },
               );
             },
           ),
@@ -1289,21 +1303,22 @@ class _GlassPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-        child: Container(
-          width: double.infinity,
-          padding: padding,
-          decoration: BoxDecoration(
-            color: _InstructorV9Colors.glassSurface(isDark),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: _InstructorV9Colors.glassBorder(isDark)),
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: _InstructorV9Colors.glassSurface(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: _InstructorV9Colors.glassBorder(isDark)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.14 : 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
   }
 }

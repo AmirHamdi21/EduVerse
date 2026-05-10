@@ -173,7 +173,7 @@ class QuestionBankService {
         '/question-bank/questions/$questionId',
         cancelToken: cancelToken,
       );
-      return QuestionBankQuestionModel.fromJson(_map(response.data));
+      return QuestionBankQuestionModel.fromJson(_itemMap(response.data));
     }, fallbackMessage: 'Failed to load question');
   }
 
@@ -185,7 +185,7 @@ class QuestionBankService {
         '/question-bank/questions',
         data: payload.toCreateJson(),
       );
-      return QuestionBankQuestionModel.fromJson(_map(response.data));
+      return QuestionBankQuestionModel.fromJson(_itemMap(response.data));
     }, fallbackMessage: 'Failed to create question');
   }
 
@@ -198,7 +198,7 @@ class QuestionBankService {
         '/question-bank/questions/$questionId',
         data: dirtyPayload,
       );
-      return QuestionBankQuestionModel.fromJson(_map(response.data));
+      return QuestionBankQuestionModel.fromJson(_itemMap(response.data));
     }, fallbackMessage: 'Failed to update question');
   }
 
@@ -206,6 +206,55 @@ class QuestionBankService {
     return RetryHelper.executeVoid(() async {
       await _client.dio.delete('/question-bank/questions/$questionId');
     }, fallbackMessage: 'Failed to delete question');
+  }
+
+  Future<ServiceResult<List<int>>> batchDeleteQuestions({
+    required List<int> questionIds,
+    bool allMatchingFilters = false,
+    List<int> excludeQuestionIds = const <int>[],
+    int? expectedQuestionCount,
+    int? courseId,
+    int? chapterId,
+    QuestionBankType? questionType,
+    QuestionBankDifficulty? difficulty,
+    BloomLevel? bloomLevel,
+    QuestionBankStatus? status,
+    String? search,
+    bool? hasAttachments,
+    int? groupId,
+  }) {
+    return RetryHelper.execute<List<int>>(() async {
+      final response = await _client.dio.post(
+        '/question-bank/questions/delete/batch',
+        options: Options(
+          sendTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(minutes: 2),
+        ),
+        data: <String, dynamic>{
+          if (!allMatchingFilters) 'questionIds': questionIds,
+          if (allMatchingFilters) ...{
+            'allMatchingFilters': true,
+            if (excludeQuestionIds.isNotEmpty)
+              'excludeQuestionIds': excludeQuestionIds,
+            if (courseId != null) 'courseId': courseId,
+            if (chapterId != null) 'chapterId': chapterId,
+            if (questionType != null) 'questionType': questionType.value,
+            if (difficulty != null) 'difficulty': difficulty.value,
+            if (bloomLevel != null) 'bloomLevel': bloomLevel.value,
+            if (status != null) 'status': status.value,
+            if (search != null && search.trim().isNotEmpty)
+              'search': search.trim(),
+            if (hasAttachments != null) 'hasAttachments': hasAttachments,
+            if (groupId != null) 'groupId': groupId,
+          },
+          if (expectedQuestionCount != null)
+            'expectedQuestionCount': expectedQuestionCount,
+        },
+      );
+      return _list(
+        _map(response.data)['deletedIds'],
+      ).map(_int).where((id) => id > 0).toList();
+    }, fallbackMessage: 'Failed to delete selected questions');
   }
 
   Future<ServiceResult<List<QuestionBankQuestionModel>>> bulkCreateQuestions({
@@ -419,7 +468,7 @@ class QuestionBankService {
             'comment': comment.trim(),
         },
       );
-      return QuestionBankQuestionModel.fromJson(_map(response.data));
+      return QuestionBankQuestionModel.fromJson(_itemMap(response.data));
     }, fallbackMessage: 'Failed to update question status');
   }
 
@@ -652,6 +701,14 @@ class QuestionBankService {
     if (value is Map<String, dynamic>) return value;
     if (value is Map) return Map<String, dynamic>.from(value);
     return <String, dynamic>{};
+  }
+
+  Map<String, dynamic> _itemMap(dynamic value) {
+    final root = _map(value);
+    final data = root['data'];
+    if (data is Map<String, dynamic>) return data;
+    if (data is Map) return Map<String, dynamic>.from(data);
+    return root;
   }
 
   List<dynamic> _list(dynamic value) {

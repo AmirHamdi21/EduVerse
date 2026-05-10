@@ -11,12 +11,18 @@ class ExamSavedCard extends StatelessWidget {
     super.key,
     required this.exam,
     required this.onTap,
+    this.onLongPress,
     this.courseLabel,
+    this.selectionMode = false,
+    this.selected = false,
   });
 
   final ExamResponseModel exam;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final String? courseLabel;
+  final bool selectionMode;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +40,7 @@ class ExamSavedCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
+          onLongPress: onLongPress,
           borderRadius: BorderRadius.circular(20),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -41,7 +48,12 @@ class ExamSavedCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: InstructorColors.cardColor(isDark),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: InstructorColors.borderColor(isDark)),
+                border: Border.all(
+                  color: selected
+                      ? InstructorColors.primary
+                      : InstructorColors.borderColor(isDark),
+                  width: selected ? 1.6 : 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
@@ -122,10 +134,16 @@ class ExamSavedCard extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 8),
                                 Icon(
-                                  Icons.chevron_right_rounded,
-                                  color: InstructorColors.textTertiaryColor(
-                                    isDark,
-                                  ),
+                                  selectionMode
+                                      ? (selected
+                                            ? Icons.check_circle_rounded
+                                            : Icons.radio_button_unchecked)
+                                      : Icons.chevron_right_rounded,
+                                  color: selected
+                                      ? InstructorColors.primary
+                                      : InstructorColors.textTertiaryColor(
+                                          isDark,
+                                        ),
                                 ),
                               ],
                             ),

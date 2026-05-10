@@ -31,6 +31,8 @@ class QuestionBulkRowCard extends StatelessWidget {
     this.onReorderAttachments,
     this.onRemove,
     this.isBusy = false,
+    this.isCollapsed = false,
+    this.onToggleCollapsed,
   });
 
   final QuestionBulkRowModel row;
@@ -45,6 +47,8 @@ class QuestionBulkRowCard extends StatelessWidget {
   final ValueChanged<List<int>>? onReorderAttachments;
   final VoidCallback? onRemove;
   final bool isBusy;
+  final bool isCollapsed;
+  final VoidCallback? onToggleCollapsed;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +61,10 @@ class QuestionBulkRowCard extends StatelessWidget {
         ? row.chapterId
         : null;
     final hasError = row.error?.trim().isNotEmpty == true;
+    final hasQuestionImage =
+        row.questionFileId != null ||
+        row.questionImageUrl != null ||
+        row.questionImageLocalPath != null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -97,288 +105,343 @@ class QuestionBulkRowCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color:
-                            (hasError
-                                    ? InstructorColors.error
-                                    : InstructorColors.primary)
-                                .withValues(alpha: isDark ? 0.18 : 0.1),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Icon(
-                        hasError
-                            ? Icons.error_outline_rounded
-                            : Icons.edit_note_rounded,
-                        color: hasError
-                            ? InstructorColors.error
-                            : InstructorColors.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onToggleCollapsed,
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Row(
                         children: [
-                          Text(
-                            '${l10n.qbQuestionRow} ${row.localId}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: InstructorColors.textPrimaryColor(isDark),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w900,
+                          Container(
+                            width: 42,
+                            height: 42,
+                            decoration: BoxDecoration(
+                              color:
+                                  (hasError
+                                          ? InstructorColors.error
+                                          : InstructorColors.primary)
+                                      .withValues(alpha: isDark ? 0.18 : 0.1),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Icon(
+                              hasError
+                                  ? Icons.error_outline_rounded
+                                  : Icons.edit_note_rounded,
+                              color: hasError
+                                  ? InstructorColors.error
+                                  : InstructorColors.primary,
                             ),
                           ),
-                          const SizedBox(height: 3),
-                          Text(
-                            localizedQuestionType(l10n, row.questionType),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: InstructorColors.textSecondaryColor(
-                                isDark,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${l10n.qbQuestionRow} ${row.localId}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: InstructorColors.textPrimaryColor(
+                                      isDark,
+                                    ),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  localizedQuestionType(l10n, row.questionType),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: InstructorColors.textSecondaryColor(
+                                      isDark,
+                                    ),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: isCollapsed ? l10n.show : l10n.showLess,
+                            onPressed: onToggleCollapsed,
+                            icon: AnimatedRotation(
+                              turns: isCollapsed ? 0.5 : 0,
+                              duration: const Duration(milliseconds: 180),
+                              child: const Icon(Icons.expand_less_rounded),
+                            ),
+                          ),
+                          if (onRemove != null)
+                            IconButton(
+                              tooltip: l10n.remove,
+                              onPressed: onRemove,
+                              style: IconButton.styleFrom(
+                                backgroundColor: InstructorColors.error
+                                    .withValues(alpha: isDark ? 0.18 : 0.1),
+                                foregroundColor: InstructorColors.error,
                               ),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
+                              icon: const Icon(Icons.delete_outline_rounded),
                             ),
-                          ),
                         ],
                       ),
                     ),
-                    if (onRemove != null)
-                      IconButton(
-                        tooltip: l10n.remove,
-                        onPressed: onRemove,
-                        style: IconButton.styleFrom(
-                          backgroundColor: InstructorColors.error.withValues(
-                            alpha: isDark ? 0.18 : 0.1,
-                          ),
-                          foregroundColor: InstructorColors.error,
-                        ),
-                        icon: const Icon(Icons.delete_outline_rounded),
-                      ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 14),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return QuestionFormMenuField<int>(
-                      width: constraints.maxWidth,
-                      label: l10n.chapter,
-                      value: selectedChapterId,
-                      icon: Icons.menu_book_outlined,
-                      color: InstructorColors.primary,
-                      enabled: uniqueChapters.isNotEmpty,
-                      options: uniqueChapters
-                          .map(
-                            (chapter) => QuestionFormMenuOption<int>(
-                              value: chapter.id,
-                              label: chapter.name,
-                              icon: Icons.bookmark_border_rounded,
+                AnimatedCrossFade(
+                  firstChild: const SizedBox.shrink(),
+                  secondChild: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 14),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return QuestionFormMenuField<int>(
+                            width: constraints.maxWidth,
+                            label: l10n.chapter,
+                            value: selectedChapterId,
+                            icon: Icons.menu_book_outlined,
+                            color: InstructorColors.primary,
+                            enabled: uniqueChapters.isNotEmpty,
+                            options: uniqueChapters
+                                .map(
+                                  (chapter) => QuestionFormMenuOption<int>(
+                                    value: chapter.id,
+                                    label: chapter.name,
+                                    icon: Icons.bookmark_border_rounded,
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) => onChanged(
+                              row.copyWith(
+                                chapterId: value,
+                                clearChapter: value == null,
+                              ),
                             ),
-                          )
-                          .toList(),
-                      onChanged: (value) => onChanged(
-                        row.copyWith(
-                          chapterId: value,
-                          clearChapter: value == null,
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: row.questionText,
-                  minLines: 3,
-                  maxLines: 6,
-                  decoration: _decoration(
-                    context,
-                    l10n.qbQuestionPrompt,
-                    Icons.help_outline_rounded,
-                  ),
-                  onChanged: (value) =>
-                      onChanged(row.copyWith(questionText: value)),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: row.hints,
-                  minLines: 2,
-                  maxLines: 4,
-                  decoration: _decoration(
-                    context,
-                    l10n.qbQuestionHints,
-                    Icons.lightbulb_outline_rounded,
-                  ),
-                  onChanged: (value) => onChanged(row.copyWith(hints: value)),
-                ),
-                if (onUploadImage != null) ...[
-                  const SizedBox(height: 12),
-                  _BulkQuestionImagePanel(
-                    row: row,
-                    isDark: isDark,
-                    isBusy: isBusy,
-                    onPick: _pickQuestionImage,
-                    onRemove:
-                        onRemoveImage ??
-                        () => onChanged(
-                          row.copyWith(
-                            clearQuestionFile: true,
-                            questionFileCaption: '',
-                            questionFileAltText: '',
-                          ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        initialValue: row.questionText,
+                        minLines: 3,
+                        maxLines: 6,
+                        decoration: _decoration(
+                          context,
+                          l10n.qbQuestionPrompt,
+                          Icons.help_outline_rounded,
                         ),
-                    onPreview:
-                        row.questionImageUrl == null &&
-                            row.questionImageLocalPath == null
-                        ? null
-                        : () => _showImagePreview(
-                            context,
-                            imageUrl: row.questionImageUrl,
-                            localPath: row.questionImageLocalPath,
-                            title: row.questionFileCaption.trim().isNotEmpty
-                                ? row.questionFileCaption
-                                : _questionImageLabel(l10n),
-                          ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    initialValue: row.questionFileCaption,
-                    decoration: _decoration(
-                      context,
-                      l10n.qbImageCaption,
-                      Icons.closed_caption_outlined,
-                    ),
-                    onChanged: (value) =>
-                        onChanged(row.copyWith(questionFileCaption: value)),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    initialValue: row.questionFileAltText,
-                    decoration: _decoration(
-                      context,
-                      l10n.qbImageAltText,
-                      Icons.accessibility_new_outlined,
-                    ),
-                    onChanged: (value) =>
-                        onChanged(row.copyWith(questionFileAltText: value)),
-                  ),
-                ],
-                if (onUploadAttachments != null &&
-                    onAttachmentChanged != null &&
-                    onRemoveAttachment != null &&
-                    onReorderAttachments != null) ...[
-                  const SizedBox(height: 12),
-                  QuestionPendingAttachmentManager(
-                    attachments: row.attachments,
-                    isUploading: isBusy,
-                    onUpload: onUploadAttachments!,
-                    onChanged: onAttachmentChanged!,
-                    onRemove: onRemoveAttachment!,
-                    onReorder: onReorderAttachments!,
-                  ),
-                ],
-                const SizedBox(height: 14),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final compact = constraints.maxWidth < 560;
-                    final width = compact
-                        ? constraints.maxWidth
-                        : (constraints.maxWidth - 12) / 2;
-                    return Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        QuestionFormMenuField<QuestionBankType>(
-                          width: width,
-                          label: l10n.type,
-                          value: row.questionType,
-                          icon: Icons.category_outlined,
-                          color: InstructorColors.primary,
-                          options: QuestionBankType.values
-                              .map(
-                                (type) =>
-                                    QuestionFormMenuOption<QuestionBankType>(
-                                      value: type,
-                                      label: localizedQuestionType(l10n, type),
-                                    ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            if (value != null) onTypeChanged(value);
-                          },
+                        onChanged: (value) =>
+                            onChanged(row.copyWith(questionText: value)),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        initialValue: row.hints,
+                        minLines: 2,
+                        maxLines: 4,
+                        decoration: _decoration(
+                          context,
+                          l10n.qbQuestionHints,
+                          Icons.lightbulb_outline_rounded,
                         ),
-                        QuestionFormMenuField<QuestionBankDifficulty>(
-                          width: width,
-                          label: l10n.difficulty,
-                          value: row.difficulty,
-                          icon: Icons.speed_rounded,
-                          color: InstructorColors.teal,
-                          options: QuestionBankDifficulty.values
-                              .map(
-                                (value) =>
-                                    QuestionFormMenuOption<
-                                      QuestionBankDifficulty
-                                    >(
-                                      value: value,
-                                      label: localizedDifficulty(l10n, value),
-                                    ),
-                              )
-                              .toList(),
-                          onChanged: (value) =>
-                              onChanged(row.copyWith(difficulty: value)),
-                        ),
-                        QuestionFormMenuField<BloomLevel>(
-                          width: width,
-                          label: l10n.qbBloomLevel,
-                          value: row.bloomLevel,
-                          icon: Icons.psychology_outlined,
-                          color: InstructorColors.accent,
-                          options: BloomLevel.values
-                              .map(
-                                (value) => QuestionFormMenuOption<BloomLevel>(
-                                  value: value,
-                                  label: localizedBloomLevel(l10n, value),
+                        onChanged: (value) =>
+                            onChanged(row.copyWith(hints: value)),
+                      ),
+                      if (onUploadImage != null) ...[
+                        const SizedBox(height: 12),
+                        _BulkQuestionImagePanel(
+                          row: row,
+                          isDark: isDark,
+                          isBusy: isBusy,
+                          onPick: _pickQuestionImage,
+                          onRemove:
+                              onRemoveImage ??
+                              () => onChanged(
+                                row.copyWith(
+                                  clearQuestionFile: true,
+                                  questionFileCaption: '',
+                                  questionFileAltText: '',
                                 ),
-                              )
-                              .toList(),
-                          onChanged: (value) =>
-                              onChanged(row.copyWith(bloomLevel: value)),
+                              ),
+                          onPreview:
+                              row.questionImageUrl == null &&
+                                  row.questionImageLocalPath == null
+                              ? null
+                              : () => _showImagePreview(
+                                  context,
+                                  imageUrl: row.questionImageUrl,
+                                  localPath: row.questionImageLocalPath,
+                                  title:
+                                      row.questionFileCaption.trim().isNotEmpty
+                                      ? row.questionFileCaption
+                                      : _questionImageLabel(l10n),
+                                ),
+                        ),
+                        if (hasQuestionImage) ...[
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            initialValue: row.questionFileCaption,
+                            decoration: _decoration(
+                              context,
+                              l10n.qbImageCaption,
+                              Icons.closed_caption_outlined,
+                            ),
+                            onChanged: (value) => onChanged(
+                              row.copyWith(questionFileCaption: value),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            initialValue: row.questionFileAltText,
+                            decoration: _decoration(
+                              context,
+                              l10n.qbImageAltText,
+                              Icons.accessibility_new_outlined,
+                            ),
+                            onChanged: (value) => onChanged(
+                              row.copyWith(questionFileAltText: value),
+                            ),
+                          ),
+                        ],
+                      ],
+                      if (onUploadAttachments != null &&
+                          onAttachmentChanged != null &&
+                          onRemoveAttachment != null &&
+                          onReorderAttachments != null) ...[
+                        const SizedBox(height: 12),
+                        QuestionPendingAttachmentManager(
+                          attachments: row.attachments,
+                          isUploading: isBusy,
+                          onUpload: onUploadAttachments!,
+                          onChanged: onAttachmentChanged!,
+                          onRemove: onRemoveAttachment!,
+                          onReorder: onReorderAttachments!,
                         ),
                       ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 14),
-                _answerEditor(context, l10n),
-                if (hasError) ...[
-                  const SizedBox(height: 12),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: InstructorColors.error.withValues(
-                        alpha: isDark ? 0.18 : 0.08,
+                      const SizedBox(height: 14),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final compact = constraints.maxWidth < 560;
+                          final width = compact
+                              ? constraints.maxWidth
+                              : (constraints.maxWidth - 12) / 2;
+                          return Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: [
+                              QuestionFormMenuField<QuestionBankType>(
+                                width: width,
+                                label: l10n.type,
+                                value: row.questionType,
+                                icon: Icons.category_outlined,
+                                color: InstructorColors.primary,
+                                options: QuestionBankType.values
+                                    .map(
+                                      (type) =>
+                                          QuestionFormMenuOption<
+                                            QuestionBankType
+                                          >(
+                                            value: type,
+                                            label: localizedQuestionType(
+                                              l10n,
+                                              type,
+                                            ),
+                                          ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) {
+                                  if (value != null) onTypeChanged(value);
+                                },
+                              ),
+                              QuestionFormMenuField<QuestionBankDifficulty>(
+                                width: width,
+                                label: l10n.difficulty,
+                                value: row.difficulty,
+                                icon: Icons.speed_rounded,
+                                color: InstructorColors.teal,
+                                options: QuestionBankDifficulty.values
+                                    .map(
+                                      (value) =>
+                                          QuestionFormMenuOption<
+                                            QuestionBankDifficulty
+                                          >(
+                                            value: value,
+                                            label: localizedDifficulty(
+                                              l10n,
+                                              value,
+                                            ),
+                                          ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) =>
+                                    onChanged(row.copyWith(difficulty: value)),
+                              ),
+                              QuestionFormMenuField<BloomLevel>(
+                                width: width,
+                                label: l10n.qbBloomLevel,
+                                value: row.bloomLevel,
+                                icon: Icons.psychology_outlined,
+                                color: InstructorColors.accent,
+                                options: BloomLevel.values
+                                    .map(
+                                      (value) =>
+                                          QuestionFormMenuOption<BloomLevel>(
+                                            value: value,
+                                            label: localizedBloomLevel(
+                                              l10n,
+                                              value,
+                                            ),
+                                          ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) =>
+                                    onChanged(row.copyWith(bloomLevel: value)),
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: InstructorColors.error.withValues(alpha: 0.24),
-                      ),
-                    ),
-                    child: Text(
-                      localizedQuestionBankMessage(l10n, row.error!),
-                      style: const TextStyle(
-                        color: InstructorColors.error,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
+                      const SizedBox(height: 14),
+                      _answerEditor(context, l10n),
+                      if (hasError) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: InstructorColors.error.withValues(
+                              alpha: isDark ? 0.18 : 0.08,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: InstructorColors.error.withValues(
+                                alpha: 0.24,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            localizedQuestionBankMessage(l10n, row.error!),
+                            style: const TextStyle(
+                              color: InstructorColors.error,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
+                  crossFadeState: isCollapsed
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  duration: const Duration(milliseconds: 180),
+                  sizeCurve: Curves.easeOutCubic,
+                  firstCurve: Curves.easeOutCubic,
+                  secondCurve: Curves.easeOutCubic,
+                ),
               ],
             ),
           ),

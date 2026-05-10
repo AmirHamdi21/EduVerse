@@ -78,6 +78,10 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
         _sharedImageLocalPath ??
         _resolveFormGroupImageUrl(_sharedImageUrl, _sharedFileId);
     final groupImageLabel = _groupImageLabel(l10n);
+    final hasGroupImage =
+        _sharedFileId != null ||
+        _sharedImageUrl != null ||
+        _sharedImageLocalPath != null;
     return Column(
       children: [
         QuestionSectionCard(
@@ -118,24 +122,26 @@ class _QuestionGroupFormCardState extends State<QuestionGroupFormCard> {
                     ),
               onRemove: _sharedFileId == null ? null : _removeSharedImage,
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _caption,
-              decoration: _decoration(
-                context,
-                l10n.qbImageCaption,
-                Icons.closed_caption_outlined,
+            if (hasGroupImage) ...[
+              const SizedBox(height: 12),
+              TextField(
+                controller: _caption,
+                decoration: _decoration(
+                  context,
+                  l10n.qbImageCaption,
+                  Icons.closed_caption_outlined,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _altText,
-              decoration: _decoration(
-                context,
-                l10n.qbImageAltText,
-                Icons.accessibility_new_outlined,
+              const SizedBox(height: 12),
+              TextField(
+                controller: _altText,
+                decoration: _decoration(
+                  context,
+                  l10n.qbImageAltText,
+                  Icons.accessibility_new_outlined,
+                ),
               ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: 16),

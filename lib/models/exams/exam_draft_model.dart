@@ -22,6 +22,8 @@ class ExamDraftModel {
     required this.expiresAt,
     this.createdAt,
     this.updatedAt,
+    this.itemCount,
+    this.sectionCount,
     this.sections = const <ExamDraftSectionModel>[],
     this.items = const <ExamDraftItemModel>[],
   });
@@ -44,6 +46,8 @@ class ExamDraftModel {
   final DateTime expiresAt;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final int? itemCount;
+  final int? sectionCount;
   final List<ExamDraftSectionModel> sections;
   final List<ExamDraftItemModel> items;
 
@@ -70,6 +74,8 @@ class ExamDraftModel {
       expiresAt: _toDate(json['expiresAt']) ?? DateTime.now(),
       createdAt: _toDate(json['createdAt']),
       updatedAt: _toDate(json['updatedAt']),
+      itemCount: _nullableInt(json['itemCount']),
+      sectionCount: _nullableInt(json['sectionCount']),
       sections: _asList(json['sections'])
           .whereType<Map<String, dynamic>>()
           .map(ExamDraftSectionModel.fromJson)

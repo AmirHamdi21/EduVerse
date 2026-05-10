@@ -25,6 +25,7 @@ import '../../../services/api_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
 import '../../../widgets/instructor/question_bank/question_bank_localized_labels.dart';
+import '../../../widgets/instructor/question_bank/question_bank_mutation_overlay.dart';
 import '../../../widgets/instructor/question_bank/question_text_renderer.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 import '../../../widgets/instructor/shared/instructor_modern_tab_strip.dart';
@@ -69,7 +70,9 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
   final Set<int> _selectedItemIds = <int>{};
   bool _isMovingItems = false;
   bool _isSavingSection = false;
+  bool _isPreparingBuildTab = false;
   int _movingItemCount = 0;
+  int _tabChangeToken = 0;
 
   @override
   void dispose() {
@@ -148,68 +151,126 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
             );
           }
           if (draft.status == ExamDraftStatus.finalized) {
-            return _FinalizedDraftHandoff(
-              draft: draft,
-              isMutating: state.isMutating,
-              onOpenSavedExam: draft.finalizedExamId == null
-                  ? null
-                  : () => context.go(
-                      '/instructor/exam-generator/exams/${draft.finalizedExamId}',
-                    ),
-              onCreateEditableCopy: () => _duplicateFinalizedDraft(context),
+            return _withMutationOverlay(
+              context,
+              state,
+              _FinalizedDraftHandoff(
+                draft: draft,
+                isMutating: state.isMutating,
+                onOpenSavedExam: draft.finalizedExamId == null
+                    ? null
+                    : () => context.go(
+                        '/instructor/exam-generator/exams/${draft.finalizedExamId}',
+                      ),
+                onCreateEditableCopy: () => _duplicateFinalizedDraft(context),
+              ),
             );
           }
-          return ListView(
-            controller: _scrollController,
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
-            children: [
-              ExamGeneratorHeroHeader(
-                title: draft.title,
-                subtitle: draft.isEditable
-                    ? l10n.examDraftEditable
-                    : l10n.examDraftNotEditable,
-                stats: {
-                  l10n.status: localizedDraftStatus(l10n, draft.status),
-                  l10n.questions: draft.items.length.toString(),
-                  l10n.sections: draft.sections.length.toString(),
-                  l10n.totalMarks: draft.totalMarks?.toString() ?? '-',
-                },
-                isDark: isDark,
-              ),
-              if (draft.isEditable) ...[
-                const SizedBox(height: 16),
-                _ExpiryBanner(expiresAt: draft.expiresAt),
-              ],
-              const SizedBox(height: 16),
-              InstructorModernTabStrip(
-                selectedIndex: _tab,
-                onChanged: (value) => setState(() => _tab = value),
-                tabs: [
-                  InstructorModernTabItem(
-                    icon: Icons.dashboard_outlined,
-                    label: l10n.examDraftOverview,
-                  ),
-                  InstructorModernTabItem(
-                    icon: Icons.construction_rounded,
-                    label: l10n.examDraftBuild,
-                  ),
-                  InstructorModernTabItem(
-                    icon: Icons.swap_vert_rounded,
-                    label: l10n.examDraftReorder,
-                  ),
-                  InstructorModernTabItem(
-                    icon: Icons.checklist_rounded,
-                    label: l10n.examDraftReview,
-                  ),
+          return _withMutationOverlay(
+            context,
+            state,
+            ListView(
+              controller: _scrollController,
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
+              children: [
+                ExamGeneratorHeroHeader(
+                  title: draft.title,
+                  subtitle: draft.isEditable
+                      ? l10n.examDraftEditable
+                      : l10n.examDraftNotEditable,
+                  stats: {
+                    l10n.status: localizedDraftStatus(l10n, draft.status),
+                    l10n.questions: draft.items.length.toString(),
+                    l10n.sections: draft.sections.length.toString(),
+                    l10n.totalMarks: draft.totalMarks?.toString() ?? '-',
+                  },
+                  isDark: isDark,
+                ),
+                if (draft.isEditable) ...[
+                  const SizedBox(height: 16),
+                  _ExpiryBanner(expiresAt: draft.expiresAt),
                 ],
-              ),
-              const SizedBox(height: 16),
-              _tabContent(context, state),
-            ],
+                const SizedBox(height: 16),
+                InstructorModernTabStrip(
+                  selectedIndex: _tab,
+                  onChanged: _changeTab,
+                  tabs: [
+                    InstructorModernTabItem(
+                      icon: Icons.dashboard_outlined,
+                      label: l10n.examDraftOverview,
+                    ),
+                    InstructorModernTabItem(
+                      icon: Icons.construction_rounded,
+                      label: l10n.examDraftBuild,
+                    ),
+                    InstructorModernTabItem(
+                      icon: Icons.swap_vert_rounded,
+                      label: l10n.examDraftReorder,
+                    ),
+                    InstructorModernTabItem(
+                      icon: Icons.checklist_rounded,
+                      label: l10n.examDraftReview,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _tabContent(context, state),
+              ],
+            ),
           );
         },
       ),
     );
+  }
+
+  Widget _withMutationOverlay(
+    BuildContext context,
+    ExamDraftEditorState state,
+    Widget child,
+  ) {
+    if (!state.isMutating && !_isPreparingBuildTab) return child;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final title = _isPreparingBuildTab
+        ? 'Preparing build tab'
+        : state.activeMutationAction ?? 'Updating draft';
+    final message = _isPreparingBuildTab
+        ? 'Please wait while the questions and formulas are rendered.'
+        : 'Please wait until the exam draft is updated.';
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        child,
+        Positioned.fill(
+          child: QuestionBankMutationOverlay(
+            title: title,
+            message: message,
+            isDark: isDark,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _changeTab(int value) {
+    if (value == _tab) return;
+    final token = ++_tabChangeToken;
+    if (value != 1) {
+      setState(() {
+        _tab = value;
+        _isPreparingBuildTab = false;
+      });
+      return;
+    }
+    setState(() => _isPreparingBuildTab = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      if (!mounted || token != _tabChangeToken) return;
+      setState(() => _tab = value);
+      await WidgetsBinding.instance.endOfFrame;
+      await Future<void>.delayed(const Duration(milliseconds: 120));
+      if (!mounted || token != _tabChangeToken) return;
+      setState(() => _isPreparingBuildTab = false);
+    });
   }
 
   Widget _tabContent(BuildContext context, ExamDraftEditorState state) {
@@ -263,22 +324,33 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
             _showSectionEditor = true;
           }),
           onDeleteSection: (section) async {
-            final confirmed = await _confirm(
+            final confirmed = await _confirmDraftAction(
               context,
-              l10n.examDeleteSection,
-              l10n.examDeleteSectionUnassigns,
+              _DraftConfirmAction.deleteSection,
             );
             if (confirmed && context.mounted) {
               context.read<ExamDraftEditorCubit>().deleteSection(section.id);
             }
           },
-          onNormalizeSection: (section) =>
-              context.read<ExamDraftEditorCubit>().normalizeSectionMarks(
-                section.id,
-                totalMarks: section.totalMarks,
-              ),
-          onReshuffleSection: (section) =>
-              context.read<ExamDraftEditorCubit>().reshuffleSection(section.id),
+          onNormalizeSection: (section) async {
+            final confirmed = await _confirmDraftAction(
+              context,
+              _DraftConfirmAction.normalizeSection,
+            );
+            if (!confirmed || !context.mounted) return;
+            context.read<ExamDraftEditorCubit>().normalizeSectionMarks(
+              section.id,
+              totalMarks: section.totalMarks,
+            );
+          },
+          onReshuffleSection: (section) async {
+            final confirmed = await _confirmDraftAction(
+              context,
+              _DraftConfirmAction.reshuffleSection,
+            );
+            if (!confirmed || !context.mounted) return;
+            context.read<ExamDraftEditorCubit>().reshuffleSection(section.id);
+          },
           onUnassignItem: (item) =>
               _moveItemsToSection(context, [item.id], null),
           onCancelItemEditor: () => setState(() => _editingItem = null),
@@ -381,7 +453,7 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
             ExamDraftItemReorderList(
               items: draft.items,
               sections: draft.sections,
-              onReorder: context.read<ExamDraftEditorCubit>().reorderItems,
+              onSaveOrder: (payload) => _saveDraftOrder(context, payload),
             ),
           ],
         );
@@ -529,8 +601,14 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
                     }
                   : null,
               onRemove: canEdit
-                  ? () =>
-                        context.read<ExamDraftEditorCubit>().removeItem(item.id)
+                  ? () async {
+                      final confirmed = await _confirmDraftAction(
+                        context,
+                        _DraftConfirmAction.removeQuestion,
+                      );
+                      if (!confirmed || !context.mounted) return;
+                      context.read<ExamDraftEditorCubit>().removeItem(item.id);
+                    }
                   : null,
               onUnassign: canEdit ? onUnassign : null,
             ),
@@ -880,11 +958,9 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
   }
 
   Future<void> _confirmEditSource(BuildContext context, int questionId) async {
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await _confirm(
+    final confirmed = await _confirmDraftAction(
       context,
-      l10n.examEditSourceQuestion,
-      l10n.examEditSourceQuestionWarning,
+      _DraftConfirmAction.editSourceQuestion,
     );
     if (confirmed && context.mounted) {
       await context.push('/instructor/question-bank/$questionId/edit');
@@ -958,6 +1034,21 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
     }
   }
 
+  Future<bool> _saveDraftOrder(
+    BuildContext context,
+    ExamDraftReorderPayload payload,
+  ) async {
+    final confirmed = await _confirmDraftAction(
+      context,
+      _DraftConfirmAction.saveDraftOrder,
+    );
+    if (!confirmed || !context.mounted) return false;
+    return context.read<ExamDraftEditorCubit>().saveDraftOrder(
+      orderedItemIds: payload.itemIds,
+      orderedSectionIds: payload.sectionIds,
+    );
+  }
+
   Future<void> _duplicateFinalizedDraft(BuildContext context) async {
     final id = await context.read<ExamDraftEditorCubit>().duplicateDraft();
     if (id != null && context.mounted) {
@@ -970,30 +1061,157 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
         draft?.finalizedExamId != null;
   }
 
-  Future<bool> _confirm(
+  Future<bool> _confirmDraftAction(
     BuildContext context,
-    String title,
-    String message,
+    _DraftConfirmAction action,
   ) async {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final config = _draftConfirmationConfig(l10n, action);
     return await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
-            title: Text(title),
-            content: Text(message),
+          builder: (dialogContext) => AlertDialog(
+            backgroundColor: InstructorColors.cardColor(isDark),
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: config.color.withValues(alpha: isDark ? 0.18 : 0.1),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Icon(config.icon, color: config.color),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    config.title,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            content: Text(
+              config.message,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                height: 1.35,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
+                onPressed: () => Navigator.of(dialogContext).pop(false),
                 child: Text(l10n.cancel),
               ),
-              FilledButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(l10n.confirm),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: config.color,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                icon: Icon(config.icon, size: 18),
+                label: Text(config.confirmLabel),
               ),
             ],
           ),
         ) ??
         false;
+  }
+}
+
+enum _DraftConfirmAction {
+  deleteSection,
+  normalizeSection,
+  reshuffleSection,
+  removeQuestion,
+  editSourceQuestion,
+  saveDraftOrder,
+}
+
+class _DraftConfirmationConfig {
+  const _DraftConfirmationConfig({
+    required this.title,
+    required this.message,
+    required this.confirmLabel,
+    required this.color,
+    required this.icon,
+  });
+
+  final String title;
+  final String message;
+  final String confirmLabel;
+  final Color color;
+  final IconData icon;
+}
+
+_DraftConfirmationConfig _draftConfirmationConfig(
+  AppLocalizations l10n,
+  _DraftConfirmAction action,
+) {
+  switch (action) {
+    case _DraftConfirmAction.deleteSection:
+      return _DraftConfirmationConfig(
+        title: l10n.examDeleteSection,
+        message: l10n.examDeleteSectionUnassigns,
+        confirmLabel: l10n.delete,
+        color: InstructorColors.error,
+        icon: Icons.delete_outline_rounded,
+      );
+    case _DraftConfirmAction.normalizeSection:
+      return const _DraftConfirmationConfig(
+        title: 'Normalize section marks?',
+        message:
+            'Question marks in this section will be recalculated from the section total.',
+        confirmLabel: 'Normalize',
+        color: InstructorColors.teal,
+        icon: Icons.auto_fix_high_outlined,
+      );
+    case _DraftConfirmAction.reshuffleSection:
+      return const _DraftConfirmationConfig(
+        title: 'Reshuffle section?',
+        message:
+            'The questions in this section will be reordered while keeping the draft updated.',
+        confirmLabel: 'Reshuffle',
+        color: InstructorColors.accent,
+        icon: Icons.shuffle_rounded,
+      );
+    case _DraftConfirmAction.removeQuestion:
+      return _DraftConfirmationConfig(
+        title: 'Remove question?',
+        message:
+            'This question will be removed from the draft. The source question will not be deleted.',
+        confirmLabel: l10n.remove,
+        color: InstructorColors.error,
+        icon: Icons.delete_outline_rounded,
+      );
+    case _DraftConfirmAction.editSourceQuestion:
+      return _DraftConfirmationConfig(
+        title: l10n.examEditSourceQuestion,
+        message: l10n.examEditSourceQuestionWarning,
+        confirmLabel: l10n.confirm,
+        color: InstructorColors.primary,
+        icon: Icons.edit_note_rounded,
+      );
+    case _DraftConfirmAction.saveDraftOrder:
+      return const _DraftConfirmationConfig(
+        title: 'Save draft order?',
+        message:
+            'The final question and section order will be applied to this draft.',
+        confirmLabel: 'Save order',
+        color: InstructorColors.accent,
+        icon: Icons.save_outlined,
+      );
   }
 }
 

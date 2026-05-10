@@ -133,6 +133,58 @@ class QuestionBankGroupModel {
   final int archivedQuestions;
   final List<QuestionBankGroupItemModel> items;
 
+  QuestionBankGroupModel copyWith({
+    int? id,
+    int? courseId,
+    String? courseCode,
+    String? courseName,
+    int? chapterId,
+    String? title,
+    String? sharedPrompt,
+    int? sharedFileId,
+    String? sharedImageUrl,
+    String? sharedFileCaption,
+    String? sharedFileAltText,
+    QuestionGroupType? groupType,
+    int? createdBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
+    int? totalQuestions,
+    int? approvedQuestions,
+    int? draftQuestions,
+    int? underReviewQuestions,
+    int? rejectedQuestions,
+    int? archivedQuestions,
+    List<QuestionBankGroupItemModel>? items,
+  }) {
+    return QuestionBankGroupModel(
+      id: id ?? this.id,
+      courseId: courseId ?? this.courseId,
+      courseCode: courseCode ?? this.courseCode,
+      courseName: courseName ?? this.courseName,
+      chapterId: chapterId ?? this.chapterId,
+      title: title ?? this.title,
+      sharedPrompt: sharedPrompt ?? this.sharedPrompt,
+      sharedFileId: sharedFileId ?? this.sharedFileId,
+      sharedImageUrl: sharedImageUrl ?? this.sharedImageUrl,
+      sharedFileCaption: sharedFileCaption ?? this.sharedFileCaption,
+      sharedFileAltText: sharedFileAltText ?? this.sharedFileAltText,
+      groupType: groupType ?? this.groupType,
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      totalQuestions: totalQuestions ?? this.totalQuestions,
+      approvedQuestions: approvedQuestions ?? this.approvedQuestions,
+      draftQuestions: draftQuestions ?? this.draftQuestions,
+      underReviewQuestions: underReviewQuestions ?? this.underReviewQuestions,
+      rejectedQuestions: rejectedQuestions ?? this.rejectedQuestions,
+      archivedQuestions: archivedQuestions ?? this.archivedQuestions,
+      items: items ?? this.items,
+    );
+  }
+
   factory QuestionBankGroupModel.fromJson(Map<String, dynamic> json) {
     return QuestionBankGroupModel(
       id: _toInt(json['id'] ?? json['groupId']),

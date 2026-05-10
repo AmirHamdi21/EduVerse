@@ -12,7 +12,6 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
-import '../../../widgets/instructor/shared/safe_feature_back.dart';
 import 'question_bank_create_screen.dart';
 
 class QuestionBankBulkCreateScreen extends StatelessWidget {
@@ -32,8 +31,26 @@ class QuestionBankBulkCreateScreen extends StatelessWidget {
   }
 }
 
-class _QuestionBankBulkCreateView extends StatelessWidget {
+class _QuestionBankBulkCreateView extends StatefulWidget {
   const _QuestionBankBulkCreateView();
+
+  @override
+  State<_QuestionBankBulkCreateView> createState() =>
+      _QuestionBankBulkCreateViewState();
+}
+
+class _QuestionBankBulkCreateViewState
+    extends State<_QuestionBankBulkCreateView> {
+  final Set<int> _collapsedRows = <int>{};
+  bool _hasChanged = false;
+
+  void _toggleRow(int localId) {
+    setState(() {
+      if (!_collapsedRows.add(localId)) {
+        _collapsedRows.remove(localId);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,263 +108,180 @@ class _QuestionBankBulkCreateView extends StatelessWidget {
                 children: const [QuestionBankSkeletons(itemCount: 3)],
               );
             }
+            if (state.createdQuestions.isNotEmpty) {
+              _hasChanged = true;
+            }
             final hasCreated = state.createdQuestions.isNotEmpty;
             final hasFailures = state.failedRows.isNotEmpty;
             final selectedCourse = state.courses
                 .where((course) => course.courseId == state.courseId)
                 .firstOrNull;
-            return ListView(
+            final content = ListView(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
               children: [
-                QuestionFormHero(
-                  title: l10n.questionBankBulkCreate,
-                  subtitle: l10n.questionBankBulkSubtitle,
-                  tiles: {
-                    l10n.qbBulkRows: state.rows.length.toString(),
-                    l10n.course: selectedCourse?.course.code ?? '-',
-                    l10n.chapter: state.chapters.length.toString(),
-                  },
+                _buildContent(
+                  context,
+                  state,
+                  selectedCourse?.course.code ?? '-',
+                  hasCreated,
+                  hasFailures,
+                  isDark,
+                  l10n,
                 ),
-                const SizedBox(height: 18),
-                QuestionBulkValidationPanel(
-                  message: state.errorMessage == null
-                      ? null
-                      : localizedQuestionBankMessage(l10n, state.errorMessage!),
-                ),
-                if (state.failedRows.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  _BulkFailureReportPanel(state: state),
-                ],
-                if (!hasCreated || hasFailures) ...[
-                  if (state.errorMessage != null) const SizedBox(height: 12),
-                  QuestionSectionCard(
-                    title: l10n.qbCoreDetails,
-                    icon: Icons.fact_check_outlined,
-                    color: InstructorColors.primary,
-                    children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final compact = constraints.maxWidth < 430;
-                          final courseField = QuestionFormMenuField<int>(
-                            label: l10n.course,
-                            value: state.courseId,
-                            icon: Icons.school_outlined,
-                            color: InstructorColors.primary,
-                            options: state.courses
-                                .map(
-                                  (course) => QuestionFormMenuOption<int>(
-                                    value: course.courseId,
-                                    label:
-                                        '${course.course.code} - ${course.course.name}',
-                                    icon: Icons.menu_book_outlined,
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: context
-                                .read<QuestionBulkCreateCubit>()
-                                .selectCourse,
-                          );
-                          final chapterButton = OutlinedButton.icon(
-                            onPressed:
-                                state.courseId == null ||
-                                    state.isLoadingChapters
-                                ? null
-                                : () => _showCreateChapter(context, state),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: InstructorColors.teal.withValues(
-                                alpha: isDark ? 0.18 : 0.08,
-                              ),
-                              foregroundColor: InstructorColors.teal,
-                              side: BorderSide(
-                                color: InstructorColors.teal.withValues(
-                                  alpha: 0.24,
-                                ),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            icon: state.isLoadingChapters
-                                ? const SizedBox(
-                                    width: 17,
-                                    height: 17,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        InstructorColors.teal,
-                                      ),
-                                    ),
-                                  )
-                                : const Icon(Icons.add_rounded),
-                            label: Text(
-                              l10n.qbCreateChapter,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                          if (compact) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                courseField,
-                                const SizedBox(height: 10),
-                                chapterButton,
-                              ],
-                            );
-                          }
-                          return Row(
-                            children: [
-                              Expanded(child: courseField),
-                              const SizedBox(width: 10),
-                              SizedBox(
-                                width: 180,
-                                height: 58,
-                                child: chapterButton,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.info_outline_rounded,
-                            size: 18,
-                            color: InstructorColors.teal,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              l10n.questionBankBulkChapterPerRow,
-                              style: TextStyle(
-                                color: InstructorColors.textSecondaryColor(
-                                  isDark,
-                                ),
-                                fontWeight: FontWeight.w700,
-                                height: 1.25,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  QuestionBulkEditor(
-                    rowCount: state.rows.length,
-                    onAddRow: context.read<QuestionBulkCreateCubit>().addRow,
-                    children: state.rows
-                        .map(
-                          (row) => QuestionBulkRowCard(
-                            row: row,
-                            chapters: state.chapters,
-                            isBusy: state.isSubmitting,
-                            onChanged: context
-                                .read<QuestionBulkCreateCubit>()
-                                .updateRow,
-                            onTypeChanged: (type) => context
-                                .read<QuestionBulkCreateCubit>()
-                                .updateRowType(row.localId, type),
-                            onUploadImage: (path) => context
-                                .read<QuestionBulkCreateCubit>()
-                                .uploadRowQuestionImage(
-                                  localId: row.localId,
-                                  path: path,
-                                ),
-                            onRemoveImage: row.questionFileId == null
-                                ? null
-                                : () => context
-                                      .read<QuestionBulkCreateCubit>()
-                                      .removeRowQuestionImage(row.localId),
-                            onUploadAttachments: (paths) => context
-                                .read<QuestionBulkCreateCubit>()
-                                .uploadRowAttachments(
-                                  localId: row.localId,
-                                  paths: paths,
-                                ),
-                            onAttachmentChanged: (attachment) => context
-                                .read<QuestionBulkCreateCubit>()
-                                .updateRowAttachment(
-                                  localId: row.localId,
-                                  attachment: attachment,
-                                ),
-                            onRemoveAttachment: (fileId) => context
-                                .read<QuestionBulkCreateCubit>()
-                                .removeRowAttachment(
-                                  localId: row.localId,
-                                  fileId: fileId,
-                                ),
-                            onReorderAttachments: (orderedFileIds) => context
-                                .read<QuestionBulkCreateCubit>()
-                                .reorderRowAttachments(
-                                  localId: row.localId,
-                                  orderedFileIds: orderedFileIds,
-                                ),
-                            onRemove: state.rows.length <= 1
-                                ? null
-                                : () => context
-                                      .read<QuestionBulkCreateCubit>()
-                                      .removeRow(row.localId),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                  const SizedBox(height: 18),
-                  SizedBox(
-                    height: 56,
-                    child: FilledButton.icon(
-                      onPressed: state.isSubmitting
-                          ? null
-                          : () async {
-                              final ok = await context
-                                  .read<QuestionBulkCreateCubit>()
-                                  .submit();
-                              if (!ok || !context.mounted) return;
-                            },
-                      style: FilledButton.styleFrom(
-                        backgroundColor: InstructorColors.primary,
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: InstructorColors.primary
-                            .withValues(alpha: 0.42),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      icon: state.isSubmitting
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : const Icon(Icons.cloud_upload_outlined),
-                      label: Text(
-                        l10n.qbSubmitBulk,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+              ],
+            );
+            return Stack(
+              children: [
+                content,
+                if (state.activeMutationAction != null)
+                  Positioned.fill(
+                    child: _BulkMutationOverlay(
+                      action: state.activeMutationAction!,
+                      isDark: isDark,
                     ),
                   ),
-                ],
-                if (hasCreated) ...[
-                  const SizedBox(height: 18),
-                  _BulkCreateResultPanel(state: state),
-                ],
               ],
             );
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    QuestionBulkCreateState state,
+    String selectedCourseCode,
+    bool hasCreated,
+    bool hasFailures,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        QuestionFormHero(
+          title: l10n.questionBankBulkCreate,
+          subtitle: l10n.questionBankBulkSubtitle,
+          tiles: {
+            l10n.qbBulkRows: state.rows.length.toString(),
+            l10n.course: selectedCourseCode,
+            l10n.chapter: state.chapters.length.toString(),
+          },
+        ),
+        const SizedBox(height: 18),
+        QuestionBulkValidationPanel(
+          message: state.errorMessage == null
+              ? null
+              : localizedQuestionBankMessage(l10n, state.errorMessage!),
+        ),
+        if (state.failedRows.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _BulkFailureReportPanel(state: state),
+        ],
+        if (!hasCreated || hasFailures) ...[
+          if (state.errorMessage != null) const SizedBox(height: 12),
+          _BulkCoreDetailsSection(state: state, isDark: isDark),
+          const SizedBox(height: 16),
+          QuestionBulkEditor(
+            rowCount: state.rows.length,
+            onAddRow: context.read<QuestionBulkCreateCubit>().addRow,
+            children: state.rows
+                .map(
+                  (row) => QuestionBulkRowCard(
+                    row: row,
+                    chapters: state.chapters,
+                    isBusy: state.isSubmitting,
+                    isCollapsed: _collapsedRows.contains(row.localId),
+                    onToggleCollapsed: () => _toggleRow(row.localId),
+                    onChanged: context
+                        .read<QuestionBulkCreateCubit>()
+                        .updateRow,
+                    onTypeChanged: (type) => context
+                        .read<QuestionBulkCreateCubit>()
+                        .updateRowType(row.localId, type),
+                    onUploadImage: (path) => context
+                        .read<QuestionBulkCreateCubit>()
+                        .uploadRowQuestionImage(
+                          localId: row.localId,
+                          path: path,
+                        ),
+                    onRemoveImage: row.questionFileId == null
+                        ? null
+                        : () => context
+                              .read<QuestionBulkCreateCubit>()
+                              .removeRowQuestionImage(row.localId),
+                    onUploadAttachments: (paths) => context
+                        .read<QuestionBulkCreateCubit>()
+                        .uploadRowAttachments(
+                          localId: row.localId,
+                          paths: paths,
+                        ),
+                    onAttachmentChanged: (attachment) => context
+                        .read<QuestionBulkCreateCubit>()
+                        .updateRowAttachment(
+                          localId: row.localId,
+                          attachment: attachment,
+                        ),
+                    onRemoveAttachment: (fileId) => context
+                        .read<QuestionBulkCreateCubit>()
+                        .removeRowAttachment(
+                          localId: row.localId,
+                          fileId: fileId,
+                        ),
+                    onReorderAttachments: (orderedFileIds) => context
+                        .read<QuestionBulkCreateCubit>()
+                        .reorderRowAttachments(
+                          localId: row.localId,
+                          orderedFileIds: orderedFileIds,
+                        ),
+                    onRemove: state.rows.length <= 1
+                        ? null
+                        : () {
+                            _collapsedRows.remove(row.localId);
+                            context.read<QuestionBulkCreateCubit>().removeRow(
+                              row.localId,
+                            );
+                          },
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 56,
+            child: FilledButton.icon(
+              onPressed: state.isSubmitting
+                  ? null
+                  : () => context.read<QuestionBulkCreateCubit>().submit(),
+              style: FilledButton.styleFrom(
+                backgroundColor: InstructorColors.primary,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: InstructorColors.primary.withValues(
+                  alpha: 0.42,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              icon: const Icon(Icons.cloud_upload_outlined),
+              label: Text(
+                l10n.qbSubmitBulk,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        ],
+        if (hasCreated) ...[
+          const SizedBox(height: 18),
+          _BulkCreateResultPanel(state: state),
+        ],
+      ],
     );
   }
 
@@ -375,7 +309,10 @@ class _QuestionBankBulkCreateView extends StatelessWidget {
       await cubit.discardPendingUploads();
     }
     if (context.mounted) {
-      safeFeatureBack(context, '/instructor/question-bank');
+      _leaveBulkCreate(
+        context,
+        changed: _hasChanged || cubit.state.createdQuestions.isNotEmpty,
+      );
     }
   }
 
@@ -384,6 +321,127 @@ class _QuestionBankBulkCreateView extends StatelessWidget {
       if (row.questionFileId != null || row.attachments.isNotEmpty) return true;
     }
     return false;
+  }
+}
+
+void _leaveBulkCreate(BuildContext context, {required bool changed}) {
+  if (context.canPop()) {
+    context.pop(changed);
+    return;
+  }
+  context.go('/instructor/question-bank');
+}
+
+class _BulkCoreDetailsSection extends StatelessWidget {
+  const _BulkCoreDetailsSection({required this.state, required this.isDark});
+
+  final QuestionBulkCreateState state;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return QuestionSectionCard(
+      title: l10n.qbCoreDetails,
+      icon: Icons.fact_check_outlined,
+      color: InstructorColors.primary,
+      children: [
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final compact = constraints.maxWidth < 430;
+            final courseField = QuestionFormMenuField<int>(
+              label: l10n.course,
+              value: state.courseId,
+              icon: Icons.school_outlined,
+              color: InstructorColors.primary,
+              options: state.courses
+                  .map(
+                    (course) => QuestionFormMenuOption<int>(
+                      value: course.courseId,
+                      label: '${course.course.code} - ${course.course.name}',
+                      icon: Icons.menu_book_outlined,
+                    ),
+                  )
+                  .toList(),
+              onChanged: context.read<QuestionBulkCreateCubit>().selectCourse,
+            );
+            final chapterButton = OutlinedButton.icon(
+              onPressed: state.courseId == null || state.isLoadingChapters
+                  ? null
+                  : () => _showCreateChapter(context, state),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: InstructorColors.teal.withValues(
+                  alpha: isDark ? 0.18 : 0.08,
+                ),
+                foregroundColor: InstructorColors.teal,
+                side: BorderSide(
+                  color: InstructorColors.teal.withValues(alpha: 0.24),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              icon: state.isLoadingChapters
+                  ? const SizedBox(
+                      width: 17,
+                      height: 17,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          InstructorColors.teal,
+                        ),
+                      ),
+                    )
+                  : const Icon(Icons.add_rounded),
+              label: Text(
+                l10n.qbCreateChapter,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+            if (compact) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  courseField,
+                  const SizedBox(height: 10),
+                  chapterButton,
+                ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(child: courseField),
+                const SizedBox(width: 10),
+                SizedBox(width: 180, height: 58, child: chapterButton),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.info_outline_rounded,
+              size: 18,
+              color: InstructorColors.teal,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                l10n.questionBankBulkChapterPerRow,
+                style: TextStyle(
+                  color: InstructorColors.textSecondaryColor(isDark),
+                  fontWeight: FontWeight.w700,
+                  height: 1.25,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Future<void> _showCreateChapter(
@@ -528,6 +586,113 @@ class _BulkFailureReportPanel extends StatelessWidget {
   }
 }
 
+class _BulkMutationOverlay extends StatelessWidget {
+  const _BulkMutationOverlay({required this.action, required this.isDark});
+
+  final String action;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label = _labelForAction(l10n, action);
+    return AbsorbPointer(
+      child: Container(
+        color: Colors.black.withValues(alpha: isDark ? 0.48 : 0.32),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(24),
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.96, end: 1),
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          builder: (context, scale, child) =>
+              Transform.scale(scale: scale, child: child),
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 360),
+              padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+              decoration: BoxDecoration(
+                color: InstructorColors.cardColor(isDark),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: InstructorColors.primary.withValues(
+                    alpha: isDark ? 0.35 : 0.18,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.14),
+                    blurRadius: 26,
+                    offset: const Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 42,
+                    height: 42,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                      color: InstructorColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    action == 'bulkCreate'
+                        ? label
+                        : 'Applying ${label.toLowerCase()}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    action == 'bulkCreate'
+                        ? 'Please wait until the questions are created.'
+                        : 'Please wait until the created questions are updated.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textSecondaryColor(isDark),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _labelForAction(AppLocalizations l10n, String action) {
+    switch (action) {
+      case 'bulkCreate':
+        return l10n.questionBankBulkCreate;
+      case 'submit-for-review':
+        return l10n.submitForReview;
+      case 'approve':
+        return l10n.qbApprove;
+      case 'reject':
+        return l10n.qbReject;
+      case 'archive':
+        return l10n.qbArchive;
+      case 'restore':
+        return l10n.qbRestore;
+      default:
+        return l10n.qbQuestionsBatchUpdated;
+    }
+  }
+}
+
 class _BulkCreateResultPanel extends StatelessWidget {
   const _BulkCreateResultPanel({required this.state});
 
@@ -634,26 +799,41 @@ class _BulkCreateResultPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              alignment: WrapAlignment.end,
-              children: [
-                _ResultActionButton(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final compact = constraints.maxWidth < 430;
+                final questionBankButton = _ResultActionButton(
                   label: l10n.questionBank,
                   icon: Icons.list_alt_rounded,
                   color: InstructorColors.primary,
                   isDark: isDark,
-                  onPressed: () => context.go('/instructor/question-bank'),
-                ),
-                _ResultActionButton(
+                  onPressed: () => _leaveBulkCreate(context, changed: true),
+                );
+                final createMoreButton = _ResultActionButton(
                   label: l10n.qbCreateMoreQuestions,
                   icon: Icons.add_rounded,
                   color: InstructorColors.accent,
                   isDark: isDark,
                   onPressed: cubit.resetAfterSuccess,
-                ),
-              ],
+                );
+                if (compact) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      questionBankButton,
+                      const SizedBox(height: 10),
+                      createMoreButton,
+                    ],
+                  );
+                }
+                return Row(
+                  children: [
+                    Expanded(child: questionBankButton),
+                    const SizedBox(width: 10),
+                    Expanded(child: createMoreButton),
+                  ],
+                );
+              },
             ),
           ],
         ),

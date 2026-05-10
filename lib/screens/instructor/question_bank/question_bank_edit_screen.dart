@@ -16,9 +16,14 @@ import '../../../widgets/instructor/shared/safe_feature_back.dart';
 import 'question_bank_create_screen.dart';
 
 class QuestionBankEditScreen extends StatelessWidget {
-  const QuestionBankEditScreen({super.key, required this.questionId});
+  const QuestionBankEditScreen({
+    super.key,
+    required this.questionId,
+    this.returnPath,
+  });
 
   final int questionId;
+  final String? returnPath;
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +33,37 @@ class QuestionBankEditScreen extends StatelessWidget {
           coreApiClient: CoreApiClient(),
         ),
       )..initializeEdit(questionId),
-      child: _QuestionBankEditView(questionId: questionId),
+      child: _QuestionBankEditView(
+        questionId: questionId,
+        returnPath: returnPath,
+      ),
     );
   }
 }
 
 class _QuestionBankEditView extends StatelessWidget {
-  const _QuestionBankEditView({required this.questionId});
+  const _QuestionBankEditView({required this.questionId, this.returnPath});
 
   final int questionId;
+  final String? returnPath;
 
   @override
   Widget build(BuildContext context) {
-    return _QuestionBankEditCourseLoader(questionId: questionId);
+    return _QuestionBankEditCourseLoader(
+      questionId: questionId,
+      returnPath: returnPath,
+    );
   }
 }
 
 class _QuestionBankEditCourseLoader extends StatefulWidget {
-  const _QuestionBankEditCourseLoader({required this.questionId});
+  const _QuestionBankEditCourseLoader({
+    required this.questionId,
+    this.returnPath,
+  });
 
   final int questionId;
+  final String? returnPath;
 
   @override
   State<_QuestionBankEditCourseLoader> createState() =>
@@ -94,10 +110,7 @@ class _QuestionBankEditCourseLoaderState
           ),
         ),
         leading: IconButton(
-          onPressed: () => safeFeatureBack(
-            context,
-            '/instructor/question-bank/${widget.questionId}',
-          ),
+          onPressed: () => safeFeatureBack(context, _resolvedReturnPath()),
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: InstructorColors.textPrimaryColor(isDark),
@@ -137,7 +150,7 @@ class _QuestionBankEditCourseLoaderState
               children: const [QuestionBankSkeletons(itemCount: 3)],
             );
           }
-          return QuestionFormBody(
+          final content = QuestionFormBody(
             courses: _courses,
             state: state,
             heroTitle: l10n.questionBankEditQuestion,
@@ -153,13 +166,34 @@ class _QuestionBankEditCourseLoaderState
               }
               final ok = await context.read<QuestionFormCubit>().submit();
               if (ok && context.mounted) {
-                context.go('/instructor/question-bank/${widget.questionId}');
+                context.go(_resolvedReturnPath());
               }
             },
+          );
+          return Stack(
+            children: [
+              content,
+              if (state.isSaving)
+                Positioned.fill(
+                  child: QuestionBankMutationOverlay(
+                    title: 'Saving question',
+                    message: 'Please wait until the question is saved.',
+                    isDark: isDark,
+                  ),
+                ),
+            ],
           );
         },
       ),
     );
+  }
+
+  String _resolvedReturnPath() {
+    final path = widget.returnPath?.trim();
+    if (path == null || path.isEmpty || !path.startsWith('/')) {
+      return '/instructor/question-bank/${widget.questionId}';
+    }
+    return path;
   }
 
   Future<bool> _confirmApprovedEdit(BuildContext context) async {

@@ -12,6 +12,7 @@ class ExamDraftEditorState extends Equatable {
   const ExamDraftEditorState({
     this.isLoading = false,
     this.isMutating = false,
+    this.activeMutationAction,
     this.errorMessage,
     this.actionMessage,
     this.draft,
@@ -33,6 +34,7 @@ class ExamDraftEditorState extends Equatable {
 
   final bool isLoading;
   final bool isMutating;
+  final String? activeMutationAction;
   final String? errorMessage;
   final String? actionMessage;
   final ExamDraftModel? draft;
@@ -56,10 +58,12 @@ class ExamDraftEditorState extends Equatable {
   ExamDraftEditorState copyWith({
     bool? isLoading,
     bool? isMutating,
+    String? activeMutationAction,
     String? errorMessage,
     String? actionMessage,
     bool clearError = false,
     bool clearAction = false,
+    bool clearMutationAction = false,
     ExamDraftModel? draft,
     ExamResponseModel? savedExam,
     ExamDraftValidationModel? validation,
@@ -85,6 +89,9 @@ class ExamDraftEditorState extends Equatable {
     return ExamDraftEditorState(
       isLoading: isLoading ?? this.isLoading,
       isMutating: isMutating ?? this.isMutating,
+      activeMutationAction: clearMutationAction
+          ? null
+          : activeMutationAction ?? this.activeMutationAction,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       actionMessage: clearAction ? null : actionMessage ?? this.actionMessage,
       draft: draft ?? this.draft,
@@ -121,6 +128,7 @@ class ExamDraftEditorState extends Equatable {
   List<Object?> get props => [
     isLoading,
     isMutating,
+    activeMutationAction,
     errorMessage,
     actionMessage,
     draft,
