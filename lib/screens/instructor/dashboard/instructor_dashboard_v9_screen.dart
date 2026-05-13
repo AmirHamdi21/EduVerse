@@ -654,29 +654,31 @@ class _InstructorV9QuickActionsCard extends StatelessWidget {
           const SizedBox(height: 10),
           LayoutBuilder(
             builder: (context, constraints) {
-              final columns = constraints.maxWidth < 320
-                  ? 3
-                  : constraints.maxWidth < 430
-                  ? 4
-                  : 5;
-              return GridView.builder(
-                itemCount: actions.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 6,
-                  childAspectRatio: constraints.maxWidth >= 700 ? 1.16 : 0.92,
+              final tileWidth = constraints.maxWidth < 330
+                  ? 58.0
+                  : constraints.maxWidth < 600
+                  ? 62.0
+                  : 68.0;
+              final tileHeight = constraints.maxWidth < 600 ? 62.0 : 66.0;
+              return Center(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  runAlignment: WrapAlignment.center,
+                  spacing: constraints.maxWidth < 600 ? 8 : 10,
+                  runSpacing: constraints.maxWidth < 600 ? 10 : 12,
+                  children: [
+                    for (final action in actions)
+                      SizedBox(
+                        width: tileWidth,
+                        height: tileHeight,
+                        child: _QuickActionTile(
+                          action: action,
+                          isDark: isDark,
+                          onTap: () => context.push(action.route),
+                        ),
+                      ),
+                  ],
                 ),
-                itemBuilder: (context, index) {
-                  final action = actions[index];
-                  return _QuickActionTile(
-                    action: action,
-                    isDark: isDark,
-                    onTap: () => context.push(action.route),
-                  );
-                },
               );
             },
           ),
