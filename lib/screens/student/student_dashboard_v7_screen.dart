@@ -447,16 +447,16 @@ class _StudentV7QuickAccessCard extends StatelessWidget {
           const SizedBox(height: 10),
           LayoutBuilder(
             builder: (context, constraints) {
-              final columns = constraints.maxWidth < 340 ? 3 : 4;
+              final columns = constraints.maxWidth < 320 ? 3 : 4;
               return GridView.builder(
                 itemCount: actions.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: columns,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: constraints.maxWidth >= 700 ? 1.05 : 0.82,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 6,
+                  childAspectRatio: constraints.maxWidth >= 700 ? 1.18 : 0.94,
                 ),
                 itemBuilder: (context, index) {
                   final action = actions[index];
@@ -935,15 +935,15 @@ class _QuickActionTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 color: action.color.withValues(alpha: isDark ? 0.18 : 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(action.icon, color: action.color, size: 18),
+              child: Icon(action.icon, color: action.color, size: 17),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 4),
             Text(
               action.label,
               maxLines: 2,
@@ -951,8 +951,8 @@ class _QuickActionTile extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: _DashboardColors.primaryText(isDark),
-                fontSize: 10,
-                height: 1.15,
+                fontSize: 9,
+                height: 1.08,
                 fontWeight: FontWeight.w700,
               ),
             ),

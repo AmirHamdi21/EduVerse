@@ -654,7 +654,7 @@ class _InstructorV9QuickActionsCard extends StatelessWidget {
           const SizedBox(height: 10),
           LayoutBuilder(
             builder: (context, constraints) {
-              final columns = constraints.maxWidth < 360
+              final columns = constraints.maxWidth < 320
                   ? 3
                   : constraints.maxWidth < 430
                   ? 4
@@ -665,9 +665,9 @@ class _InstructorV9QuickActionsCard extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: columns,
-                  mainAxisSpacing: 8,
+                  mainAxisSpacing: 10,
                   crossAxisSpacing: 6,
-                  childAspectRatio: constraints.maxWidth >= 700 ? 1.0 : 0.72,
+                  childAspectRatio: constraints.maxWidth >= 700 ? 1.16 : 0.92,
                 ),
                 itemBuilder: (context, index) {
                   final action = actions[index];
@@ -1455,15 +1455,15 @@ class _QuickActionTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 color: action.color.withValues(alpha: isDark ? 0.18 : 0.13),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(action.icon, color: action.color, size: 18),
+              child: Icon(action.icon, color: action.color, size: 17),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 4),
             Text(
               action.label,
               maxLines: 2,
@@ -1472,7 +1472,7 @@ class _QuickActionTile extends StatelessWidget {
               style: TextStyle(
                 color: _InstructorV9Colors.primaryText(isDark),
                 fontSize: 9,
-                height: 1.1,
+                height: 1.05,
                 fontWeight: FontWeight.w800,
               ),
             ),

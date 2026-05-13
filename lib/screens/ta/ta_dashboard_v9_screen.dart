@@ -560,16 +560,40 @@ class _TAV9QuickActionsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final actions = <_QuickAction>[
       _QuickAction(
+        icon: Icons.menu_book_outlined,
+        label: 'Courses',
+        route: '/ta/courses',
+        color: _TAV9Colors.primary,
+      ),
+      _QuickAction(
+        icon: Icons.assignment_outlined,
+        label: 'Tasks',
+        route: '/ta/assignments',
+        color: _TAV9Colors.warning,
+      ),
+      _QuickAction(
         icon: Icons.fact_check_outlined,
         label: 'Exam Grade',
         route: '/ta/grading',
-        color: _TAV9Colors.primary,
+        color: _TAV9Colors.secondary,
       ),
       _QuickAction(
         icon: Icons.science_outlined,
         label: 'Review Labs',
         route: '/ta/labs',
         color: _TAV9Colors.success,
+      ),
+      _QuickAction(
+        icon: Icons.quiz_outlined,
+        label: 'Quizzes',
+        route: '/ta/quiz-management',
+        color: const Color(0xFF7C3AED),
+      ),
+      _QuickAction(
+        icon: Icons.groups_outlined,
+        label: 'Roster',
+        route: '/ta/roster',
+        color: _TAV9Colors.teal,
       ),
       _QuickAction(
         icon: Icons.forum_outlined,
@@ -595,16 +619,16 @@ class _TAV9QuickActionsCard extends StatelessWidget {
           const SizedBox(height: 12),
           LayoutBuilder(
             builder: (context, constraints) {
-              final columns = constraints.maxWidth < 340 ? 2 : 4;
+              final columns = constraints.maxWidth < 320 ? 3 : 4;
               return GridView.builder(
                 itemCount: actions.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: columns,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: constraints.maxWidth >= 700 ? 1.12 : 0.76,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 6,
+                  childAspectRatio: constraints.maxWidth >= 700 ? 1.2 : 0.92,
                 ),
                 itemBuilder: (context, index) {
                   final action = actions[index];
@@ -1242,15 +1266,15 @@ class _QuickActionTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
               color: action.color.withValues(alpha: isDark ? 0.22 : 0.14),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(action.icon, color: action.color, size: 19),
+            child: Icon(action.icon, color: action.color, size: 17),
           ),
-          const SizedBox(height: 7),
+          const SizedBox(height: 5),
           Text(
             action.label,
             maxLines: 2,
@@ -1258,9 +1282,9 @@ class _QuickActionTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: _TAV9Colors.primaryText(isDark),
-              fontSize: 10,
+              fontSize: 9,
               fontWeight: FontWeight.w800,
-              height: 1.15,
+              height: 1.08,
             ),
           ),
         ],
