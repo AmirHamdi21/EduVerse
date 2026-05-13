@@ -24,6 +24,7 @@
   "signUp": "إنشاء حساب",
   "logout": "تسجيل الخروج",
   "profile": "الملف الشخصي",
+  "stats": "الإحصائيات",
   "settings": "الإعدادات",
   "language": "اللغة",
   "english": "English",
@@ -401,6 +402,82 @@
     }
   },
   "notificationYesterday": "أمس",
+  "sharedNotifTitle": "الإشعارات",
+  "sharedNotifSubtitle": "تحديثات مباشرة من مقرراتك ونشاطك",
+  "sharedNotifUnreadStat": "غير مقروء",
+  "sharedNotifTotalStat": "الإجمالي",
+  "sharedNotifReadRateStat": "نسبة القراءة",
+  "sharedNotifRealtimeConnected": "التحديث المباشر متصل",
+  "sharedNotifRealtimeDisconnected": "التحديث المباشر غير متصل",
+  "sharedNotifTools": "أدوات الإشعارات",
+  "sharedNotifSwipeSettings": "إعدادات السحب",
+  "sharedNotifSearchHint": "ابحث في الإشعارات والمقررات والرسائل",
+  "sharedNotifStatusFilter": "الحالة",
+  "sharedNotifTypeFilter": "النوع",
+  "sharedNotifAllStatuses": "كل الحالات",
+  "sharedNotifAllTypes": "كل الأنواع",
+  "sharedNotifCoursework": "واجبات ومعامل واختبارات",
+  "sharedNotifGrades": "الدرجات",
+  "sharedNotifDiscussions": "نقاشات ورسائل",
+  "sharedNotifSchedule": "جدول ومواعيد نهائية",
+  "sharedNotifAnnouncements": "إعلانات",
+  "sharedNotifSystem": "النظام",
+  "sharedNotifActions": "إجراءات الإشعار",
+  "sharedNotifOpen": "فتح",
+  "sharedNotifOpenDetails": "فتح التفاصيل",
+  "sharedNotifRelatedTo": "عنصر مرتبط",
+  "sharedNotifPriorityLow": "أولوية منخفضة",
+  "sharedNotifPriorityNormal": "أولوية عادية",
+  "sharedNotifPriorityHigh": "أولوية عالية",
+  "sharedNotifPriorityUrgent": "عاجل",
+  "sharedNotifTypeAnnouncement": "إعلان",
+  "sharedNotifTypeGrade": "درجة",
+  "sharedNotifTypeAssignment": "واجب",
+  "sharedNotifTypeMessage": "رسالة",
+  "sharedNotifTypeDeadline": "موعد نهائي",
+  "sharedNotifTypeLab": "معمل",
+  "sharedNotifTypeQuiz": "اختبار",
+  "sharedNotifTypeMaterial": "مادة تعليمية",
+  "sharedNotifTypeCommunity": "مجتمع",
+  "sharedNotifTypeDiscussion": "نقاش",
+  "sharedNotifTypeEnrollment": "تسجيل",
+  "sharedNotifTypeSchedule": "جدول",
+  "sharedNotifTypeOfficeHours": "ساعات مكتبية",
+  "sharedNotifTypeNotification": "إشعار",
+  "sharedNotifShowingCount": "{count, plural, =0{لا توجد إشعارات معروضة} =1{إشعار واحد معروض} two{إشعاران معروضان} few{{count} إشعارات معروضة} many{{count} إشعارًا معروضًا} other{{count} إشعار معروض}}",
+  "@sharedNotifShowingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharedNotifNoFilteredTitle": "لا توجد إشعارات مطابقة",
+  "sharedNotifNoFilteredSubtitle": "جرّب بحثًا آخر أو خفف الفلاتر المحددة.",
+  "sharedNotifLoadFailedTitle": "تعذر تحميل الإشعارات",
+  "sharedNotifDeleteTitle": "حذف الإشعار؟",
+  "sharedNotifDeleteMessage": "هل تريد حذف «{title}»؟ سيُزال من إشعاراتك.",
+  "@sharedNotifDeleteMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedNotifClearReadTitle": "مسح الإشعارات المقروءة؟",
+  "sharedNotifClearReadMessage": "سيتم حذف كل الإشعارات المقروءة القابلة للحذف.",
+  "sharedNotifClearAllTitle": "مسح كل الإشعارات؟",
+  "sharedNotifClearAllMessage": "سيتم حذف كل الإشعارات القابلة للحذف. لا يمكن التراجع عن هذا الإجراء.",
+  "sharedNotifMarkReadMessage": "هل تريد تعليم «{title}» كمقروء؟",
+  "@sharedNotifMarkReadMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedNotifSwipeUnsupported": "إجراء السحب هذا غير متاح لهذا الإشعار.",
+  "sharedNotifNoRoute": "لا توجد وجهة متاحة لهذا الإشعار.",
   
   "swipeActions": "إجراءات السحب",
   "customizeSwipeGestures": "تخصيص إيماءات سحب الإشعارات",

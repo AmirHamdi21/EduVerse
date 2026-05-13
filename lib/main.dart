@@ -138,6 +138,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late DeviceNotificationPreferencesService
   _deviceNotificationPreferencesService;
   StreamSubscription<String>? _sessionExpirySubscription;
+  StreamSubscription<AuthState>? _authStateSubscription;
   StreamSubscription<dynamic>? _incomingNotificationSubscription;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -181,6 +182,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _notificationCubit = NotificationCubit(
       notificationApiService: _notificationApiService,
       notificationSocketService: _notificationSocketService,
+      storageService: _storageService,
     )..loadNotifications();
     _tasksCubit = TasksCubit()..loadTasks();
     _gradesCubit = GradesCubit(
@@ -221,6 +223,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ),
           );
       });
+    });
+
+    _authStateSubscription = _authBloc.stream.listen((authState) {
+      if (authState is AuthAuthenticated) {
+        _notificationCubit.ensureCurrentSessionLoaded();
+        return;
+      }
+      if (authState is AuthUnauthenticated) {
+        _notificationCubit.clearForSignedOutSession();
+      }
     });
 
     _incomingNotificationSubscription = _notificationCubit.incomingNotifications
@@ -380,6 +392,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _quizManagementCubit.close();
     _studentQuizCubit.close();
     _sessionExpirySubscription?.cancel();
+    _authStateSubscription?.cancel();
     _incomingNotificationSubscription?.cancel();
     super.dispose();
   }

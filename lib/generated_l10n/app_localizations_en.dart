@@ -81,6 +81,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile => 'Profile';
 
   @override
+  String get stats => 'Stats';
+
+  @override
   String get settings => 'Settings';
 
   @override
@@ -1167,6 +1170,190 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationYesterday => 'Yesterday';
+
+  @override
+  String get sharedNotifTitle => 'Notifications';
+
+  @override
+  String get sharedNotifSubtitle =>
+      'Live updates from your courses and activity';
+
+  @override
+  String get sharedNotifUnreadStat => 'Unread';
+
+  @override
+  String get sharedNotifTotalStat => 'Total';
+
+  @override
+  String get sharedNotifReadRateStat => 'Read rate';
+
+  @override
+  String get sharedNotifRealtimeConnected => 'Realtime connected';
+
+  @override
+  String get sharedNotifRealtimeDisconnected => 'Realtime disconnected';
+
+  @override
+  String get sharedNotifTools => 'Notification tools';
+
+  @override
+  String get sharedNotifSwipeSettings => 'Swipe settings';
+
+  @override
+  String get sharedNotifSearchHint => 'Search notifications, courses, messages';
+
+  @override
+  String get sharedNotifStatusFilter => 'Status';
+
+  @override
+  String get sharedNotifTypeFilter => 'Type';
+
+  @override
+  String get sharedNotifAllStatuses => 'All statuses';
+
+  @override
+  String get sharedNotifAllTypes => 'All types';
+
+  @override
+  String get sharedNotifCoursework => 'Assignments, labs, quizzes';
+
+  @override
+  String get sharedNotifGrades => 'Grades';
+
+  @override
+  String get sharedNotifDiscussions => 'Discussions, messages';
+
+  @override
+  String get sharedNotifSchedule => 'Schedule, deadlines';
+
+  @override
+  String get sharedNotifAnnouncements => 'Announcements';
+
+  @override
+  String get sharedNotifSystem => 'System';
+
+  @override
+  String get sharedNotifActions => 'Notification actions';
+
+  @override
+  String get sharedNotifOpen => 'Open';
+
+  @override
+  String get sharedNotifOpenDetails => 'Open details';
+
+  @override
+  String get sharedNotifRelatedTo => 'Related item';
+
+  @override
+  String get sharedNotifPriorityLow => 'Low priority';
+
+  @override
+  String get sharedNotifPriorityNormal => 'Normal priority';
+
+  @override
+  String get sharedNotifPriorityHigh => 'High priority';
+
+  @override
+  String get sharedNotifPriorityUrgent => 'Urgent';
+
+  @override
+  String get sharedNotifTypeAnnouncement => 'Announcement';
+
+  @override
+  String get sharedNotifTypeGrade => 'Grade';
+
+  @override
+  String get sharedNotifTypeAssignment => 'Assignment';
+
+  @override
+  String get sharedNotifTypeMessage => 'Message';
+
+  @override
+  String get sharedNotifTypeDeadline => 'Deadline';
+
+  @override
+  String get sharedNotifTypeLab => 'Lab';
+
+  @override
+  String get sharedNotifTypeQuiz => 'Quiz';
+
+  @override
+  String get sharedNotifTypeMaterial => 'Material';
+
+  @override
+  String get sharedNotifTypeCommunity => 'Community';
+
+  @override
+  String get sharedNotifTypeDiscussion => 'Discussion';
+
+  @override
+  String get sharedNotifTypeEnrollment => 'Enrollment';
+
+  @override
+  String get sharedNotifTypeSchedule => 'Schedule';
+
+  @override
+  String get sharedNotifTypeOfficeHours => 'Office hours';
+
+  @override
+  String get sharedNotifTypeNotification => 'Notification';
+
+  @override
+  String sharedNotifShowingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count notifications shown',
+      one: '1 notification shown',
+      zero: 'No notifications shown',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sharedNotifNoFilteredTitle => 'No matching notifications';
+
+  @override
+  String get sharedNotifNoFilteredSubtitle =>
+      'Try another search or loosen the selected filters.';
+
+  @override
+  String get sharedNotifLoadFailedTitle => 'Notifications could not load';
+
+  @override
+  String get sharedNotifDeleteTitle => 'Delete notification?';
+
+  @override
+  String sharedNotifDeleteMessage(String title) {
+    return 'Delete \"$title\"? This removes it from your notifications.';
+  }
+
+  @override
+  String get sharedNotifClearReadTitle => 'Clear read notifications?';
+
+  @override
+  String get sharedNotifClearReadMessage =>
+      'This removes all read notifications that can be deleted.';
+
+  @override
+  String get sharedNotifClearAllTitle => 'Clear all notifications?';
+
+  @override
+  String get sharedNotifClearAllMessage =>
+      'This removes every notification that can be deleted. This action cannot be undone.';
+
+  @override
+  String sharedNotifMarkReadMessage(String title) {
+    return 'Mark \"$title\" as read?';
+  }
+
+  @override
+  String get sharedNotifSwipeUnsupported =>
+      'This swipe action is not available for this notification.';
+
+  @override
+  String get sharedNotifNoRoute =>
+      'No destination is available for this notification.';
 
   @override
   String get swipeActions => 'Swipe Actions';

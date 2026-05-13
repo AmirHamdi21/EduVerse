@@ -18,8 +18,10 @@ import 'package:edu_verse/models/core/enrollment_model.dart';
 import 'package:edu_verse/widgets/shared/current_user_identity.dart';
 import 'package:edu_verse/widgets/student/dashboard/student_dashboard_metrics.dart';
 import 'package:edu_verse/widgets/student/dashboard/student_drawer.dart';
+import 'package:edu_verse/widgets/student/dashboard/student_liquid_glass_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -32,6 +34,12 @@ class StudentDashboardV7Screen extends StatefulWidget {
 }
 
 class _StudentDashboardV7ScreenState extends State<StudentDashboardV7Screen> {
+  final ValueNotifier<bool> _bottomNavVisibleNotifier = ValueNotifier<bool>(
+    true,
+  );
+  ScrollDirection _lastBottomNavScrollDirection = ScrollDirection.idle;
+  double _bottomNavDirectionalScroll = 0;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +47,12 @@ class _StudentDashboardV7ScreenState extends State<StudentDashboardV7Screen> {
       if (!mounted) return;
       _ensureDashboardDataLoaded();
     });
+  }
+
+  @override
+  void dispose() {
+    _bottomNavVisibleNotifier.dispose();
+    super.dispose();
   }
 
   void _ensureDashboardDataLoaded() {
@@ -67,6 +81,60 @@ class _StudentDashboardV7ScreenState extends State<StudentDashboardV7Screen> {
     ]);
   }
 
+  bool _handleDashboardScroll(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) return false;
+
+    final pixels = notification.metrics.pixels;
+    if (pixels <= 16) {
+      _bottomNavDirectionalScroll = 0;
+      _lastBottomNavScrollDirection = ScrollDirection.idle;
+      _setBottomNavVisible(true);
+      return false;
+    }
+
+    if (notification is UserScrollNotification) {
+      if (notification.direction != _lastBottomNavScrollDirection) {
+        _bottomNavDirectionalScroll = 0;
+        _lastBottomNavScrollDirection = notification.direction;
+      }
+      if (notification.direction == ScrollDirection.idle && pixels <= 24) {
+        _setBottomNavVisible(true);
+      }
+    } else if (notification is ScrollUpdateNotification) {
+      final delta = notification.scrollDelta;
+      if (delta != null && delta.abs() > 3) {
+        final direction = delta > 0
+            ? ScrollDirection.reverse
+            : ScrollDirection.forward;
+        if (direction != _lastBottomNavScrollDirection) {
+          _bottomNavDirectionalScroll = 0;
+          _lastBottomNavScrollDirection = direction;
+        }
+        _bottomNavDirectionalScroll += delta.abs();
+
+        if (direction == ScrollDirection.reverse &&
+            pixels > 96 &&
+            _bottomNavDirectionalScroll > 46) {
+          _setBottomNavVisible(false);
+        } else if (direction == ScrollDirection.forward &&
+            _bottomNavDirectionalScroll > 18) {
+          _setBottomNavVisible(true);
+        }
+      }
+    } else if (notification is ScrollEndNotification && pixels <= 24) {
+      _bottomNavDirectionalScroll = 0;
+      _lastBottomNavScrollDirection = ScrollDirection.idle;
+      _setBottomNavVisible(true);
+    }
+
+    return false;
+  }
+
+  void _setBottomNavVisible(bool visible) {
+    if (_bottomNavVisibleNotifier.value == visible) return;
+    _bottomNavVisibleNotifier.value = visible;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -89,44 +157,50 @@ class _StudentDashboardV7ScreenState extends State<StudentDashboardV7Screen> {
               ),
               child: Stack(
                 children: [
-                  RefreshIndicator(
-                    color: _DashboardColors.primaryBlue,
-                    onRefresh: _refreshDashboard,
-                    child: ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: 92),
-                      children: [
-                        _CenteredDashboardContent(
-                          child: _StudentV7TopBar(isDark: isDark),
-                        ),
-                        _CenteredDashboardContent(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                            child: Column(
-                              children: [
-                                _StudentV7StatsCard(isDark: isDark),
-                                const SizedBox(height: 12),
-                                _StudentV7QuickAccessCard(isDark: isDark),
-                                const SizedBox(height: 12),
-                                _StudentV7CoursesCard(isDark: isDark),
-                                const SizedBox(height: 12),
-                                _StudentV7InsightCard(isDark: isDark),
-                                const SizedBox(height: 12),
-                                _StudentV7TodoCard(isDark: isDark),
-                                const SizedBox(height: 12),
-                                _StudentV7AskAiButton(isDark: isDark),
-                              ],
+                  NotificationListener<ScrollNotification>(
+                    onNotification: _handleDashboardScroll,
+                    child: RefreshIndicator(
+                      color: _DashboardColors.primaryBlue,
+                      onRefresh: _refreshDashboard,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(bottom: 76),
+                        children: [
+                          _CenteredDashboardContent(
+                            child: _StudentV7TopBar(isDark: isDark),
+                          ),
+                          _CenteredDashboardContent(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                              child: Column(
+                                children: [
+                                  _StudentV7StatsCard(isDark: isDark),
+                                  const SizedBox(height: 12),
+                                  _StudentV7QuickAccessCard(isDark: isDark),
+                                  const SizedBox(height: 12),
+                                  _StudentV7CoursesCard(isDark: isDark),
+                                  const SizedBox(height: 12),
+                                  _StudentV7InsightCard(isDark: isDark),
+                                  const SizedBox(height: 12),
+                                  _StudentV7TodoCard(isDark: isDark),
+                                  const SizedBox(height: 12),
+                                  _StudentV7AskAiButton(isDark: isDark),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: _StudentV7BottomNav(isDark: isDark),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _bottomNavVisibleNotifier,
+                    builder: (context, isBottomNavVisible, child) {
+                      return StudentLiquidGlassBottomNav(
+                        isDark: isDark,
+                        isVisible: isBottomNavVisible,
+                      );
+                    },
                   ),
                 ],
               ),
@@ -457,7 +531,7 @@ class _StudentV7QuickAccessCard extends StatelessWidget {
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   runAlignment: WrapAlignment.center,
-                  spacing: constraints.maxWidth < 600 ? 8 : 10,
+                  spacing: constraints.maxWidth < 600 ? 10 : 12,
                   runSpacing: constraints.maxWidth < 600 ? 10 : 12,
                   children: [
                     for (final action in actions)
@@ -735,58 +809,6 @@ class _StudentV7AskAiButton extends StatelessWidget {
   }
 }
 
-class _StudentV7BottomNav extends StatelessWidget {
-  final bool isDark;
-
-  const _StudentV7BottomNav({required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final items = [
-      _BottomNavItem(Icons.home_rounded, l10n.dashboard, '/dashboard', true),
-      _BottomNavItem(Icons.menu_book_outlined, l10n.courses, '/courses', false),
-      _BottomNavItem(Icons.psychology_outlined, 'AI', '/ai-chat', false),
-      _BottomNavItem(Icons.bar_chart_rounded, l10n.grades, '/grades', false),
-      _BottomNavItem(Icons.person_rounded, 'Profile', '/profile', false),
-    ];
-
-    return SafeArea(
-      top: false,
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF101827) : Colors.white,
-          border: Border(
-            top: BorderSide(color: _DashboardColors.hairline(isDark)),
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width >= 700 ? 760 : 460,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: items
-                  .map(
-                    (item) => _BottomNavButton(
-                      item: item,
-                      isDark: isDark,
-                      onTap: () {
-                        if (!item.isActive) context.push(item.route);
-                      },
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _GlassPanel extends StatelessWidget {
   final bool isDark;
   final EdgeInsetsGeometry padding;
@@ -957,7 +979,7 @@ class _QuickActionTile extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: _DashboardColors.primaryText(isDark),
-                fontSize: 9,
+                fontSize: 8,
                 height: 1.08,
                 fontWeight: FontWeight.w700,
               ),
@@ -1357,51 +1379,6 @@ class _CompactLoadingRows extends StatelessWidget {
   }
 }
 
-class _BottomNavButton extends StatelessWidget {
-  final _BottomNavItem item;
-  final bool isDark;
-  final VoidCallback onTap;
-
-  const _BottomNavButton({
-    required this.item,
-    required this.isDark,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = item.isActive
-        ? _DashboardColors.primaryBlue
-        : _DashboardColors.mutedText(isDark);
-    return Expanded(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(item.icon, color: color, size: 21),
-              const SizedBox(height: 2),
-              Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _DashboardData {
   static String shortDueLabel(DateTime dueDate) {
     final now = DateTime.now();
@@ -1538,13 +1515,4 @@ class _ReminderItem {
     required this.dueDate,
     required this.isUrgent,
   });
-}
-
-class _BottomNavItem {
-  final IconData icon;
-  final String label;
-  final String route;
-  final bool isActive;
-
-  const _BottomNavItem(this.icon, this.label, this.route, this.isActive);
 }

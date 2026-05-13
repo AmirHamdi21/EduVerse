@@ -81,6 +81,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profile => 'الملف الشخصي';
 
   @override
+  String get stats => 'الإحصائيات';
+
+  @override
   String get settings => 'الإعدادات';
 
   @override
@@ -1163,6 +1166,191 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationYesterday => 'أمس';
+
+  @override
+  String get sharedNotifTitle => 'الإشعارات';
+
+  @override
+  String get sharedNotifSubtitle => 'تحديثات مباشرة من مقرراتك ونشاطك';
+
+  @override
+  String get sharedNotifUnreadStat => 'غير مقروء';
+
+  @override
+  String get sharedNotifTotalStat => 'الإجمالي';
+
+  @override
+  String get sharedNotifReadRateStat => 'نسبة القراءة';
+
+  @override
+  String get sharedNotifRealtimeConnected => 'التحديث المباشر متصل';
+
+  @override
+  String get sharedNotifRealtimeDisconnected => 'التحديث المباشر غير متصل';
+
+  @override
+  String get sharedNotifTools => 'أدوات الإشعارات';
+
+  @override
+  String get sharedNotifSwipeSettings => 'إعدادات السحب';
+
+  @override
+  String get sharedNotifSearchHint => 'ابحث في الإشعارات والمقررات والرسائل';
+
+  @override
+  String get sharedNotifStatusFilter => 'الحالة';
+
+  @override
+  String get sharedNotifTypeFilter => 'النوع';
+
+  @override
+  String get sharedNotifAllStatuses => 'كل الحالات';
+
+  @override
+  String get sharedNotifAllTypes => 'كل الأنواع';
+
+  @override
+  String get sharedNotifCoursework => 'واجبات ومعامل واختبارات';
+
+  @override
+  String get sharedNotifGrades => 'الدرجات';
+
+  @override
+  String get sharedNotifDiscussions => 'نقاشات ورسائل';
+
+  @override
+  String get sharedNotifSchedule => 'جدول ومواعيد نهائية';
+
+  @override
+  String get sharedNotifAnnouncements => 'إعلانات';
+
+  @override
+  String get sharedNotifSystem => 'النظام';
+
+  @override
+  String get sharedNotifActions => 'إجراءات الإشعار';
+
+  @override
+  String get sharedNotifOpen => 'فتح';
+
+  @override
+  String get sharedNotifOpenDetails => 'فتح التفاصيل';
+
+  @override
+  String get sharedNotifRelatedTo => 'عنصر مرتبط';
+
+  @override
+  String get sharedNotifPriorityLow => 'أولوية منخفضة';
+
+  @override
+  String get sharedNotifPriorityNormal => 'أولوية عادية';
+
+  @override
+  String get sharedNotifPriorityHigh => 'أولوية عالية';
+
+  @override
+  String get sharedNotifPriorityUrgent => 'عاجل';
+
+  @override
+  String get sharedNotifTypeAnnouncement => 'إعلان';
+
+  @override
+  String get sharedNotifTypeGrade => 'درجة';
+
+  @override
+  String get sharedNotifTypeAssignment => 'واجب';
+
+  @override
+  String get sharedNotifTypeMessage => 'رسالة';
+
+  @override
+  String get sharedNotifTypeDeadline => 'موعد نهائي';
+
+  @override
+  String get sharedNotifTypeLab => 'معمل';
+
+  @override
+  String get sharedNotifTypeQuiz => 'اختبار';
+
+  @override
+  String get sharedNotifTypeMaterial => 'مادة تعليمية';
+
+  @override
+  String get sharedNotifTypeCommunity => 'مجتمع';
+
+  @override
+  String get sharedNotifTypeDiscussion => 'نقاش';
+
+  @override
+  String get sharedNotifTypeEnrollment => 'تسجيل';
+
+  @override
+  String get sharedNotifTypeSchedule => 'جدول';
+
+  @override
+  String get sharedNotifTypeOfficeHours => 'ساعات مكتبية';
+
+  @override
+  String get sharedNotifTypeNotification => 'إشعار';
+
+  @override
+  String sharedNotifShowingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إشعار معروض',
+      many: '$count إشعارًا معروضًا',
+      few: '$count إشعارات معروضة',
+      two: 'إشعاران معروضان',
+      one: 'إشعار واحد معروض',
+      zero: 'لا توجد إشعارات معروضة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sharedNotifNoFilteredTitle => 'لا توجد إشعارات مطابقة';
+
+  @override
+  String get sharedNotifNoFilteredSubtitle =>
+      'جرّب بحثًا آخر أو خفف الفلاتر المحددة.';
+
+  @override
+  String get sharedNotifLoadFailedTitle => 'تعذر تحميل الإشعارات';
+
+  @override
+  String get sharedNotifDeleteTitle => 'حذف الإشعار؟';
+
+  @override
+  String sharedNotifDeleteMessage(String title) {
+    return 'هل تريد حذف «$title»؟ سيُزال من إشعاراتك.';
+  }
+
+  @override
+  String get sharedNotifClearReadTitle => 'مسح الإشعارات المقروءة؟';
+
+  @override
+  String get sharedNotifClearReadMessage =>
+      'سيتم حذف كل الإشعارات المقروءة القابلة للحذف.';
+
+  @override
+  String get sharedNotifClearAllTitle => 'مسح كل الإشعارات؟';
+
+  @override
+  String get sharedNotifClearAllMessage =>
+      'سيتم حذف كل الإشعارات القابلة للحذف. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String sharedNotifMarkReadMessage(String title) {
+    return 'هل تريد تعليم «$title» كمقروء؟';
+  }
+
+  @override
+  String get sharedNotifSwipeUnsupported =>
+      'إجراء السحب هذا غير متاح لهذا الإشعار.';
+
+  @override
+  String get sharedNotifNoRoute => 'لا توجد وجهة متاحة لهذا الإشعار.';
 
   @override
   String get swipeActions => 'إجراءات السحب';

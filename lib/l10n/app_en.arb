@@ -24,6 +24,7 @@
   "signUp": "Sign Up",
   "logout": "Logout",
   "profile": "Profile",
+  "stats": "Stats",
   "settings": "Settings",
   "language": "Language",
   "english": "English",
@@ -401,6 +402,82 @@
     }
   },
   "notificationYesterday": "Yesterday",
+  "sharedNotifTitle": "Notifications",
+  "sharedNotifSubtitle": "Live updates from your courses and activity",
+  "sharedNotifUnreadStat": "Unread",
+  "sharedNotifTotalStat": "Total",
+  "sharedNotifReadRateStat": "Read rate",
+  "sharedNotifRealtimeConnected": "Realtime connected",
+  "sharedNotifRealtimeDisconnected": "Realtime disconnected",
+  "sharedNotifTools": "Notification tools",
+  "sharedNotifSwipeSettings": "Swipe settings",
+  "sharedNotifSearchHint": "Search notifications, courses, messages",
+  "sharedNotifStatusFilter": "Status",
+  "sharedNotifTypeFilter": "Type",
+  "sharedNotifAllStatuses": "All statuses",
+  "sharedNotifAllTypes": "All types",
+  "sharedNotifCoursework": "Assignments, labs, quizzes",
+  "sharedNotifGrades": "Grades",
+  "sharedNotifDiscussions": "Discussions, messages",
+  "sharedNotifSchedule": "Schedule, deadlines",
+  "sharedNotifAnnouncements": "Announcements",
+  "sharedNotifSystem": "System",
+  "sharedNotifActions": "Notification actions",
+  "sharedNotifOpen": "Open",
+  "sharedNotifOpenDetails": "Open details",
+  "sharedNotifRelatedTo": "Related item",
+  "sharedNotifPriorityLow": "Low priority",
+  "sharedNotifPriorityNormal": "Normal priority",
+  "sharedNotifPriorityHigh": "High priority",
+  "sharedNotifPriorityUrgent": "Urgent",
+  "sharedNotifTypeAnnouncement": "Announcement",
+  "sharedNotifTypeGrade": "Grade",
+  "sharedNotifTypeAssignment": "Assignment",
+  "sharedNotifTypeMessage": "Message",
+  "sharedNotifTypeDeadline": "Deadline",
+  "sharedNotifTypeLab": "Lab",
+  "sharedNotifTypeQuiz": "Quiz",
+  "sharedNotifTypeMaterial": "Material",
+  "sharedNotifTypeCommunity": "Community",
+  "sharedNotifTypeDiscussion": "Discussion",
+  "sharedNotifTypeEnrollment": "Enrollment",
+  "sharedNotifTypeSchedule": "Schedule",
+  "sharedNotifTypeOfficeHours": "Office hours",
+  "sharedNotifTypeNotification": "Notification",
+  "sharedNotifShowingCount": "{count, plural, =0{No notifications shown} =1{1 notification shown} other{{count} notifications shown}}",
+  "@sharedNotifShowingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharedNotifNoFilteredTitle": "No matching notifications",
+  "sharedNotifNoFilteredSubtitle": "Try another search or loosen the selected filters.",
+  "sharedNotifLoadFailedTitle": "Notifications could not load",
+  "sharedNotifDeleteTitle": "Delete notification?",
+  "sharedNotifDeleteMessage": "Delete \"{title}\"? This removes it from your notifications.",
+  "@sharedNotifDeleteMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedNotifClearReadTitle": "Clear read notifications?",
+  "sharedNotifClearReadMessage": "This removes all read notifications that can be deleted.",
+  "sharedNotifClearAllTitle": "Clear all notifications?",
+  "sharedNotifClearAllMessage": "This removes every notification that can be deleted. This action cannot be undone.",
+  "sharedNotifMarkReadMessage": "Mark \"{title}\" as read?",
+  "@sharedNotifMarkReadMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedNotifSwipeUnsupported": "This swipe action is not available for this notification.",
+  "sharedNotifNoRoute": "No destination is available for this notification.",
   
   "swipeActions": "Swipe Actions",
   "customizeSwipeGestures": "Customize notification swipe gestures",

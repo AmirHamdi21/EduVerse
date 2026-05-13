@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get profile;
 
+  /// No description provided for @stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get stats;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
@@ -2275,6 +2281,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yesterday'**
   String get notificationYesterday;
+
+  /// No description provided for @sharedNotifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get sharedNotifTitle;
+
+  /// No description provided for @sharedNotifSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live updates from your courses and activity'**
+  String get sharedNotifSubtitle;
+
+  /// No description provided for @sharedNotifUnreadStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get sharedNotifUnreadStat;
+
+  /// No description provided for @sharedNotifTotalStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get sharedNotifTotalStat;
+
+  /// No description provided for @sharedNotifReadRateStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Read rate'**
+  String get sharedNotifReadRateStat;
+
+  /// No description provided for @sharedNotifRealtimeConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Realtime connected'**
+  String get sharedNotifRealtimeConnected;
+
+  /// No description provided for @sharedNotifRealtimeDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Realtime disconnected'**
+  String get sharedNotifRealtimeDisconnected;
+
+  /// No description provided for @sharedNotifTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification tools'**
+  String get sharedNotifTools;
+
+  /// No description provided for @sharedNotifSwipeSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe settings'**
+  String get sharedNotifSwipeSettings;
+
+  /// No description provided for @sharedNotifSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notifications, courses, messages'**
+  String get sharedNotifSearchHint;
+
+  /// No description provided for @sharedNotifStatusFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get sharedNotifStatusFilter;
+
+  /// No description provided for @sharedNotifTypeFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get sharedNotifTypeFilter;
+
+  /// No description provided for @sharedNotifAllStatuses.
+  ///
+  /// In en, this message translates to:
+  /// **'All statuses'**
+  String get sharedNotifAllStatuses;
+
+  /// No description provided for @sharedNotifAllTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get sharedNotifAllTypes;
+
+  /// No description provided for @sharedNotifCoursework.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments, labs, quizzes'**
+  String get sharedNotifCoursework;
+
+  /// No description provided for @sharedNotifGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Grades'**
+  String get sharedNotifGrades;
+
+  /// No description provided for @sharedNotifDiscussions.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussions, messages'**
+  String get sharedNotifDiscussions;
+
+  /// No description provided for @sharedNotifSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule, deadlines'**
+  String get sharedNotifSchedule;
+
+  /// No description provided for @sharedNotifAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get sharedNotifAnnouncements;
+
+  /// No description provided for @sharedNotifSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get sharedNotifSystem;
+
+  /// No description provided for @sharedNotifActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification actions'**
+  String get sharedNotifActions;
+
+  /// No description provided for @sharedNotifOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get sharedNotifOpen;
+
+  /// No description provided for @sharedNotifOpenDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Open details'**
+  String get sharedNotifOpenDetails;
+
+  /// No description provided for @sharedNotifRelatedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Related item'**
+  String get sharedNotifRelatedTo;
+
+  /// No description provided for @sharedNotifPriorityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low priority'**
+  String get sharedNotifPriorityLow;
+
+  /// No description provided for @sharedNotifPriorityNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal priority'**
+  String get sharedNotifPriorityNormal;
+
+  /// No description provided for @sharedNotifPriorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High priority'**
+  String get sharedNotifPriorityHigh;
+
+  /// No description provided for @sharedNotifPriorityUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get sharedNotifPriorityUrgent;
+
+  /// No description provided for @sharedNotifTypeAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement'**
+  String get sharedNotifTypeAnnouncement;
+
+  /// No description provided for @sharedNotifTypeGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade'**
+  String get sharedNotifTypeGrade;
+
+  /// No description provided for @sharedNotifTypeAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment'**
+  String get sharedNotifTypeAssignment;
+
+  /// No description provided for @sharedNotifTypeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get sharedNotifTypeMessage;
+
+  /// No description provided for @sharedNotifTypeDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline'**
+  String get sharedNotifTypeDeadline;
+
+  /// No description provided for @sharedNotifTypeLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab'**
+  String get sharedNotifTypeLab;
+
+  /// No description provided for @sharedNotifTypeQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz'**
+  String get sharedNotifTypeQuiz;
+
+  /// No description provided for @sharedNotifTypeMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get sharedNotifTypeMaterial;
+
+  /// No description provided for @sharedNotifTypeCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get sharedNotifTypeCommunity;
+
+  /// No description provided for @sharedNotifTypeDiscussion.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion'**
+  String get sharedNotifTypeDiscussion;
+
+  /// No description provided for @sharedNotifTypeEnrollment.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrollment'**
+  String get sharedNotifTypeEnrollment;
+
+  /// No description provided for @sharedNotifTypeSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get sharedNotifTypeSchedule;
+
+  /// No description provided for @sharedNotifTypeOfficeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Office hours'**
+  String get sharedNotifTypeOfficeHours;
+
+  /// No description provided for @sharedNotifTypeNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get sharedNotifTypeNotification;
+
+  /// No description provided for @sharedNotifShowingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No notifications shown} =1{1 notification shown} other{{count} notifications shown}}'**
+  String sharedNotifShowingCount(int count);
+
+  /// No description provided for @sharedNotifNoFilteredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching notifications'**
+  String get sharedNotifNoFilteredTitle;
+
+  /// No description provided for @sharedNotifNoFilteredSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another search or loosen the selected filters.'**
+  String get sharedNotifNoFilteredSubtitle;
+
+  /// No description provided for @sharedNotifLoadFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications could not load'**
+  String get sharedNotifLoadFailedTitle;
+
+  /// No description provided for @sharedNotifDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete notification?'**
+  String get sharedNotifDeleteTitle;
+
+  /// No description provided for @sharedNotifDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{title}\"? This removes it from your notifications.'**
+  String sharedNotifDeleteMessage(String title);
+
+  /// No description provided for @sharedNotifClearReadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear read notifications?'**
+  String get sharedNotifClearReadTitle;
+
+  /// No description provided for @sharedNotifClearReadMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes all read notifications that can be deleted.'**
+  String get sharedNotifClearReadMessage;
+
+  /// No description provided for @sharedNotifClearAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all notifications?'**
+  String get sharedNotifClearAllTitle;
+
+  /// No description provided for @sharedNotifClearAllMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes every notification that can be deleted. This action cannot be undone.'**
+  String get sharedNotifClearAllMessage;
+
+  /// No description provided for @sharedNotifMarkReadMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark \"{title}\" as read?'**
+  String sharedNotifMarkReadMessage(String title);
+
+  /// No description provided for @sharedNotifSwipeUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This swipe action is not available for this notification.'**
+  String get sharedNotifSwipeUnsupported;
+
+  /// No description provided for @sharedNotifNoRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'No destination is available for this notification.'**
+  String get sharedNotifNoRoute;
 
   /// No description provided for @swipeActions.
   ///
