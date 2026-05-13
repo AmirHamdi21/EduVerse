@@ -191,7 +191,7 @@ class ExamGenerationSectionCard extends StatelessWidget {
                         Align(
                           alignment: AlignmentDirectional.centerStart,
                           child: _AddButton(
-                            label: l10n.examGenerationRules,
+                            label: l10n.examAddRule,
                             onPressed: chapters.isEmpty
                                 ? null
                                 : () => _emit(

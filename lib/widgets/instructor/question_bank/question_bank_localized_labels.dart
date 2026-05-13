@@ -97,6 +97,12 @@ String localizedGroupType(AppLocalizations l10n, QuestionGroupType value) {
 }
 
 String localizedQuestionBankMessage(AppLocalizations l10n, String message) {
+  if (message.startsWith('questionStatusUpdated:')) {
+    final statusValue = message.substring('questionStatusUpdated:'.length);
+    final status = QuestionBankStatus.fromJson(statusValue);
+    return '${l10n.status} ${l10n.updated.toLowerCase()}: ${localizedQuestionStatus(l10n, status)}';
+  }
+
   switch (message) {
     case 'chapterCreated':
       return l10n.qbChapterCreated;
@@ -104,6 +110,12 @@ String localizedQuestionBankMessage(AppLocalizations l10n, String message) {
       return l10n.qbChapterUpdated;
     case 'chapterDeleted':
       return l10n.qbChapterDeleted;
+    case 'chapterCreateFailed':
+      return 'Could not create chapter.';
+    case 'chapterUpdateFailed':
+      return 'Could not update chapter.';
+    case 'chapterDeleteFailed':
+      return 'Could not delete chapter.';
     case 'bulkMaxRows':
       return l10n.qbMaxRowsWarning;
     case 'bulkRowsInvalid':
@@ -113,29 +125,105 @@ String localizedQuestionBankMessage(AppLocalizations l10n, String message) {
     case 'bulkCreatePartialSuccess':
       return l10n.qbBulkCreatePartialSuccess;
     case 'questionImageUploaded':
-      return l10n.qbUploadQuestionImage;
+      return '${l10n.questionBankImageQuestion} ${l10n.uploaded.toLowerCase()}';
     case 'questionImageRemoved':
       return l10n.qbQuestionImageRemoved;
     case 'groupImageUploaded':
       return l10n.qbGroupImageUploaded;
+    case 'draftSaved':
+      return l10n.draftSaved;
+    case 'questionSaved':
+      return '${l10n.question} ${l10n.updated.toLowerCase()}';
     case 'questionUpdated':
-      return l10n.questionBankQuestionDetails;
+      return l10n.qbQuestionsBatchUpdated;
+    case 'questionStatusNotConfirmed':
+      return '${l10n.operationFailed}: ${l10n.status.toLowerCase()} ${l10n.updated.toLowerCase()} was not confirmed.';
+    case 'questionLoadFailed':
+      return 'Could not load question details.';
+    case 'questionStatusFailed':
+      return 'Could not update question status.';
+    case 'questionDeleteFailed':
+      return 'Could not delete question.';
+    case 'questionsDeleteFailed':
+      return 'Could not delete selected questions.';
+    case 'questionStatus:submit-for-review':
+      return l10n.submitForReview;
+    case 'questionStatus:approve':
+      return l10n.qbApprove;
+    case 'questionStatus:reject':
+      return l10n.qbReject;
+    case 'questionStatus:archive':
+      return l10n.qbArchive;
+    case 'questionStatus:restore':
+      return l10n.qbRestore;
     case 'questionDeleted':
-      return l10n.qbDeleteQuestion;
+      return l10n.questionRemoved;
+    case 'questionsDeleted':
+      return 'Selected questions deleted';
     case 'questionsBatchUpdated':
       return l10n.qbQuestionsBatchUpdated;
-    case 'attachmentUpdated':
-      return l10n.qbEditAttachment;
+    case 'questionsStatusUpdated':
+      return '${l10n.questions} ${l10n.status.toLowerCase()} ${l10n.updated.toLowerCase()}';
+    case 'attachmentAdded':
+      return l10n.attachmentAdded;
+    case 'attachmentUploaded':
+      return l10n.uploadComplete;
+    case 'attachmentMetadataUpdated':
+      return '${l10n.examQuestionAttachments} ${l10n.updated.toLowerCase()}';
+    case 'attachmentReordered':
+      return '${l10n.attachments} ${l10n.updated.toLowerCase()}';
     case 'attachmentRemoved':
-      return l10n.qbRemoveAttachment;
+      return l10n.attachmentRemoved;
+    case 'attachmentAddFailed':
+      return 'Could not add attachment.';
+    case 'attachmentUploadFailed':
+      return 'Could not upload attachment.';
+    case 'attachmentUpdateFailed':
+      return 'Could not update attachment.';
+    case 'attachmentReorderFailed':
+      return 'Could not reorder attachments.';
+    case 'attachmentRemoveFailed':
+      return 'Could not remove attachment.';
     case 'groupSaved':
       return l10n.qbGroupSaved;
     case 'groupDeleted':
-      return l10n.qbDeleteGroup;
+      return 'Group deleted';
+    case 'groupedQuestionsCreated':
+      return 'Grouped questions created';
+    case 'groupQuestionsLinked':
+      return 'Questions linked to group';
     case 'groupQuestionsAdded':
-      return l10n.qbGroupedBatchCreate;
+      return 'Questions added to group';
+    case 'groupQuestionRemoved':
+      return 'Question removed from group';
     case 'groupReordered':
-      return l10n.qbReorderGroupQuestions;
+      return 'Group question order updated';
+    case 'groupLoadFailed':
+      return 'Could not load group.';
+    case 'groupCreateFailed':
+      return 'Could not create group.';
+    case 'groupUpdateFailed':
+      return 'Could not update group.';
+    case 'groupImageUploadFailed':
+      return 'Could not upload group image.';
+    case 'questionImageUploadFailed':
+      return 'Could not upload question image.';
+    case 'questionImageDeleteFailed':
+      return 'Could not remove question image.';
+    case 'groupDeleteFailed':
+      return 'Could not delete group.';
+    case 'groupedBatchFailed':
+      return 'Could not create grouped questions.';
+    case 'bulkStatusFailed':
+      return 'Could not update question status.';
+    case 'groupLinkQuestionsFailed':
+      return 'Could not link questions to group.';
+    case 'groupReorderInvalid':
+      return 'Question order changed. Refresh and try again.';
+    case 'groupReorderFailed':
+      return 'Could not update question order.';
+    case 'groupQuestionRemoveFailed':
+      return 'Could not remove question from group.';
     default:
       return message;
   }

@@ -117,7 +117,11 @@ class _MathAwareText extends StatelessWidget {
               }
               return WidgetSpan(
                 alignment: PlaceholderAlignment.middle,
-                child: _InlineMath(text: segment.text, style: style),
+                child: _InlineMath(
+                  text: segment.text,
+                  style: style,
+                  maxWidth: maxWidth,
+                ),
               );
             }).toList(),
           ),
@@ -155,20 +159,35 @@ class _MathAwareText extends StatelessWidget {
 }
 
 class _InlineMath extends StatelessWidget {
-  const _InlineMath({required this.text, required this.style});
+  const _InlineMath({
+    required this.text,
+    required this.style,
+    required this.maxWidth,
+  });
 
   final String text;
   final TextStyle style;
+  final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
-    return Math.tex(
+    final math = Math.tex(
       _normalizeLatexExpression(text),
       mathStyle: MathStyle.text,
       textStyle: style.copyWith(fontStyle: FontStyle.normal),
       onErrorFallback: (_) => Text(
         _prettifyLatex(text),
         style: style.copyWith(fontStyle: FontStyle.italic),
+      ),
+    );
+    if (!maxWidth.isFinite) return math;
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxWidth),
+      child: ClipRect(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: math,
+        ),
       ),
     );
   }

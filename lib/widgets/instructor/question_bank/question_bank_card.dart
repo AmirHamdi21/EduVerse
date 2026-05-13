@@ -13,6 +13,7 @@ class QuestionBankCard extends StatelessWidget {
     required this.onTap,
     required this.onEdit,
     this.onDelete,
+    this.onUnlinkFromGroup,
     this.isSelected = false,
     this.selectionMode = false,
     this.onSelectionChanged,
@@ -22,6 +23,7 @@ class QuestionBankCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onUnlinkFromGroup;
   final bool isSelected;
   final bool selectionMode;
   final ValueChanged<bool?>? onSelectionChanged;
@@ -109,8 +111,10 @@ class QuestionBankCard extends StatelessWidget {
                     _CardQuickActions(
                       editTooltip: l10n.edit,
                       deleteTooltip: l10n.qbDeleteQuestion,
+                      unlinkTooltip: l10n.qbRemoveFromGroup,
                       onEdit: onEdit,
                       onDelete: onDelete,
+                      onUnlinkFromGroup: onUnlinkFromGroup,
                       isDark: isDark,
                     ),
                   ],
@@ -153,6 +157,12 @@ class QuestionBankCard extends StatelessWidget {
               : () {
                   Navigator.of(sheetContext).pop();
                   onDelete!();
+                },
+          onUnlinkFromGroup: onUnlinkFromGroup == null
+              ? null
+              : () {
+                  Navigator.of(sheetContext).pop();
+                  onUnlinkFromGroup!();
                 },
         );
       },
@@ -451,15 +461,19 @@ class _CardQuickActions extends StatelessWidget {
   const _CardQuickActions({
     required this.editTooltip,
     required this.deleteTooltip,
+    required this.unlinkTooltip,
     required this.onEdit,
     required this.onDelete,
+    required this.onUnlinkFromGroup,
     required this.isDark,
   });
 
   final String editTooltip;
   final String deleteTooltip;
+  final String unlinkTooltip;
   final VoidCallback onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onUnlinkFromGroup;
   final bool isDark;
 
   @override
@@ -474,6 +488,16 @@ class _CardQuickActions extends StatelessWidget {
           isDark: isDark,
           onPressed: onEdit,
         ),
+        if (onUnlinkFromGroup != null) ...[
+          const SizedBox(height: 8),
+          _ActionIconButton(
+            tooltip: unlinkTooltip,
+            icon: Icons.link_off_rounded,
+            color: InstructorColors.warning,
+            isDark: isDark,
+            onPressed: onUnlinkFromGroup!,
+          ),
+        ],
         if (onDelete != null) ...[
           const SizedBox(height: 8),
           _ActionIconButton(
@@ -533,6 +557,7 @@ class _QuestionActionSheet extends StatelessWidget {
     required this.onView,
     required this.onEdit,
     required this.onDelete,
+    required this.onUnlinkFromGroup,
   });
 
   final String title;
@@ -541,6 +566,7 @@ class _QuestionActionSheet extends StatelessWidget {
   final VoidCallback onView;
   final VoidCallback onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onUnlinkFromGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -630,6 +656,14 @@ class _QuestionActionSheet extends StatelessWidget {
             isDark: isDark,
             onTap: onEdit,
           ),
+          if (onUnlinkFromGroup != null)
+            _SheetActionTile(
+              label: l10n.qbRemoveFromGroup,
+              icon: Icons.link_off_rounded,
+              color: InstructorColors.warning,
+              isDark: isDark,
+              onTap: onUnlinkFromGroup!,
+            ),
           if (onDelete != null)
             _SheetActionTile(
               label: l10n.qbDeleteQuestion,

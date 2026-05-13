@@ -6,6 +6,7 @@ import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
+import 'question_group_cubit.dart';
 import 'question_detail_state.dart';
 
 class QuestionDetailCubit extends Cubit<QuestionDetailState>
@@ -20,10 +21,12 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
   final QuestionBankService _questionBankService;
   final EnrollmentService? _enrollmentService;
 
-  Future<void> load(int questionId) async {
-    emitIfOpen(
-      state.copyWith(isLoading: true, clearError: true, clearAction: true),
-    );
+  Future<void> load(int questionId, {bool showSkeleton = true}) async {
+    if (showSkeleton) {
+      emitIfOpen(
+        state.copyWith(isLoading: true, clearError: true, clearAction: true),
+      );
+    }
     final result = await _questionBankService.getQuestion(questionId);
     if (!result.isSuccess || result.data == null) {
       emitIfOpen(
@@ -100,8 +103,8 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
     if (question == null) return;
     emitIfOpen(
       state.copyWith(
-        isLoading: true,
         isMutating: true,
+        activeMutationAction: action,
         clearError: true,
         clearAction: true,
       ),
@@ -113,39 +116,104 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
     if (!result.isSuccess || result.data == null) {
       emitIfOpen(
         state.copyWith(
+          isLoading: false,
           isMutating: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'questionStatusFailed',
+        ),
+      );
+      return;
+    }
+    final confirmed = await _confirmStatus(result.data!, action);
+    if (confirmed == null) {
+      emitIfOpen(
+        state.copyWith(
+          isLoading: false,
+          isMutating: false,
+          clearActiveMutationAction: true,
+          errorMessage: 'questionStatusNotConfirmed',
         ),
       );
       return;
     }
     emitIfOpen(
       state.copyWith(
+        isLoading: false,
         isMutating: false,
-        question: result.data,
-        actionMessage: 'questionUpdated',
+        clearActiveMutationAction: true,
+        question: confirmed,
+        actionMessage: 'questionStatusUpdated:${confirmed.status.value}',
       ),
     );
+  }
+
+  Future<QuestionBankQuestionModel?> _confirmStatus(
+    QuestionBankQuestionModel actionResponse,
+    String action,
+  ) async {
+    final expected = _expectedStatus(action);
+    if (expected == null) return actionResponse;
+
+    var latest = actionResponse;
+    for (var attempt = 0; attempt < 3; attempt++) {
+      final result = await _questionBankService.getQuestion(actionResponse.id);
+      if (result.isSuccess && result.data != null) {
+        latest = result.data!;
+        if (latest.status == expected) return latest;
+      }
+      if (attempt < 2) {
+        await Future<void>.delayed(const Duration(milliseconds: 350));
+      }
+    }
+    return latest.status == expected ? latest : null;
+  }
+
+  QuestionBankStatus? _expectedStatus(String action) {
+    switch (action) {
+      case 'submit-for-review':
+        return QuestionBankStatus.underReview;
+      case 'approve':
+        return QuestionBankStatus.approved;
+      case 'reject':
+        return QuestionBankStatus.rejected;
+      case 'archive':
+        return QuestionBankStatus.archived;
+      case 'restore':
+        return QuestionBankStatus.draft;
+      default:
+        return null;
+    }
   }
 
   Future<bool> deleteQuestion() async {
     final question = state.question;
     if (question == null) return false;
     emitIfOpen(
-      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'delete',
+        clearError: true,
+        clearAction: true,
+      ),
     );
     final result = await _questionBankService.deleteQuestion(question.id);
     if (!result.isSuccess) {
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'questionDeleteFailed',
         ),
       );
       return false;
     }
+    QuestionGroupCubit.purgeQuestionFromCaches(question.id);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'questionDeleted'),
+      state.copyWith(
+        isMutating: false,
+        clearActiveMutationAction: true,
+        actionMessage: 'questionDeleted',
+      ),
     );
     return true;
   }
@@ -161,7 +229,12 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
     final question = state.question;
     if (question == null) return;
     emitIfOpen(
-      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'attachmentUpdate',
+        clearError: true,
+        clearAction: true,
+      ),
     );
     final result = await _questionBankService.addAttachment(
       questionId: question.id,
@@ -176,14 +249,19 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'attachmentAddFailed',
         ),
       );
       return;
     }
-    await load(question.id);
+    await load(question.id, showSkeleton: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'attachmentUpdated'),
+      state.copyWith(
+        isMutating: false,
+        clearActiveMutationAction: true,
+        actionMessage: 'attachmentAdded',
+      ),
     );
   }
 
@@ -191,7 +269,12 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
     final question = state.question;
     if (question == null) return;
     emitIfOpen(
-      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'attachmentUpload',
+        clearError: true,
+        clearAction: true,
+      ),
     );
     final result = await _questionBankService.uploadAttachmentImage(
       questionId: question.id,
@@ -201,14 +284,19 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'attachmentUploadFailed',
         ),
       );
       return;
     }
-    await load(question.id);
+    await load(question.id, showSkeleton: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'attachmentUpdated'),
+      state.copyWith(
+        isMutating: false,
+        clearActiveMutationAction: true,
+        actionMessage: 'attachmentUploaded',
+      ),
     );
   }
 
@@ -222,7 +310,12 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
     final question = state.question;
     if (question == null) return;
     emitIfOpen(
-      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'attachmentUpdate',
+        clearError: true,
+        clearAction: true,
+      ),
     );
     final result = await _questionBankService.updateAttachment(
       questionId: question.id,
@@ -236,14 +329,19 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'attachmentUpdateFailed',
         ),
       );
       return;
     }
-    await load(question.id);
+    await load(question.id, showSkeleton: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'attachmentUpdated'),
+      state.copyWith(
+        isMutating: false,
+        clearActiveMutationAction: true,
+        actionMessage: 'attachmentMetadataUpdated',
+      ),
     );
   }
 
@@ -251,7 +349,12 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
     final question = state.question;
     if (question == null) return;
     emitIfOpen(
-      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'attachmentReorder',
+        clearError: true,
+        clearAction: true,
+      ),
     );
     final result = await _questionBankService.reorderAttachments(
       questionId: question.id,
@@ -265,14 +368,19 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
         state.copyWith(
           isLoading: false,
           isMutating: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'attachmentReorderFailed',
         ),
       );
       return;
     }
-    await load(question.id);
+    await load(question.id, showSkeleton: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'attachmentUpdated'),
+      state.copyWith(
+        isMutating: false,
+        clearActiveMutationAction: true,
+        actionMessage: 'attachmentReordered',
+      ),
     );
   }
 
@@ -280,7 +388,12 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
     final question = state.question;
     if (question == null) return;
     emitIfOpen(
-      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: 'attachmentRemove',
+        clearError: true,
+        clearAction: true,
+      ),
     );
     final result = await _questionBankService.removeAttachment(
       questionId: question.id,
@@ -290,14 +403,19 @@ class QuestionDetailCubit extends Cubit<QuestionDetailState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'attachmentRemoveFailed',
         ),
       );
       return;
     }
-    await load(question.id);
+    await load(question.id, showSkeleton: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'attachmentRemoved'),
+      state.copyWith(
+        isMutating: false,
+        clearActiveMutationAction: true,
+        actionMessage: 'attachmentRemoved',
+      ),
     );
   }
 }

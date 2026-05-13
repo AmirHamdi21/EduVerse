@@ -5,6 +5,7 @@ import '../../../common/bloc/route_request_controller.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
 import '../../../models/question_bank/question_bank_fill_blank_model.dart';
 import '../../../models/question_bank/question_bank_option_model.dart';
+import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../models/question_bank/question_attachment_payload.dart';
 import '../../../models/question_bank/question_bulk_row_model.dart';
 import '../../../services/api/enrollment_service.dart';
@@ -308,7 +309,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
                   : row,
             )
             .toList(),
-        successMessage: 'questionImageRemoved',
+        successMessage: 'attachmentRemoved',
       ),
     );
   }
@@ -420,6 +421,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     emitIfOpen(
       state.copyWith(
         isSubmitting: true,
+        activeMutationAction: 'bulkCreate',
         rows: rows,
         clearError: true,
         clearFailureReport: true,
@@ -450,6 +452,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
       emitIfOpen(
         state.copyWith(
           isSubmitting: false,
+          clearActiveMutationAction: true,
           errorMessage: message,
           failedRows: rows,
           failureReportMessage: message,
@@ -480,6 +483,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     emitIfOpen(
       state.copyWith(
         isSubmitting: false,
+        clearActiveMutationAction: true,
         successMessage: detailed?.hasFailures == true
             ? 'bulkCreatePartialSuccess'
             : 'bulkCreateSuccess',
@@ -536,7 +540,14 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
 
   Future<bool> statusCreatedQuestions(String action) async {
     if (state.createdQuestions.isEmpty) return false;
-    emitIfOpen(state.copyWith(isSubmitting: true, clearError: true));
+    emitIfOpen(
+      state.copyWith(
+        isSubmitting: true,
+        activeMutationAction: action,
+        clearError: true,
+        clearSuccess: true,
+      ),
+    );
     final result = await _questionBankService.batchStatusAction(
       questionIds: state.createdQuestions
           .map((question) => question.id)
@@ -547,16 +558,21 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
       emitIfOpen(
         state.copyWith(
           isSubmitting: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'bulkStatusFailed',
         ),
       );
       return false;
     }
+    final refreshed = await _refreshCreatedQuestions(
+      result.data ?? state.createdQuestions,
+    );
     emitIfOpen(
       state.copyWith(
         isSubmitting: false,
-        createdQuestions: result.data ?? state.createdQuestions,
-        successMessage: 'questionsBatchUpdated',
+        clearActiveMutationAction: true,
+        createdQuestions: refreshed,
+        successMessage: 'questionsStatusUpdated',
       ),
     );
     return true;
@@ -566,7 +582,14 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
     required int questionId,
     required String action,
   }) async {
-    emitIfOpen(state.copyWith(isSubmitting: true, clearError: true));
+    emitIfOpen(
+      state.copyWith(
+        isSubmitting: true,
+        activeMutationAction: action,
+        clearError: true,
+        clearSuccess: true,
+      ),
+    );
     final result = await _questionBankService.statusAction(
       questionId: questionId,
       action: action,
@@ -575,23 +598,45 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
       emitIfOpen(
         state.copyWith(
           isSubmitting: false,
+          clearActiveMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to update question',
         ),
       );
       return false;
     }
+    final refreshed = await _refreshCreatedQuestion(result.data!);
     emitIfOpen(
       state.copyWith(
         isSubmitting: false,
+        clearActiveMutationAction: true,
         createdQuestions: state.createdQuestions
-            .map(
-              (question) => question.id == questionId ? result.data! : question,
-            )
+            .map((question) => question.id == questionId ? refreshed : question)
             .toList(),
-        successMessage: 'Question saved',
+        successMessage: 'questionStatusUpdated:${refreshed.status.value}',
       ),
     );
     return true;
+  }
+
+  Future<List<QuestionBankQuestionModel>> _refreshCreatedQuestions(
+    List<QuestionBankQuestionModel> fallback,
+  ) async {
+    final byId = {for (final question in fallback) question.id: question};
+    for (final original in state.createdQuestions) {
+      byId.putIfAbsent(original.id, () => original);
+    }
+    final refreshed = <QuestionBankQuestionModel>[];
+    for (final question in byId.values) {
+      refreshed.add(await _refreshCreatedQuestion(question));
+    }
+    return refreshed;
+  }
+
+  Future<QuestionBankQuestionModel> _refreshCreatedQuestion(
+    QuestionBankQuestionModel fallback,
+  ) async {
+    final result = await _questionBankService.getQuestion(fallback.id);
+    return result.data ?? fallback;
   }
 
   List<QuestionBulkRowModel> _applyDefaultChapter(
@@ -640,6 +685,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
         emitIfOpen(
           state.copyWith(
             isSubmitting: false,
+            clearActiveMutationAction: true,
             errorMessage: result.error?.message ?? 'questionImageUploadFailed',
           ),
         );
@@ -664,6 +710,7 @@ class QuestionBulkCreateCubit extends Cubit<QuestionBulkCreateState>
           emitIfOpen(
             state.copyWith(
               isSubmitting: false,
+              clearActiveMutationAction: true,
               errorMessage: result.error?.message ?? 'attachmentUploadFailed',
             ),
           );

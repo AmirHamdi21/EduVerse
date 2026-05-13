@@ -20,6 +20,31 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
   static final Map<int, List<QuestionBankQuestionModel>> _recentGroupQuestions =
       <int, List<QuestionBankQuestionModel>>{};
 
+  static void purgeQuestionFromCaches(int questionId) {
+    for (final groupId in _recentGroupQuestions.keys.toList()) {
+      _recentGroupQuestions[groupId] =
+          (_recentGroupQuestions[groupId] ?? const [])
+              .where((question) => question.id != questionId)
+              .toList();
+      if (_recentGroupQuestions[groupId]?.isEmpty ?? false) {
+        _recentGroupQuestions.remove(groupId);
+      }
+    }
+  }
+
+  static void removeCachedQuestionFromGroup({
+    required int groupId,
+    required int questionId,
+  }) {
+    _recentGroupQuestions[groupId] =
+        (_recentGroupQuestions[groupId] ?? const [])
+            .where((question) => question.id != questionId)
+            .toList();
+    if (_recentGroupQuestions[groupId]?.isEmpty ?? false) {
+      _recentGroupQuestions.remove(groupId);
+    }
+  }
+
   Future<void> load(int groupId) async {
     emitIfOpen(
       state.copyWith(isLoading: true, clearError: true, clearAction: true),
@@ -189,7 +214,10 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
     return true;
   }
 
-  Future<QuestionBankUploadResponse?> uploadGroupImage(String path) async {
+  Future<QuestionBankUploadResponse?> uploadGroupImage(
+    String path, {
+    bool showSuccessMessage = true,
+  }) async {
     emitIfOpen(
       state.copyWith(isMutating: true, clearError: true, clearAction: true),
     );
@@ -204,12 +232,18 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
       return null;
     }
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'groupImageUploaded'),
+      state.copyWith(
+        isMutating: false,
+        actionMessage: showSuccessMessage ? 'groupImageUploaded' : null,
+      ),
     );
     return result.data;
   }
 
-  Future<int?> uploadQuestionImage(String path) async {
+  Future<int?> uploadQuestionImage(
+    String path, {
+    bool showSuccessMessage = true,
+  }) async {
     emitIfOpen(
       state.copyWith(isMutating: true, clearError: true, clearAction: true),
     );
@@ -224,12 +258,18 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
       return null;
     }
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'questionImageUploaded'),
+      state.copyWith(
+        isMutating: false,
+        actionMessage: showSuccessMessage ? 'questionImageUploaded' : null,
+      ),
     );
     return result.data!.fileId;
   }
 
-  Future<void> deleteUploadedQuestionImage(int fileId) async {
+  Future<void> deleteUploadedQuestionImage(
+    int fileId, {
+    bool showSuccessMessage = true,
+  }) async {
     emitIfOpen(
       state.copyWith(isMutating: true, clearError: true, clearAction: true),
     );
@@ -240,7 +280,9 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
         errorMessage: result.isSuccess
             ? null
             : result.error?.message ?? 'questionImageDeleteFailed',
-        actionMessage: result.isSuccess ? 'questionImageRemoved' : null,
+        actionMessage: result.isSuccess && showSuccessMessage
+            ? 'questionImageRemoved'
+            : null,
       ),
     );
   }
@@ -329,13 +371,12 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
     }
     final createdQuestions = result.data ?? const <QuestionBankQuestionModel>[];
     _cacheGroupQuestions(group.id, createdQuestions);
-    await load(group.id);
     emitIfOpen(
       state.copyWith(
         isMutating: false,
         createdQuestions: createdQuestions,
         questions: _mergeQuestions(state.questions, createdQuestions),
-        actionMessage: 'groupQuestionsAdded',
+        actionMessage: 'groupedQuestionsCreated',
       ),
     );
     return true;
@@ -369,7 +410,7 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
         isMutating: false,
         createdQuestions: updatedQuestions,
         questions: _mergeQuestions(state.questions, updatedQuestions),
-        actionMessage: 'questionsBatchUpdated',
+        actionMessage: 'questionsStatusUpdated',
       ),
     );
     return true;
@@ -408,7 +449,7 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
         questions: state.questions
             .map((question) => question.id == questionId ? updated : question)
             .toList(),
-        actionMessage: 'questionsBatchUpdated',
+        actionMessage: 'questionStatusUpdated:${updated.status.value}',
       ),
     );
     return true;
@@ -452,6 +493,9 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
         (_recentGroupQuestions[group.id] ?? const [])
             .where((question) => question.id != questionId)
             .toList();
+    if (_recentGroupQuestions[group.id]?.isEmpty ?? false) {
+      _recentGroupQuestions.remove(group.id);
+    }
     await load(group.id);
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'groupQuestionRemoved'),
@@ -482,9 +526,16 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
         (_recentGroupQuestions[group.id] ?? const [])
             .where((question) => question.id != questionId)
             .toList();
+    if (_recentGroupQuestions[group.id]?.isEmpty ?? false) {
+      _recentGroupQuestions.remove(group.id);
+    }
     await load(group.id);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'questionDeleted'),
+      state.copyWith(
+        isMutating: false,
+        actionMessage:
+            'questionStatusUpdated:${QuestionBankStatus.archived.value}',
+      ),
     );
     return true;
   }
@@ -510,12 +561,11 @@ class QuestionGroupCubit extends Cubit<QuestionGroupState>
     }
     final linkedQuestions = result.data ?? const <QuestionBankQuestionModel>[];
     _cacheGroupQuestions(group.id, linkedQuestions);
-    await load(group.id);
     emitIfOpen(
       state.copyWith(
         isMutating: false,
         questions: _mergeQuestions(state.questions, linkedQuestions),
-        actionMessage: 'groupQuestionsAdded',
+        actionMessage: 'groupQuestionsLinked',
       ),
     );
     return true;

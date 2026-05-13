@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../common/bloc/route_request_controller.dart';
 import '../../../models/question_bank/question_bank_enums.dart';
+import '../../../models/question_bank/question_bank_group_model.dart';
 import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
+import 'question_group_cubit.dart';
 import 'question_bank_state.dart';
 
 class QuestionBankCubit extends Cubit<QuestionBankState>
@@ -75,7 +77,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
 
   Future<void> selectCourse(int? courseId) async {
     _remoteFilterDebounce?.cancel();
-    emitIfOpen(
+    final nextState = _withLocalQuestionPreview(
       state.copyWith(
         selectedCourseId: courseId,
         clearSelectedCourse: courseId == null,
@@ -85,10 +87,18 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
         clearExcludedQuestionIds: true,
         isAllMatchingQuestionsSelected: false,
         page: 1,
-        questions: const [],
+        isLoading: false,
+        isLoadingMore: false,
+        clearError: true,
       ),
     );
-    await _loadDependent(resetPage: true);
+    emitIfOpen(nextState);
+    await Future.wait(<Future<void>>[
+      loadChapters(),
+      loadGroups(),
+      loadQuestions(refresh: true, refreshStats: false),
+      loadStats(),
+    ]);
   }
 
   Future<void> setFilters({
@@ -140,12 +150,12 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
     if (debounceRemote) {
       _remoteFilterDebounce = Timer(const Duration(milliseconds: 120), () {
         if (!isClosed) {
-          loadQuestions(refresh: true, quiet: true);
+          loadQuestions(refresh: true);
         }
       });
       return;
     }
-    await loadQuestions(refresh: true, quiet: true);
+    await loadQuestions(refresh: true);
   }
 
   Future<void> refresh() => _loadDependent(resetPage: true);
@@ -191,11 +201,11 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
     }
   }
 
-  Future<void> createChapter({required String name, int? chapterOrder}) async {
+  Future<bool> createChapter({required String name, int? chapterOrder}) async {
     final courseId = state.selectedCourseId;
     if (courseId == null) {
       emitIfOpen(state.copyWith(errorMessage: 'courseRequired'));
-      return;
+      return false;
     }
     emitIfOpen(
       state.copyWith(isMutating: true, clearError: true, clearAction: true),
@@ -212,22 +222,23 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
           errorMessage: result.error?.message ?? 'chapterCreateFailed',
         ),
       );
-      return;
+      return false;
     }
     await _loadDependent(resetPage: true);
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'chapterCreated'),
     );
+    return true;
   }
 
-  Future<void> updateChapter({
+  Future<bool> updateChapter({
     required int chapterId,
     String? name,
     int? chapterOrder,
     bool? isActive,
   }) async {
     final courseId = state.selectedCourseId;
-    if (courseId == null) return;
+    if (courseId == null) return false;
     emitIfOpen(
       state.copyWith(isMutating: true, clearError: true, clearAction: true),
     );
@@ -245,17 +256,18 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
           errorMessage: result.error?.message ?? 'chapterUpdateFailed',
         ),
       );
-      return;
+      return false;
     }
     await _loadDependent(resetPage: true);
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'chapterUpdated'),
     );
+    return true;
   }
 
-  Future<void> deleteChapter(int chapterId) async {
+  Future<bool> deleteChapter(int chapterId) async {
     final courseId = state.selectedCourseId;
-    if (courseId == null) return;
+    if (courseId == null) return false;
     emitIfOpen(
       state.copyWith(isMutating: true, clearError: true, clearAction: true),
     );
@@ -270,7 +282,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
           errorMessage: result.error?.message ?? 'chapterDeleteFailed',
         ),
       );
-      return;
+      return false;
     }
     emitIfOpen(
       state.copyWith(
@@ -282,6 +294,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
     emitIfOpen(
       state.copyWith(isMutating: false, actionMessage: 'chapterDeleted'),
     );
+    return true;
   }
 
   Future<void> loadGroups() async {
@@ -400,7 +413,7 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
         questions: state.questions
             .map((question) => question.id == updated.id ? updated : question)
             .toList(),
-        actionMessage: 'Question updated',
+        actionMessage: 'questionStatusUpdated:${updated.status.value}',
       ),
     );
     await loadStats();
@@ -535,6 +548,60 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
     );
   }
 
+  Future<void> batchDeleteQuestions() async {
+    if (!state.hasSelectedQuestions) return;
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeBatchAction: 'delete',
+        clearAction: true,
+        clearError: true,
+      ),
+    );
+    final result = await _questionBankService.batchDeleteQuestions(
+      questionIds: state.selectedQuestionIds.toList(),
+      allMatchingFilters: state.isAllMatchingQuestionsSelected,
+      excludeQuestionIds: state.excludedQuestionIds.toList(),
+      expectedQuestionCount: state.selectedQuestionCount,
+      courseId: state.selectedCourseId,
+      chapterId: state.selectedChapterId,
+      questionType: state.selectedType,
+      difficulty: state.selectedDifficulty,
+      bloomLevel: state.selectedBloomLevel,
+      status: state.selectedStatus,
+      search: state.search,
+      hasAttachments: state.hasAttachments,
+      groupId: state.selectedGroupId,
+    );
+    if (!result.isSuccess) {
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          clearActiveBatchAction: true,
+          errorMessage: result.error?.message ?? 'questionsDeleteFailed',
+        ),
+      );
+      return;
+    }
+    final deletedIds = result.data ?? const <int>[];
+    for (final questionId in deletedIds) {
+      _questionCache.remove(questionId);
+      QuestionGroupCubit.purgeQuestionFromCaches(questionId);
+    }
+    await _refreshAfterBatchAction();
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        clearActiveBatchAction: true,
+        isSelectionMode: false,
+        clearSelectedQuestionIds: true,
+        clearExcludedQuestionIds: true,
+        isAllMatchingQuestionsSelected: false,
+        actionMessage: 'questionsDeleted',
+      ),
+    );
+  }
+
   bool isQuestionSelected(int questionId) {
     if (state.isAllMatchingQuestionsSelected) {
       return !state.excludedQuestionIds.contains(questionId);
@@ -548,24 +615,172 @@ class QuestionBankCubit extends Cubit<QuestionBankState>
   }
 
   Future<void> deleteQuestion(int questionId) async {
+    final removedQuestion = _questionById(questionId);
     emitIfOpen(
-      state.copyWith(isMutating: true, clearAction: true, clearError: true),
+      state.copyWith(
+        isMutating: true,
+        activeBatchAction: 'delete',
+        clearAction: true,
+        clearError: true,
+      ),
     );
     final result = await _questionBankService.deleteQuestion(questionId);
     if (!result.isSuccess) {
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearActiveBatchAction: true,
           errorMessage: result.error?.message ?? 'questionDeleteFailed',
         ),
       );
       return;
     }
     _questionCache.remove(questionId);
-    await loadQuestions(refresh: true);
+    QuestionGroupCubit.purgeQuestionFromCaches(questionId);
+    await _refreshAfterBatchAction();
+    final adjustedGroups = removedQuestion == null
+        ? state.groups
+        : _decrementGroupCountersForQuestion(state.groups, removedQuestion);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'questionDeleted'),
+      state.copyWith(
+        isMutating: false,
+        clearActiveBatchAction: true,
+        groups: adjustedGroups,
+        actionMessage: 'questionDeleted',
+      ),
     );
+  }
+
+  Future<void> unlinkQuestionFromGroup({
+    required int questionId,
+    required int groupId,
+  }) async {
+    final removedQuestion = _questionById(questionId);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeBatchAction: 'unlink',
+        clearAction: true,
+        clearError: true,
+      ),
+    );
+    final result = await _questionBankService.unlinkGroupQuestion(
+      groupId: groupId,
+      questionId: questionId,
+    );
+    if (!result.isSuccess) {
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          clearActiveBatchAction: true,
+          errorMessage: result.error?.message ?? 'groupQuestionRemoveFailed',
+        ),
+      );
+      return;
+    }
+    QuestionGroupCubit.removeCachedQuestionFromGroup(
+      groupId: groupId,
+      questionId: questionId,
+    );
+    await _refreshAfterBatchAction();
+    final adjustedGroups = removedQuestion == null
+        ? state.groups
+        : _decrementGroupCountersForQuestion(
+            state.groups,
+            removedQuestion,
+            onlyGroupId: groupId,
+          );
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        clearActiveBatchAction: true,
+        groups: adjustedGroups,
+        actionMessage: 'groupQuestionRemoved',
+      ),
+    );
+  }
+
+  Future<bool> deleteGroup(int groupId) async {
+    emitIfOpen(
+      state.copyWith(isMutating: true, clearError: true, clearAction: true),
+    );
+    final result = await _questionBankService.deleteGroup(groupId);
+    if (!result.isSuccess) {
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          errorMessage: result.error?.message ?? 'groupDeleteFailed',
+        ),
+      );
+      return false;
+    }
+    emitIfOpen(
+      state.copyWith(
+        groups: state.groups.where((group) => group.id != groupId).toList(),
+      ),
+    );
+    await loadGroups();
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        groups: state.groups.where((group) => group.id != groupId).toList(),
+        actionMessage: 'groupDeleted',
+      ),
+    );
+    return true;
+  }
+
+  QuestionBankQuestionModel? _questionById(int questionId) {
+    for (final question in state.questions) {
+      if (question.id == questionId) return question;
+    }
+    return _questionCache[questionId];
+  }
+
+  List<QuestionBankGroupModel> _decrementGroupCountersForQuestion(
+    List<QuestionBankGroupModel> groups,
+    QuestionBankQuestionModel question, {
+    int? onlyGroupId,
+  }) {
+    final affectedGroupIds = onlyGroupId == null
+        ? question.groups.map((group) => group.groupId).toSet()
+        : <int>{onlyGroupId};
+    if (affectedGroupIds.isEmpty) return groups;
+    return [
+      for (final group in groups)
+        affectedGroupIds.contains(group.id)
+            ? _decrementGroupCounters(group, question.status)
+            : group,
+    ];
+  }
+
+  QuestionBankGroupModel _decrementGroupCounters(
+    QuestionBankGroupModel group,
+    QuestionBankStatus status,
+  ) {
+    int decrement(int value) => value <= 0 ? 0 : value - 1;
+    return switch (status) {
+      QuestionBankStatus.approved => group.copyWith(
+        totalQuestions: decrement(group.totalQuestions),
+        approvedQuestions: decrement(group.approvedQuestions),
+      ),
+      QuestionBankStatus.draft => group.copyWith(
+        totalQuestions: decrement(group.totalQuestions),
+        draftQuestions: decrement(group.draftQuestions),
+      ),
+      QuestionBankStatus.underReview => group.copyWith(
+        totalQuestions: decrement(group.totalQuestions),
+        underReviewQuestions: decrement(group.underReviewQuestions),
+      ),
+      QuestionBankStatus.rejected => group.copyWith(
+        totalQuestions: decrement(group.totalQuestions),
+        rejectedQuestions: decrement(group.rejectedQuestions),
+      ),
+      QuestionBankStatus.archived => group.copyWith(
+        totalQuestions: decrement(group.totalQuestions),
+        archivedQuestions: decrement(group.archivedQuestions),
+      ),
+    };
   }
 
   QuestionBankState _withLocalQuestionPreview(QuestionBankState nextState) {

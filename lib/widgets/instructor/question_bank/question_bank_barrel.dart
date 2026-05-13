@@ -8,6 +8,7 @@ export 'question_bank_filter_card.dart';
 export 'question_bank_hero_header.dart';
 export 'question_bank_skeletons.dart';
 export 'question_bank_localized_labels.dart';
+export 'question_bank_mutation_overlay.dart';
 export 'question_bulk_editor.dart';
 export 'question_bulk_row_card.dart';
 export 'question_bulk_validation_panel.dart';

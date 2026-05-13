@@ -105,6 +105,10 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState>
           ),
         ),
     ];
+    final nextSections =
+        state.mode == ExamGenerationMode.sectioned && normalizedSections.isEmpty
+        ? [_defaultSection(fallbackChapterId)]
+        : normalizedSections;
     emitIfOpen(
       state.copyWith(
         chapters: list,
@@ -119,7 +123,7 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState>
                 ),
               ]
             : normalizedRules,
-        sections: normalizedSections,
+        sections: nextSections,
       ),
     );
     await checkAvailability(debounce: false);
@@ -163,6 +167,15 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState>
     String? footerText,
   }) {
     final affectsAvailability = mode != null || groupSelectionMode != null;
+    final nextMode = mode ?? state.mode;
+    final nextSections =
+        nextMode == ExamGenerationMode.sectioned && state.sections.isEmpty
+        ? [
+            _defaultSection(
+              state.chapters.isEmpty ? null : state.chapters.first.id,
+            ),
+          ]
+        : state.sections;
     emitIfOpen(
       state.copyWith(
         title: title,
@@ -178,6 +191,7 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState>
         instructions: instructions,
         headerText: headerText,
         footerText: footerText,
+        sections: nextSections,
         clearError: true,
         clearAvailability: affectsAvailability,
       ),
@@ -203,6 +217,23 @@ class ExamGeneratorFormCubit extends Cubit<ExamGeneratorFormState>
       ),
     );
     checkAvailability();
+  }
+
+  ExamGenerationSectionModel _defaultSection(int? fallbackChapterId) {
+    return ExamGenerationSectionModel(
+      title: 'Section 1',
+      totalMarks: 10,
+      rules: [
+        ExamGenerationRuleModel(
+          scope: fallbackChapterId == null
+              ? ExamGenerationScope.course
+              : ExamGenerationScope.chapter,
+          chapterId: fallbackChapterId,
+          count: 5,
+          weightPerQuestion: 1,
+        ),
+      ],
+    );
   }
 
   void randomizeSeed() {

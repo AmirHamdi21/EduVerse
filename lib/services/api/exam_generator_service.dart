@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:open_file/open_file.dart';
@@ -525,6 +527,22 @@ class ExamGeneratorService {
     }, fallbackMessage: 'Failed to save draft');
   }
 
+  Future<ServiceResult<List<int>>> batchSaveDrafts(List<int> draftIds) {
+    return RetryHelper.execute<List<int>>(() async {
+      final response = await _client.dio.post(
+        '/exams/drafts/save/batch',
+        data: <String, dynamic>{'draftIds': draftIds},
+      );
+      return _intList(_map(response.data)['savedExamIds']);
+    }, fallbackMessage: 'Failed to save selected drafts');
+  }
+
+  Future<ServiceResult<void>> deleteDraft(int draftId) {
+    return RetryHelper.executeVoid(() async {
+      await _client.dio.delete('/exams/drafts/$draftId');
+    }, fallbackMessage: 'Failed to delete draft');
+  }
+
   Future<ServiceResult<ExamDraftValidationModel>> validateDraft(int draftId) {
     return RetryHelper.execute<ExamDraftValidationModel>(() async {
       final response = await _client.dio.get(
@@ -626,6 +644,27 @@ class ExamGeneratorService {
     }, fallbackMessage: 'Failed to update exam');
   }
 
+  Future<ServiceResult<void>> deleteExam(int examId) {
+    return RetryHelper.executeVoid(() async {
+      await _client.dio.delete('/exams/$examId');
+    }, fallbackMessage: 'Failed to delete exam');
+  }
+
+  Future<ServiceResult<void>> batchDeleteRecords({
+    List<int> examIds = const <int>[],
+    List<int> draftIds = const <int>[],
+  }) {
+    return RetryHelper.executeVoid(() async {
+      await _client.dio.post(
+        '/exams/records/delete/batch',
+        data: <String, dynamic>{
+          if (examIds.isNotEmpty) 'examIds': examIds,
+          if (draftIds.isNotEmpty) 'draftIds': draftIds,
+        },
+      );
+    }, fallbackMessage: 'Failed to delete selected exam records');
+  }
+
   Future<ServiceResult<ExamExportResponseModel>> exportExam({
     required int examId,
     bool includeAnswerKey = false,
@@ -657,6 +696,41 @@ class ExamGeneratorService {
     return RetryHelper.execute<String>(() async {
       return _saveExportFile(export);
     }, fallbackMessage: 'Failed to save exported exam');
+  }
+
+  Future<ServiceResult<String>> saveClientPdfFile({
+    required String fileName,
+    required Uint8List bytes,
+  }) {
+    return RetryHelper.execute<String>(() async {
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}${Platform.pathSeparator}$fileName');
+      await file.writeAsBytes(bytes, flush: true);
+      return file.path;
+    }, fallbackMessage: 'Failed to save exported exam');
+  }
+
+  Future<ServiceResult<Map<String, dynamic>>> registerClientPdfExport({
+    required int examId,
+    required String filePath,
+    required ExamExportOptionsModel options,
+  }) {
+    return RetryHelper.execute<Map<String, dynamic>>(() async {
+      final response = await _client.dio.post(
+        '/exams/$examId/client-export',
+        options: _client.materialTimeoutOptions(),
+        data: FormData.fromMap(<String, dynamic>{
+          'format': ExamExportFormat.pdf.value,
+          'variant': options.variant.value,
+          'optionsSnapshot': jsonEncode(options.toJson()),
+          'file': await MultipartFile.fromFile(
+            filePath,
+            filename: filePath.split(Platform.pathSeparator).last,
+          ),
+        }),
+      );
+      return _map(response.data);
+    }, fallbackMessage: 'Failed to register exported PDF');
   }
 
   Future<ServiceResult<String>> openExportFile(String filePath) {
@@ -723,5 +797,10 @@ class ExamGeneratorService {
     if (value is int) return value;
     if (value is num) return value.toInt();
     return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  List<int> _intList(dynamic value) {
+    if (value is! List) return const <int>[];
+    return value.map(_toInt).where((id) => id > 0).toList();
   }
 }

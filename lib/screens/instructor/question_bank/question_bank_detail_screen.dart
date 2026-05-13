@@ -141,7 +141,7 @@ class _QuestionBankDetailViewState extends State<_QuestionBankDetailView> {
               child: QuestionBankSkeletons(itemCount: 4),
             );
           }
-          return RefreshIndicator(
+          final content = RefreshIndicator(
             onRefresh: () =>
                 context.read<QuestionDetailCubit>().load(question.id),
             child: ListView(
@@ -195,6 +195,18 @@ class _QuestionBankDetailViewState extends State<_QuestionBankDetailView> {
                 _tabContent(context, question, state),
               ],
             ),
+          );
+          return Stack(
+            children: [
+              content,
+              if (state.activeMutationAction != null)
+                Positioned.fill(
+                  child: _QuestionDetailMutationOverlay(
+                    action: state.activeMutationAction!,
+                    isDark: isDark,
+                  ),
+                ),
+            ],
           );
         },
       ),
@@ -269,6 +281,119 @@ class _QuestionBankDetailViewState extends State<_QuestionBankDetailView> {
     if (!ok || !context.mounted) return;
     final deleted = await context.read<QuestionDetailCubit>().deleteQuestion();
     if (deleted && context.mounted) context.go('/instructor/question-bank');
+  }
+}
+
+class _QuestionDetailMutationOverlay extends StatelessWidget {
+  const _QuestionDetailMutationOverlay({
+    required this.action,
+    required this.isDark,
+  });
+
+  final String action;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label = _labelForAction(l10n, action);
+    return AbsorbPointer(
+      child: Container(
+        color: Colors.black.withValues(alpha: isDark ? 0.48 : 0.32),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(24),
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.96, end: 1),
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          builder: (context, scale, child) =>
+              Transform.scale(scale: scale, child: child),
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 360),
+              padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+              decoration: BoxDecoration(
+                color: InstructorColors.cardColor(isDark),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: InstructorColors.primary.withValues(
+                    alpha: isDark ? 0.35 : 0.18,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.14),
+                    blurRadius: 26,
+                    offset: const Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 42,
+                    height: 42,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                      color: InstructorColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Applying ${label.toLowerCase()}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please wait until the question details are updated.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: InstructorColors.textSecondaryColor(isDark),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _labelForAction(AppLocalizations l10n, String action) {
+    switch (action) {
+      case 'submit-for-review':
+        return l10n.submitForReview;
+      case 'approve':
+        return l10n.qbApprove;
+      case 'reject':
+        return l10n.qbReject;
+      case 'archive':
+        return l10n.qbArchive;
+      case 'restore':
+        return l10n.qbRestore;
+      case 'attachmentUpload':
+        return l10n.qbUploadAttachment;
+      case 'attachmentRemove':
+        return l10n.qbRemoveAttachment;
+      case 'attachmentReorder':
+        return l10n.qbReorderAttachments;
+      case 'delete':
+        return l10n.qbDeleteQuestion;
+      case 'attachmentUpdate':
+      default:
+        return l10n.qbEditAttachment;
+    }
   }
 }
 

@@ -23,6 +23,17 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
   final ExamGeneratorService _examGeneratorService;
   final QuestionBankService? _questionBankService;
 
+  void _startMutation(String action) {
+    emitIfOpen(
+      state.copyWith(
+        isMutating: true,
+        activeMutationAction: action,
+        clearError: true,
+        clearAction: true,
+      ),
+    );
+  }
+
   Future<void> loadDraft(int draftId, {bool showLoading = true}) async {
     if (showLoading) {
       emitIfOpen(state.copyWith(isLoading: true, clearError: true));
@@ -72,7 +83,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Creating section');
     final result = await _examGeneratorService.createSection(
       draftId: draft.id,
       title: title,
@@ -84,6 +95,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to create section',
         ),
       );
@@ -91,7 +103,11 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
     }
     await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Section created'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Section created',
+      ),
     );
   }
 
@@ -109,7 +125,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: validation));
       return false;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation(sectionId == null ? 'Creating section' : 'Saving section');
     final result = sectionId == null
         ? await _examGeneratorService.createSection(
             draftId: draft.id,
@@ -132,6 +148,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to save section',
         ),
       );
@@ -139,7 +156,11 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
     }
     await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Section saved'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Section saved',
+      ),
     );
     return true;
   }
@@ -150,7 +171,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Deleting section');
     final result = await _examGeneratorService.deleteSection(
       draftId: draft.id,
       sectionId: sectionId,
@@ -159,6 +180,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to delete section',
         ),
       );
@@ -166,7 +188,11 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
     }
     await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Section deleted'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Section deleted',
+      ),
     );
   }
 
@@ -185,6 +211,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       );
       return;
     }
+    _startMutation('Saving section order');
     final result = await _examGeneratorService.reorderSections(
       draftId: draft.id,
       items: [
@@ -193,10 +220,23 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       ],
     );
     if (!result.isSuccess) {
-      emitIfOpen(state.copyWith(errorMessage: result.error?.message));
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          clearMutationAction: true,
+          errorMessage: result.error?.message,
+        ),
+      );
       return;
     }
     await loadDraft(draft.id, showLoading: false);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Section order saved',
+      ),
+    );
   }
 
   Future<void> addItem({
@@ -222,9 +262,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Question is already in draft'));
       return;
     }
-    emitIfOpen(
-      state.copyWith(isMutating: true, clearError: true, clearAction: true),
-    );
+    _startMutation('Adding question');
     final result = await _examGeneratorService.addItem(
       draftId: draft.id,
       questionId: questionId,
@@ -237,14 +275,21 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           clearAction: true,
           errorMessage: result.error?.message ?? 'Failed to add item',
         ),
       );
       return;
     }
-    await loadDraft(draft.id);
-    emitIfOpen(state.copyWith(isMutating: false, actionMessage: 'Item added'));
+    await loadDraft(draft.id, showLoading: false);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Item added',
+      ),
+    );
   }
 
   Future<void> updateItem({
@@ -264,7 +309,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: validation));
       return;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Updating question');
     final result = await _examGeneratorService.updateItem(
       draftId: draft.id,
       itemId: itemId,
@@ -280,14 +325,19 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to update item',
         ),
       );
       return;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Item updated'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Item updated',
+      ),
     );
   }
 
@@ -330,7 +380,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       );
       return;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Removing question');
     final result = await _examGeneratorService.removeItem(
       draftId: draft.id,
       itemId: itemId,
@@ -339,14 +389,19 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to remove item',
         ),
       );
       return;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Item removed'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Item removed',
+      ),
     );
   }
 
@@ -365,6 +420,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       );
       return;
     }
+    _startMutation('Saving question order');
     final result = await _examGeneratorService.reorderItems(
       draftId: draft.id,
       items: <Map<String, int>>[
@@ -373,10 +429,118 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       ],
     );
     if (!result.isSuccess) {
-      emitIfOpen(state.copyWith(errorMessage: result.error?.message));
+      emitIfOpen(
+        state.copyWith(
+          isMutating: false,
+          clearMutationAction: true,
+          errorMessage: result.error?.message,
+        ),
+      );
       return;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Question order saved',
+      ),
+    );
+  }
+
+  Future<bool> saveDraftOrder({
+    required List<int> orderedItemIds,
+    required List<int> orderedSectionIds,
+  }) async {
+    final draft = state.draft;
+    if (draft == null || !draft.isEditable) {
+      emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
+      return false;
+    }
+    final existingItems = draft.items.map((item) => item.id).toSet();
+    if (orderedItemIds.length != existingItems.length ||
+        orderedItemIds.toSet().length != existingItems.length ||
+        !orderedItemIds.toSet().containsAll(existingItems)) {
+      emitIfOpen(
+        state.copyWith(errorMessage: 'Reorder must include every item once'),
+      );
+      return false;
+    }
+    final existingSections = draft.sections
+        .map((section) => section.id)
+        .toSet();
+    if (orderedSectionIds.length != existingSections.length ||
+        orderedSectionIds.toSet().length != existingSections.length ||
+        !orderedSectionIds.toSet().containsAll(existingSections)) {
+      emitIfOpen(
+        state.copyWith(errorMessage: 'Reorder must include every section once'),
+      );
+      return false;
+    }
+
+    final currentItemIds =
+        ([...draft.items]..sort((a, b) => a.itemOrder.compareTo(b.itemOrder)))
+            .map((item) => item.id)
+            .toList();
+    final currentSectionIds =
+        ([...draft.sections]
+              ..sort((a, b) => a.sectionOrder.compareTo(b.sectionOrder)))
+            .map((section) => section.id)
+            .toList();
+    final shouldSaveItems =
+        currentItemIds.join(',') != orderedItemIds.join(',');
+    final shouldSaveSections =
+        currentSectionIds.join(',') != orderedSectionIds.join(',');
+    if (!shouldSaveItems && !shouldSaveSections) return true;
+
+    _startMutation('Saving draft order');
+    if (shouldSaveSections && orderedSectionIds.isNotEmpty) {
+      final result = await _examGeneratorService.reorderSections(
+        draftId: draft.id,
+        items: [
+          for (var i = 0; i < orderedSectionIds.length; i++)
+            {'sectionId': orderedSectionIds[i], 'sectionOrder': i},
+        ],
+      );
+      if (!result.isSuccess) {
+        emitIfOpen(
+          state.copyWith(
+            isMutating: false,
+            clearMutationAction: true,
+            errorMessage: result.error?.message,
+          ),
+        );
+        return false;
+      }
+    }
+    if (shouldSaveItems) {
+      final result = await _examGeneratorService.reorderItems(
+        draftId: draft.id,
+        items: <Map<String, int>>[
+          for (var i = 0; i < orderedItemIds.length; i++)
+            <String, int>{'itemId': orderedItemIds[i], 'itemOrder': i},
+        ],
+      );
+      if (!result.isSuccess) {
+        emitIfOpen(
+          state.copyWith(
+            isMutating: false,
+            clearMutationAction: true,
+            errorMessage: result.error?.message,
+          ),
+        );
+        return false;
+      }
+    }
+    await loadDraft(draft.id, showLoading: false);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Draft order saved',
+      ),
+    );
+    return true;
   }
 
   Future<void> loadCandidateQuestions({
@@ -455,24 +619,27 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
   Future<int?> saveDraft() async {
     final draft = state.draft;
     if (draft == null) return null;
+    _startMutation('Saving exam');
     final validation = await _examGeneratorService.validateDraft(draft.id);
     if (validation.isSuccess &&
         validation.data != null &&
         !validation.data!.canSave) {
       emitIfOpen(
         state.copyWith(
+          isMutating: false,
+          clearMutationAction: true,
           validation: validation.data,
           errorMessage: validation.data!.errors.join('\n'),
         ),
       );
       return null;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
     final result = await _examGeneratorService.saveDraft(draft.id);
     if (!result.isSuccess || result.data == null) {
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to save exam',
         ),
       );
@@ -481,6 +648,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
     emitIfOpen(
       state.copyWith(
         isMutating: false,
+        clearMutationAction: true,
         savedExam: result.data,
         actionMessage: 'Exam saved',
       ),
@@ -497,7 +665,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return null;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Regenerating draft');
     final result = await _examGeneratorService.regenerateDraft(
       draftId: draft.id,
       seed: seed,
@@ -507,13 +675,18 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to regenerate draft',
         ),
       );
       return null;
     }
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Draft regenerated'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Draft regenerated',
+      ),
     );
     return result.data!.id;
   }
@@ -525,7 +698,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
   }) async {
     final draft = state.draft;
     if (draft == null) return null;
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Duplicating draft');
     final result = await _examGeneratorService.duplicateDraft(
       draftId: draft.id,
       title: title,
@@ -536,13 +709,18 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to duplicate draft',
         ),
       );
       return null;
     }
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Draft duplicated'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Draft duplicated',
+      ),
     );
     return result.data!.id;
   }
@@ -550,8 +728,15 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
   Future<void> reloadAfterSourceEdit() async {
     final draft = state.draft;
     if (draft == null) return;
-    await loadDraft(draft.id);
-    emitIfOpen(state.copyWith(actionMessage: 'Draft revalidated'));
+    _startMutation('Refreshing draft');
+    await loadDraft(draft.id, showLoading: false);
+    emitIfOpen(
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Draft revalidated',
+      ),
+    );
   }
 
   Future<int?> reshuffleSection(int sectionId, {String? seed}) async {
@@ -560,7 +745,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return null;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Reshuffling section');
     final result = await _examGeneratorService.reshuffleSection(
       draftId: draft.id,
       sectionId: sectionId,
@@ -570,14 +755,19 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to reshuffle section',
         ),
       );
       return null;
     }
-    await loadDraft(result.data!.id);
+    await loadDraft(result.data!.id, showLoading: false);
     emitIfOpen(
-      state.copyWith(isMutating: false, actionMessage: 'Section reshuffled'),
+      state.copyWith(
+        isMutating: false,
+        clearMutationAction: true,
+        actionMessage: 'Section reshuffled',
+      ),
     );
     return result.data!.id;
   }
@@ -591,7 +781,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Draft is not editable'));
       return;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation('Normalizing section marks');
     final result = await _examGeneratorService.normalizeSectionMarks(
       draftId: draft.id,
       sectionId: sectionId,
@@ -601,15 +791,17 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(
         state.copyWith(
           isMutating: false,
+          clearMutationAction: true,
           errorMessage: result.error?.message ?? 'Failed to normalize marks',
         ),
       );
       return;
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
       state.copyWith(
         isMutating: false,
+        clearMutationAction: true,
         actionMessage: 'Section marks normalized',
       ),
     );
@@ -625,7 +817,9 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
       emitIfOpen(state.copyWith(errorMessage: 'Select at least one question'));
       return;
     }
-    emitIfOpen(state.copyWith(isMutating: true, clearError: true));
+    _startMutation(
+      sectionId == null ? 'Unassigning questions' : 'Moving questions',
+    );
     for (final itemId in itemIds) {
       final result = await _examGeneratorService.updateItem(
         draftId: draft.id,
@@ -637,6 +831,7 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
         emitIfOpen(
           state.copyWith(
             isMutating: false,
+            clearMutationAction: true,
             errorMessage:
                 result.error?.message ?? 'Failed to move selected questions',
           ),
@@ -644,10 +839,11 @@ class ExamDraftEditorCubit extends Cubit<ExamDraftEditorState>
         return;
       }
     }
-    await loadDraft(draft.id);
+    await loadDraft(draft.id, showLoading: false);
     emitIfOpen(
       state.copyWith(
         isMutating: false,
+        clearMutationAction: true,
         actionMessage: 'Selected questions moved',
       ),
     );

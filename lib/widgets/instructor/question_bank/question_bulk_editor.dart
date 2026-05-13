@@ -88,24 +88,10 @@ class QuestionBulkEditor extends StatelessWidget {
               );
               final button = Align(
                 alignment: AlignmentDirectional.centerEnd,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 150),
-                  child: FilledButton.icon(
-                    onPressed: rowCount >= 50 ? null : onAddRow,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: InstructorColors.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    icon: const Icon(Icons.add_rounded),
-                    label: Text(
-                      l10n.qbAddRow,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+                child: _AddRowButton(
+                  rowCount: rowCount,
+                  onAddRow: onAddRow,
+                  filled: true,
                 ),
               );
               if (compact) {
@@ -126,7 +112,73 @@ class QuestionBulkEditor extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         ...children,
+        const SizedBox(height: 2),
+        _AddRowButton(rowCount: rowCount, onAddRow: onAddRow),
       ],
+    );
+  }
+}
+
+class _AddRowButton extends StatelessWidget {
+  const _AddRowButton({
+    required this.rowCount,
+    required this.onAddRow,
+    this.filled = false,
+  });
+
+  final int rowCount;
+  final VoidCallback onAddRow;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final onPressed = rowCount >= 50 ? null : onAddRow;
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    );
+    if (filled) {
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 150),
+        child: FilledButton.icon(
+          onPressed: onPressed,
+          style: FilledButton.styleFrom(
+            backgroundColor: InstructorColors.primary,
+            foregroundColor: Colors.white,
+            shape: shape,
+          ),
+          icon: const Icon(Icons.add_rounded),
+          label: Text(
+            l10n.qbAddRow,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 54,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: InstructorColors.primary.withValues(
+            alpha: isDark ? 0.14 : 0.07,
+          ),
+          foregroundColor: InstructorColors.primary,
+          side: BorderSide(
+            color: InstructorColors.primary.withValues(alpha: 0.24),
+          ),
+          shape: shape,
+        ),
+        icon: const Icon(Icons.add_rounded),
+        label: Text(
+          l10n.qbAddRow,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.w900),
+        ),
+      ),
     );
   }
 }

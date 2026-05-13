@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,10 +44,16 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
   final TextEditingController _search = TextEditingController();
   CourseChapterModel? _editing;
   bool _creating = false;
+  bool _hasCompletedInitialLoad = false;
+  bool _isApplyingLocalFilter = false;
+  bool _savingChapter = false;
+  int? _deletingChapterId;
+  Timer? _filterFeedbackTimer;
   _ChapterStatusFilter _statusFilter = _ChapterStatusFilter.all;
 
   @override
   void dispose() {
+    _filterFeedbackTimer?.cancel();
     _search.dispose();
     super.dispose();
   }
@@ -125,7 +133,12 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
           }
         },
         builder: (context, state) {
-          if (state.isLoading && state.chapters.isEmpty) {
+          final showInitialSkeleton =
+              state.isLoading &&
+              state.chapters.isEmpty &&
+              !_hasCompletedInitialLoad;
+          if (!state.isLoading) _hasCompletedInitialLoad = true;
+          if (showInitialSkeleton) {
             return const SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(16, 12, 16, 32),
               child: QuestionBankSkeletons(itemCount: 4),
@@ -133,7 +146,7 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
           }
 
           final visibleChapters = _visibleChapters(state);
-          final activeCount = state.chapters
+          final activeCount = visibleChapters
               .where((chapter) => chapter.isActive)
               .length;
           final questionTotal = visibleChapters.fold<int>(
@@ -142,7 +155,7 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
                 sum + (state.chapterQuestionCounts[chapter.id] ?? 0),
           );
 
-          return RefreshIndicator(
+          final content = RefreshIndicator(
             onRefresh: () => context.read<QuestionBankCubit>().refresh(),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 110),
@@ -152,7 +165,7 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
                   subtitle: l10n.qbChapterCascadeWarning,
                   stats: {
                     l10n.course: _selectedCourseShortLabel(state),
-                    l10n.qbChapters: state.chapters.length.toString(),
+                    l10n.qbChapters: visibleChapters.length.toString(),
                     l10n.qbChapterActive: activeCount.toString(),
                     l10n.questions: questionTotal.toString(),
                   },
@@ -163,7 +176,10 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
                   state: state,
                   search: _search,
                   statusFilter: _statusFilter,
-                  onSearchChanged: (_) => setState(() {}),
+                  isLoading:
+                      _isApplyingLocalFilter ||
+                      (state.isLoading && _hasCompletedInitialLoad),
+                  onSearchChanged: (_) => _applyLocalFilterFeedback(),
                   onCourseChanged: (courseId) async {
                     setState(() {
                       _creating = false;
@@ -173,11 +189,14 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
                       courseId,
                     );
                   },
-                  onStatusChanged: (filter) =>
-                      setState(() => _statusFilter = filter),
+                  onStatusChanged: (filter) {
+                    setState(() => _statusFilter = filter);
+                    _applyLocalFilterFeedback();
+                  },
                   onClear: () {
                     _search.clear();
                     setState(() => _statusFilter = _ChapterStatusFilter.all);
+                    _applyLocalFilterFeedback();
                   },
                 ),
                 const SizedBox(height: 16),
@@ -187,37 +206,19 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
                     initial: _editing,
                     suggestedOrder: _nextChapterOrder(state),
                     occupiedOrders: _occupiedOrders(state),
-                    isSubmitting: state.isMutating,
+                    isSubmitting: _savingChapter || state.isMutating,
                     onCancel: () => setState(() {
                       _creating = false;
                       _editing = null;
                     }),
-                    onSubmit: (name, order, isActive) async {
-                      if (_editing == null) {
-                        await context.read<QuestionBankCubit>().createChapter(
-                          name: name,
-                          chapterOrder: order,
-                        );
-                      } else {
-                        await context.read<QuestionBankCubit>().updateChapter(
-                          chapterId: _editing!.id,
-                          name: name,
-                          chapterOrder: order,
-                          isActive: isActive,
-                        );
-                      }
-                      if (!context.mounted) return;
-                      setState(() {
-                        _creating = false;
-                        _editing = null;
-                      });
-                    },
+                    onSubmit: (name, order, isActive) =>
+                        _saveChapter(context, name, order, isActive),
                   ),
                   const SizedBox(height: 16),
                 ],
                 QuestionChapterManagerCard(
                   chapters: visibleChapters,
-                  totalChapters: state.chapters.length,
+                  totalChapters: visibleChapters.length,
                   questionCounts: state.chapterQuestionCounts,
                   onCreate: _showCreateForm,
                   onEdit: (chapter) => setState(() {
@@ -227,14 +228,32 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
                   onDelete: (chapter) async {
                     final ok = await showQuestionChapterDeleteDialog(context);
                     if (ok && context.mounted) {
-                      await context.read<QuestionBankCubit>().deleteChapter(
-                        chapter.id,
-                      );
+                      await _deleteChapter(context, chapter.id);
                     }
                   },
                 ),
               ],
             ),
+          );
+          return Stack(
+            children: [
+              content,
+              if (_savingChapter || _deletingChapterId != null)
+                Positioned.fill(
+                  child: QuestionBankMutationOverlay(
+                    title: _savingChapter
+                        ? 'Saving chapter'
+                        : 'Deleting chapter',
+                    message: _savingChapter
+                        ? 'Please wait until the chapter is saved.'
+                        : 'Please wait until the chapter is deleted.',
+                    isDark: isDark,
+                    color: _deletingChapterId == null
+                        ? InstructorColors.primary
+                        : InstructorColors.error,
+                  ),
+                ),
+            ],
           );
         },
       ),
@@ -246,6 +265,55 @@ class _QuestionBankChaptersViewState extends State<_QuestionBankChaptersView> {
       _creating = true;
       _editing = null;
     });
+  }
+
+  void _applyLocalFilterFeedback() {
+    _filterFeedbackTimer?.cancel();
+    if (!_isApplyingLocalFilter) {
+      setState(() => _isApplyingLocalFilter = true);
+    }
+    _filterFeedbackTimer = Timer(const Duration(milliseconds: 220), () {
+      if (mounted) setState(() => _isApplyingLocalFilter = false);
+    });
+  }
+
+  Future<void> _saveChapter(
+    BuildContext context,
+    String name,
+    int order,
+    bool isActive,
+  ) async {
+    if (_savingChapter) return;
+    final editing = _editing;
+    final cubit = context.read<QuestionBankCubit>();
+    setState(() => _savingChapter = true);
+    try {
+      final saved = editing == null
+          ? await cubit.createChapter(name: name, chapterOrder: order)
+          : await cubit.updateChapter(
+              chapterId: editing.id,
+              name: name,
+              chapterOrder: order,
+              isActive: isActive,
+            );
+      if (!saved || !mounted) return;
+      setState(() {
+        _creating = false;
+        _editing = null;
+      });
+    } finally {
+      if (mounted) setState(() => _savingChapter = false);
+    }
+  }
+
+  Future<void> _deleteChapter(BuildContext context, int chapterId) async {
+    if (_deletingChapterId != null) return;
+    setState(() => _deletingChapterId = chapterId);
+    try {
+      await context.read<QuestionBankCubit>().deleteChapter(chapterId);
+    } finally {
+      if (mounted) setState(() => _deletingChapterId = null);
+    }
   }
 
   List<CourseChapterModel> _visibleChapters(QuestionBankState state) {
@@ -297,6 +365,7 @@ class _ChapterFilterPanel extends StatelessWidget {
     required this.state,
     required this.search,
     required this.statusFilter,
+    required this.isLoading,
     required this.onSearchChanged,
     required this.onCourseChanged,
     required this.onStatusChanged,
@@ -306,6 +375,7 @@ class _ChapterFilterPanel extends StatelessWidget {
   final QuestionBankState state;
   final TextEditingController search;
   final _ChapterStatusFilter statusFilter;
+  final bool isLoading;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<int?> onCourseChanged;
   final ValueChanged<_ChapterStatusFilter> onStatusChanged;
@@ -430,6 +500,13 @@ class _ChapterFilterPanel extends StatelessWidget {
               ),
             ],
           ),
+          if (isLoading) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: const LinearProgressIndicator(minHeight: 3),
+            ),
+          ],
           if (hasFilters) ...[
             const SizedBox(height: 4),
             Align(

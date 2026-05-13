@@ -1,56 +1,52 @@
 import 'dart:ui';
 
+import 'package:edu_verse/bloc/auth/auth_bloc.dart';
+import 'package:edu_verse/bloc/auth/auth_event.dart';
+import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
+import 'package:edu_verse/bloc/instructor/instructor_courses_event.dart';
+import 'package:edu_verse/bloc/instructor/instructor_courses_state.dart';
+import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
+import 'package:edu_verse/bloc/notifications/notification_state.dart';
+import 'package:edu_verse/bloc/theme/theme_bloc.dart';
+import 'package:edu_verse/bloc/theme/theme_event.dart';
+import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/widgets/instructor/dashboard/instructor_dashboard_v9_metrics.dart';
+import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
+import 'package:edu_verse/widgets/shared/current_user_identity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../bloc/assignments/assignment_bloc.dart';
-import '../../../bloc/assignments/assignment_event.dart';
-import '../../../bloc/assignments/assignment_state.dart';
-import '../../../bloc/auth/auth_bloc.dart';
-import '../../../bloc/auth/auth_event.dart';
-import '../../../bloc/courses/courses_bloc.dart';
-import '../../../bloc/courses/courses_event.dart';
-import '../../../bloc/courses/courses_state.dart';
-import '../../../bloc/notifications/notification_cubit.dart';
-import '../../../bloc/notifications/notification_state.dart';
-import '../../../bloc/theme/theme_bloc.dart';
-import '../../../bloc/theme/theme_event.dart';
-import '../../../bloc/theme/theme_state.dart';
-import '../../../generated_l10n/app_localizations.dart';
-import '../../shared/current_user_identity.dart';
-import 'student_dashboard_metrics.dart';
+class InstructorDrawerV9 extends StatefulWidget {
+  final InstructorV9Snapshot snapshot;
 
-class StudentDrawer extends StatefulWidget {
-  const StudentDrawer({super.key});
+  const InstructorDrawerV9({
+    super.key,
+    this.snapshot = InstructorV9Snapshot.empty,
+  });
 
   @override
-  State<StudentDrawer> createState() => _StudentDrawerState();
+  State<InstructorDrawerV9> createState() => _InstructorDrawerV9State();
 }
 
-class _StudentDrawerState extends State<StudentDrawer> {
-  final Set<String> _expandedCategoryIds = <String>{'overview', 'learning'};
+class _InstructorDrawerV9State extends State<InstructorDrawerV9> {
+  final Set<String> _expandedCategoryIds = <String>{'overview', 'teaching'};
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _ensureDrawerDataLoaded();
+      _ensureDataLoaded();
     });
   }
 
-  void _ensureDrawerDataLoaded() {
-    final coursesBloc = context.read<CoursesBloc>();
-    if (coursesBloc.state is! CoursesLoaded &&
-        coursesBloc.state is! CoursesLoading) {
-      coursesBloc.add(const StudentCoursesFetched());
-    }
-
-    final assignmentBloc = context.read<AssignmentBloc>();
-    final assignmentState = assignmentBloc.state;
-    if (assignmentState.assignments.isEmpty && !assignmentState.isListLoading) {
-      assignmentBloc.add(const FetchAssignments(courseId: null));
+  void _ensureDataLoaded() {
+    final coursesBloc = context.read<InstructorCoursesBloc>();
+    if (coursesBloc.state is! InstructorCoursesLoaded &&
+        coursesBloc.state is! InstructorCoursesLoading) {
+      coursesBloc.add(const LoadTeachingCourses());
     }
 
     final notificationCubit = context.read<NotificationCubit>();
@@ -77,7 +73,7 @@ class _StudentDrawerState extends State<StudentDrawer> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: _DrawerColors.pageGradient(isDark),
+                colors: _InstructorV9Colors.pageGradient(isDark),
               ),
             ),
             child: SafeArea(
@@ -85,12 +81,15 @@ class _StudentDrawerState extends State<StudentDrawer> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    child: _DrawerProfileHeader(isDark: isDark),
+                    child: _InstructorDrawerHeader(isDark: isDark),
                   ),
                   const SizedBox(height: 12),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _DrawerStatsCard(isDark: isDark),
+                    child: _InstructorDrawerStats(
+                      isDark: isDark,
+                      snapshot: widget.snapshot,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Expanded(
@@ -98,14 +97,12 @@ class _StudentDrawerState extends State<StudentDrawer> {
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
                       physics: const BouncingScrollPhysics(),
                       children: sections.map((section) {
-                        final isExpanded = _expandedCategoryIds.contains(
-                          section.id,
-                        );
                         return _DrawerCategory(
                           section: section,
                           isDark: isDark,
-                          isExpanded: isExpanded,
+                          isExpanded: _expandedCategoryIds.contains(section.id),
                           currentPath: currentPath,
+                          snapshot: widget.snapshot,
                           onToggle: () {
                             setState(() {
                               if (_expandedCategoryIds.contains(section.id)) {
@@ -125,7 +122,7 @@ class _StudentDrawerState extends State<StudentDrawer> {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: _DrawerBottomSection(isDark: isDark),
+                    child: _InstructorDrawerBottom(isDark: isDark),
                   ),
                 ],
               ),
@@ -157,68 +154,107 @@ class _StudentDrawerState extends State<StudentDrawer> {
             icon: Icons.dashboard_outlined,
             activeIcon: Icons.dashboard_rounded,
             title: l10n.dashboard,
-            route: '/dashboard',
+            route: '/instructor/dashboard',
           ),
           _DrawerItem(
             icon: Icons.calendar_month_outlined,
             activeIcon: Icons.calendar_month_rounded,
             title: l10n.calendar,
-            route: '/calendar',
+            route: '/instructor/calendar',
           ),
           _DrawerItem(
-            icon: Icons.app_registration_outlined,
-            activeIcon: Icons.app_registration_rounded,
-            title: l10n.registration,
-            route: '/registration',
+            icon: Icons.analytics_outlined,
+            activeIcon: Icons.analytics_rounded,
+            title: l10n.reportsAndAnalytics,
+            route: '/instructor/reports',
           ),
         ],
       ),
       _DrawerSection(
-        id: 'learning',
-        title: l10n.drawerLearning,
-        icon: Icons.menu_book_rounded,
+        id: 'teaching',
+        title: l10n.drawerTeaching,
+        icon: Icons.school_rounded,
         items: [
           _DrawerItem(
-            icon: Icons.auto_stories_outlined,
-            activeIcon: Icons.auto_stories_rounded,
-            title: l10n.courses,
-            route: '/courses',
+            icon: Icons.menu_book_outlined,
+            activeIcon: Icons.menu_book_rounded,
+            title: l10n.myCourses,
+            route: '/instructor/courses',
           ),
           _DrawerItem(
-            icon: Icons.assignment_outlined,
-            activeIcon: Icons.assignment_rounded,
-            title: l10n.assignments,
-            route: '/assignments',
+            icon: Icons.tune_outlined,
+            activeIcon: Icons.tune_rounded,
+            title: l10n.manageCourses,
+            route: '/instructor/course-management',
           ),
           _DrawerItem(
-            icon: Icons.checklist_rounded,
-            activeIcon: Icons.fact_check_rounded,
-            title: l10n.tasks,
-            route: '/tasks',
+            icon: Icons.groups_outlined,
+            activeIcon: Icons.groups_rounded,
+            title: l10n.roster,
+            route: '/instructor/roster',
+          ),
+          _DrawerItem(
+            icon: Icons.how_to_reg_outlined,
+            activeIcon: Icons.how_to_reg_rounded,
+            title: l10n.attendanceManager,
+            route: '/instructor/attendance',
+          ),
+          _DrawerItem(
+            icon: Icons.upload_file_outlined,
+            activeIcon: Icons.upload_file_rounded,
+            title: l10n.uploadMaterial,
+            route: '/instructor/upload-materials',
           ),
           _DrawerItem(
             icon: Icons.science_outlined,
             activeIcon: Icons.science_rounded,
             title: l10n.labs,
-            route: '/labs',
+            route: '/instructor/labs',
+          ),
+        ],
+      ),
+      _DrawerSection(
+        id: 'assessment',
+        title: l10n.drawerAssessment,
+        icon: Icons.fact_check_rounded,
+        items: [
+          _DrawerItem(
+            icon: Icons.assignment_outlined,
+            activeIcon: Icons.assignment_rounded,
+            title: l10n.assignments,
+            route: '/instructor/assignments',
+            showsPendingBadge: true,
+          ),
+          _DrawerItem(
+            icon: Icons.add_task_outlined,
+            activeIcon: Icons.add_task_rounded,
+            title: l10n.createAssignment,
+            route: '/instructor/create-assignment',
+          ),
+          _DrawerItem(
+            icon: Icons.grading_outlined,
+            activeIcon: Icons.grading_rounded,
+            title: l10n.gradingCenter,
+            route: '/instructor/grading',
+            showsPendingBadge: true,
           ),
           _DrawerItem(
             icon: Icons.quiz_outlined,
             activeIcon: Icons.quiz_rounded,
-            title: l10n.quizzes,
-            route: '/student/quizzes',
+            title: l10n.quizManagement,
+            route: '/instructor/quiz-management',
           ),
           _DrawerItem(
-            icon: Icons.emoji_events_outlined,
-            activeIcon: Icons.emoji_events_rounded,
-            title: l10n.grades,
-            route: '/grades',
+            icon: Icons.storage_outlined,
+            activeIcon: Icons.storage_rounded,
+            title: l10n.questionBank,
+            route: '/instructor/question-bank',
           ),
           _DrawerItem(
-            icon: Icons.event_available_outlined,
-            activeIcon: Icons.event_available_rounded,
-            title: l10n.attendance,
-            route: '/attendance',
+            icon: Icons.description_outlined,
+            activeIcon: Icons.description_rounded,
+            title: l10n.examGenerator,
+            route: '/instructor/exam-generator',
           ),
         ],
       ),
@@ -231,22 +267,8 @@ class _StudentDrawerState extends State<StudentDrawer> {
           _DrawerItem(
             icon: Icons.psychology_outlined,
             activeIcon: Icons.psychology_rounded,
-            title: l10n.aiAssistant,
-            route: '/ai-chat',
-            isAi: true,
-          ),
-          _DrawerItem(
-            icon: Icons.tips_and_updates_outlined,
-            activeIcon: Icons.tips_and_updates_rounded,
-            title: l10n.aiQuiz,
-            route: '/ai-quiz-generator',
-            isAi: true,
-          ),
-          _DrawerItem(
-            icon: Icons.layers_outlined,
-            activeIcon: Icons.layers_rounded,
-            title: l10n.flashcards,
-            route: '/flashcards',
+            title: l10n.aiTeachingAssistant,
+            route: '/instructor/ai-teaching',
             isAi: true,
           ),
           _DrawerItem(
@@ -254,20 +276,6 @@ class _StudentDrawerState extends State<StudentDrawer> {
             activeIcon: Icons.summarize_rounded,
             title: l10n.summarizerTitle,
             route: '/summarizer',
-            isAi: true,
-          ),
-          _DrawerItem(
-            icon: Icons.mic_none_rounded,
-            activeIcon: Icons.mic_rounded,
-            title: l10n.voiceToTextTitle,
-            route: '/voice-to-text',
-            isAi: true,
-          ),
-          _DrawerItem(
-            icon: Icons.military_tech_outlined,
-            activeIcon: Icons.military_tech_rounded,
-            title: l10n.gamificationTitle,
-            route: '/gamification',
             isAi: true,
           ),
         ],
@@ -281,26 +289,28 @@ class _StudentDrawerState extends State<StudentDrawer> {
             icon: Icons.forum_outlined,
             activeIcon: Icons.forum_rounded,
             title: l10n.discussions,
-            route: '/discussions',
-            activePrefixes: const ['/course/'],
+            route: '/instructor/discussions',
+            activePrefixes: const ['/instructor/course/'],
           ),
           _DrawerItem(
             icon: Icons.chat_bubble_outline_rounded,
             activeIcon: Icons.chat_bubble_rounded,
             title: l10n.messages,
-            route: '/messages',
+            route: '/instructor/messages',
+            showsMessagesBadge: true,
           ),
           _DrawerItem(
             icon: Icons.campaign_outlined,
             activeIcon: Icons.campaign_rounded,
             title: l10n.announcements,
-            route: '/student/announcements',
+            route: '/instructor/announcements',
           ),
           _DrawerItem(
             icon: Icons.notifications_outlined,
             activeIcon: Icons.notifications_rounded,
             title: l10n.notifications,
-            route: '/notifications',
+            route: '/instructor/notifications',
+            showsNotificationBadge: true,
           ),
         ],
       ),
@@ -313,13 +323,13 @@ class _StudentDrawerState extends State<StudentDrawer> {
             icon: Icons.person_outline_rounded,
             activeIcon: Icons.person_rounded,
             title: l10n.profile,
-            route: '/profile',
+            route: '/instructor/profile',
           ),
           _DrawerItem(
             icon: Icons.settings_outlined,
             activeIcon: Icons.settings_rounded,
             title: l10n.settings,
-            route: '/settings',
+            route: '/instructor/settings',
           ),
         ],
       ),
@@ -327,20 +337,20 @@ class _StudentDrawerState extends State<StudentDrawer> {
   }
 }
 
-class _DrawerProfileHeader extends StatelessWidget {
+class _InstructorDrawerHeader extends StatelessWidget {
   final bool isDark;
 
-  const _DrawerProfileHeader({required this.isDark});
+  const _InstructorDrawerHeader({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final identity = CurrentUserIdentity.fromAuthState(
       context.watch<AuthBloc>().state,
-      fallbackName: 'Student',
+      fallbackName: 'Instructor',
     );
 
-    return _DrawerGlassCard(
+    return _GlassCard(
       isDark: isDark,
       padding: const EdgeInsets.all(14),
       child: Row(
@@ -349,7 +359,7 @@ class _DrawerProfileHeader extends StatelessWidget {
             onTap: () {
               final router = GoRouter.of(context);
               Navigator.of(context).pop();
-              router.go('/profile');
+              router.go('/instructor/profile');
             },
             child: Stack(
               children: [
@@ -361,14 +371,14 @@ class _DrawerProfileHeader extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        _DrawerColors.primaryBlueLight,
-                        _DrawerColors.aiPurple,
+                        _InstructorV9Colors.purple,
+                        _InstructorV9Colors.pink,
                       ],
                     ),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: _DrawerColors.primaryBlue.withValues(
+                        color: _InstructorV9Colors.purple.withValues(
                           alpha: 0.24,
                         ),
                         blurRadius: 14,
@@ -381,7 +391,7 @@ class _DrawerProfileHeader extends StatelessWidget {
                       identity.initials,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 23,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -394,10 +404,10 @@ class _DrawerProfileHeader extends StatelessWidget {
                     width: 15,
                     height: 15,
                     decoration: BoxDecoration(
-                      color: _DrawerColors.success,
+                      color: _InstructorV9Colors.success,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: _DrawerColors.glassSurface(isDark),
+                        color: _InstructorV9Colors.glassSurface(isDark),
                         width: 2,
                       ),
                     ),
@@ -416,7 +426,7 @@ class _DrawerProfileHeader extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: _DrawerColors.primaryText(isDark),
+                    color: _InstructorV9Colors.primaryText(isDark),
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
                   ),
@@ -428,15 +438,15 @@ class _DrawerProfileHeader extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _DrawerColors.success.withValues(alpha: 0.12),
+                    color: _InstructorV9Colors.purple.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
-                    l10n.activeLearner,
+                    l10n.activeInstructor,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: _DrawerColors.success,
+                      color: _InstructorV9Colors.purple,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                     ),
@@ -446,7 +456,7 @@ class _DrawerProfileHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          _DrawerIconButton(
+          _IconButtonShell(
             isDark: isDark,
             icon: Icons.close_rounded,
             onTap: () => Navigator.pop(context),
@@ -457,74 +467,61 @@ class _DrawerProfileHeader extends StatelessWidget {
   }
 }
 
-class _DrawerStatsCard extends StatelessWidget {
+class _InstructorDrawerStats extends StatelessWidget {
   final bool isDark;
+  final InstructorV9Snapshot snapshot;
 
-  const _DrawerStatsCard({required this.isDark});
+  const _InstructorDrawerStats({required this.isDark, required this.snapshot});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final courses = context.select<InstructorCoursesBloc, int>((bloc) {
+      return InstructorDashboardV9Metrics.courseCount(
+        InstructorDashboardV9Metrics.teachingCoursesFromState(bloc.state),
+      );
+    });
+    final students = context.select<InstructorCoursesBloc, int>((bloc) {
+      return InstructorDashboardV9Metrics.totalStudents(
+        InstructorDashboardV9Metrics.teachingCoursesFromState(bloc.state),
+      );
+    });
 
-    return _DrawerGlassCard(
+    return _GlassCard(
       isDark: isDark,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      child: BlocBuilder<CoursesBloc, CoursesState>(
-        builder: (context, coursesState) {
-          return BlocBuilder<AssignmentBloc, AssignmentState>(
-            builder: (context, assignmentState) {
-              final coursesLoading =
-                  coursesState is CoursesLoading &&
-                  StudentDashboardMetrics.courseCount(coursesState) == 0;
-              final assignmentsLoading =
-                  assignmentState.isListLoading &&
-                  assignmentState.assignments.isEmpty;
-              final coursesValue = coursesLoading
-                  ? '--'
-                  : '${StudentDashboardMetrics.courseCount(coursesState)}';
-              final progressValue = coursesLoading
-                  ? '--'
-                  : '${StudentDashboardMetrics.averageProgressPercent(coursesState)}%';
-              final tasksValue = assignmentsLoading
-                  ? '--'
-                  : '${StudentDashboardMetrics.pendingAssignmentCount(assignmentState)}';
-
-              return Row(
-                children: [
-                  Expanded(
-                    child: _DrawerStatItem(
-                      isDark: isDark,
-                      value: coursesValue,
-                      label: l10n.courses,
-                      icon: Icons.menu_book_rounded,
-                      color: _DrawerColors.primaryBlue,
-                    ),
-                  ),
-                  _DrawerStatDivider(isDark: isDark),
-                  Expanded(
-                    child: _DrawerStatItem(
-                      isDark: isDark,
-                      value: progressValue,
-                      label: l10n.progress,
-                      icon: Icons.trending_up_rounded,
-                      color: _DrawerColors.aiPurple,
-                    ),
-                  ),
-                  _DrawerStatDivider(isDark: isDark),
-                  Expanded(
-                    child: _DrawerStatItem(
-                      isDark: isDark,
-                      value: tasksValue,
-                      label: l10n.tasks,
-                      icon: Icons.task_alt_rounded,
-                      color: _DrawerColors.cyan,
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
+      child: Row(
+        children: [
+          Expanded(
+            child: _StatItem(
+              isDark: isDark,
+              value: '$courses',
+              label: l10n.courses,
+              icon: Icons.menu_book_rounded,
+              color: _InstructorV9Colors.purple,
+            ),
+          ),
+          _StatDivider(isDark: isDark),
+          Expanded(
+            child: _StatItem(
+              isDark: isDark,
+              value: '$students',
+              label: l10n.students,
+              icon: Icons.groups_rounded,
+              color: _InstructorV9Colors.indigo,
+            ),
+          ),
+          _StatDivider(isDark: isDark),
+          Expanded(
+            child: _StatItem(
+              isDark: isDark,
+              value: '${snapshot.pendingGrading.length}',
+              label: l10n.pending,
+              icon: Icons.grading_rounded,
+              color: _InstructorV9Colors.pink,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -535,6 +532,7 @@ class _DrawerCategory extends StatelessWidget {
   final bool isDark;
   final bool isExpanded;
   final String currentPath;
+  final InstructorV9Snapshot snapshot;
   final VoidCallback onToggle;
   final ValueChanged<_DrawerItem> onItemTap;
 
@@ -543,6 +541,7 @@ class _DrawerCategory extends StatelessWidget {
     required this.isDark,
     required this.isExpanded,
     required this.currentPath,
+    required this.snapshot,
     required this.onToggle,
     required this.onItemTap,
   });
@@ -555,19 +554,19 @@ class _DrawerCategory extends StatelessWidget {
     final unreadNotifications = context.select<NotificationCubit, int>(
       (cubit) => cubit.state.unreadCount,
     );
-    final pendingAssignments = context.select<AssignmentBloc, int>(
-      (bloc) => StudentDashboardMetrics.pendingAssignmentCount(bloc.state),
+    final messageCount = InstructorDashboardV9Metrics.messageCount(
+      snapshot.courses,
     );
     final accent = section.isAi
-        ? _DrawerColors.aiPurple
-        : _DrawerColors.primaryBlue;
+        ? _InstructorV9Colors.pink
+        : _InstructorV9Colors.purple;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: _DrawerGlassCard(
+      child: _GlassCard(
         isDark: isDark,
-        padding: const EdgeInsets.all(6),
         radius: 20,
+        padding: const EdgeInsets.all(6),
         child: Column(
           children: [
             Material(
@@ -586,7 +585,7 @@ class _DrawerCategory extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: accent.withValues(alpha: 0.12),
+                          color: accent.withValues(alpha: 0.13),
                           borderRadius: BorderRadius.circular(11),
                         ),
                         child: Icon(section.icon, color: accent, size: 18),
@@ -600,7 +599,7 @@ class _DrawerCategory extends StatelessWidget {
                           style: TextStyle(
                             color: hasActiveItem
                                 ? accent
-                                : _DrawerColors.primaryText(isDark),
+                                : _InstructorV9Colors.primaryText(isDark),
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.35,
@@ -612,7 +611,7 @@ class _DrawerCategory extends StatelessWidget {
                         duration: const Duration(milliseconds: 180),
                         child: Icon(
                           Icons.keyboard_arrow_down_rounded,
-                          color: _DrawerColors.mutedText(isDark),
+                          color: _InstructorV9Colors.mutedText(isDark),
                         ),
                       ),
                     ],
@@ -631,7 +630,8 @@ class _DrawerCategory extends StatelessWidget {
                     badgeCount: _badgeCountFor(
                       item,
                       unreadNotifications: unreadNotifications,
-                      pendingAssignments: pendingAssignments,
+                      pendingGrading: snapshot.pendingGrading.length,
+                      messages: messageCount,
                     ),
                     onTap: () => onItemTap(item),
                   );
@@ -652,12 +652,12 @@ class _DrawerCategory extends StatelessWidget {
   int _badgeCountFor(
     _DrawerItem item, {
     required int unreadNotifications,
-    required int pendingAssignments,
+    required int pendingGrading,
+    required int messages,
   }) {
-    if (item.route == '/notifications') return unreadNotifications;
-    if (item.route == '/assignments' || item.route == '/tasks') {
-      return pendingAssignments;
-    }
+    if (item.showsNotificationBadge) return unreadNotifications;
+    if (item.showsPendingBadge) return pendingGrading;
+    if (item.showsMessagesBadge) return messages;
     return 0;
   }
 }
@@ -680,8 +680,8 @@ class _DrawerNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = item.isAi
-        ? _DrawerColors.aiPurple
-        : _DrawerColors.primaryBlue;
+        ? _InstructorV9Colors.pink
+        : _InstructorV9Colors.purple;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -699,8 +699,8 @@ class _DrawerNavItem extends StatelessWidget {
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                       colors: [
-                        accent.withValues(alpha: 0.18),
-                        accent.withValues(alpha: 0.08),
+                        accent.withValues(alpha: 0.19),
+                        _InstructorV9Colors.pink.withValues(alpha: 0.08),
                       ],
                     )
                   : null,
@@ -713,13 +713,15 @@ class _DrawerNavItem extends StatelessWidget {
                   height: 34,
                   decoration: BoxDecoration(
                     color: isActive
-                        ? accent.withValues(alpha: 0.14)
-                        : _DrawerColors.controlSurface(isDark),
+                        ? accent.withValues(alpha: 0.15)
+                        : _InstructorV9Colors.controlSurface(isDark),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     isActive ? item.activeIcon : item.icon,
-                    color: isActive ? accent : _DrawerColors.mutedText(isDark),
+                    color: isActive
+                        ? accent
+                        : _InstructorV9Colors.mutedText(isDark),
                     size: 19,
                   ),
                 ),
@@ -732,7 +734,7 @@ class _DrawerNavItem extends StatelessWidget {
                     style: TextStyle(
                       color: isActive
                           ? accent
-                          : _DrawerColors.primaryText(isDark),
+                          : _InstructorV9Colors.primaryText(isDark),
                       fontSize: 14,
                       fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
                     ),
@@ -740,10 +742,12 @@ class _DrawerNavItem extends StatelessWidget {
                 ),
                 if (badgeCount > 0) ...[
                   const SizedBox(width: 8),
-                  _DrawerCountBadge(
+                  _CountBadge(
                     count: badgeCount,
                     isDark: isDark,
-                    color: _badgeColor,
+                    color: item.showsNotificationBadge
+                        ? _InstructorV9Colors.yellow
+                        : _InstructorV9Colors.pink,
                   ),
                 ],
               ],
@@ -753,71 +757,12 @@ class _DrawerNavItem extends StatelessWidget {
       ),
     );
   }
-
-  Color get _badgeColor {
-    if (item.route == '/notifications') return _DrawerColors.red;
-    if (item.route == '/assignments' || item.route == '/tasks') {
-      return _DrawerColors.amber;
-    }
-    return item.isAi ? _DrawerColors.aiPurple : _DrawerColors.primaryBlue;
-  }
 }
 
-class _DrawerCountBadge extends StatelessWidget {
-  final int count;
-  final bool isDark;
-  final Color color;
-
-  const _DrawerCountBadge({
-    required this.count,
-    required this.isDark,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final label = count > 99 ? '99+' : '$count';
-
-    return Container(
-      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.14)
-              : Colors.white.withValues(alpha: 0.95),
-          width: 1.4,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: isDark ? 0.22 : 0.18),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          label,
-          maxLines: 1,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 11,
-            fontWeight: FontWeight.w900,
-            height: 1,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DrawerBottomSection extends StatelessWidget {
+class _InstructorDrawerBottom extends StatelessWidget {
   final bool isDark;
 
-  const _DrawerBottomSection({required this.isDark});
+  const _InstructorDrawerBottom({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -826,10 +771,10 @@ class _DrawerBottomSection extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _DrawerGlassCard(
+        _GlassCard(
           isDark: isDark,
-          padding: const EdgeInsets.all(4),
           radius: 16,
+          padding: const EdgeInsets.all(4),
           child: Row(
             children: [
               Expanded(
@@ -877,12 +822,12 @@ class _DrawerBottomSection extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: _DrawerColors.red.withValues(
+                color: _InstructorV9Colors.red.withValues(
                   alpha: isDark ? 0.10 : 0.04,
                 ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: _DrawerColors.red.withValues(alpha: 0.30),
+                  color: _InstructorV9Colors.red.withValues(alpha: 0.30),
                 ),
               ),
               child: Row(
@@ -890,14 +835,14 @@ class _DrawerBottomSection extends StatelessWidget {
                 children: [
                   const Icon(
                     Icons.logout_rounded,
-                    color: _DrawerColors.red,
+                    color: _InstructorV9Colors.red,
                     size: 18,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.logout,
                     style: const TextStyle(
-                      color: _DrawerColors.red,
+                      color: _InstructorV9Colors.red,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                     ),
@@ -939,18 +884,9 @@ class _ThemeChoice extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: isActive
-                ? (isDark ? _DrawerColors.primaryBlue : Colors.white)
+                ? (isDark ? _InstructorV9Colors.purple : Colors.white)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: isActive && !isDark
-                ? [
-                    BoxShadow(
-                      color: _DrawerColors.primaryBlue.withValues(alpha: 0.12),
-                      blurRadius: 12,
-                      offset: const Offset(0, 5),
-                    ),
-                  ]
-                : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -959,8 +895,8 @@ class _ThemeChoice extends StatelessWidget {
                 icon,
                 size: 16,
                 color: isActive
-                    ? (isDark ? Colors.white : _DrawerColors.primaryBlue)
-                    : _DrawerColors.mutedText(isDark),
+                    ? (isDark ? Colors.white : _InstructorV9Colors.purple)
+                    : _InstructorV9Colors.mutedText(isDark),
               ),
               const SizedBox(width: 6),
               Flexible(
@@ -970,8 +906,8 @@ class _ThemeChoice extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: isActive
-                        ? (isDark ? Colors.white : _DrawerColors.primaryBlue)
-                        : _DrawerColors.mutedText(isDark),
+                        ? (isDark ? Colors.white : _InstructorV9Colors.purple)
+                        : _InstructorV9Colors.mutedText(isDark),
                     fontSize: 12,
                     fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
                   ),
@@ -985,13 +921,13 @@ class _ThemeChoice extends StatelessWidget {
   }
 }
 
-class _DrawerGlassCard extends StatelessWidget {
+class _GlassCard extends StatelessWidget {
   final bool isDark;
   final EdgeInsetsGeometry padding;
   final Widget child;
   final double radius;
 
-  const _DrawerGlassCard({
+  const _GlassCard({
     required this.isDark,
     required this.padding,
     required this.child,
@@ -1008,14 +944,14 @@ class _DrawerGlassCard extends StatelessWidget {
           width: double.infinity,
           padding: padding,
           decoration: BoxDecoration(
-            color: _DrawerColors.glassSurface(isDark),
+            color: _InstructorV9Colors.glassSurface(isDark),
             borderRadius: BorderRadius.circular(radius),
-            border: Border.all(color: _DrawerColors.glassBorder(isDark)),
+            border: Border.all(color: _InstructorV9Colors.glassBorder(isDark)),
             boxShadow: [
               BoxShadow(
                 color: isDark
                     ? Colors.black.withValues(alpha: 0.18)
-                    : _DrawerColors.primaryBlue.withValues(alpha: 0.07),
+                    : _InstructorV9Colors.purple.withValues(alpha: 0.07),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
@@ -1028,14 +964,14 @@ class _DrawerGlassCard extends StatelessWidget {
   }
 }
 
-class _DrawerStatItem extends StatelessWidget {
+class _StatItem extends StatelessWidget {
   final bool isDark;
   final String value;
   final String label;
   final IconData icon;
   final Color color;
 
-  const _DrawerStatItem({
+  const _StatItem({
     required this.isDark,
     required this.value,
     required this.label,
@@ -1055,7 +991,7 @@ class _DrawerStatItem extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            color: _DrawerColors.primaryText(isDark),
+            color: _InstructorV9Colors.primaryText(isDark),
             fontSize: 17,
             fontWeight: FontWeight.w800,
           ),
@@ -1066,7 +1002,7 @@ class _DrawerStatItem extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            color: _DrawerColors.mutedText(isDark),
+            color: _InstructorV9Colors.mutedText(isDark),
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -1076,27 +1012,27 @@ class _DrawerStatItem extends StatelessWidget {
   }
 }
 
-class _DrawerStatDivider extends StatelessWidget {
+class _StatDivider extends StatelessWidget {
   final bool isDark;
 
-  const _DrawerStatDivider({required this.isDark});
+  const _StatDivider({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 1,
       height: 44,
-      color: _DrawerColors.glassBorder(isDark),
+      color: _InstructorV9Colors.glassBorder(isDark),
     );
   }
 }
 
-class _DrawerIconButton extends StatelessWidget {
+class _IconButtonShell extends StatelessWidget {
   final bool isDark;
   final IconData icon;
   final VoidCallback onTap;
 
-  const _DrawerIconButton({
+  const _IconButtonShell({
     required this.isDark,
     required this.icon,
     required this.onTap,
@@ -1113,49 +1049,106 @@ class _DrawerIconButton extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: _DrawerColors.controlSurface(isDark),
+            color: _InstructorV9Colors.controlSurface(isDark),
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(icon, color: _DrawerColors.mutedText(isDark), size: 20),
+          child: Icon(
+            icon,
+            color: _InstructorV9Colors.mutedText(isDark),
+            size: 20,
+          ),
         ),
       ),
     );
   }
 }
 
-class _DrawerColors {
-  static const primaryBlue = Color(0xFF155CFB);
-  static const primaryBlueLight = Color(0xFF2B7FFF);
-  static const aiPurple = Color(0xFF8B5CF6);
-  static const cyan = Color(0xFF06B6D4);
-  static const amber = Color(0xFFF59E0B);
-  static const success = Color(0xFF10B981);
-  static const red = Color(0xFFEF4444);
+class _CountBadge extends StatelessWidget {
+  final int count;
+  final bool isDark;
+  final Color color;
+
+  const _CountBadge({
+    required this.count,
+    required this.isDark,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final label = count > 99 ? '99+' : '$count';
+    final textColor = color == _InstructorV9Colors.yellow
+        ? const Color(0xFF713F12)
+        : Colors.white;
+
+    return Container(
+      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.14)
+              : Colors.white.withValues(alpha: 0.95),
+          width: 1.4,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            height: 1,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InstructorV9Colors {
+  static const purple = InstructorColors.primary;
+  static const pink = InstructorColors.accent;
+  static const indigo = InstructorColors.info;
+  static const yellow = InstructorColors.warning;
+  static const success = InstructorColors.success;
+  static const red = InstructorColors.error;
 
   static List<Color> pageGradient(bool isDark) {
     if (isDark) {
-      return const [Color(0xFF0B1120), Color(0xFF111C35), Color(0xFF0F172A)];
+      return const [
+        InstructorColors.darkBg,
+        InstructorColors.darkCard,
+        InstructorColors.darkBg,
+      ];
     }
-    return const [Color(0xFFE6EFFD), Color(0xFFF8FBFF), Color(0xFFF1E9FF)];
+    return const [
+      InstructorColors.primarySurface,
+      InstructorColors.surface,
+      InstructorColors.cyanLight,
+    ];
   }
 
   static Color glassSurface(bool isDark) => isDark
-      ? const Color(0xFF172442).withValues(alpha: 0.88)
-      : Colors.white.withValues(alpha: 0.92);
+      ? InstructorColors.darkCard.withValues(alpha: 0.88)
+      : Colors.white.withValues(alpha: 0.78);
 
   static Color glassBorder(bool isDark) => isDark
-      ? const Color(0xFF6EA8FF).withValues(alpha: 0.18)
-      : const Color(0xFFD8E4FF).withValues(alpha: 0.95);
+      ? InstructorColors.darkBorder.withValues(alpha: 0.46)
+      : InstructorColors.border.withValues(alpha: 0.74);
 
   static Color controlSurface(bool isDark) => isDark
       ? Colors.white.withValues(alpha: 0.10)
-      : const Color(0xFFF3F7FF).withValues(alpha: 0.95);
+      : InstructorColors.primarySurface.withValues(alpha: 0.72);
 
   static Color primaryText(bool isDark) =>
-      isDark ? Colors.white : const Color(0xFF101727);
+      InstructorColors.textPrimaryColor(isDark);
 
   static Color mutedText(bool isDark) =>
-      isDark ? Colors.white60 : const Color(0xFF64748B);
+      InstructorColors.textSecondaryColor(isDark);
 }
 
 class _DrawerSection {
@@ -1180,6 +1173,9 @@ class _DrawerItem {
   final String title;
   final String route;
   final bool isAi;
+  final bool showsNotificationBadge;
+  final bool showsPendingBadge;
+  final bool showsMessagesBadge;
   final List<String> activePrefixes;
 
   const _DrawerItem({
@@ -1188,11 +1184,13 @@ class _DrawerItem {
     required this.title,
     required this.route,
     this.isAi = false,
+    this.showsNotificationBadge = false,
+    this.showsPendingBadge = false,
+    this.showsMessagesBadge = false,
     this.activePrefixes = const [],
   });
 
   bool matches(String path) {
-    if (route == '/dashboard') return path == route;
     if (path == route || path.startsWith('$route/')) return true;
     return activePrefixes.any((prefix) => path.startsWith(prefix));
   }

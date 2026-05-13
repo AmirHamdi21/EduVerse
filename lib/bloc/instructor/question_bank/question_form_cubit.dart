@@ -7,6 +7,7 @@ import '../../../models/question_bank/question_bank_fill_blank_model.dart';
 import '../../../models/question_bank/question_bank_form_payload.dart';
 import '../../../models/question_bank/question_bank_option_model.dart';
 import '../../../models/question_bank/question_attachment_payload.dart';
+import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/question_bank_service.dart';
 import 'question_form_state.dart';
 
@@ -257,7 +258,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
               .where((attachment) => attachment.fileId != fileId)
               .toList(),
         ),
-        successMessage: 'questionImageRemoved',
+        successMessage: 'attachmentRemoved',
       ),
     );
   }
@@ -333,7 +334,7 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
       state.copyWith(
         isSaving: false,
         savedQuestion: result.data,
-        successMessage: 'Question saved',
+        successMessage: original == null ? 'draftSaved' : 'questionSaved',
       ),
     );
     return true;
@@ -358,14 +359,62 @@ class QuestionFormCubit extends Cubit<QuestionFormState>
       );
       return false;
     }
+    final confirmed = await _confirmStatus(result.data!, action);
+    if (confirmed == null) {
+      emitIfOpen(
+        state.copyWith(
+          isSaving: false,
+          errorMessage: 'questionStatusNotConfirmed',
+        ),
+      );
+      return false;
+    }
     emitIfOpen(
       state.copyWith(
         isSaving: false,
-        savedQuestion: result.data,
-        successMessage: 'Question saved',
+        savedQuestion: confirmed,
+        successMessage: 'questionStatusUpdated:${confirmed.status.value}',
       ),
     );
     return true;
+  }
+
+  Future<QuestionBankQuestionModel?> _confirmStatus(
+    QuestionBankQuestionModel actionResponse,
+    String action,
+  ) async {
+    final expected = _expectedStatus(action);
+    if (expected == null) return actionResponse;
+
+    var latest = actionResponse;
+    for (var attempt = 0; attempt < 3; attempt++) {
+      final result = await _questionBankService.getQuestion(actionResponse.id);
+      if (result.isSuccess && result.data != null) {
+        latest = result.data!;
+        if (latest.status == expected) return latest;
+      }
+      if (attempt < 2) {
+        await Future<void>.delayed(const Duration(milliseconds: 350));
+      }
+    }
+    return latest.status == expected ? latest : null;
+  }
+
+  QuestionBankStatus? _expectedStatus(String action) {
+    switch (action) {
+      case 'submit-for-review':
+        return QuestionBankStatus.underReview;
+      case 'approve':
+        return QuestionBankStatus.approved;
+      case 'reject':
+        return QuestionBankStatus.rejected;
+      case 'archive':
+        return QuestionBankStatus.archived;
+      case 'restore':
+        return QuestionBankStatus.draft;
+      default:
+        return null;
+    }
   }
 
   bool get hasDiscardableUploads {

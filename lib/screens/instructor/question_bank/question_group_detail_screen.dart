@@ -63,6 +63,7 @@ class _QuestionGroupDetailView extends StatefulWidget {
 
 class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
   int? _bankLoadedCourseId;
+  bool _isDeletingGroup = false;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +119,7 @@ class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
                     const SizedBox(width: 8),
                     IconButton(
                       tooltip: l10n.qbDeleteGroup,
-                      onPressed: group == null
+                      onPressed: group == null || _isDeletingGroup
                           ? null
                           : () => _delete(context, group.id),
                       style: IconButton.styleFrom(
@@ -192,7 +193,7 @@ class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
                 approvedCount > group.approvedQuestions
                 ? approvedCount
                 : group.approvedQuestions;
-            return ListView(
+            final content = ListView(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
               children: [
                 QuestionBankHeroHeader(
@@ -211,9 +212,7 @@ class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
                 const SizedBox(height: 16),
                 _GroupOverviewCard(group: group),
                 const SizedBox(height: 16),
-                if (questions.isEmpty && bankState.teachingCourses.isEmpty)
-                  const QuestionBankSkeletons(itemCount: 2)
-                else if (questions.isEmpty)
+                if (questions.isEmpty)
                   _GroupQuestionsEmptyPanel(
                     onAddGroupedQuestions: () => context.push(
                       '/instructor/question-bank/groups/${group.id}/add-questions',
@@ -243,15 +242,34 @@ class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
                         onReorder: context
                             .read<QuestionGroupCubit>()
                             .reorderQuestions,
-                        onEdit: (question) => context.push(
-                          '/instructor/question-bank/${question.id}/edit',
-                        ),
+                        onEdit: (question) {
+                          final returnTo = Uri.encodeComponent(
+                            '/instructor/question-bank/groups/${group.id}',
+                          );
+                          context.push(
+                            '/instructor/question-bank/${question.id}/edit?returnTo=$returnTo',
+                          );
+                        },
                         onDelete: (question) =>
                             _removeQuestionFromGroup(context, question.id),
                       ),
                     ],
                   ),
                 ],
+              ],
+            );
+            return Stack(
+              children: [
+                content,
+                if (_isDeletingGroup)
+                  Positioned.fill(
+                    child: QuestionBankMutationOverlay(
+                      title: 'Deleting group',
+                      message: 'Please wait until the group is deleted.',
+                      isDark: isDark,
+                      color: InstructorColors.error,
+                    ),
+                  ),
               ],
             );
           },
@@ -304,14 +322,22 @@ class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
         ) ??
         false;
     if (!ok || !context.mounted) return;
-    final deleted = await context.read<QuestionGroupCubit>().deleteGroup(
-      groupId,
-    );
-    if (deleted && context.mounted) context.go('/instructor/question-bank');
+    setState(() => _isDeletingGroup = true);
+    try {
+      final deleted = await context.read<QuestionGroupCubit>().deleteGroup(
+        groupId,
+      );
+      if (deleted && context.mounted) {
+        final refresh = DateTime.now().microsecondsSinceEpoch;
+        context.go('/instructor/question-bank/groups?refresh=$refresh');
+      }
+    } finally {
+      if (mounted) setState(() => _isDeletingGroup = false);
+    }
   }
 
   void _goToQuestionBank(BuildContext context) {
-    context.go('/instructor/question-bank');
+    context.go('/instructor/question-bank/groups');
   }
 
   void _ensureBankFeedLoaded(

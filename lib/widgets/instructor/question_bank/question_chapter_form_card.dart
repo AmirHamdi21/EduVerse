@@ -220,11 +220,13 @@ class _QuestionChapterFormCardState extends State<QuestionChapterFormCard> {
           LayoutBuilder(
             builder: (context, constraints) {
               final compact = constraints.maxWidth < 360;
+              const actionButtonHeight = 54.0;
               final saveButton = FilledButton.icon(
                 onPressed: widget.isSubmitting ? null : _submit,
                 style: FilledButton.styleFrom(
                   backgroundColor: InstructorColors.primary,
                   foregroundColor: Colors.white,
+                  minimumSize: const Size(0, actionButtonHeight),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -252,6 +254,7 @@ class _QuestionChapterFormCardState extends State<QuestionChapterFormCard> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: InstructorColors.primary,
                   side: const BorderSide(color: InstructorColors.primary),
+                  minimumSize: const Size(0, actionButtonHeight),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),

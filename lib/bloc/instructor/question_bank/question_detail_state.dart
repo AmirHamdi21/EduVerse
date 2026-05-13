@@ -11,6 +11,7 @@ class QuestionDetailState extends Equatable {
     this.chapterLabel,
     this.errorMessage,
     this.actionMessage,
+    this.activeMutationAction,
   });
 
   final bool isLoading;
@@ -20,6 +21,7 @@ class QuestionDetailState extends Equatable {
   final String? chapterLabel;
   final String? errorMessage;
   final String? actionMessage;
+  final String? activeMutationAction;
 
   QuestionDetailState copyWith({
     bool? isLoading,
@@ -29,8 +31,10 @@ class QuestionDetailState extends Equatable {
     String? chapterLabel,
     String? errorMessage,
     String? actionMessage,
+    String? activeMutationAction,
     bool clearError = false,
     bool clearAction = false,
+    bool clearActiveMutationAction = false,
   }) {
     return QuestionDetailState(
       isLoading: isLoading ?? this.isLoading,
@@ -40,6 +44,9 @@ class QuestionDetailState extends Equatable {
       chapterLabel: chapterLabel ?? this.chapterLabel,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       actionMessage: clearAction ? null : actionMessage ?? this.actionMessage,
+      activeMutationAction: clearActiveMutationAction
+          ? null
+          : activeMutationAction ?? this.activeMutationAction,
     );
   }
 
@@ -52,5 +59,6 @@ class QuestionDetailState extends Equatable {
     chapterLabel,
     errorMessage,
     actionMessage,
+    activeMutationAction,
   ];
 }

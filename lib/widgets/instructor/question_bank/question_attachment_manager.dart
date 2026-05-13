@@ -93,7 +93,10 @@ class _QuestionAttachmentManagerState extends State<QuestionAttachmentManager> {
         ],
         const SizedBox(height: 12),
         if (widget.attachments.isEmpty)
-          _AttachmentEmptyState(onUpload: _pickAttachmentImage)
+          _AttachmentEmptyState(
+            isBusy: widget.isMutating,
+            onUpload: _pickAttachmentImage,
+          )
         else ...[
           Container(
             padding: const EdgeInsets.all(12),
@@ -559,8 +562,9 @@ class _AttachmentTile extends StatelessWidget {
 }
 
 class _AttachmentEmptyState extends StatelessWidget {
-  const _AttachmentEmptyState({required this.onUpload});
+  const _AttachmentEmptyState({required this.isBusy, required this.onUpload});
 
+  final bool isBusy;
   final VoidCallback onUpload;
 
   @override
@@ -604,8 +608,14 @@ class _AttachmentEmptyState extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: onUpload,
-              icon: const Icon(Icons.upload_rounded),
+              onPressed: isBusy ? null : onUpload,
+              icon: isBusy
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.upload_rounded),
               label: Text(l10n.qbUploadAttachment),
             ),
           ),

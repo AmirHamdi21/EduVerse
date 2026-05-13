@@ -20,6 +20,7 @@ class QuestionBulkCreateState extends Equatable {
     this.createdQuestions = const <QuestionBankQuestionModel>[],
     this.failedRows = const <QuestionBulkRowModel>[],
     this.failureReportMessage,
+    this.activeMutationAction,
   });
 
   final bool isLoading;
@@ -35,6 +36,7 @@ class QuestionBulkCreateState extends Equatable {
   final List<QuestionBankQuestionModel> createdQuestions;
   final List<QuestionBulkRowModel> failedRows;
   final String? failureReportMessage;
+  final String? activeMutationAction;
 
   QuestionBulkCreateState copyWith({
     bool? isLoading,
@@ -56,6 +58,8 @@ class QuestionBulkCreateState extends Equatable {
     List<QuestionBulkRowModel>? failedRows,
     String? failureReportMessage,
     bool clearFailureReport = false,
+    String? activeMutationAction,
+    bool clearActiveMutationAction = false,
   }) {
     return QuestionBulkCreateState(
       isLoading: isLoading ?? this.isLoading,
@@ -81,6 +85,9 @@ class QuestionBulkCreateState extends Equatable {
       failureReportMessage: clearFailureReport
           ? null
           : failureReportMessage ?? this.failureReportMessage,
+      activeMutationAction: clearActiveMutationAction
+          ? null
+          : activeMutationAction ?? this.activeMutationAction,
     );
   }
 
@@ -99,5 +106,6 @@ class QuestionBulkCreateState extends Equatable {
     createdQuestions,
     failedRows,
     failureReportMessage,
+    activeMutationAction,
   ];
 }

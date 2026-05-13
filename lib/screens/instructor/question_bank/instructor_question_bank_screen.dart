@@ -94,6 +94,7 @@ class _InstructorQuestionBankViewState
   final TextEditingController _searchController = TextEditingController();
   final Set<int> _collapsedGroupIds = <int>{};
   bool _actionsOpen = false;
+  bool _hasCompletedInitialLoad = false;
 
   @override
   void dispose() {
@@ -183,9 +184,14 @@ class _InstructorQuestionBankViewState
               setState(() => _actionsOpen = false);
               context.push('/instructor/question-bank/create');
             },
-            onBulkCreate: () {
+            onBulkCreate: () async {
               setState(() => _actionsOpen = false);
-              context.push('/instructor/question-bank/bulk-create');
+              final changed = await context.push<bool>(
+                '/instructor/question-bank/bulk-create',
+              );
+              if (changed == true && context.mounted) {
+                await context.read<QuestionBankCubit>().refresh();
+              }
             },
             onCreateGroup: () {
               setState(() => _actionsOpen = false);
@@ -220,7 +226,12 @@ class _InstructorQuestionBankViewState
             );
           }
 
-          if (state.isLoading && state.questions.isEmpty) {
+          final showInitialSkeleton =
+              state.isLoading &&
+              state.questions.isEmpty &&
+              !_hasCompletedInitialLoad;
+          if (!state.isLoading) _hasCompletedInitialLoad = true;
+          if (showInitialSkeleton) {
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
@@ -253,6 +264,7 @@ class _InstructorQuestionBankViewState
                   state: state,
                   searchController: _searchController,
                   isDark: isDark,
+                  isLoading: state.isLoading && _hasCompletedInitialLoad,
                   onSearchChanged: (value) => context
                       .read<QuestionBankCubit>()
                       .setFilters(search: value, debounceRemote: true),
@@ -387,8 +399,8 @@ class _InstructorQuestionBankViewState
             }
           });
         },
-        questionBuilder: (question) =>
-            _buildQuestionCard(context, state, question),
+        questionBuilder: (question, groupId) =>
+            _buildQuestionCard(context, state, question, groupId: groupId),
       );
     }).toList();
   }
@@ -396,13 +408,18 @@ class _InstructorQuestionBankViewState
   Widget _buildQuestionCard(
     BuildContext context,
     QuestionBankState state,
-    QuestionBankQuestionModel question,
-  ) {
+    QuestionBankQuestionModel question, {
+    int? groupId,
+  }) {
     return QuestionBankCard(
       question: question,
       onTap: () => context.push('/instructor/question-bank/${question.id}'),
-      onEdit: () =>
-          context.push('/instructor/question-bank/${question.id}/edit'),
+      onEdit: () {
+        final returnTo = Uri.encodeComponent('/instructor/question-bank');
+        context.push(
+          '/instructor/question-bank/${question.id}/edit?returnTo=$returnTo',
+        );
+      },
       selectionMode: state.isSelectionMode,
       isSelected: context.read<QuestionBankCubit>().isQuestionSelected(
         question.id,
@@ -416,6 +433,17 @@ class _InstructorQuestionBankViewState
           await context.read<QuestionBankCubit>().deleteQuestion(question.id);
         }
       },
+      onUnlinkFromGroup: groupId == null
+          ? null
+          : () async {
+              final ok = await _confirmUnlinkQuestion(context);
+              if (ok && context.mounted) {
+                await context.read<QuestionBankCubit>().unlinkQuestionFromGroup(
+                  questionId: question.id,
+                  groupId: groupId,
+                );
+              }
+            },
     );
   }
 
@@ -521,6 +549,49 @@ class _InstructorQuestionBankViewState
         ) ??
         false;
   }
+
+  Future<bool> _confirmUnlinkQuestion(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: InstructorColors.cardColor(isDark),
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            title: Text(
+              l10n.qbRemoveFromGroup,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            content: Text(
+              l10n.qbRemoveFromGroupBody,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                height: 1.35,
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.cancel),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: InstructorColors.warning,
+                ),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(l10n.qbRemoveFromGroup),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
 }
 
 class _AppBarActionButton extends StatelessWidget {
@@ -570,6 +641,7 @@ class _QuestionBankControlPanel extends StatelessWidget {
     required this.state,
     required this.searchController,
     required this.isDark,
+    required this.isLoading,
     required this.onSearchChanged,
     required this.onFilterAction,
   });
@@ -577,6 +649,7 @@ class _QuestionBankControlPanel extends StatelessWidget {
   final QuestionBankState state;
   final TextEditingController searchController;
   final bool isDark;
+  final bool isLoading;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<_QuestionBankFilterAction> onFilterAction;
 
@@ -671,6 +744,13 @@ class _QuestionBankControlPanel extends StatelessWidget {
               ),
             ],
           ),
+          if (isLoading) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: const LinearProgressIndicator(minHeight: 3),
+            ),
+          ],
         ],
       ),
     );
@@ -1126,6 +1206,14 @@ class _BatchActionBar extends StatelessWidget {
         onPressed: canAct ? () => cubit.batchStatusAction('archive') : null,
       ),
       _BatchAction(
+        label: l10n.delete,
+        icon: Icons.delete_outline_rounded,
+        color: InstructorColors.error,
+        onPressed: canAct
+            ? () => _confirmAndDeleteSelected(context, cubit, state)
+            : null,
+      ),
+      _BatchAction(
         label: l10n.restore,
         icon: Icons.restore_rounded,
         color: InstructorColors.teal,
@@ -1237,6 +1325,57 @@ class _BatchActionBar extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _confirmAndDeleteSelected(
+    BuildContext context,
+    QuestionBankCubit cubit,
+    QuestionBankState state,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ok =
+        await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: InstructorColors.cardColor(isDark),
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            title: Text(
+              l10n.qbDeleteQuestion,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            content: Text(
+              'Delete ${l10n.qbSelectedCount(state.selectedQuestionCount).toLowerCase()}? This will archive and remove them from the question bank list.',
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                height: 1.35,
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.cancel),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: InstructorColors.error,
+                ),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(l10n.delete),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    if (ok && context.mounted) {
+      await cubit.batchDeleteQuestions();
+    }
+  }
 }
 
 class _BatchMutationOverlay extends StatelessWidget {
@@ -1310,7 +1449,9 @@ class _BatchMutationOverlay extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Your action is being applied to ${l10n.qbSelectedCount(selectedCount).toLowerCase()}. Please wait until all selected questions are updated.',
+                    selectedCount > 0
+                        ? 'Your action is being applied to ${l10n.qbSelectedCount(selectedCount).toLowerCase()}. Please wait until all selected questions are updated.'
+                        : 'Your action is being applied. Please wait until the question bank is updated.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: InstructorColors.textSecondaryColor(isDark),
@@ -1338,6 +1479,10 @@ class _BatchMutationOverlay extends StatelessWidget {
         return l10n.archive.toLowerCase();
       case 'restore':
         return l10n.restore.toLowerCase();
+      case 'delete':
+        return l10n.qbDeleteQuestion.toLowerCase();
+      case 'unlink':
+        return l10n.qbRemoveFromGroup.toLowerCase();
       default:
         return 'selected action';
     }
@@ -1837,7 +1982,8 @@ class _QuestionGroupQuestionSection extends StatelessWidget {
   final VoidCallback onAddGroupedQuestions;
   final VoidCallback onAddExistingQuestions;
   final VoidCallback onToggleCollapsed;
-  final Widget Function(QuestionBankQuestionModel question) questionBuilder;
+  final Widget Function(QuestionBankQuestionModel question, int groupId)
+  questionBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -2007,7 +2153,10 @@ class _QuestionGroupQuestionSection extends StatelessWidget {
                                   ? 0
                                   : 10,
                             ),
-                            child: questionBuilder(group.questions[index]),
+                            child: questionBuilder(
+                              group.questions[index],
+                              group.groupId,
+                            ),
                           ),
                       ],
                     ),
