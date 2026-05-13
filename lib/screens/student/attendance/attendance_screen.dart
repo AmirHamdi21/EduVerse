@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../bloc/attendance/attendance_cubit.dart';
 import '../../../bloc/attendance/attendance_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
@@ -128,7 +129,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => _leaveAttendanceScreen(context),
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -189,6 +190,15 @@ class _AttendanceScreenState extends State<AttendanceScreen>
         ],
       ),
     );
+  }
+
+  void _leaveAttendanceScreen(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
+    context.go('/dashboard');
   }
 
   Widget _buildTabBar(BuildContext context, bool isDark) {

@@ -43,6 +43,7 @@ class TAAttendanceScreen extends StatelessWidget {
           return SharedAttendanceManagerScreen(
             isDark: isDark,
             embedded: embedded,
+            fallbackRoute: '/ta/dashboard',
             theme: SharedAttendanceTheme(
               title: l10n.attendanceManager,
               subtitle: l10n.trackStudentAttendance,

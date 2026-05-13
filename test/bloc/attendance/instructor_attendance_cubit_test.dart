@@ -433,11 +433,35 @@ void main() {
 
         cubit.setAiFile(File('fake_attendance.jpg'));
         await cubit.runAiAttendance();
+
+        expect(cubit.state.rosterRows.first.status, 'present');
+        expect(cubit.state.rosterRows.first.aiConfidencePercent, 92);
+        expect(cubit.state.isRosterDirty, isFalse);
+        expect(cubit.state.aiUnknownCount, 1);
+
         cubit.applyAiResultsToRoster();
 
         expect(cubit.state.rosterRows.first.status, 'present');
-        expect(cubit.state.isRosterDirty, isTrue);
+        expect(cubit.state.isRosterDirty, isFalse);
         expect(cubit.state.aiUnknownCount, 1);
+      },
+    );
+
+    test(
+      'AI-marked present rows use website confidence fallback when missing',
+      () {
+        const row = RosterRow(
+          userId: 1,
+          name: 'Ali Hassan',
+          email: 'ali@example.com',
+          status: 'present',
+          initialStatus: 'present',
+          isAiMarked: true,
+        );
+
+        expect(row.aiSuggestedStatus, 'present');
+        expect(row.aiConfidencePercent, 90);
+        expect(row.needsAiReview, isFalse);
       },
     );
   });

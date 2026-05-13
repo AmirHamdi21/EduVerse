@@ -311,12 +311,16 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState>
     await loadRosterData(session.id, readOnly);
   }
 
-  Future<void> loadRosterData(int sessionId, bool readOnly) async {
+  Future<void> loadRosterData(
+    int sessionId,
+    bool readOnly, {
+    bool preserveLocalStatuses = true,
+  }) async {
     final requestId = _rosterRequest.begin();
     emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
     final previousRowsByUser = <int, RosterRow>{
-      if (state.activeSession?.id == sessionId)
+      if (preserveLocalStatuses && state.activeSession?.id == sessionId)
         for (final row in state.rosterRows) row.userId: row,
     };
 
@@ -618,7 +622,11 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState>
     }
 
     final result = poll.data!;
-    await loadRosterData(session.id, state.isRosterReadOnly);
+    await loadRosterData(
+      session.id,
+      state.isRosterReadOnly,
+      preserveLocalStatuses: false,
+    );
     if (!isRequestCurrent(_aiRequest, requestId)) {
       return;
     }

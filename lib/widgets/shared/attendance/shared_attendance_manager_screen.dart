@@ -64,11 +64,13 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
     required this.isDark,
     required this.theme,
     this.embedded = false,
+    this.fallbackRoute = '/dashboard',
   });
 
   final bool isDark;
   final SharedAttendanceTheme theme;
   final bool embedded;
+  final String fallbackRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +121,8 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
                                 isDark: isDark,
                                 theme: theme,
                                 title: theme.title,
-                                onBack: () => context.pop(),
+                                onBack: () =>
+                                    _leaveAttendanceScreen(context),
                               ),
                             Expanded(
                               child: ListView(
@@ -213,6 +216,15 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
       backgroundColor: theme.background(isDark),
       body: content,
     );
+  }
+
+  void _leaveAttendanceScreen(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
+    context.go(fallbackRoute);
   }
 
   String _heroTitle(AppLocalizations l10n, InstructorAttendanceState state) {
@@ -2932,7 +2944,7 @@ Future<void> _showEditSessionSheet(
                     children: <Widget>[
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () => context.pop(),
+                          onPressed: () => Navigator.of(context).maybePop(),
                           child: Text(l10n.cancel),
                         ),
                       ),
@@ -2946,7 +2958,7 @@ Future<void> _showEditSessionSheet(
                               sessionType: typeNotifier.value,
                             );
                             if (context.mounted) {
-                              context.pop();
+                              await Navigator.of(context).maybePop();
                             }
                           },
                           style: ElevatedButton.styleFrom(

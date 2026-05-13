@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/attendance/attendance_state.dart';
@@ -116,7 +117,7 @@ class _CourseAttendanceDetailScreenState
         _buildIconButton(
           icon: Icons.arrow_back_ios_new_rounded,
           isDark: isDark,
-          onTap: () => Navigator.of(context).pop(),
+          onTap: () => _leaveCourseAttendanceDetail(context),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -145,6 +146,15 @@ class _CourseAttendanceDetailScreenState
         ),
       ],
     );
+  }
+
+  void _leaveCourseAttendanceDetail(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
+    context.go('/attendance');
   }
 
   Widget _buildHero(BuildContext context, bool isDark) {

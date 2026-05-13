@@ -35,6 +35,7 @@ class AttendanceManagerScreen extends StatelessWidget {
           final l10n = AppLocalizations.of(context);
           return SharedAttendanceManagerScreen(
             isDark: isDark,
+            fallbackRoute: '/instructor/dashboard',
             theme: SharedAttendanceTheme(
               title: l10n.attendanceManager,
               subtitle: l10n.trackStudentAttendance,
