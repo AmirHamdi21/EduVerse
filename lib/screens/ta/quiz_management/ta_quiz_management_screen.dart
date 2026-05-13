@@ -53,7 +53,7 @@ class _State extends State<TAQuizManagementScreen>
           body: Stack(
             children: [
               Container(
-                height: 280,
+                height: 380,
                 decoration: BoxDecoration(
                   gradient: dk
                       ? TAColors.darkHeaderGradient
@@ -200,13 +200,13 @@ class _State extends State<TAQuizManagementScreen>
     child: TextField(
       controller: _search,
       onChanged: (v) => context.read<QuizManagementCubit>().setSearchQuery(v),
-      style: const TextStyle(color: Colors.white, fontSize: 14),
+      style: const TextStyle(color: Colors.black, fontSize: 14),
       decoration: InputDecoration(
         hintText: 'Search quizzes...',
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+        hintStyle: TextStyle(color: Colors.black.withValues(alpha: 0.6)),
         prefixIcon: Icon(
           Icons.search_rounded,
-          color: Colors.white.withValues(alpha: 0.6),
+          color: Colors.black.withValues(alpha: 0.6),
           size: 20,
         ),
         border: InputBorder.none,
@@ -651,7 +651,9 @@ class _Card extends StatelessWidget {
       if (!ctx.mounted) return;
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(ok ? 'Quiz closed successfully.' : 'Failed to close quiz.'),
+          content: Text(
+            ok ? 'Quiz closed successfully.' : 'Failed to close quiz.',
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );

@@ -470,21 +470,21 @@ class _StudentV7QuickAccessCard extends StatelessWidget {
       _QuickAction(
         icon: Icons.psychology_outlined,
         label: l10n.aiQuiz,
-        route: '/ai-quiz-generator',
+        route: '/student/quizzes',
         color: _DashboardColors.aiPurple,
       ),
-      _QuickAction(
-        icon: Icons.layers_outlined,
-        label: l10n.flashcards,
-        route: '/flashcards',
-        color: _DashboardColors.cyan,
-      ),
-      _QuickAction(
-        icon: Icons.checklist_rounded,
-        label: l10n.tasks,
-        route: '/tasks',
-        color: _DashboardColors.amber,
-      ),
+      // _QuickAction(
+      //   icon: Icons.layers_outlined,
+      //   label: l10n.flashcards,
+      //   route: '/flashcards',
+      //   color: _DashboardColors.cyan,
+      // ),
+      // _QuickAction(
+      //   icon: Icons.checklist_rounded,
+      //   label: l10n.tasks,
+      //   route: '/tasks',
+      //   color: _DashboardColors.amber,
+      // ),
       _QuickAction(
         icon: Icons.science_outlined,
         label: l10n.labs,

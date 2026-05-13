@@ -38,9 +38,9 @@ class TALiquidGlassBottomNav extends StatelessWidget {
           route: '/ta/dashboard',
         ),
         LiquidGlassNavItem(
-          icon: Icons.list_alt_rounded,
-          label: l10n.tasks,
-          route: '/ta/assignments',
+          icon: Icons.menu_book_rounded,
+          label: l10n.courses,
+          route: '/ta/courses',
         ),
         LiquidGlassNavItem(
           icon: Icons.fact_check_rounded,
@@ -48,9 +48,9 @@ class TALiquidGlassBottomNav extends StatelessWidget {
           route: '/ta/grading',
         ),
         LiquidGlassNavItem(
-          icon: Icons.bar_chart_rounded,
-          label: l10n.stats,
-          route: '/ta/analytics',
+          icon: Icons.forum_rounded,
+          label: l10n.discussions,
+          route: '/ta/discussions',
         ),
       ],
       actionItem: LiquidGlassNavItem(

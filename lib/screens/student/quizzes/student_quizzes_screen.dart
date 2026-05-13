@@ -84,7 +84,7 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
                           responsive.p20,
                           responsive.p16,
                           responsive.p20,
-                          0,
+                          responsive.p12,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,13 +198,13 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
       child: TextField(
         controller: _searchController,
         onChanged: (v) => context.read<StudentQuizCubit>().setSearchQuery(v),
-        style: const TextStyle(color: Colors.white, fontSize: 14),
+        style: const TextStyle(color: Colors.black, fontSize: 14),
         decoration: InputDecoration(
           hintText: 'Search quizzes...',
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+          hintStyle: TextStyle(color: Colors.black.withValues(alpha: 0.6)),
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: Colors.white.withValues(alpha: 0.6),
+            color: Colors.black.withValues(alpha: 0.6),
             size: 20,
           ),
           border: InputBorder.none,

@@ -42,14 +42,14 @@ class StudentLiquidGlassBottomNav extends StatelessWidget {
           route: '/courses',
         ),
         LiquidGlassNavItem(
-          icon: Icons.bar_chart_rounded,
-          label: l10n.grades,
-          route: '/grades',
+          icon: Icons.quiz_rounded,
+          label: l10n.quiz,
+          route: '/student/quizzes',
         ),
         LiquidGlassNavItem(
-          icon: Icons.person_rounded,
-          label: l10n.profile,
-          route: '/profile',
+          icon: Icons.forum_rounded,
+          label: l10n.discussions,
+          route: '/discussions',
         ),
       ],
       actionItem: LiquidGlassNavItem(

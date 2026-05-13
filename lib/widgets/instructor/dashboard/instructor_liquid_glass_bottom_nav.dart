@@ -38,19 +38,19 @@ class InstructorLiquidGlassBottomNav extends StatelessWidget {
           route: '/instructor/dashboard',
         ),
         LiquidGlassNavItem(
-          icon: Icons.groups_rounded,
-          label: l10n.students,
-          route: '/instructor/roster',
+          icon: Icons.menu_book_rounded,
+          label: l10n.courses,
+          route: '/instructor/courses',
         ),
         LiquidGlassNavItem(
-          icon: Icons.assignment_rounded,
-          label: l10n.assignments,
-          route: '/instructor/assignments',
+          icon: Icons.storage_rounded,
+          label: l10n.questionBank,
+          route: '/instructor/question-bank',
         ),
         LiquidGlassNavItem(
-          icon: Icons.bar_chart_rounded,
-          label: l10n.analytics,
-          route: '/instructor/reports',
+          icon: Icons.description_rounded,
+          label: l10n.examGenerator,
+          route: '/instructor/exam-generator',
         ),
       ],
       actionItem: LiquidGlassNavItem(
