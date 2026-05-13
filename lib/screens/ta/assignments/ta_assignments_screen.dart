@@ -1,4 +1,6 @@
 import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/widgets/ta/dashboard/ta_drawer.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
@@ -135,20 +137,26 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               );
             }
 
-            return Scaffold(
-              key: _scaffoldKey,
-              backgroundColor: TAColors.scaffoldColor(isDark),
-              drawer: TADrawer(currentRoute: '/ta/assignments', isDark: isDark),
-              floatingActionButton: widget.embedded
-                  ? null
-                  : FloatingActionButton.extended(
-                      onPressed: () => _openAssignmentEditor(context),
-                      backgroundColor: TAColors.primary,
-                      foregroundColor: Colors.white,
-                      icon: const Icon(Icons.add_rounded),
-                      label: Text(l10n.createAssignment),
-                    ),
-              body: SafeArea(child: content),
+            return TAWalkthroughRouteMarker(
+              segmentId: TAWalkthroughIds.assignments,
+              child: Scaffold(
+                key: _scaffoldKey,
+                backgroundColor: TAColors.scaffoldColor(isDark),
+                drawer: TADrawer(
+                  currentRoute: '/ta/assignments',
+                  isDark: isDark,
+                ),
+                floatingActionButton: widget.embedded
+                    ? null
+                    : FloatingActionButton.extended(
+                        onPressed: () => _openAssignmentEditor(context),
+                        backgroundColor: TAColors.primary,
+                        foregroundColor: Colors.white,
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text(l10n.createAssignment),
+                      ),
+                body: SafeArea(child: content),
+              ),
             );
           },
         );
@@ -228,15 +236,21 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
       return SliverMainAxisGroup(
         slivers: <Widget>[
           SliverToBoxAdapter(
-            child: _buildSummaryHeader(isDark, l10n, r, courses, assignments),
+            child: WalkthroughTarget(
+              id: TAWalkthroughIds.assignmentsHeader,
+              child: _buildSummaryHeader(isDark, l10n, r, courses, assignments),
+            ),
           ),
           SliverToBoxAdapter(
-            child: _buildFilterMenus(
-              isDark,
-              l10n,
-              r,
-              courses,
-              filteredAssignments.length,
+            child: WalkthroughTarget(
+              id: TAWalkthroughIds.assignmentsFilters,
+              child: _buildFilterMenus(
+                isDark,
+                l10n,
+                r,
+                courses,
+                filteredAssignments.length,
+              ),
             ),
           ),
           SliverFillRemaining(
@@ -259,15 +273,21 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     return SliverMainAxisGroup(
       slivers: <Widget>[
         SliverToBoxAdapter(
-          child: _buildSummaryHeader(isDark, l10n, r, courses, assignments),
+          child: WalkthroughTarget(
+            id: TAWalkthroughIds.assignmentsHeader,
+            child: _buildSummaryHeader(isDark, l10n, r, courses, assignments),
+          ),
         ),
         SliverToBoxAdapter(
-          child: _buildFilterMenus(
-            isDark,
-            l10n,
-            r,
-            courses,
-            filteredAssignments.length,
+          child: WalkthroughTarget(
+            id: TAWalkthroughIds.assignmentsFilters,
+            child: _buildFilterMenus(
+              isDark,
+              l10n,
+              r,
+              courses,
+              filteredAssignments.length,
+            ),
           ),
         ),
         if (courseIds.isEmpty)
@@ -286,13 +306,20 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final courseId = courseIds[index];
-                return _buildCourseAssignmentsCard(
+                final card = _buildCourseAssignmentsCard(
                   isDark,
                   l10n,
                   courses,
                   courseId,
                   grouped[courseId] ?? const <AssignmentModel>[],
                 );
+                if (index == 0) {
+                  return WalkthroughTarget(
+                    id: TAWalkthroughIds.assignmentsList,
+                    child: card,
+                  );
+                }
+                return card;
               }, childCount: courseIds.length),
             ),
           ),

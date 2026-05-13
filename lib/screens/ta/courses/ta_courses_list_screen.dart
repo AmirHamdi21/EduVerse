@@ -8,6 +8,8 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/ta_courses_theme.dart';
+import '../../../features/walkthrough/ta_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/extended_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
@@ -177,10 +179,14 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
       case CourseSortOption.mostEngagement:
         filtered.sort((a, b) {
           final aScore =
-              (a.attendanceRate ?? (_studentCountFor(state, a) / (a.capacity <= 0 ? 1 : a.capacity))) *
+              (a.attendanceRate ??
+                  (_studentCountFor(state, a) /
+                      (a.capacity <= 0 ? 1 : a.capacity))) *
               100;
           final bScore =
-              (b.attendanceRate ?? (_studentCountFor(state, b) / (b.capacity <= 0 ? 1 : b.capacity))) *
+              (b.attendanceRate ??
+                  (_studentCountFor(state, b) /
+                      (b.capacity <= 0 ? 1 : b.capacity))) *
               100;
           return bScore.compareTo(aScore);
         });
@@ -197,105 +203,125 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: TACoursesTheme.scaffoldBackground(isDark),
-          drawer: TADrawer(currentRoute: '/ta/courses', isDark: isDark),
-          body: DecoratedBox(
-            decoration: TACoursesTheme.scaffoldDecoration(isDark),
-            child: SafeArea(
-              child: BlocBuilder<TACoursesCubit, TACoursesState>(
-                builder: (context, taState) {
-                  final courses = _coursesFromState(taState);
-                  final filteredCourses = _filteredCourses(taState, courses);
+        return TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.courses,
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: TACoursesTheme.scaffoldBackground(isDark),
+            drawer: TADrawer(currentRoute: '/ta/courses', isDark: isDark),
+            body: DecoratedBox(
+              decoration: TACoursesTheme.scaffoldDecoration(isDark),
+              child: SafeArea(
+                child: BlocBuilder<TACoursesCubit, TACoursesState>(
+                  builder: (context, taState) {
+                    final courses = _coursesFromState(taState);
+                    final filteredCourses = _filteredCourses(taState, courses);
 
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      final maxWidth = TACoursesTheme.maxContentWidth(
-                        constraints.maxWidth,
-                      );
-                      final screenPadding = TACoursesTheme.screenPadding(
-                        constraints.maxWidth,
-                      );
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final maxWidth = TACoursesTheme.maxContentWidth(
+                          constraints.maxWidth,
+                        );
+                        final screenPadding = TACoursesTheme.screenPadding(
+                          constraints.maxWidth,
+                        );
 
-                      return RefreshIndicator(
-                        onRefresh: () async {
-                          await context.read<TACoursesCubit>().fetchTACourses();
-                        },
-                        color: TACoursesTheme.brandPrimary,
-                        backgroundColor: TACoursesTheme.cardBackground(isDark),
-                        child: CustomScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(
-                            parent: ClampingScrollPhysics(),
+                        return RefreshIndicator(
+                          onRefresh: () async {
+                            await context
+                                .read<TACoursesCubit>()
+                                .fetchTACourses();
+                          },
+                          color: TACoursesTheme.brandPrimary,
+                          backgroundColor: TACoursesTheme.cardBackground(
+                            isDark,
                           ),
-                          slivers: [
-                            SliverToBoxAdapter(
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: maxWidth),
-                                  child: Padding(
-                                    padding: screenPadding,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        TACoursesHeader(
-                                          title: l10n.taCourses,
-                                          subtitle: l10n.taCoursesShellSubtitle,
-                                          onMenuTap: () {
-                                            _scaffoldKey.currentState?.openDrawer();
-                                          },
-                                          searchBar: TACourseSearchBar(
-                                            controller: _searchController,
-                                            onSearchChanged: (query) {
-                                              setState(() {
-                                                _searchQuery = query;
-                                              });
-                                            },
-                                            hintText: l10n.searchCourses,
-                                            clearTooltip: l10n.clearFilters,
+                          child: CustomScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(
+                              parent: ClampingScrollPhysics(),
+                            ),
+                            slivers: [
+                              SliverToBoxAdapter(
+                                child: Center(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: maxWidth,
+                                    ),
+                                    child: Padding(
+                                      padding: screenPadding,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          WalkthroughTarget(
+                                            id: TAWalkthroughIds.coursesHeader,
+                                            child: TACoursesHeader(
+                                              title: l10n.taCourses,
+                                              subtitle:
+                                                  l10n.taCoursesShellSubtitle,
+                                              onMenuTap: () {
+                                                _scaffoldKey.currentState
+                                                    ?.openDrawer();
+                                              },
+                                              searchBar: TACourseSearchBar(
+                                                controller: _searchController,
+                                                onSearchChanged: (query) {
+                                                  setState(() {
+                                                    _searchQuery = query;
+                                                  });
+                                                },
+                                                hintText: l10n.searchCourses,
+                                                clearTooltip: l10n.clearFilters,
+                                              ),
+                                              trailingAction:
+                                                  _buildHeaderActions(isDark),
+                                              stats: _buildHeroStats(
+                                                isDark: isDark,
+                                                l10n: l10n,
+                                                courses: courses,
+                                                state: taState,
+                                                maxWidth: maxWidth,
+                                              ),
+                                              tabBar: _buildStatusTabs(l10n),
+                                            ),
                                           ),
-                                          trailingAction: _buildHeaderActions(
-                                            isDark,
+                                          const SizedBox(height: 18),
+                                          WalkthroughTarget(
+                                            id: TAWalkthroughIds.coursesFilters,
+                                            child: _buildToolbar(
+                                              isDark: isDark,
+                                              l10n: l10n,
+                                              filteredCount:
+                                                  filteredCourses.length,
+                                              maxWidth: maxWidth,
+                                            ),
                                           ),
-                                          stats: _buildHeroStats(
-                                            isDark: isDark,
-                                            l10n: l10n,
-                                            courses: courses,
-                                            state: taState,
-                                            maxWidth: maxWidth,
+                                          const SizedBox(height: 22),
+                                          WalkthroughTarget(
+                                            id: TAWalkthroughIds.coursesList,
+                                            child: _buildContent(
+                                              state: taState,
+                                              isDark: isDark,
+                                              l10n: l10n,
+                                              courses: courses,
+                                              filteredCourses: filteredCourses,
+                                              maxWidth: maxWidth,
+                                            ),
                                           ),
-                                          tabBar: _buildStatusTabs(l10n),
-                                        ),
-                                        const SizedBox(height: 18),
-                                        _buildToolbar(
-                                          isDark: isDark,
-                                          l10n: l10n,
-                                          filteredCount: filteredCourses.length,
-                                          maxWidth: maxWidth,
-                                        ),
-                                        const SizedBox(height: 22),
-                                        _buildContent(
-                                          state: taState,
-                                          isDark: isDark,
-                                          l10n: l10n,
-                                          courses: courses,
-                                          filteredCourses: filteredCourses,
-                                          maxWidth: maxWidth,
-                                        ),
-                                        const SizedBox(height: 24),
-                                      ],
+                                          const SizedBox(height: 24),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -492,10 +518,12 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
     final averageFill = courses.isEmpty
         ? 0
         : (courses.fold<double>(0, (sum, course) {
-            final count = _studentCountFor(state, course);
-            final fill = course.capacity <= 0 ? 0 : count / course.capacity;
-            return sum + fill.clamp(0.0, 1.0);
-          }) /
+                    final count = _studentCountFor(state, course);
+                    final fill = course.capacity <= 0
+                        ? 0
+                        : count / course.capacity;
+                    return sum + fill.clamp(0.0, 1.0);
+                  }) /
                   courses.length *
                   100)
               .round();
@@ -712,7 +740,8 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
   }) {
     final status = state.coursesStatus;
 
-    if (status is TASubTabLoading<List<TeachingCourseModel>> && courses.isEmpty) {
+    if (status is TASubTabLoading<List<TeachingCourseModel>> &&
+        courses.isEmpty) {
       return _buildSkeletonLoader(isDark, maxWidth);
     }
 
@@ -734,7 +763,8 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
       viewType: _viewType,
       onTap: (course) => context.push('/ta/course/${course.sectionId}'),
       onLabsTap: (_) => context.push('/ta/labs'),
-      onGradingTap: (course) => context.push('/ta/grading?courseId=${course.courseId}'),
+      onGradingTap: (course) =>
+          context.push('/ta/grading?courseId=${course.courseId}'),
       onDiscussionsTap: (course) =>
           context.push('/ta/course/${course.courseId}/discussions'),
     );
@@ -950,7 +980,9 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
             subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isDark ? Colors.white60 : TACoursesTheme.secondaryText(isDark),
+              color: isDark
+                  ? Colors.white60
+                  : TACoursesTheme.secondaryText(isDark),
               fontSize: 15,
               height: 1.5,
             ),
@@ -958,17 +990,16 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
           const SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: onPressed,
-            icon: Icon(icon == Icons.filter_alt_off_rounded
-                ? Icons.filter_alt_off_rounded
-                : Icons.refresh_rounded),
+            icon: Icon(
+              icon == Icons.filter_alt_off_rounded
+                  ? Icons.filter_alt_off_rounded
+                  : Icons.refresh_rounded,
+            ),
             label: Text(buttonLabel),
             style: ElevatedButton.styleFrom(
               backgroundColor: TACoursesTheme.brandPrimary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),

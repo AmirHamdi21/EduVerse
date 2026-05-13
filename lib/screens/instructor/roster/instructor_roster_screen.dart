@@ -22,6 +22,7 @@ class InstructorRosterScreen extends StatelessWidget {
           final isDark = themeState.isDark;
           return SharedRosterScreen(
             isDark: isDark,
+            fallbackRoute: '/instructor/dashboard',
             theme: SharedRosterTheme(
               title: 'Roster',
               emptyCoursesTitle: 'No Courses Found',

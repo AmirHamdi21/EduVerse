@@ -36,6 +36,9 @@ import 'package:edu_verse/bloc/ta/ta_labs_cubit.dart';
 import 'package:edu_verse/config/auth_route_notifier.dart';
 import 'package:edu_verse/config/app_router.dart';
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/features/walkthrough/role_walkthrough_cubit.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_service.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_overlay.dart';
 import 'package:edu_verse/services/api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
@@ -120,6 +123,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late AdminEnrollmentBloc _adminEnrollmentBloc;
   late QuizManagementCubit _quizManagementCubit;
   late StudentQuizCubit _studentQuizCubit;
+  late RoleWalkthroughCubit _walkthroughCubit;
   late SectionService _sectionService;
   late ScheduleService _scheduleService;
   late CourseService _courseService;
@@ -332,6 +336,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final quizApiService = QuizApiService(coreApiClient: coreApiClient);
     _quizManagementCubit = QuizManagementCubit(quizApiService: quizApiService);
     _studentQuizCubit = StudentQuizCubit(quizApiService: quizApiService);
+    _walkthroughCubit = RoleWalkthroughCubit(
+      service: const WalkthroughCompletionService(),
+    );
 
     // Initialize theme and language from storage
     _initializeTheme();
@@ -391,6 +398,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _adminEnrollmentBloc.close();
     _quizManagementCubit.close();
     _studentQuizCubit.close();
+    _walkthroughCubit.close();
     _sessionExpirySubscription?.cancel();
     _authStateSubscription?.cancel();
     _incomingNotificationSubscription?.cancel();
@@ -435,6 +443,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           BlocProvider.value(value: _adminEnrollmentBloc),
           BlocProvider.value(value: _quizManagementCubit),
           BlocProvider.value(value: _studentQuizCubit),
+          BlocProvider.value(value: _walkthroughCubit),
         ],
         child: BlocListener<AuthBloc, AuthState>(
           listenWhen: (previous, current) =>
@@ -453,6 +462,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             if (authState is AuthUnauthenticated) {
               authRouteNotifier.setUnauthenticated();
               _chatBloc.add(const ChatSessionEnded());
+              _walkthroughCubit.cancelActive();
             }
           },
           child: BlocBuilder<ThemeBloc, ThemeState>(
@@ -477,6 +487,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                         ? ThemeMode.dark
                         : ThemeMode.light,
                     routerConfig: AppRouter.router,
+                    builder: (context, child) {
+                      return WalkthroughHost(
+                        child: child ?? const SizedBox.shrink(),
+                      );
+                    },
                   );
                 },
               );

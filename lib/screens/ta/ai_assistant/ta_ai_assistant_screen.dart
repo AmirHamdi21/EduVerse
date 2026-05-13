@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../features/walkthrough/ta_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
@@ -25,7 +27,6 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
   late AnimationController _animationController;
 
   String _selectedMode = 'general';
-  String _selectedCourse = 'All Courses';
   bool _isTyping = false;
   bool _isRecording = false;
 
@@ -135,29 +136,41 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
         final isDark = themeState.themeMode == AppThemeMode.dark;
         final l10n = AppLocalizations.of(context);
 
-        return Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: const TADrawer(currentRoute: '/ta/ai-assistant'),
-          body: SafeArea(
-            child: Column(
-              children: [
-                _buildAppBar(isDark, l10n),
-                _buildModeSelector(isDark, l10n),
-                Expanded(
-                  child: _messages.isEmpty
-                      ? _buildEmptyState(isDark, l10n)
-                      : _buildMessageList(isDark, l10n),
-                ),
-                if (_messages.isNotEmpty &&
-                    _messages.last['suggestions'] != null)
-                  _buildSuggestions(
-                    isDark,
-                    _messages.last['suggestions'] as List<String>,
+        return TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.ai,
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: TAColors.scaffoldColor(isDark),
+            drawer: const TADrawer(currentRoute: '/ta/ai-assistant'),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  _buildAppBar(isDark, l10n),
+                  _buildModeSelector(isDark, l10n),
+                  Expanded(
+                    child: _messages.isEmpty
+                        ? _buildEmptyState(isDark, l10n)
+                        : WalkthroughTarget(
+                            id: TAWalkthroughIds.aiHistory,
+                            child: _buildMessageList(isDark, l10n),
+                          ),
                   ),
-                _buildQuickActionsBar(isDark, l10n),
-                _buildInputBar(isDark, l10n),
-              ],
+                  if (_messages.isNotEmpty &&
+                      _messages.last['suggestions'] != null)
+                    _buildSuggestions(
+                      isDark,
+                      _messages.last['suggestions'] as List<String>,
+                    ),
+                  WalkthroughTarget(
+                    id: TAWalkthroughIds.aiStarters,
+                    child: _buildQuickActionsBar(isDark, l10n),
+                  ),
+                  WalkthroughTarget(
+                    id: TAWalkthroughIds.aiComposer,
+                    child: _buildInputBar(isDark, l10n),
+                  ),
+                ],
+              ),
             ),
           ),
         );

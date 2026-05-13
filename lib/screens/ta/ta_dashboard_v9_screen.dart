@@ -5,6 +5,8 @@ import 'package:edu_verse/bloc/ta/ta_courses_cubit.dart';
 import 'package:edu_verse/bloc/ta/ta_courses_state.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/services/api/assignment_service.dart';
@@ -212,133 +214,155 @@ class _TADashboardV9ScreenState extends State<TADashboardV9Screen> {
               _loadV9Data(status.data, state.sectionStudentCounts);
             }
           },
-          child: Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: _TAV9Colors.background(isDark),
-            drawer: TADrawerV9(snapshot: _snapshot),
-            body: SafeArea(
-              bottom: false,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: _TAV9Colors.pageGradient(isDark),
+          child: TAWalkthroughRouteMarker(
+            segmentId: TAWalkthroughIds.dashboard,
+            child: Scaffold(
+              key: _scaffoldKey,
+              backgroundColor: _TAV9Colors.background(isDark),
+              drawer: TADrawerV9(snapshot: _snapshot),
+              body: SafeArea(
+                bottom: false,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: _TAV9Colors.pageGradient(isDark),
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    NotificationListener<ScrollNotification>(
-                      onNotification: _handleDashboardScroll,
-                      child: RefreshIndicator(
-                        color: _TAV9Colors.primary,
-                        onRefresh: _refreshDashboard,
-                        child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(bottom: 76),
-                          children: [
-                            _CenteredTAContent(
-                              child: _TAV9TopBar(
-                                isDark: isDark,
-                                onMenuTap: () =>
-                                    _scaffoldKey.currentState?.openDrawer(),
-                              ),
-                            ),
-                            _CenteredTAContent(
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  0,
-                                  16,
-                                  16,
+                  child: Stack(
+                    children: [
+                      NotificationListener<ScrollNotification>(
+                        onNotification: _handleDashboardScroll,
+                        child: RefreshIndicator(
+                          color: _TAV9Colors.primary,
+                          onRefresh: _refreshDashboard,
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(bottom: 76),
+                            children: [
+                              _CenteredTAContent(
+                                child: WalkthroughTarget(
+                                  id: TAWalkthroughIds.dashboardTop,
+                                  child: _TAV9TopBar(
+                                    isDark: isDark,
+                                    onMenuTap: () =>
+                                        _scaffoldKey.currentState?.openDrawer(),
+                                  ),
                                 ),
-                                child:
-                                    BlocBuilder<TACoursesCubit, TACoursesState>(
-                                      builder: (context, coursesState) {
-                                        final courses =
-                                            TADashboardV9Metrics.coursesFromState(
-                                              coursesState,
-                                            );
-                                        final isCoursesLoading =
-                                            coursesState.coursesStatus
-                                                is TASubTabLoading<
-                                                  List<TeachingCourseModel>
-                                                >;
-
-                                        return Column(
-                                          children: [
-                                            _TAV9StatsCard(
-                                              isDark: isDark,
-                                              courses: courses,
-                                              snapshot: _snapshot,
-                                              isLoading:
-                                                  isCoursesLoading ||
-                                                  _isMetricsLoading,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _TAV9AiInsightsCard(
-                                              isDark: isDark,
-                                              snapshot: _snapshot,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _TAV9QuickActionsCard(
-                                              isDark: isDark,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _TAV9WeeklyActivityCard(
-                                              isDark: isDark,
-                                              snapshot: _snapshot,
-                                              isLoading: _isMetricsLoading,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _TAV9AssignedCoursesCard(
-                                              isDark: isDark,
-                                              snapshot: _snapshot,
-                                              isLoading:
-                                                  isCoursesLoading ||
-                                                  _isMetricsLoading,
-                                              error: _metricsError,
-                                              onRetry: () => _loadV9Data(
-                                                courses,
-                                                coursesState
-                                                    .sectionStudentCounts,
-                                                force: true,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _TAV9TaskCenterCard(
-                                              isDark: isDark,
-                                              snapshot: _snapshot,
-                                              isLoading: _isMetricsLoading,
-                                              filter: _taskFilter,
-                                              onFilterChanged: (filter) {
-                                                setState(
-                                                  () => _taskFilter = filter,
-                                                );
-                                              },
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _TAV9AskAiButton(isDark: isDark),
-                                          ],
-                                        );
-                                      },
-                                    ),
                               ),
-                            ),
-                          ],
+                              _CenteredTAContent(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    0,
+                                    16,
+                                    16,
+                                  ),
+                                  child:
+                                      BlocBuilder<
+                                        TACoursesCubit,
+                                        TACoursesState
+                                      >(
+                                        builder: (context, coursesState) {
+                                          final courses =
+                                              TADashboardV9Metrics.coursesFromState(
+                                                coursesState,
+                                              );
+                                          final isCoursesLoading =
+                                              coursesState.coursesStatus
+                                                  is TASubTabLoading<
+                                                    List<TeachingCourseModel>
+                                                  >;
+
+                                          return Column(
+                                            children: [
+                                              WalkthroughTarget(
+                                                id: TAWalkthroughIds
+                                                    .dashboardStats,
+                                                child: _TAV9StatsCard(
+                                                  isDark: isDark,
+                                                  courses: courses,
+                                                  snapshot: _snapshot,
+                                                  isLoading:
+                                                      isCoursesLoading ||
+                                                      _isMetricsLoading,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _TAV9AiInsightsCard(
+                                                isDark: isDark,
+                                                snapshot: _snapshot,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              WalkthroughTarget(
+                                                id: TAWalkthroughIds
+                                                    .dashboardQuick,
+                                                child: _TAV9QuickActionsCard(
+                                                  isDark: isDark,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _TAV9WeeklyActivityCard(
+                                                isDark: isDark,
+                                                snapshot: _snapshot,
+                                                isLoading: _isMetricsLoading,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _TAV9AssignedCoursesCard(
+                                                isDark: isDark,
+                                                snapshot: _snapshot,
+                                                isLoading:
+                                                    isCoursesLoading ||
+                                                    _isMetricsLoading,
+                                                error: _metricsError,
+                                                onRetry: () => _loadV9Data(
+                                                  courses,
+                                                  coursesState
+                                                      .sectionStudentCounts,
+                                                  force: true,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              WalkthroughTarget(
+                                                id: TAWalkthroughIds
+                                                    .dashboardTasks,
+                                                child: _TAV9TaskCenterCard(
+                                                  isDark: isDark,
+                                                  snapshot: _snapshot,
+                                                  isLoading: _isMetricsLoading,
+                                                  filter: _taskFilter,
+                                                  onFilterChanged: (filter) {
+                                                    setState(
+                                                      () =>
+                                                          _taskFilter = filter,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _TAV9AskAiButton(isDark: isDark),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: _bottomNavVisibleNotifier,
-                      builder: (context, isBottomNavVisible, child) {
-                        return TALiquidGlassBottomNav(
-                          isDark: isDark,
-                          isVisible: isBottomNavVisible,
-                        );
-                      },
-                    ),
-                  ],
+                      ValueListenableBuilder<bool>(
+                        valueListenable: _bottomNavVisibleNotifier,
+                        builder: (context, isBottomNavVisible, child) {
+                          return TALiquidGlassBottomNav(
+                            isDark: isDark,
+                            isVisible: isBottomNavVisible,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

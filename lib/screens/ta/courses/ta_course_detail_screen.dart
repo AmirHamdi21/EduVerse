@@ -9,13 +9,16 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/ta_courses_theme.dart';
+import '../../../features/walkthrough/ta_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/assignments/assignment_model.dart';
 import '../../../models/instructor/instructor_course_model.dart'
     show MaterialModel, SectionStudentModel;
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/labs/lab_model.dart';
-import '../../../models/materials/announcement_model.dart' as course_announcement;
+import '../../../models/materials/announcement_model.dart'
+    as course_announcement;
 import '../../../models/materials/course_material_model.dart';
 import '../../../services/api/assignment_service.dart';
 import '../../../services/api/communication_service.dart';
@@ -348,15 +351,18 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return Scaffold(
-          backgroundColor: TACoursesTheme.scaffoldBackground(isDark),
-          body: DecoratedBox(
-            decoration: TACoursesTheme.scaffoldDecoration(isDark),
-            child: SafeArea(
-              child: BlocBuilder<TACoursesCubit, TACoursesState>(
-                builder: (context, taState) {
-                  return _buildBody(isDark, l10n, taState);
-                },
+        return TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.courseDetails,
+          child: Scaffold(
+            backgroundColor: TACoursesTheme.scaffoldBackground(isDark),
+            body: DecoratedBox(
+              decoration: TACoursesTheme.scaffoldDecoration(isDark),
+              child: SafeArea(
+                child: BlocBuilder<TACoursesCubit, TACoursesState>(
+                  builder: (context, taState) {
+                    return _buildBody(isDark, l10n, taState);
+                  },
+                ),
               ),
             ),
           ),
@@ -452,16 +458,19 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                           screenPadding.right,
                           0,
                         ),
-                        child: _buildTopChrome(
-                          isDark: isDark,
-                          l10n: l10n,
-                          course: course,
-                          showHeroSkeleton: showHeroSkeleton,
-                          heroVideo: heroVideo,
-                          materials: materials,
-                          studentsCount: _studentCountFor(state, course),
-                          assignmentsCount: assignmentsCount,
-                          labsCount: labsCount,
+                        child: WalkthroughTarget(
+                          id: TAWalkthroughIds.courseDetailsHero,
+                          child: _buildTopChrome(
+                            isDark: isDark,
+                            l10n: l10n,
+                            course: course,
+                            showHeroSkeleton: showHeroSkeleton,
+                            heroVideo: heroVideo,
+                            materials: materials,
+                            studentsCount: _studentCountFor(state, course),
+                            assignmentsCount: assignmentsCount,
+                            labsCount: labsCount,
+                          ),
                         ),
                       ),
                     ),
@@ -483,7 +492,10 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                               screenPadding.right,
                               12,
                             ),
-                            child: _buildTabBar(isDark: isDark, tabs: tabs),
+                            child: WalkthroughTarget(
+                              id: TAWalkthroughIds.courseDetailsTabs,
+                              child: _buildTabBar(isDark: isDark, tabs: tabs),
+                            ),
                           ),
                         ),
                       ),
@@ -494,39 +506,49 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               body: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _TACourseSearchTab(
-                        isDark: isDark,
-                        l10n: l10n,
-                        courseId: course.courseId,
-                        onOpenContent: () => _switchTab(_courseContentTabIndex),
-                        onOpenAssignments: () =>
-                            _switchTab(_assignmentsTabIndex),
-                        onOpenLabs: () => _switchTab(_labsTabIndex),
-                        onOpenAnnouncements: () =>
-                            _switchTab(_announcementsTabIndex),
-                      ),
-                      _buildCourseContentTab(
-                        isDark,
-                        l10n,
-                        course,
-                        state,
-                        materials,
-                      ),
-                      _buildOverviewTab(isDark, l10n, course, state, materials),
-                      _buildAssignmentsTab(isDark, l10n, state, course),
-                      _buildLabsTab(isDark, l10n, state, course),
-                      _buildAnnouncementsTab(isDark, l10n, course),
-                      _buildDiscussionsTab(isDark, l10n, course),
-                      TAGradingCenterScreen(
-                        courseId: course.courseId,
-                        embedded: true,
-                      ),
-                      _buildAttendanceTab(isDark, l10n, state),
-                      _buildStudentsTab(isDark, l10n, state, course),
-                    ],
+                  child: WalkthroughTarget(
+                    id: TAWalkthroughIds.courseDetailsContent,
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _TACourseSearchTab(
+                          isDark: isDark,
+                          l10n: l10n,
+                          courseId: course.courseId,
+                          onOpenContent: () =>
+                              _switchTab(_courseContentTabIndex),
+                          onOpenAssignments: () =>
+                              _switchTab(_assignmentsTabIndex),
+                          onOpenLabs: () => _switchTab(_labsTabIndex),
+                          onOpenAnnouncements: () =>
+                              _switchTab(_announcementsTabIndex),
+                        ),
+                        _buildCourseContentTab(
+                          isDark,
+                          l10n,
+                          course,
+                          state,
+                          materials,
+                        ),
+                        _buildOverviewTab(
+                          isDark,
+                          l10n,
+                          course,
+                          state,
+                          materials,
+                        ),
+                        _buildAssignmentsTab(isDark, l10n, state, course),
+                        _buildLabsTab(isDark, l10n, state, course),
+                        _buildAnnouncementsTab(isDark, l10n, course),
+                        _buildDiscussionsTab(isDark, l10n, course),
+                        TAGradingCenterScreen(
+                          courseId: course.courseId,
+                          embedded: true,
+                        ),
+                        _buildAttendanceTab(isDark, l10n, state),
+                        _buildStudentsTab(isDark, l10n, state, course),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -2431,7 +2453,10 @@ class _TACourseSearchTabState extends State<_TACourseSearchTab> {
 
     try {
       final results = await Future.wait<Object>([
-        _materialService.getMaterials(widget.courseId, cancelToken: cancelToken),
+        _materialService.getMaterials(
+          widget.courseId,
+          cancelToken: cancelToken,
+        ),
         _assignmentService.getAll(
           courseId: widget.courseId,
           limit: 100,
@@ -2528,7 +2553,8 @@ class _TACourseSearchTabState extends State<_TACourseSearchTab> {
         promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
         promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
         noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
-        noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
+        noResultsSubtitle:
+            widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
         entries: _entries,
       ),
     );

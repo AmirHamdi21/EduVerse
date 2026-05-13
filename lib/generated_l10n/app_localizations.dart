@@ -33848,6 +33848,900 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to export the exam paper.'**
   String get examPaperExportFailed;
+
+  /// No description provided for @walkthroughSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get walkthroughSkip;
+
+  /// No description provided for @walkthroughBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get walkthroughBack;
+
+  /// No description provided for @walkthroughNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get walkthroughNext;
+
+  /// No description provided for @walkthroughFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get walkthroughFinish;
+
+  /// No description provided for @walkthroughProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String walkthroughProgress(int current, int total);
+
+  /// No description provided for @walkthroughDashboardTopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from the command bar'**
+  String get walkthroughDashboardTopTitle;
+
+  /// No description provided for @walkthroughDashboardTopBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use search to jump to students and courses, open notifications, or reach the drawer without leaving the dashboard.'**
+  String get walkthroughDashboardTopBody;
+
+  /// No description provided for @walkthroughDashboardStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the live teaching snapshot'**
+  String get walkthroughDashboardStatsTitle;
+
+  /// No description provided for @walkthroughDashboardStatsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'These numbers summarize courses, work waiting for review, and recent class activity.'**
+  String get walkthroughDashboardStatsBody;
+
+  /// No description provided for @walkthroughDashboardQuickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use quick actions for common work'**
+  String get walkthroughDashboardQuickTitle;
+
+  /// No description provided for @walkthroughDashboardQuickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open courses, assignments, labs, grading, question bank, exams, attendance, and AI help from one compact area.'**
+  String get walkthroughDashboardQuickBody;
+
+  /// No description provided for @walkthroughDashboardPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow up on pending grading'**
+  String get walkthroughDashboardPendingTitle;
+
+  /// No description provided for @walkthroughDashboardPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This card highlights submissions that need attention so you can move directly into grading.'**
+  String get walkthroughDashboardPendingBody;
+
+  /// No description provided for @walkthroughCoursesHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your teaching courses'**
+  String get walkthroughCoursesHeaderTitle;
+
+  /// No description provided for @walkthroughCoursesHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your assigned courses and scan the hero metrics before opening a course space.'**
+  String get walkthroughCoursesHeaderBody;
+
+  /// No description provided for @walkthroughCoursesToolbarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refine the course list'**
+  String get walkthroughCoursesToolbarTitle;
+
+  /// No description provided for @walkthroughCoursesToolbarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use sorting, status, and level filters to find the exact course section you need.'**
+  String get walkthroughCoursesToolbarBody;
+
+  /// No description provided for @walkthroughCoursesListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open or manage a course'**
+  String get walkthroughCoursesListTitle;
+
+  /// No description provided for @walkthroughCoursesListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Course cards lead to details, students, materials, and management actions for each teaching section.'**
+  String get walkthroughCoursesListBody;
+
+  /// No description provided for @walkthroughCoursesCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a course when allowed'**
+  String get walkthroughCoursesCreateTitle;
+
+  /// No description provided for @walkthroughCoursesCreateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this action to create a new course space when your permissions allow it.'**
+  String get walkthroughCoursesCreateBody;
+
+  /// No description provided for @walkthroughCourseDetailsHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the course overview'**
+  String get walkthroughCourseDetailsHeroTitle;
+
+  /// No description provided for @walkthroughCourseDetailsHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The top area gives the course identity, progress signals, students, assignments, and grade context.'**
+  String get walkthroughCourseDetailsHeroBody;
+
+  /// No description provided for @walkthroughCourseDetailsTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move between course tools'**
+  String get walkthroughCourseDetailsTabsTitle;
+
+  /// No description provided for @walkthroughCourseDetailsTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tabs keep content, assignments, labs, announcements, discussions, grading, and students in one course hub.'**
+  String get walkthroughCourseDetailsTabsBody;
+
+  /// No description provided for @walkthroughCourseDetailsContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work inside the selected course area'**
+  String get walkthroughCourseDetailsContentTitle;
+
+  /// No description provided for @walkthroughCourseDetailsContentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This panel changes with the selected tab so each course workflow stays focused.'**
+  String get walkthroughCourseDetailsContentBody;
+
+  /// No description provided for @walkthroughAssignmentsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track assignment workload'**
+  String get walkthroughAssignmentsHeaderTitle;
+
+  /// No description provided for @walkthroughAssignmentsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The summary shows assignment counts and status signals across your teaching courses.'**
+  String get walkthroughAssignmentsHeaderBody;
+
+  /// No description provided for @walkthroughAssignmentsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter assignments quickly'**
+  String get walkthroughAssignmentsFiltersTitle;
+
+  /// No description provided for @walkthroughAssignmentsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Narrow by course and status to focus on drafts, published work, closed tasks, or archives.'**
+  String get walkthroughAssignmentsFiltersBody;
+
+  /// No description provided for @walkthroughAssignmentsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage assignment cards'**
+  String get walkthroughAssignmentsListTitle;
+
+  /// No description provided for @walkthroughAssignmentsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open details, edit, update status, or review submissions from each assignment group.'**
+  String get walkthroughAssignmentsListBody;
+
+  /// No description provided for @walkthroughLabsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control lab activity'**
+  String get walkthroughLabsHeaderTitle;
+
+  /// No description provided for @walkthroughLabsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The lab overview summarizes practical work and the courses currently in focus.'**
+  String get walkthroughLabsHeaderBody;
+
+  /// No description provided for @walkthroughLabsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose course and lab status'**
+  String get walkthroughLabsFiltersTitle;
+
+  /// No description provided for @walkthroughLabsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use filters to switch between assigned courses and active, upcoming, or completed labs.'**
+  String get walkthroughLabsFiltersBody;
+
+  /// No description provided for @walkthroughLabsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review lab submissions'**
+  String get walkthroughLabsListTitle;
+
+  /// No description provided for @walkthroughLabsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab cards collect instructions, due dates, submissions, and review actions.'**
+  String get walkthroughLabsListBody;
+
+  /// No description provided for @walkthroughQuestionBankHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build your reusable question pool'**
+  String get walkthroughQuestionBankHeaderTitle;
+
+  /// No description provided for @walkthroughQuestionBankHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The header summarizes total questions, approval state, drafts, and archived items.'**
+  String get walkthroughQuestionBankHeaderBody;
+
+  /// No description provided for @walkthroughQuestionBankControlsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and filter questions'**
+  String get walkthroughQuestionBankControlsTitle;
+
+  /// No description provided for @walkthroughQuestionBankControlsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use course, chapter, group, type, difficulty, status, and attachment filters to shape the bank.'**
+  String get walkthroughQuestionBankControlsBody;
+
+  /// No description provided for @walkthroughQuestionBankFeedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain question quality'**
+  String get walkthroughQuestionBankFeedTitle;
+
+  /// No description provided for @walkthroughQuestionBankFeedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Question cards expose details, grouping, selection, and review actions for the pool.'**
+  String get walkthroughQuestionBankFeedBody;
+
+  /// No description provided for @walkthroughQuestionBankCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add questions or groups'**
+  String get walkthroughQuestionBankCreateTitle;
+
+  /// No description provided for @walkthroughQuestionBankCreateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this action to create one question, bulk import, or organize questions into groups.'**
+  String get walkthroughQuestionBankCreateBody;
+
+  /// No description provided for @walkthroughExamGeneratorHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate exams from your bank'**
+  String get walkthroughExamGeneratorHeaderTitle;
+
+  /// No description provided for @walkthroughExamGeneratorHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The overview shows drafts, saved exams, published exams, and available approved questions.'**
+  String get walkthroughExamGeneratorHeaderBody;
+
+  /// No description provided for @walkthroughExamGeneratorFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find drafts and saved exams'**
+  String get walkthroughExamGeneratorFiltersTitle;
+
+  /// No description provided for @walkthroughExamGeneratorFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search, filter by course and status, and switch between draft and saved exam records.'**
+  String get walkthroughExamGeneratorFiltersBody;
+
+  /// No description provided for @walkthroughExamGeneratorListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue exam work'**
+  String get walkthroughExamGeneratorListTitle;
+
+  /// No description provided for @walkthroughExamGeneratorListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use each record to edit drafts, inspect saved exams, export, or continue generation.'**
+  String get walkthroughExamGeneratorListBody;
+
+  /// No description provided for @walkthroughExamGeneratorCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new exam draft'**
+  String get walkthroughExamGeneratorCreateTitle;
+
+  /// No description provided for @walkthroughExamGeneratorCreateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a draft when you are ready to build an exam from selected courses and questions.'**
+  String get walkthroughExamGeneratorCreateBody;
+
+  /// No description provided for @walkthroughGradingHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the grading center'**
+  String get walkthroughGradingHeaderTitle;
+
+  /// No description provided for @walkthroughGradingHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The summary shows submissions waiting for action and the overall grading state.'**
+  String get walkthroughGradingHeaderBody;
+
+  /// No description provided for @walkthroughGradingFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus the grading queue'**
+  String get walkthroughGradingFiltersTitle;
+
+  /// No description provided for @walkthroughGradingFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by course and submission status to handle pending, graded, or late work.'**
+  String get walkthroughGradingFiltersBody;
+
+  /// No description provided for @walkthroughGradingListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade from submission cards'**
+  String get walkthroughGradingListTitle;
+
+  /// No description provided for @walkthroughGradingListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a submission to inspect files, enter scores, add feedback, and submit the grade.'**
+  String get walkthroughGradingListBody;
+
+  /// No description provided for @walkthroughAttendanceHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage attendance sessions'**
+  String get walkthroughAttendanceHeaderTitle;
+
+  /// No description provided for @walkthroughAttendanceHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance starts with course and session context so the roster matches the class you are handling.'**
+  String get walkthroughAttendanceHeaderBody;
+
+  /// No description provided for @walkthroughAttendanceControlsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the session view'**
+  String get walkthroughAttendanceControlsTitle;
+
+  /// No description provided for @walkthroughAttendanceControlsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the controls to move between classes, sessions, dates, and roster mode.'**
+  String get walkthroughAttendanceControlsBody;
+
+  /// No description provided for @walkthroughAttendanceRosterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark and save roster status'**
+  String get walkthroughAttendanceRosterTitle;
+
+  /// No description provided for @walkthroughAttendanceRosterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The roster is where you mark present, late, excused, or absent and save the batch.'**
+  String get walkthroughAttendanceRosterBody;
+
+  /// No description provided for @walkthroughQuizHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage backend quizzes'**
+  String get walkthroughQuizHeaderTitle;
+
+  /// No description provided for @walkthroughQuizHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This screen is for quizzes wired to the backend, including creation, publishing, and grading.'**
+  String get walkthroughQuizHeaderBody;
+
+  /// No description provided for @walkthroughQuizFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and filter quizzes'**
+  String get walkthroughQuizFiltersTitle;
+
+  /// No description provided for @walkthroughQuizFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use search and status filters to find drafts, published quizzes, and closed quizzes.'**
+  String get walkthroughQuizFiltersBody;
+
+  /// No description provided for @walkthroughQuizListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work with quiz cards'**
+  String get walkthroughQuizListTitle;
+
+  /// No description provided for @walkthroughQuizListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each quiz card exposes edit, publish, close, attempts, statistics, grading, and delete actions.'**
+  String get walkthroughQuizListBody;
+
+  /// No description provided for @walkthroughQuizCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new quiz'**
+  String get walkthroughQuizCreateTitle;
+
+  /// No description provided for @walkthroughQuizCreateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this button to start a backend quiz and configure its questions and settings.'**
+  String get walkthroughQuizCreateBody;
+
+  /// No description provided for @taWalkthroughDashboardTopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from the TA command bar'**
+  String get taWalkthroughDashboardTopTitle;
+
+  /// No description provided for @taWalkthroughDashboardTopBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use search, notifications, and the drawer to move through TA work without losing the dashboard context.'**
+  String get taWalkthroughDashboardTopBody;
+
+  /// No description provided for @taWalkthroughDashboardStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read your TA workload snapshot'**
+  String get taWalkthroughDashboardStatsTitle;
+
+  /// No description provided for @taWalkthroughDashboardStatsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'These numbers summarize assigned tasks, grading waiting for review, courses, and AI support activity.'**
+  String get taWalkthroughDashboardStatsBody;
+
+  /// No description provided for @taWalkthroughDashboardQuickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump into common TA actions'**
+  String get taWalkthroughDashboardQuickTitle;
+
+  /// No description provided for @taWalkthroughDashboardQuickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open courses, tasks, grading, labs, roster, discussions, quizzes, and AI help from this compact area.'**
+  String get taWalkthroughDashboardQuickBody;
+
+  /// No description provided for @taWalkthroughDashboardTasksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the task center'**
+  String get taWalkthroughDashboardTasksTitle;
+
+  /// No description provided for @taWalkthroughDashboardTasksBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The task center groups grading, lab review, and discussion follow-ups so urgent work stays visible.'**
+  String get taWalkthroughDashboardTasksBody;
+
+  /// No description provided for @taWalkthroughCoursesHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find your assigned courses'**
+  String get taWalkthroughCoursesHeaderTitle;
+
+  /// No description provided for @taWalkthroughCoursesHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search course spaces and scan the course metrics before opening a teaching section.'**
+  String get taWalkthroughCoursesHeaderBody;
+
+  /// No description provided for @taWalkthroughCoursesFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refine the course list'**
+  String get taWalkthroughCoursesFiltersTitle;
+
+  /// No description provided for @taWalkthroughCoursesFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use status, level, sorting, and view controls to reach the exact section you need.'**
+  String get taWalkthroughCoursesFiltersBody;
+
+  /// No description provided for @taWalkthroughCoursesListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a course workspace'**
+  String get taWalkthroughCoursesListTitle;
+
+  /// No description provided for @taWalkthroughCoursesListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Course cards lead to details, labs, grading, discussions, and section tools.'**
+  String get taWalkthroughCoursesListBody;
+
+  /// No description provided for @taWalkthroughCourseDetailsHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the course overview'**
+  String get taWalkthroughCourseDetailsHeroTitle;
+
+  /// No description provided for @taWalkthroughCourseDetailsHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The hero area shows course identity, progress signals, student context, assignments, and labs.'**
+  String get taWalkthroughCourseDetailsHeroBody;
+
+  /// No description provided for @taWalkthroughCourseDetailsTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move between course tools'**
+  String get taWalkthroughCourseDetailsTabsTitle;
+
+  /// No description provided for @taWalkthroughCourseDetailsTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tabs keep content, assignments, labs, announcements, discussions, grading, attendance, and students in one hub.'**
+  String get taWalkthroughCourseDetailsTabsBody;
+
+  /// No description provided for @taWalkthroughCourseDetailsContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work in the active course area'**
+  String get taWalkthroughCourseDetailsContentTitle;
+
+  /// No description provided for @taWalkthroughCourseDetailsContentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This panel changes with the selected tab so each course workflow stays focused.'**
+  String get taWalkthroughCourseDetailsContentBody;
+
+  /// No description provided for @taWalkthroughAssignmentsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track assignment flow'**
+  String get taWalkthroughAssignmentsHeaderTitle;
+
+  /// No description provided for @taWalkthroughAssignmentsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The summary shows assignment workload and status across your assigned courses.'**
+  String get taWalkthroughAssignmentsHeaderBody;
+
+  /// No description provided for @taWalkthroughAssignmentsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter assignments by context'**
+  String get taWalkthroughAssignmentsFiltersTitle;
+
+  /// No description provided for @taWalkthroughAssignmentsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a course and status to focus on draft, published, closed, or archived assignments.'**
+  String get taWalkthroughAssignmentsFiltersBody;
+
+  /// No description provided for @taWalkthroughAssignmentsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage assignment groups'**
+  String get taWalkthroughAssignmentsListTitle;
+
+  /// No description provided for @taWalkthroughAssignmentsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open assignment details, review submissions, and continue grading from the course groups.'**
+  String get taWalkthroughAssignmentsListBody;
+
+  /// No description provided for @taWalkthroughLabsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review lab activity'**
+  String get taWalkthroughLabsHeaderTitle;
+
+  /// No description provided for @taWalkthroughLabsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The lab snapshot summarizes practical work across the courses assigned to you.'**
+  String get taWalkthroughLabsHeaderBody;
+
+  /// No description provided for @taWalkthroughLabsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose course and lab state'**
+  String get taWalkthroughLabsFiltersTitle;
+
+  /// No description provided for @taWalkthroughLabsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter labs by course and state to find active, draft, closed, or archived work.'**
+  String get taWalkthroughLabsFiltersBody;
+
+  /// No description provided for @taWalkthroughLabsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open lab review work'**
+  String get taWalkthroughLabsListTitle;
+
+  /// No description provided for @taWalkthroughLabsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab cards collect due dates, submission entry points, resources, and review actions.'**
+  String get taWalkthroughLabsListBody;
+
+  /// No description provided for @taWalkthroughGradingHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the TA grading queue'**
+  String get taWalkthroughGradingHeaderTitle;
+
+  /// No description provided for @taWalkthroughGradingHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The summary shows pending, graded, and late submissions across your assigned courses.'**
+  String get taWalkthroughGradingHeaderBody;
+
+  /// No description provided for @taWalkthroughGradingFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus grading by course or status'**
+  String get taWalkthroughGradingFiltersTitle;
+
+  /// No description provided for @taWalkthroughGradingFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use course and submission filters to focus on the work that needs attention.'**
+  String get taWalkthroughGradingFiltersBody;
+
+  /// No description provided for @taWalkthroughGradingListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade from submission cards'**
+  String get taWalkthroughGradingListTitle;
+
+  /// No description provided for @taWalkthroughGradingListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open submissions, inspect files, enter scores, add feedback, and save grading decisions.'**
+  String get taWalkthroughGradingListBody;
+
+  /// No description provided for @taWalkthroughAttendanceHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage attendance sessions'**
+  String get taWalkthroughAttendanceHeaderTitle;
+
+  /// No description provided for @taWalkthroughAttendanceHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance starts with course and session context so the roster matches the class you are handling.'**
+  String get taWalkthroughAttendanceHeaderBody;
+
+  /// No description provided for @taWalkthroughAttendanceControlsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the attendance view'**
+  String get taWalkthroughAttendanceControlsTitle;
+
+  /// No description provided for @taWalkthroughAttendanceControlsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the controls to switch classes, sessions, dates, and roster mode.'**
+  String get taWalkthroughAttendanceControlsBody;
+
+  /// No description provided for @taWalkthroughAttendanceRosterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark and save attendance'**
+  String get taWalkthroughAttendanceRosterTitle;
+
+  /// No description provided for @taWalkthroughAttendanceRosterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark students present, late, excused, or absent, then save the batch.'**
+  String get taWalkthroughAttendanceRosterBody;
+
+  /// No description provided for @taWalkthroughRosterHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review section rosters'**
+  String get taWalkthroughRosterHeaderTitle;
+
+  /// No description provided for @taWalkthroughRosterHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The roster header summarizes the selected course and section before you inspect students.'**
+  String get taWalkthroughRosterHeaderBody;
+
+  /// No description provided for @taWalkthroughRosterControlsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose and filter students'**
+  String get taWalkthroughRosterControlsTitle;
+
+  /// No description provided for @taWalkthroughRosterControlsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a section, switch views, search students, and sort the roster.'**
+  String get taWalkthroughRosterControlsBody;
+
+  /// No description provided for @taWalkthroughRosterListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect student records'**
+  String get taWalkthroughRosterListTitle;
+
+  /// No description provided for @taWalkthroughRosterListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Student rows show enrollment details, grade context, notes, and roster status.'**
+  String get taWalkthroughRosterListBody;
+
+  /// No description provided for @taWalkthroughDiscussionsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor course discussions'**
+  String get taWalkthroughDiscussionsHeaderTitle;
+
+  /// No description provided for @taWalkthroughDiscussionsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The discussion summary shows activity, pinned threads, replies, and courses needing attention.'**
+  String get taWalkthroughDiscussionsHeaderBody;
+
+  /// No description provided for @taWalkthroughDiscussionsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter discussion workload'**
+  String get taWalkthroughDiscussionsFiltersTitle;
+
+  /// No description provided for @taWalkthroughDiscussionsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses and filter by active, unanswered, pinned, locked, or quiet discussions.'**
+  String get taWalkthroughDiscussionsFiltersBody;
+
+  /// No description provided for @taWalkthroughDiscussionsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open discussion threads'**
+  String get taWalkthroughDiscussionsListTitle;
+
+  /// No description provided for @taWalkthroughDiscussionsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Course cards expose latest threads, metrics, and entry points for replies and moderation.'**
+  String get taWalkthroughDiscussionsListBody;
+
+  /// No description provided for @taWalkthroughQuizHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage backend quizzes'**
+  String get taWalkthroughQuizHeaderTitle;
+
+  /// No description provided for @taWalkthroughQuizHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and manage quizzes that are wired to the backend for publishing, attempts, grading, and stats.'**
+  String get taWalkthroughQuizHeaderBody;
+
+  /// No description provided for @taWalkthroughQuizFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and filter quizzes'**
+  String get taWalkthroughQuizFiltersTitle;
+
+  /// No description provided for @taWalkthroughQuizFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use search and status filters to find drafts, published quizzes, and closed quizzes.'**
+  String get taWalkthroughQuizFiltersBody;
+
+  /// No description provided for @taWalkthroughQuizListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work with quiz cards'**
+  String get taWalkthroughQuizListTitle;
+
+  /// No description provided for @taWalkthroughQuizListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each quiz card exposes edit, publish, close, attempts, statistics, grading, and delete actions.'**
+  String get taWalkthroughQuizListBody;
+
+  /// No description provided for @taWalkthroughAnalyticsStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read TA analytics'**
+  String get taWalkthroughAnalyticsStatsTitle;
+
+  /// No description provided for @taWalkthroughAnalyticsStatsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'KPI cards summarize attendance, submissions, at-risk students, and engagement signals.'**
+  String get taWalkthroughAnalyticsStatsBody;
+
+  /// No description provided for @taWalkthroughAnalyticsChartsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare activity trends'**
+  String get taWalkthroughAnalyticsChartsTitle;
+
+  /// No description provided for @taWalkthroughAnalyticsChartsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Charts help you compare attendance, submissions, and score distribution over time.'**
+  String get taWalkthroughAnalyticsChartsBody;
+
+  /// No description provided for @taWalkthroughAnalyticsInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use analytics insights'**
+  String get taWalkthroughAnalyticsInsightsTitle;
+
+  /// No description provided for @taWalkthroughAnalyticsInsightsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'AI insights highlight students, labs, and course patterns that need follow-up.'**
+  String get taWalkthroughAnalyticsInsightsBody;
+
+  /// No description provided for @taWalkthroughAiStartersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with TA prompts'**
+  String get taWalkthroughAiStartersTitle;
+
+  /// No description provided for @taWalkthroughAiStartersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use quick prompts for grading help, feedback, rubrics, explanations, quizzes, and lab preparation.'**
+  String get taWalkthroughAiStartersBody;
+
+  /// No description provided for @taWalkthroughAiHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the AI conversation'**
+  String get taWalkthroughAiHistoryTitle;
+
+  /// No description provided for @taWalkthroughAiHistoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The chat history keeps AI responses and suggestions visible while you refine your question.'**
+  String get taWalkthroughAiHistoryBody;
+
+  /// No description provided for @taWalkthroughAiComposerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a focused question'**
+  String get taWalkthroughAiComposerTitle;
+
+  /// No description provided for @taWalkthroughAiComposerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a question, choose the right mode, and send it when you want targeted TA support.'**
+  String get taWalkthroughAiComposerBody;
 }
 
 class _AppLocalizationsDelegate

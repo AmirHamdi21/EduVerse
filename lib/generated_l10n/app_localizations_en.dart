@@ -17850,4 +17850,540 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get examPaperExportFailed => 'Failed to export the exam paper.';
+
+  @override
+  String get walkthroughSkip => 'Skip';
+
+  @override
+  String get walkthroughBack => 'Back';
+
+  @override
+  String get walkthroughNext => 'Next';
+
+  @override
+  String get walkthroughFinish => 'Finish';
+
+  @override
+  String walkthroughProgress(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get walkthroughDashboardTopTitle => 'Start from the command bar';
+
+  @override
+  String get walkthroughDashboardTopBody =>
+      'Use search to jump to students and courses, open notifications, or reach the drawer without leaving the dashboard.';
+
+  @override
+  String get walkthroughDashboardStatsTitle =>
+      'Read the live teaching snapshot';
+
+  @override
+  String get walkthroughDashboardStatsBody =>
+      'These numbers summarize courses, work waiting for review, and recent class activity.';
+
+  @override
+  String get walkthroughDashboardQuickTitle =>
+      'Use quick actions for common work';
+
+  @override
+  String get walkthroughDashboardQuickBody =>
+      'Open courses, assignments, labs, grading, question bank, exams, attendance, and AI help from one compact area.';
+
+  @override
+  String get walkthroughDashboardPendingTitle => 'Follow up on pending grading';
+
+  @override
+  String get walkthroughDashboardPendingBody =>
+      'This card highlights submissions that need attention so you can move directly into grading.';
+
+  @override
+  String get walkthroughCoursesHeaderTitle => 'Manage your teaching courses';
+
+  @override
+  String get walkthroughCoursesHeaderBody =>
+      'Search your assigned courses and scan the hero metrics before opening a course space.';
+
+  @override
+  String get walkthroughCoursesToolbarTitle => 'Refine the course list';
+
+  @override
+  String get walkthroughCoursesToolbarBody =>
+      'Use sorting, status, and level filters to find the exact course section you need.';
+
+  @override
+  String get walkthroughCoursesListTitle => 'Open or manage a course';
+
+  @override
+  String get walkthroughCoursesListBody =>
+      'Course cards lead to details, students, materials, and management actions for each teaching section.';
+
+  @override
+  String get walkthroughCoursesCreateTitle => 'Create a course when allowed';
+
+  @override
+  String get walkthroughCoursesCreateBody =>
+      'Use this action to create a new course space when your permissions allow it.';
+
+  @override
+  String get walkthroughCourseDetailsHeroTitle => 'Review the course overview';
+
+  @override
+  String get walkthroughCourseDetailsHeroBody =>
+      'The top area gives the course identity, progress signals, students, assignments, and grade context.';
+
+  @override
+  String get walkthroughCourseDetailsTabsTitle => 'Move between course tools';
+
+  @override
+  String get walkthroughCourseDetailsTabsBody =>
+      'Tabs keep content, assignments, labs, announcements, discussions, grading, and students in one course hub.';
+
+  @override
+  String get walkthroughCourseDetailsContentTitle =>
+      'Work inside the selected course area';
+
+  @override
+  String get walkthroughCourseDetailsContentBody =>
+      'This panel changes with the selected tab so each course workflow stays focused.';
+
+  @override
+  String get walkthroughAssignmentsHeaderTitle => 'Track assignment workload';
+
+  @override
+  String get walkthroughAssignmentsHeaderBody =>
+      'The summary shows assignment counts and status signals across your teaching courses.';
+
+  @override
+  String get walkthroughAssignmentsFiltersTitle => 'Filter assignments quickly';
+
+  @override
+  String get walkthroughAssignmentsFiltersBody =>
+      'Narrow by course and status to focus on drafts, published work, closed tasks, or archives.';
+
+  @override
+  String get walkthroughAssignmentsListTitle => 'Manage assignment cards';
+
+  @override
+  String get walkthroughAssignmentsListBody =>
+      'Open details, edit, update status, or review submissions from each assignment group.';
+
+  @override
+  String get walkthroughLabsHeaderTitle => 'Control lab activity';
+
+  @override
+  String get walkthroughLabsHeaderBody =>
+      'The lab overview summarizes practical work and the courses currently in focus.';
+
+  @override
+  String get walkthroughLabsFiltersTitle => 'Choose course and lab status';
+
+  @override
+  String get walkthroughLabsFiltersBody =>
+      'Use filters to switch between assigned courses and active, upcoming, or completed labs.';
+
+  @override
+  String get walkthroughLabsListTitle => 'Review lab submissions';
+
+  @override
+  String get walkthroughLabsListBody =>
+      'Lab cards collect instructions, due dates, submissions, and review actions.';
+
+  @override
+  String get walkthroughQuestionBankHeaderTitle =>
+      'Build your reusable question pool';
+
+  @override
+  String get walkthroughQuestionBankHeaderBody =>
+      'The header summarizes total questions, approval state, drafts, and archived items.';
+
+  @override
+  String get walkthroughQuestionBankControlsTitle =>
+      'Search and filter questions';
+
+  @override
+  String get walkthroughQuestionBankControlsBody =>
+      'Use course, chapter, group, type, difficulty, status, and attachment filters to shape the bank.';
+
+  @override
+  String get walkthroughQuestionBankFeedTitle => 'Maintain question quality';
+
+  @override
+  String get walkthroughQuestionBankFeedBody =>
+      'Question cards expose details, grouping, selection, and review actions for the pool.';
+
+  @override
+  String get walkthroughQuestionBankCreateTitle => 'Add questions or groups';
+
+  @override
+  String get walkthroughQuestionBankCreateBody =>
+      'Open this action to create one question, bulk import, or organize questions into groups.';
+
+  @override
+  String get walkthroughExamGeneratorHeaderTitle =>
+      'Generate exams from your bank';
+
+  @override
+  String get walkthroughExamGeneratorHeaderBody =>
+      'The overview shows drafts, saved exams, published exams, and available approved questions.';
+
+  @override
+  String get walkthroughExamGeneratorFiltersTitle =>
+      'Find drafts and saved exams';
+
+  @override
+  String get walkthroughExamGeneratorFiltersBody =>
+      'Search, filter by course and status, and switch between draft and saved exam records.';
+
+  @override
+  String get walkthroughExamGeneratorListTitle => 'Continue exam work';
+
+  @override
+  String get walkthroughExamGeneratorListBody =>
+      'Use each record to edit drafts, inspect saved exams, export, or continue generation.';
+
+  @override
+  String get walkthroughExamGeneratorCreateTitle => 'Start a new exam draft';
+
+  @override
+  String get walkthroughExamGeneratorCreateBody =>
+      'Create a draft when you are ready to build an exam from selected courses and questions.';
+
+  @override
+  String get walkthroughGradingHeaderTitle => 'Open the grading center';
+
+  @override
+  String get walkthroughGradingHeaderBody =>
+      'The summary shows submissions waiting for action and the overall grading state.';
+
+  @override
+  String get walkthroughGradingFiltersTitle => 'Focus the grading queue';
+
+  @override
+  String get walkthroughGradingFiltersBody =>
+      'Filter by course and submission status to handle pending, graded, or late work.';
+
+  @override
+  String get walkthroughGradingListTitle => 'Grade from submission cards';
+
+  @override
+  String get walkthroughGradingListBody =>
+      'Open a submission to inspect files, enter scores, add feedback, and submit the grade.';
+
+  @override
+  String get walkthroughAttendanceHeaderTitle => 'Manage attendance sessions';
+
+  @override
+  String get walkthroughAttendanceHeaderBody =>
+      'Attendance starts with course and session context so the roster matches the class you are handling.';
+
+  @override
+  String get walkthroughAttendanceControlsTitle => 'Choose the session view';
+
+  @override
+  String get walkthroughAttendanceControlsBody =>
+      'Use the controls to move between classes, sessions, dates, and roster mode.';
+
+  @override
+  String get walkthroughAttendanceRosterTitle => 'Mark and save roster status';
+
+  @override
+  String get walkthroughAttendanceRosterBody =>
+      'The roster is where you mark present, late, excused, or absent and save the batch.';
+
+  @override
+  String get walkthroughQuizHeaderTitle => 'Manage backend quizzes';
+
+  @override
+  String get walkthroughQuizHeaderBody =>
+      'This screen is for quizzes wired to the backend, including creation, publishing, and grading.';
+
+  @override
+  String get walkthroughQuizFiltersTitle => 'Search and filter quizzes';
+
+  @override
+  String get walkthroughQuizFiltersBody =>
+      'Use search and status filters to find drafts, published quizzes, and closed quizzes.';
+
+  @override
+  String get walkthroughQuizListTitle => 'Work with quiz cards';
+
+  @override
+  String get walkthroughQuizListBody =>
+      'Each quiz card exposes edit, publish, close, attempts, statistics, grading, and delete actions.';
+
+  @override
+  String get walkthroughQuizCreateTitle => 'Create a new quiz';
+
+  @override
+  String get walkthroughQuizCreateBody =>
+      'Use this button to start a backend quiz and configure its questions and settings.';
+
+  @override
+  String get taWalkthroughDashboardTopTitle => 'Start from the TA command bar';
+
+  @override
+  String get taWalkthroughDashboardTopBody =>
+      'Use search, notifications, and the drawer to move through TA work without losing the dashboard context.';
+
+  @override
+  String get taWalkthroughDashboardStatsTitle =>
+      'Read your TA workload snapshot';
+
+  @override
+  String get taWalkthroughDashboardStatsBody =>
+      'These numbers summarize assigned tasks, grading waiting for review, courses, and AI support activity.';
+
+  @override
+  String get taWalkthroughDashboardQuickTitle => 'Jump into common TA actions';
+
+  @override
+  String get taWalkthroughDashboardQuickBody =>
+      'Open courses, tasks, grading, labs, roster, discussions, quizzes, and AI help from this compact area.';
+
+  @override
+  String get taWalkthroughDashboardTasksTitle => 'Follow the task center';
+
+  @override
+  String get taWalkthroughDashboardTasksBody =>
+      'The task center groups grading, lab review, and discussion follow-ups so urgent work stays visible.';
+
+  @override
+  String get taWalkthroughCoursesHeaderTitle => 'Find your assigned courses';
+
+  @override
+  String get taWalkthroughCoursesHeaderBody =>
+      'Search course spaces and scan the course metrics before opening a teaching section.';
+
+  @override
+  String get taWalkthroughCoursesFiltersTitle => 'Refine the course list';
+
+  @override
+  String get taWalkthroughCoursesFiltersBody =>
+      'Use status, level, sorting, and view controls to reach the exact section you need.';
+
+  @override
+  String get taWalkthroughCoursesListTitle => 'Open a course workspace';
+
+  @override
+  String get taWalkthroughCoursesListBody =>
+      'Course cards lead to details, labs, grading, discussions, and section tools.';
+
+  @override
+  String get taWalkthroughCourseDetailsHeroTitle =>
+      'Review the course overview';
+
+  @override
+  String get taWalkthroughCourseDetailsHeroBody =>
+      'The hero area shows course identity, progress signals, student context, assignments, and labs.';
+
+  @override
+  String get taWalkthroughCourseDetailsTabsTitle => 'Move between course tools';
+
+  @override
+  String get taWalkthroughCourseDetailsTabsBody =>
+      'Tabs keep content, assignments, labs, announcements, discussions, grading, attendance, and students in one hub.';
+
+  @override
+  String get taWalkthroughCourseDetailsContentTitle =>
+      'Work in the active course area';
+
+  @override
+  String get taWalkthroughCourseDetailsContentBody =>
+      'This panel changes with the selected tab so each course workflow stays focused.';
+
+  @override
+  String get taWalkthroughAssignmentsHeaderTitle => 'Track assignment flow';
+
+  @override
+  String get taWalkthroughAssignmentsHeaderBody =>
+      'The summary shows assignment workload and status across your assigned courses.';
+
+  @override
+  String get taWalkthroughAssignmentsFiltersTitle =>
+      'Filter assignments by context';
+
+  @override
+  String get taWalkthroughAssignmentsFiltersBody =>
+      'Choose a course and status to focus on draft, published, closed, or archived assignments.';
+
+  @override
+  String get taWalkthroughAssignmentsListTitle => 'Manage assignment groups';
+
+  @override
+  String get taWalkthroughAssignmentsListBody =>
+      'Open assignment details, review submissions, and continue grading from the course groups.';
+
+  @override
+  String get taWalkthroughLabsHeaderTitle => 'Review lab activity';
+
+  @override
+  String get taWalkthroughLabsHeaderBody =>
+      'The lab snapshot summarizes practical work across the courses assigned to you.';
+
+  @override
+  String get taWalkthroughLabsFiltersTitle => 'Choose course and lab state';
+
+  @override
+  String get taWalkthroughLabsFiltersBody =>
+      'Filter labs by course and state to find active, draft, closed, or archived work.';
+
+  @override
+  String get taWalkthroughLabsListTitle => 'Open lab review work';
+
+  @override
+  String get taWalkthroughLabsListBody =>
+      'Lab cards collect due dates, submission entry points, resources, and review actions.';
+
+  @override
+  String get taWalkthroughGradingHeaderTitle => 'Open the TA grading queue';
+
+  @override
+  String get taWalkthroughGradingHeaderBody =>
+      'The summary shows pending, graded, and late submissions across your assigned courses.';
+
+  @override
+  String get taWalkthroughGradingFiltersTitle =>
+      'Focus grading by course or status';
+
+  @override
+  String get taWalkthroughGradingFiltersBody =>
+      'Use course and submission filters to focus on the work that needs attention.';
+
+  @override
+  String get taWalkthroughGradingListTitle => 'Grade from submission cards';
+
+  @override
+  String get taWalkthroughGradingListBody =>
+      'Open submissions, inspect files, enter scores, add feedback, and save grading decisions.';
+
+  @override
+  String get taWalkthroughAttendanceHeaderTitle => 'Manage attendance sessions';
+
+  @override
+  String get taWalkthroughAttendanceHeaderBody =>
+      'Attendance starts with course and session context so the roster matches the class you are handling.';
+
+  @override
+  String get taWalkthroughAttendanceControlsTitle =>
+      'Select the attendance view';
+
+  @override
+  String get taWalkthroughAttendanceControlsBody =>
+      'Use the controls to switch classes, sessions, dates, and roster mode.';
+
+  @override
+  String get taWalkthroughAttendanceRosterTitle => 'Mark and save attendance';
+
+  @override
+  String get taWalkthroughAttendanceRosterBody =>
+      'Mark students present, late, excused, or absent, then save the batch.';
+
+  @override
+  String get taWalkthroughRosterHeaderTitle => 'Review section rosters';
+
+  @override
+  String get taWalkthroughRosterHeaderBody =>
+      'The roster header summarizes the selected course and section before you inspect students.';
+
+  @override
+  String get taWalkthroughRosterControlsTitle => 'Choose and filter students';
+
+  @override
+  String get taWalkthroughRosterControlsBody =>
+      'Select a section, switch views, search students, and sort the roster.';
+
+  @override
+  String get taWalkthroughRosterListTitle => 'Inspect student records';
+
+  @override
+  String get taWalkthroughRosterListBody =>
+      'Student rows show enrollment details, grade context, notes, and roster status.';
+
+  @override
+  String get taWalkthroughDiscussionsHeaderTitle =>
+      'Monitor course discussions';
+
+  @override
+  String get taWalkthroughDiscussionsHeaderBody =>
+      'The discussion summary shows activity, pinned threads, replies, and courses needing attention.';
+
+  @override
+  String get taWalkthroughDiscussionsFiltersTitle =>
+      'Filter discussion workload';
+
+  @override
+  String get taWalkthroughDiscussionsFiltersBody =>
+      'Search courses and filter by active, unanswered, pinned, locked, or quiet discussions.';
+
+  @override
+  String get taWalkthroughDiscussionsListTitle => 'Open discussion threads';
+
+  @override
+  String get taWalkthroughDiscussionsListBody =>
+      'Course cards expose latest threads, metrics, and entry points for replies and moderation.';
+
+  @override
+  String get taWalkthroughQuizHeaderTitle => 'Manage backend quizzes';
+
+  @override
+  String get taWalkthroughQuizHeaderBody =>
+      'Create and manage quizzes that are wired to the backend for publishing, attempts, grading, and stats.';
+
+  @override
+  String get taWalkthroughQuizFiltersTitle => 'Search and filter quizzes';
+
+  @override
+  String get taWalkthroughQuizFiltersBody =>
+      'Use search and status filters to find drafts, published quizzes, and closed quizzes.';
+
+  @override
+  String get taWalkthroughQuizListTitle => 'Work with quiz cards';
+
+  @override
+  String get taWalkthroughQuizListBody =>
+      'Each quiz card exposes edit, publish, close, attempts, statistics, grading, and delete actions.';
+
+  @override
+  String get taWalkthroughAnalyticsStatsTitle => 'Read TA analytics';
+
+  @override
+  String get taWalkthroughAnalyticsStatsBody =>
+      'KPI cards summarize attendance, submissions, at-risk students, and engagement signals.';
+
+  @override
+  String get taWalkthroughAnalyticsChartsTitle => 'Compare activity trends';
+
+  @override
+  String get taWalkthroughAnalyticsChartsBody =>
+      'Charts help you compare attendance, submissions, and score distribution over time.';
+
+  @override
+  String get taWalkthroughAnalyticsInsightsTitle => 'Use analytics insights';
+
+  @override
+  String get taWalkthroughAnalyticsInsightsBody =>
+      'AI insights highlight students, labs, and course patterns that need follow-up.';
+
+  @override
+  String get taWalkthroughAiStartersTitle => 'Start with TA prompts';
+
+  @override
+  String get taWalkthroughAiStartersBody =>
+      'Use quick prompts for grading help, feedback, rubrics, explanations, quizzes, and lab preparation.';
+
+  @override
+  String get taWalkthroughAiHistoryTitle => 'Review the AI conversation';
+
+  @override
+  String get taWalkthroughAiHistoryBody =>
+      'The chat history keeps AI responses and suggestions visible while you refine your question.';
+
+  @override
+  String get taWalkthroughAiComposerTitle => 'Ask a focused question';
+
+  @override
+  String get taWalkthroughAiComposerBody =>
+      'Type a question, choose the right mode, and send it when you want targeted TA support.';
 }

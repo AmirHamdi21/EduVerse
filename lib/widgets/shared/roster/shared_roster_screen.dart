@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../bloc/roster/roster_cubit.dart';
 import '../../../bloc/roster/roster_state.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 
 class SharedRosterTheme {
@@ -46,14 +47,30 @@ class SharedRosterTheme {
   });
 }
 
+class SharedRosterWalkthroughTargets {
+  const SharedRosterWalkthroughTargets({
+    required this.header,
+    required this.controls,
+    required this.list,
+  });
+
+  final String header;
+  final String controls;
+  final String list;
+}
+
 class SharedRosterScreen extends StatelessWidget {
   final bool isDark;
   final SharedRosterTheme theme;
+  final SharedRosterWalkthroughTargets? walkthroughTargets;
+  final String fallbackRoute;
 
   const SharedRosterScreen({
     super.key,
     required this.isDark,
     required this.theme,
+    this.walkthroughTargets,
+    this.fallbackRoute = '/dashboard',
   });
 
   @override
@@ -71,17 +88,19 @@ class SharedRosterScreen extends StatelessWidget {
                 slivers: <Widget>[
                   _buildAppBar(context),
                   SliverToBoxAdapter(
-                    child: _HeaderCard(
-                      theme: theme,
-                      isDark: isDark,
-                      state: state,
+                    child: _maybeTarget(
+                      walkthroughTargets?.header,
+                      _HeaderCard(theme: theme, isDark: isDark, state: state),
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: _SectionSelector(
-                      theme: theme,
-                      isDark: isDark,
-                      state: state,
+                    child: _maybeTarget(
+                      walkthroughTargets?.controls,
+                      _SectionSelector(
+                        theme: theme,
+                        isDark: isDark,
+                        state: state,
+                      ),
                     ),
                   ),
                   if (state.selectedCourse != null)
@@ -131,7 +150,7 @@ class SharedRosterScreen extends StatelessWidget {
           color: theme.textPrimary(isDark),
           size: 20,
         ),
-        onPressed: () => context.pop(),
+        onPressed: () => _handleBackPressed(context),
       ),
       title: Text(
         theme.title,
@@ -239,21 +258,41 @@ class SharedRosterScreen extends StatelessWidget {
               }
 
               final student = students[index - 1];
-              return _StudentOverviewCard(
+              final card = _StudentOverviewCard(
                 theme: theme,
                 isDark: isDark,
                 student: student,
                 note: state.noteForStudent(student.userId),
               );
+              if (index == 1) {
+                return _maybeTarget(walkthroughTargets?.list, card);
+              }
+              return card;
             },
           )
         : SliverToBoxAdapter(
-            child: _DetailedGradesList(
-              theme: theme,
-              isDark: isDark,
-              students: students,
+            child: _maybeTarget(
+              walkthroughTargets?.list,
+              _DetailedGradesList(
+                theme: theme,
+                isDark: isDark,
+                students: students,
+              ),
             ),
           );
+  }
+
+  Widget _maybeTarget(String? id, Widget child) {
+    if (id == null || id.isEmpty) return child;
+    return WalkthroughTarget(id: id, child: child);
+  }
+
+  void _handleBackPressed(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    context.go(fallbackRoute);
   }
 }
 

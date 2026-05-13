@@ -13,13 +13,16 @@ import '../../../bloc/materials/materials_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/instructor_courses_theme.dart';
+import '../../../features/walkthrough/instructor_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/core/schedule_model.dart';
 import '../../../models/assignments/assignment_model.dart' as api_assignment;
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/labs/lab_model.dart';
-import '../../../models/materials/announcement_model.dart' as course_announcement;
+import '../../../models/materials/announcement_model.dart'
+    as course_announcement;
 import '../../../models/materials/course_material_model.dart';
 import '../../../models/materials/material_bundle_model.dart';
 import '../../../services/api/assignment_service.dart';
@@ -329,174 +332,200 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                 _handleBackPressed();
               }
             },
-            child: Scaffold(
-              backgroundColor: InstructorCoursesTheme.scaffoldBackground(
-                isDark,
-              ),
-              floatingActionButton: _isPreparingExit
-                  ? null
-                  : _buildFAB(isDark, l10n),
-              body: Container(
-                decoration: InstructorCoursesTheme.scaffoldDecoration(isDark),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final maxWidth = InstructorCoursesTheme.maxContentWidth(
-                      constraints.maxWidth,
-                    );
-                    final screenPadding = InstructorCoursesTheme.screenPadding(
-                      constraints.maxWidth,
-                    );
+            child: InstructorWalkthroughRouteMarker(
+              segmentId: InstructorWalkthroughIds.courseDetails,
+              child: Scaffold(
+                backgroundColor: InstructorCoursesTheme.scaffoldBackground(
+                  isDark,
+                ),
+                floatingActionButton: _isPreparingExit
+                    ? null
+                    : _buildFAB(isDark, l10n),
+                body: Container(
+                  decoration: InstructorCoursesTheme.scaffoldDecoration(isDark),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final maxWidth = InstructorCoursesTheme.maxContentWidth(
+                        constraints.maxWidth,
+                      );
+                      final screenPadding =
+                          InstructorCoursesTheme.screenPadding(
+                            constraints.maxWidth,
+                          );
 
-                    return IgnorePointer(
-                      ignoring: _isPreparingExit,
-                      child: NestedScrollView(
-                        controller: _outerScrollController,
-                        physics: _isPreparingExit
-                            ? const NeverScrollableScrollPhysics()
-                            : null,
-                        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                      SliverToBoxAdapter(
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: maxWidth),
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                screenPadding.left,
-                                10,
-                                screenPadding.right,
-                                0,
-                              ),
-                              child: _buildTopChrome(
-                                context: context,
-                                isDark: isDark,
-                                l10n: l10n,
-                                displayCourse: displayCourse,
-                                showHeroSkeleton: showHeroSkeleton,
-                                heroVideo: heroVideo,
-                                materials: materials,
-                                studentsCount: overviewStudentsCount,
-                                assignmentsCount: deadlines
-                                    .where(
-                                      (item) =>
-                                          item.type == DeadlineType.assignment,
-                                    )
-                                    .length,
-                                averageGrade: teachingCourse?.averageGrade,
+                      return IgnorePointer(
+                        ignoring: _isPreparingExit,
+                        child: NestedScrollView(
+                          controller: _outerScrollController,
+                          physics: _isPreparingExit
+                              ? const NeverScrollableScrollPhysics()
+                              : null,
+                          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                            SliverToBoxAdapter(
+                              child: Center(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: maxWidth,
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      screenPadding.left,
+                                      10,
+                                      screenPadding.right,
+                                      0,
+                                    ),
+                                    child: WalkthroughTarget(
+                                      id: InstructorWalkthroughIds
+                                          .courseDetailsHero,
+                                      child: _buildTopChrome(
+                                        context: context,
+                                        isDark: isDark,
+                                        l10n: l10n,
+                                        displayCourse: displayCourse,
+                                        showHeroSkeleton: showHeroSkeleton,
+                                        heroVideo: heroVideo,
+                                        materials: materials,
+                                        studentsCount: overviewStudentsCount,
+                                        assignmentsCount: deadlines
+                                            .where(
+                                              (item) =>
+                                                  item.type ==
+                                                  DeadlineType.assignment,
+                                            )
+                                            .length,
+                                        averageGrade:
+                                            teachingCourse?.averageGrade,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _CourseManagementTabsHeaderDelegate(
-                          height: 86,
-                          child: Container(
-                            color: InstructorCoursesTheme.scaffoldBackground(
-                              isDark,
+                            SliverPersistentHeader(
+                              pinned: true,
+                              delegate: _CourseManagementTabsHeaderDelegate(
+                                height: 86,
+                                child: WalkthroughTarget(
+                                  id: InstructorWalkthroughIds
+                                      .courseDetailsTabs,
+                                  child: Container(
+                                    color:
+                                        InstructorCoursesTheme.scaffoldBackground(
+                                          isDark,
+                                        ),
+                                    child: Center(
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: maxWidth,
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                            screenPadding.left,
+                                            12,
+                                            screenPadding.right,
+                                            12,
+                                          ),
+                                          child: _buildTabBar(
+                                            isDark: isDark,
+                                            tabs: tabs,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            child: Center(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(maxWidth: maxWidth),
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    screenPadding.left,
-                                    12,
-                                    screenPadding.right,
-                                    12,
-                                  ),
-                                  child: _buildTabBar(
-                                    isDark: isDark,
-                                    tabs: tabs,
-                                  ),
+                          ],
+                          body: Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: maxWidth),
+                              child: WalkthroughTarget(
+                                id: InstructorWalkthroughIds
+                                    .courseDetailsContent,
+                                child: TabBarView(
+                                  controller: _tabController,
+                                  children: [
+                                    _InstructorCourseSearchTab(
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                      courseId: _resolvedCourseId,
+                                      onOpenContent: () =>
+                                          _switchTab(_courseContentTabIndex),
+                                      onOpenAssignments: () =>
+                                          _switchTab(_assignmentsTabIndex),
+                                      onOpenLabs: () =>
+                                          _switchTab(_labsTabIndex),
+                                      onOpenAnnouncements: () =>
+                                          _switchTab(_announcementsTabIndex),
+                                    ),
+                                    _buildMaterialsTabContent(
+                                      materialsState: materialsState,
+                                      materials: materials,
+                                      displayCourse: displayCourse,
+                                      bundles: bundles,
+                                      materialCountsByWeek:
+                                          materialCountsByWeek,
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                    ),
+                                    _buildOverviewTabContent(
+                                      instructorState: instructorState,
+                                      materialsState: materialsState,
+                                      course: displayCourse,
+                                      deadlines: deadlines,
+                                      studentsCount: overviewStudentsCount,
+                                      averageGrade:
+                                          teachingCourse?.averageGrade,
+                                      engagementMetrics: engagementMetrics,
+                                      schedules:
+                                          teachingCourse?.section.schedules ??
+                                          const <ScheduleModel>[],
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                    ),
+                                    AssignmentsTab(
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                      courseId: _resolvedCourseId,
+                                    ),
+                                    LabsTab(
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                      courseId: _resolvedCourseId,
+                                    ),
+                                    AnnouncementsTab(
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                      courseId: _resolvedCourseId,
+                                    ),
+                                    DiscussionsTab(
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                      courseId: _resolvedCourseId,
+                                      initialCourse: teachingCourse,
+                                    ),
+                                    GradingTab(
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                      courseId: _resolvedCourseId,
+                                    ),
+                                    _buildStudentsTabContent(
+                                      instructorState: instructorState,
+                                      students: students,
+                                      hasValidSection: hasValidSection,
+                                      isDark: isDark,
+                                      l10n: l10n,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                        body: Center(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: maxWidth),
-                            child: TabBarView(
-                              controller: _tabController,
-                              children: [
-                            _InstructorCourseSearchTab(
-                              isDark: isDark,
-                              l10n: l10n,
-                              courseId: _resolvedCourseId,
-                              onOpenContent: () =>
-                                  _switchTab(_courseContentTabIndex),
-                              onOpenAssignments: () =>
-                                  _switchTab(_assignmentsTabIndex),
-                              onOpenLabs: () => _switchTab(_labsTabIndex),
-                              onOpenAnnouncements: () =>
-                                  _switchTab(_announcementsTabIndex),
-                            ),
-                            _buildMaterialsTabContent(
-                              materialsState: materialsState,
-                              materials: materials,
-                              displayCourse: displayCourse,
-                              bundles: bundles,
-                              materialCountsByWeek: materialCountsByWeek,
-                              isDark: isDark,
-                              l10n: l10n,
-                            ),
-                            _buildOverviewTabContent(
-                              instructorState: instructorState,
-                              materialsState: materialsState,
-                              course: displayCourse,
-                              deadlines: deadlines,
-                              studentsCount: overviewStudentsCount,
-                              averageGrade: teachingCourse?.averageGrade,
-                              engagementMetrics: engagementMetrics,
-                              schedules:
-                                  teachingCourse?.section.schedules ??
-                                  const <ScheduleModel>[],
-                              isDark: isDark,
-                              l10n: l10n,
-                            ),
-                            AssignmentsTab(
-                              isDark: isDark,
-                              l10n: l10n,
-                              courseId: _resolvedCourseId,
-                            ),
-                            LabsTab(
-                              isDark: isDark,
-                              l10n: l10n,
-                              courseId: _resolvedCourseId,
-                            ),
-                            AnnouncementsTab(
-                              isDark: isDark,
-                              l10n: l10n,
-                              courseId: _resolvedCourseId,
-                            ),
-                            DiscussionsTab(
-                              isDark: isDark,
-                              l10n: l10n,
-                              courseId: _resolvedCourseId,
-                              initialCourse: teachingCourse,
-                            ),
-                            GradingTab(
-                              isDark: isDark,
-                              l10n: l10n,
-                              courseId: _resolvedCourseId,
-                            ),
-                            _buildStudentsTabContent(
-                              instructorState: instructorState,
-                              students: students,
-                              hasValidSection: hasValidSection,
-                              isDark: isDark,
-                              l10n: l10n,
-                            ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -2122,7 +2151,8 @@ class _InstructorCourseSearchTab extends StatefulWidget {
       _InstructorCourseSearchTabState();
 }
 
-class _InstructorCourseSearchTabState extends State<_InstructorCourseSearchTab> {
+class _InstructorCourseSearchTabState
+    extends State<_InstructorCourseSearchTab> {
   late final MaterialService _materialService;
   late final AssignmentService _assignmentService;
   late final LabService _labService;
@@ -2269,7 +2299,8 @@ class _InstructorCourseSearchTabState extends State<_InstructorCourseSearchTab> 
         promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
         promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
         noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
-        noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
+        noResultsSubtitle:
+            widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
         entries: _entries,
       ),
     );

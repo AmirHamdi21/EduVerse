@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../features/walkthrough/ta_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
@@ -154,36 +156,48 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
       builder: (context, themeState) {
         final isDark = themeState.themeMode == AppThemeMode.dark;
 
-        return Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: const TADrawer(),
-          appBar: _buildAppBar(l10n, isDark),
-          body: _isLoading
-              ? _buildLoadingState(isDark)
-              : RefreshIndicator(
-                  onRefresh: _loadAnalyticsData,
-                  color: TAColors.primary,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildStatsGrid(l10n, isDark),
-                        const SizedBox(height: 20),
-                        _buildChartsSection(l10n, isDark),
-                        const SizedBox(height: 20),
-                        _buildAIInsightsSection(l10n, isDark),
-                        const SizedBox(height: 20),
-                        _buildBottomSection(l10n, isDark),
-                        const SizedBox(height: 20),
-                        _buildViewAllButton(l10n, isDark),
-                        const SizedBox(height: 20),
-                      ],
+        return TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.analytics,
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: TAColors.scaffoldColor(isDark),
+            drawer: const TADrawer(),
+            appBar: _buildAppBar(l10n, isDark),
+            body: _isLoading
+                ? _buildLoadingState(isDark)
+                : RefreshIndicator(
+                    onRefresh: _loadAnalyticsData,
+                    color: TAColors.primary,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          WalkthroughTarget(
+                            id: TAWalkthroughIds.analyticsStats,
+                            child: _buildStatsGrid(l10n, isDark),
+                          ),
+                          const SizedBox(height: 20),
+                          WalkthroughTarget(
+                            id: TAWalkthroughIds.analyticsCharts,
+                            child: _buildChartsSection(l10n, isDark),
+                          ),
+                          const SizedBox(height: 20),
+                          WalkthroughTarget(
+                            id: TAWalkthroughIds.analyticsInsights,
+                            child: _buildAIInsightsSection(l10n, isDark),
+                          ),
+                          const SizedBox(height: 20),
+                          _buildBottomSection(l10n, isDark),
+                          const SizedBox(height: 20),
+                          _buildViewAllButton(l10n, isDark),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+          ),
         );
       },
     );

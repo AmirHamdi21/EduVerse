@@ -5,6 +5,8 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
+import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:edu_verse/common/utils/responsive.dart';
@@ -48,99 +50,113 @@ class _State extends State<TAQuizManagementScreen>
       builder: (_, ts) {
         final dk = ts.isDark;
         final bg = TAColors.background(dk);
-        return Scaffold(
-          backgroundColor: bg,
-          body: Stack(
-            children: [
-              Container(
-                height: 380,
-                decoration: BoxDecoration(
-                  gradient: dk
-                      ? TAColors.darkHeaderGradient
-                      : TAColors.headerGradient,
+        return TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.quiz,
+          child: Scaffold(
+            backgroundColor: bg,
+            body: Stack(
+              children: [
+                Container(
+                  height: 380,
+                  decoration: BoxDecoration(
+                    gradient: dk
+                        ? TAColors.darkHeaderGradient
+                        : TAColors.headerGradient,
+                  ),
                 ),
-              ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    FadeTransition(
-                      opacity: _fade,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(r.p20, r.p16, r.p20, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                SafeArea(
+                  child: Column(
+                    children: [
+                      WalkthroughTarget(
+                        id: TAWalkthroughIds.quizHeader,
+                        child: FadeTransition(
+                          opacity: _fade,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              r.p20,
+                              r.p16,
+                              r.p20,
+                              0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _backBtn(),
-                                const Spacer(),
-                                _createBtn(),
+                                Row(
+                                  children: [
+                                    _backBtn(),
+                                    const Spacer(),
+                                    _createBtn(),
+                                  ],
+                                ),
+                                SizedBox(height: r.p16),
+                                const Text(
+                                  'Quiz Management',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Create, manage, and grade quizzes',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                  ),
+                                ),
+                                SizedBox(height: r.p16),
+                                _searchBar(),
                               ],
                             ),
-                            SizedBox(height: r.p16),
-                            const Text(
-                              'Quiz Management',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Create, manage, and grade quizzes',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white.withValues(alpha: 0.85),
-                              ),
-                            ),
-                            SizedBox(height: r.p16),
-                            _searchBar(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: r.p12),
-                    _filters(dk),
-                    SizedBox(height: r.p8),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: bg,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(28),
-                            topRight: Radius.circular(28),
                           ),
                         ),
-                        child:
-                            BlocBuilder<
-                              QuizManagementCubit,
-                              QuizManagementState
-                            >(
-                              builder: (_, s) {
-                                if (s is QuizMgmtLoading ||
-                                    s is QuizMgmtOperating) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(
-                                      color: TAColors.primary,
-                                    ),
-                                  );
-                                }
-                                if (s is QuizMgmtError) {
-                                  return _errView(dk, s.message);
-                                }
-                                if (s is QuizMgmtLoaded) {
-                                  return _listView(dk, s, r);
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: r.p12),
+                      WalkthroughTarget(
+                        id: TAWalkthroughIds.quizFilters,
+                        child: _filters(dk),
+                      ),
+                      SizedBox(height: r.p8),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: bg,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(28),
+                              topRight: Radius.circular(28),
+                            ),
+                          ),
+                          child:
+                              BlocBuilder<
+                                QuizManagementCubit,
+                                QuizManagementState
+                              >(
+                                builder: (_, s) {
+                                  if (s is QuizMgmtLoading ||
+                                      s is QuizMgmtOperating) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        color: TAColors.primary,
+                                      ),
+                                    );
+                                  }
+                                  if (s is QuizMgmtError) {
+                                    return _errView(dk, s.message);
+                                  }
+                                  if (s is QuizMgmtLoaded) {
+                                    return _listView(dk, s, r);
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -153,7 +169,7 @@ class _State extends State<TAQuizManagementScreen>
       borderRadius: BorderRadius.circular(12),
     ),
     child: IconButton(
-      onPressed: () => context.pop(),
+      onPressed: _handleBackPressed,
       icon: const Icon(
         Icons.arrow_back_ios_rounded,
         color: Colors.white,
@@ -342,9 +358,26 @@ class _State extends State<TAQuizManagementScreen>
           parent: BouncingScrollPhysics(),
         ),
         itemCount: q.length,
-        itemBuilder: (_, i) => _Card(quiz: q[i], isDark: dk),
+        itemBuilder: (_, i) {
+          final card = _Card(quiz: q[i], isDark: dk);
+          if (i == 0) {
+            return WalkthroughTarget(
+              id: TAWalkthroughIds.quizList,
+              child: card,
+            );
+          }
+          return card;
+        },
       ),
     );
+  }
+
+  void _handleBackPressed() {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    context.go('/ta/dashboard');
   }
 }
 

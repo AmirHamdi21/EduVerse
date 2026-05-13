@@ -5,6 +5,8 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:edu_verse/common/utils/responsive.dart';
@@ -48,100 +50,116 @@ class _State extends State<InstructorQuizManagementScreen>
       builder: (_, ts) {
         final dk = ts.isDark;
         final bg = InstructorColors.background(dk);
-        return Scaffold(
-          backgroundColor: bg,
-          body: Stack(
-            children: [
-              Container(
-                height: 450,
-                decoration: BoxDecoration(
-                  gradient: dk
-                      ? InstructorColors.darkHeaderGradient
-                      : InstructorColors.headerGradient,
+        return InstructorWalkthroughRouteMarker(
+          segmentId: InstructorWalkthroughIds.quiz,
+          child: Scaffold(
+            backgroundColor: bg,
+            body: Stack(
+              children: [
+                Container(
+                  height: 450,
+                  decoration: BoxDecoration(
+                    gradient: dk
+                        ? InstructorColors.darkHeaderGradient
+                        : InstructorColors.headerGradient,
+                  ),
                 ),
-              ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    FadeTransition(
-                      opacity: _fade,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(r.p20, r.p16, r.p20, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                SafeArea(
+                  child: Column(
+                    children: [
+                      FadeTransition(
+                        opacity: _fade,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(r.p20, r.p16, r.p20, 0),
+                          child: WalkthroughTarget(
+                            id: InstructorWalkthroughIds.quizHeader,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _backBtn(),
-                                const Spacer(),
-                                _createBtn(),
+                                Row(
+                                  children: [
+                                    _backBtn(),
+                                    const Spacer(),
+                                    WalkthroughTarget(
+                                      id: InstructorWalkthroughIds.quizCreate,
+                                      shape: WalkthroughTargetShape.circle,
+                                      child: _createBtn(),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: r.p16),
+                                const Text(
+                                  'Quiz Management',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Create, manage, and grade quizzes',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                  ),
+                                ),
+                                SizedBox(height: r.p16),
+                                _searchBar(),
                               ],
                             ),
-                            SizedBox(height: r.p16),
-                            const Text(
-                              'Quiz Management',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Create, manage, and grade quizzes',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white.withValues(alpha: 0.85),
-                              ),
-                            ),
-                            SizedBox(height: r.p16),
-                            _searchBar(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: r.p12),
-                    _filters(dk),
-                    SizedBox(height: r.p8),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.only(top: r.p12),
-                        decoration: BoxDecoration(
-                          color: bg,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(28),
-                            topRight: Radius.circular(28),
                           ),
                         ),
-                        child:
-                            BlocBuilder<
-                              QuizManagementCubit,
-                              QuizManagementState
-                            >(
-                              builder: (_, s) {
-                                if (s is QuizMgmtLoading ||
-                                    s is QuizMgmtOperating) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(
-                                      color: InstructorColors.primary,
-                                    ),
-                                  );
-                                }
-                                if (s is QuizMgmtError) {
-                                  return _errView(dk, s.message);
-                                }
-                                if (s is QuizMgmtLoaded) {
-                                  return _listView(dk, s, r);
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: r.p12),
+                      WalkthroughTarget(
+                        id: InstructorWalkthroughIds.quizFilters,
+                        child: _filters(dk),
+                      ),
+                      SizedBox(height: r.p8),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.only(top: r.p12),
+                          decoration: BoxDecoration(
+                            color: bg,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(28),
+                              topRight: Radius.circular(28),
+                            ),
+                          ),
+                          child:
+                              BlocBuilder<
+                                QuizManagementCubit,
+                                QuizManagementState
+                              >(
+                                builder: (_, s) {
+                                  if (s is QuizMgmtLoading ||
+                                      s is QuizMgmtOperating) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        color: InstructorColors.primary,
+                                      ),
+                                    );
+                                  }
+                                  if (s is QuizMgmtError) {
+                                    return _errView(dk, s.message);
+                                  }
+                                  if (s is QuizMgmtLoaded) {
+                                    return WalkthroughTarget(
+                                      id: InstructorWalkthroughIds.quizList,
+                                      child: _listView(dk, s, r),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -154,7 +172,7 @@ class _State extends State<InstructorQuizManagementScreen>
       borderRadius: BorderRadius.circular(12),
     ),
     child: IconButton(
-      onPressed: () => context.pop(),
+      onPressed: _safeBackToDashboard,
       icon: const Icon(
         Icons.arrow_back_ios_rounded,
         color: Colors.white,
@@ -162,6 +180,14 @@ class _State extends State<InstructorQuizManagementScreen>
       ),
     ),
   );
+
+  void _safeBackToDashboard() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/instructor/dashboard');
+    }
+  }
 
   Widget _createBtn() => GestureDetector(
     onTap: () {
@@ -654,7 +680,9 @@ class _QuizCard extends StatelessWidget {
       if (!ctx.mounted) return;
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(ok ? 'Quiz closed successfully.' : 'Failed to close quiz.'),
+          content: Text(
+            ok ? 'Quiz closed successfully.' : 'Failed to close quiz.',
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );

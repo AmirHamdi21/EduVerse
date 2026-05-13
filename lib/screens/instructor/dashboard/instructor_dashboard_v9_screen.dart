@@ -6,6 +6,8 @@ import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_state.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/services/api/assignment_service.dart';
@@ -210,124 +212,145 @@ class _InstructorDashboardV9ScreenState
               _loadV9Data(state.courses);
             }
           },
-          child: Scaffold(
-            backgroundColor: _InstructorV9Colors.background(isDark),
-            drawer: InstructorDrawerV9(snapshot: _snapshot),
-            body: SafeArea(
-              bottom: false,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: _InstructorV9Colors.pageGradient(isDark),
+          child: InstructorWalkthroughRouteMarker(
+            segmentId: InstructorWalkthroughIds.dashboard,
+            child: Scaffold(
+              backgroundColor: _InstructorV9Colors.background(isDark),
+              drawer: InstructorDrawerV9(snapshot: _snapshot),
+              body: SafeArea(
+                bottom: false,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: _InstructorV9Colors.pageGradient(isDark),
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    NotificationListener<ScrollNotification>(
-                      onNotification: _handleDashboardScroll,
-                      child: RefreshIndicator(
-                        color: _InstructorV9Colors.purple,
-                        onRefresh: _refreshDashboard,
-                        child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(bottom: 76),
-                          children: [
-                            _CenteredInstructorContent(
-                              child: _InstructorV9TopBar(isDark: isDark),
-                            ),
-                            _CenteredInstructorContent(
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  0,
-                                  16,
-                                  16,
+                  child: Stack(
+                    children: [
+                      NotificationListener<ScrollNotification>(
+                        onNotification: _handleDashboardScroll,
+                        child: RefreshIndicator(
+                          color: _InstructorV9Colors.purple,
+                          onRefresh: _refreshDashboard,
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(bottom: 76),
+                            children: [
+                              _CenteredInstructorContent(
+                                child: WalkthroughTarget(
+                                  id: InstructorWalkthroughIds.dashboardTop,
+                                  child: _InstructorV9TopBar(isDark: isDark),
                                 ),
-                                child:
-                                    BlocBuilder<
-                                      InstructorCoursesBloc,
-                                      InstructorCoursesState
-                                    >(
-                                      builder: (context, coursesState) {
-                                        final teachingCourses =
-                                            InstructorDashboardV9Metrics.teachingCoursesFromState(
-                                              coursesState,
-                                            );
+                              ),
+                              _CenteredInstructorContent(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    0,
+                                    16,
+                                    16,
+                                  ),
+                                  child:
+                                      BlocBuilder<
+                                        InstructorCoursesBloc,
+                                        InstructorCoursesState
+                                      >(
+                                        builder: (context, coursesState) {
+                                          final teachingCourses =
+                                              InstructorDashboardV9Metrics.teachingCoursesFromState(
+                                                coursesState,
+                                              );
 
-                                        return Column(
-                                          children: [
-                                            _InstructorV9StatsCard(
-                                              isDark: isDark,
-                                              courses: teachingCourses,
-                                              snapshot: _snapshot,
-                                              isLoading: _isMetricsLoading,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            if (_showAiOverview) ...[
-                                              _InstructorV9AiOverviewCard(
-                                                isDark: isDark,
-                                                snapshot: _snapshot,
-                                                onReview: () => context.push(
-                                                  '/instructor/reports',
+                                          return Column(
+                                            children: [
+                                              WalkthroughTarget(
+                                                id: InstructorWalkthroughIds
+                                                    .dashboardStats,
+                                                child: _InstructorV9StatsCard(
+                                                  isDark: isDark,
+                                                  courses: teachingCourses,
+                                                  snapshot: _snapshot,
+                                                  isLoading: _isMetricsLoading,
                                                 ),
-                                                onDismiss: () => setState(() {
-                                                  _showAiOverview = false;
-                                                }),
                                               ),
                                               const SizedBox(height: 12),
-                                            ],
-                                            _InstructorV9QuickActionsCard(
-                                              isDark: isDark,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _InstructorV9CoursesCard(
-                                              isDark: isDark,
-                                              snapshot: _snapshot,
-                                              isLoading: _isMetricsLoading,
-                                              error: _metricsError,
-                                              onRetry: () => _loadV9Data(
-                                                teachingCourses,
-                                                force: true,
+                                              if (_showAiOverview) ...[
+                                                _InstructorV9AiOverviewCard(
+                                                  isDark: isDark,
+                                                  snapshot: _snapshot,
+                                                  onReview: () => context.push(
+                                                    '/instructor/reports',
+                                                  ),
+                                                  onDismiss: () => setState(() {
+                                                    _showAiOverview = false;
+                                                  }),
+                                                ),
+                                                const SizedBox(height: 12),
+                                              ],
+                                              WalkthroughTarget(
+                                                id: InstructorWalkthroughIds
+                                                    .dashboardQuick,
+                                                child:
+                                                    _InstructorV9QuickActionsCard(
+                                                      isDark: isDark,
+                                                    ),
                                               ),
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _InstructorV9PendingGradingCard(
-                                              isDark: isDark,
-                                              snapshot: _snapshot,
-                                              isLoading: _isMetricsLoading,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _InstructorV9UpcomingEventsCard(
-                                              isDark: isDark,
-                                              events: _events,
-                                              isLoading: _isMetricsLoading,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            _InstructorV9AskAiButton(
-                                              isDark: isDark,
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
+                                              const SizedBox(height: 12),
+                                              _InstructorV9CoursesCard(
+                                                isDark: isDark,
+                                                snapshot: _snapshot,
+                                                isLoading: _isMetricsLoading,
+                                                error: _metricsError,
+                                                onRetry: () => _loadV9Data(
+                                                  teachingCourses,
+                                                  force: true,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              WalkthroughTarget(
+                                                id: InstructorWalkthroughIds
+                                                    .dashboardPending,
+                                                child:
+                                                    _InstructorV9PendingGradingCard(
+                                                      isDark: isDark,
+                                                      snapshot: _snapshot,
+                                                      isLoading:
+                                                          _isMetricsLoading,
+                                                    ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _InstructorV9UpcomingEventsCard(
+                                                isDark: isDark,
+                                                events: _events,
+                                                isLoading: _isMetricsLoading,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _InstructorV9AskAiButton(
+                                                isDark: isDark,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: _bottomNavVisibleNotifier,
-                      builder: (context, isBottomNavVisible, child) {
-                        return InstructorLiquidGlassBottomNav(
-                          isDark: isDark,
-                          isVisible: isBottomNavVisible,
-                        );
-                      },
-                    ),
-                  ],
+                      ValueListenableBuilder<bool>(
+                        valueListenable: _bottomNavVisibleNotifier,
+                        builder: (context, isBottomNavVisible, child) {
+                          return InstructorLiquidGlassBottomNav(
+                            isDark: isDark,
+                            isVisible: isBottomNavVisible,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

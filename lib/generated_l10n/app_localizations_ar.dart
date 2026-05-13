@@ -17782,4 +17782,531 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get examPaperExportFailed => 'تعذر تصدير ورقة الامتحان.';
+
+  @override
+  String get walkthroughSkip => 'تخطي';
+
+  @override
+  String get walkthroughBack => 'السابق';
+
+  @override
+  String get walkthroughNext => 'التالي';
+
+  @override
+  String get walkthroughFinish => 'إنهاء';
+
+  @override
+  String walkthroughProgress(int current, int total) {
+    return 'خطوة $current من $total';
+  }
+
+  @override
+  String get walkthroughDashboardTopTitle => 'ابدأ من شريط التحكم';
+
+  @override
+  String get walkthroughDashboardTopBody =>
+      'استخدم البحث للوصول إلى الطلاب والكورسات، وافتح الإشعارات أو القائمة من دون مغادرة لوحة التحكم.';
+
+  @override
+  String get walkthroughDashboardStatsTitle => 'اقرأ ملخص التدريس المباشر';
+
+  @override
+  String get walkthroughDashboardStatsBody =>
+      'هذه الأرقام تلخص الكورسات والعمل المنتظر للمراجعة ونشاط المحاضرات الأخير.';
+
+  @override
+  String get walkthroughDashboardQuickTitle =>
+      'استخدم الاختصارات للأعمال اليومية';
+
+  @override
+  String get walkthroughDashboardQuickBody =>
+      'افتح الكورسات والواجبات والمعامل والتصحيح وبنك الأسئلة والامتحانات والحضور ومساعدة الذكاء الاصطناعي من مكان واحد.';
+
+  @override
+  String get walkthroughDashboardPendingTitle => 'تابع التصحيح المنتظر';
+
+  @override
+  String get walkthroughDashboardPendingBody =>
+      'هذه البطاقة تبرز التسليمات التي تحتاج مراجعة حتى تنتقل مباشرة إلى التصحيح.';
+
+  @override
+  String get walkthroughCoursesHeaderTitle => 'أدر كورساتك التدريسية';
+
+  @override
+  String get walkthroughCoursesHeaderBody =>
+      'ابحث في الكورسات المسندة لك وراجع مؤشرات الصفحة قبل فتح مساحة الكورس.';
+
+  @override
+  String get walkthroughCoursesToolbarTitle => 'خصص قائمة الكورسات';
+
+  @override
+  String get walkthroughCoursesToolbarBody =>
+      'استخدم الفرز وفلاتر الحالة والمستوى للوصول إلى الشعبة المطلوبة بسرعة.';
+
+  @override
+  String get walkthroughCoursesListTitle => 'افتح أو أدر الكورس';
+
+  @override
+  String get walkthroughCoursesListBody =>
+      'بطاقات الكورسات تنقلك إلى التفاصيل والطلاب والمواد وأدوات الإدارة لكل شعبة.';
+
+  @override
+  String get walkthroughCoursesCreateTitle => 'أنشئ كورس عند السماح';
+
+  @override
+  String get walkthroughCoursesCreateBody =>
+      'استخدم هذا الزر لإنشاء مساحة كورس جديدة عندما تسمح صلاحياتك بذلك.';
+
+  @override
+  String get walkthroughCourseDetailsHeroTitle => 'راجع نظرة الكورس';
+
+  @override
+  String get walkthroughCourseDetailsHeroBody =>
+      'الجزء العلوي يعرض هوية الكورس ومؤشرات التقدم والطلاب والواجبات وسياق الدرجات.';
+
+  @override
+  String get walkthroughCourseDetailsTabsTitle => 'تنقل بين أدوات الكورس';
+
+  @override
+  String get walkthroughCourseDetailsTabsBody =>
+      'التبويبات تجمع المحتوى والواجبات والمعامل والإعلانات والمناقشات والتصحيح والطلاب داخل مركز واحد.';
+
+  @override
+  String get walkthroughCourseDetailsContentTitle => 'اعمل داخل القسم المحدد';
+
+  @override
+  String get walkthroughCourseDetailsContentBody =>
+      'هذا الجزء يتغير حسب التبويب المختار حتى يبقى كل مسار عمل واضحا ومركزا.';
+
+  @override
+  String get walkthroughAssignmentsHeaderTitle => 'تابع عبء الواجبات';
+
+  @override
+  String get walkthroughAssignmentsHeaderBody =>
+      'الملخص يعرض أعداد الواجبات ومؤشرات الحالة عبر كورساتك.';
+
+  @override
+  String get walkthroughAssignmentsFiltersTitle => 'فلتر الواجبات بسرعة';
+
+  @override
+  String get walkthroughAssignmentsFiltersBody =>
+      'حدد الكورس والحالة للتركيز على المسودات أو المنشور أو المغلق أو المؤرشف.';
+
+  @override
+  String get walkthroughAssignmentsListTitle => 'أدر بطاقات الواجبات';
+
+  @override
+  String get walkthroughAssignmentsListBody =>
+      'افتح التفاصيل أو عدل الواجب أو غير حالته أو راجع التسليمات من كل مجموعة.';
+
+  @override
+  String get walkthroughLabsHeaderTitle => 'تحكم في نشاط المعامل';
+
+  @override
+  String get walkthroughLabsHeaderBody =>
+      'ملخص المعامل يعرض العمل العملي والكورسات الموجودة في التركيز حاليا.';
+
+  @override
+  String get walkthroughLabsFiltersTitle => 'اختر الكورس وحالة المعمل';
+
+  @override
+  String get walkthroughLabsFiltersBody =>
+      'استخدم الفلاتر للتنقل بين الكورسات والمعامل النشطة أو القادمة أو المكتملة.';
+
+  @override
+  String get walkthroughLabsListTitle => 'راجع تسليمات المعامل';
+
+  @override
+  String get walkthroughLabsListBody =>
+      'بطاقات المعامل تجمع التعليمات والمواعيد النهائية والتسليمات وإجراءات المراجعة.';
+
+  @override
+  String get walkthroughQuestionBankHeaderTitle =>
+      'ابن بنك أسئلة قابل لإعادة الاستخدام';
+
+  @override
+  String get walkthroughQuestionBankHeaderBody =>
+      'يعرض العنوان إجمالي الأسئلة وحالة الاعتماد والمسودات والعناصر المؤرشفة.';
+
+  @override
+  String get walkthroughQuestionBankControlsTitle => 'ابحث وفلتر الأسئلة';
+
+  @override
+  String get walkthroughQuestionBankControlsBody =>
+      'استخدم فلاتر الكورس والفصل والمجموعة والنوع والصعوبة والحالة والمرفقات لتشكيل البنك.';
+
+  @override
+  String get walkthroughQuestionBankFeedTitle => 'حافظ على جودة الأسئلة';
+
+  @override
+  String get walkthroughQuestionBankFeedBody =>
+      'بطاقات الأسئلة تعرض التفاصيل والتجميع والتحديد وإجراءات المراجعة.';
+
+  @override
+  String get walkthroughQuestionBankCreateTitle => 'أضف أسئلة أو مجموعات';
+
+  @override
+  String get walkthroughQuestionBankCreateBody =>
+      'افتح هذا الزر لإنشاء سؤال واحد أو إدخال جماعي أو تنظيم الأسئلة في مجموعات.';
+
+  @override
+  String get walkthroughExamGeneratorHeaderTitle => 'ولد الامتحانات من بنكك';
+
+  @override
+  String get walkthroughExamGeneratorHeaderBody =>
+      'الملخص يعرض المسودات والامتحانات المحفوظة والمنشورة والأسئلة المعتمدة المتاحة.';
+
+  @override
+  String get walkthroughExamGeneratorFiltersTitle =>
+      'اعثر على المسودات والامتحانات';
+
+  @override
+  String get walkthroughExamGeneratorFiltersBody =>
+      'ابحث وفلتر حسب الكورس والحالة وانتقل بين المسودات والامتحانات المحفوظة.';
+
+  @override
+  String get walkthroughExamGeneratorListTitle => 'أكمل عمل الامتحانات';
+
+  @override
+  String get walkthroughExamGeneratorListBody =>
+      'استخدم كل سجل لتعديل المسودات أو فحص الامتحانات المحفوظة أو التصدير أو متابعة التوليد.';
+
+  @override
+  String get walkthroughExamGeneratorCreateTitle => 'ابدأ مسودة امتحان جديدة';
+
+  @override
+  String get walkthroughExamGeneratorCreateBody =>
+      'أنشئ مسودة عندما تكون جاهزا لبناء امتحان من الكورسات والأسئلة المختارة.';
+
+  @override
+  String get walkthroughGradingHeaderTitle => 'افتح مركز التصحيح';
+
+  @override
+  String get walkthroughGradingHeaderBody =>
+      'الملخص يعرض التسليمات التي تنتظر إجراء وحالة التصحيح العامة.';
+
+  @override
+  String get walkthroughGradingFiltersTitle => 'ركز قائمة التصحيح';
+
+  @override
+  String get walkthroughGradingFiltersBody =>
+      'فلتر حسب الكورس وحالة التسليم للتعامل مع المنتظر أو المصحح أو المتأخر.';
+
+  @override
+  String get walkthroughGradingListTitle => 'صحح من بطاقات التسليم';
+
+  @override
+  String get walkthroughGradingListBody =>
+      'افتح التسليم لفحص الملفات وإدخال الدرجة وإضافة الملاحظات ثم حفظ التصحيح.';
+
+  @override
+  String get walkthroughAttendanceHeaderTitle => 'أدر جلسات الحضور';
+
+  @override
+  String get walkthroughAttendanceHeaderBody =>
+      'يبدأ الحضور بسياق الكورس والجلسة حتى تطابق القائمة الحصة التي تعمل عليها.';
+
+  @override
+  String get walkthroughAttendanceControlsTitle => 'اختر طريقة عرض الجلسة';
+
+  @override
+  String get walkthroughAttendanceControlsBody =>
+      'استخدم أدوات التحكم للتنقل بين الحصص والجلسات والتواريخ ووضع القائمة.';
+
+  @override
+  String get walkthroughAttendanceRosterTitle => 'حدد الحالة واحفظ القائمة';
+
+  @override
+  String get walkthroughAttendanceRosterBody =>
+      'القائمة هي مكان تحديد حاضر أو متأخر أو معذور أو غائب ثم حفظ الدفعة.';
+
+  @override
+  String get walkthroughQuizHeaderTitle => 'أدر الاختبارات المرتبطة بالخلفية';
+
+  @override
+  String get walkthroughQuizHeaderBody =>
+      'هذه الشاشة للاختبارات المتصلة بالخلفية وتشمل الإنشاء والنشر والتصحيح.';
+
+  @override
+  String get walkthroughQuizFiltersTitle => 'ابحث وفلتر الاختبارات';
+
+  @override
+  String get walkthroughQuizFiltersBody =>
+      'استخدم البحث وفلاتر الحالة للوصول إلى المسودات والاختبارات المنشورة والمغلقة.';
+
+  @override
+  String get walkthroughQuizListTitle => 'اعمل مع بطاقات الاختبار';
+
+  @override
+  String get walkthroughQuizListBody =>
+      'كل بطاقة اختبار تعرض التعديل والنشر والإغلاق والمحاولات والإحصاءات والتصحيح والحذف.';
+
+  @override
+  String get walkthroughQuizCreateTitle => 'أنشئ اختبارا جديدا';
+
+  @override
+  String get walkthroughQuizCreateBody =>
+      'استخدم هذا الزر لبدء اختبار متصل بالخلفية وضبط أسئلته وإعداداته.';
+
+  @override
+  String get taWalkthroughDashboardTopTitle => 'ابدأ من شريط تحكم المعيد';
+
+  @override
+  String get taWalkthroughDashboardTopBody =>
+      'استخدم البحث والإشعارات والقائمة للتنقل في عمل المعيد من دون فقدان سياق لوحة التحكم.';
+
+  @override
+  String get taWalkthroughDashboardStatsTitle => 'اقرأ ملخص عبء العمل';
+
+  @override
+  String get taWalkthroughDashboardStatsBody =>
+      'هذه الأرقام تلخص المهام المسندة والتصحيح المنتظر والكورسات ونشاط دعم الذكاء الاصطناعي.';
+
+  @override
+  String get taWalkthroughDashboardQuickTitle =>
+      'انتقل إلى إجراءات المعيد اليومية';
+
+  @override
+  String get taWalkthroughDashboardQuickBody =>
+      'افتح الكورسات والمهام والتصحيح والمعامل والقوائم والمناقشات والاختبارات ومساعدة الذكاء الاصطناعي من منطقة واحدة.';
+
+  @override
+  String get taWalkthroughDashboardTasksTitle => 'تابع مركز المهام';
+
+  @override
+  String get taWalkthroughDashboardTasksBody =>
+      'يجمع مركز المهام التصحيح ومراجعة المعامل ومتابعة النقاشات حتى يبقى العمل العاجل واضحا.';
+
+  @override
+  String get taWalkthroughCoursesHeaderTitle => 'اعثر على الكورسات المسندة لك';
+
+  @override
+  String get taWalkthroughCoursesHeaderBody =>
+      'ابحث في مساحات الكورسات وراجع مؤشرات الصفحة قبل فتح شعبة التدريس.';
+
+  @override
+  String get taWalkthroughCoursesFiltersTitle => 'خصص قائمة الكورسات';
+
+  @override
+  String get taWalkthroughCoursesFiltersBody =>
+      'استخدم الحالة والمستوى والفرز وطريقة العرض للوصول إلى الشعبة المطلوبة.';
+
+  @override
+  String get taWalkthroughCoursesListTitle => 'افتح مساحة الكورس';
+
+  @override
+  String get taWalkthroughCoursesListBody =>
+      'بطاقات الكورسات تنقلك إلى التفاصيل والمعامل والتصحيح والمناقشات وأدوات الشعبة.';
+
+  @override
+  String get taWalkthroughCourseDetailsHeroTitle => 'راجع نظرة الكورس';
+
+  @override
+  String get taWalkthroughCourseDetailsHeroBody =>
+      'الجزء العلوي يعرض هوية الكورس ومؤشرات التقدم وسياق الطلاب والواجبات والمعامل.';
+
+  @override
+  String get taWalkthroughCourseDetailsTabsTitle => 'تنقل بين أدوات الكورس';
+
+  @override
+  String get taWalkthroughCourseDetailsTabsBody =>
+      'التبويبات تجمع المحتوى والواجبات والمعامل والإعلانات والمناقشات والتصحيح والحضور والطلاب في مركز واحد.';
+
+  @override
+  String get taWalkthroughCourseDetailsContentTitle =>
+      'اعمل داخل منطقة الكورس النشطة';
+
+  @override
+  String get taWalkthroughCourseDetailsContentBody =>
+      'هذه المساحة تتغير حسب التبويب المختار حتى يبقى كل مسار عمل مركزا.';
+
+  @override
+  String get taWalkthroughAssignmentsHeaderTitle => 'تابع سير الواجبات';
+
+  @override
+  String get taWalkthroughAssignmentsHeaderBody =>
+      'الملخص يعرض عبء الواجبات وحالاتها عبر الكورسات المسندة لك.';
+
+  @override
+  String get taWalkthroughAssignmentsFiltersTitle => 'فلتر الواجبات حسب السياق';
+
+  @override
+  String get taWalkthroughAssignmentsFiltersBody =>
+      'اختر الكورس والحالة للتركيز على المسودات أو المنشور أو المغلق أو المؤرشف.';
+
+  @override
+  String get taWalkthroughAssignmentsListTitle => 'أدر مجموعات الواجبات';
+
+  @override
+  String get taWalkthroughAssignmentsListBody =>
+      'افتح تفاصيل الواجب وراجع التسليمات وتابع التصحيح من مجموعات الكورسات.';
+
+  @override
+  String get taWalkthroughLabsHeaderTitle => 'راجع نشاط المعامل';
+
+  @override
+  String get taWalkthroughLabsHeaderBody =>
+      'ملخص المعامل يعرض العمل العملي عبر الكورسات المسندة لك.';
+
+  @override
+  String get taWalkthroughLabsFiltersTitle => 'اختر الكورس وحالة المعمل';
+
+  @override
+  String get taWalkthroughLabsFiltersBody =>
+      'فلتر المعامل حسب الكورس والحالة للوصول إلى النشط أو المسودة أو المغلق أو المؤرشف.';
+
+  @override
+  String get taWalkthroughLabsListTitle => 'افتح مراجعة المعامل';
+
+  @override
+  String get taWalkthroughLabsListBody =>
+      'بطاقات المعامل تجمع المواعيد ونقاط التسليم والموارد وإجراءات المراجعة.';
+
+  @override
+  String get taWalkthroughGradingHeaderTitle => 'افتح قائمة تصحيح المعيد';
+
+  @override
+  String get taWalkthroughGradingHeaderBody =>
+      'الملخص يعرض التسليمات المنتظرة والمصححة والمتأخرة عبر الكورسات المسندة لك.';
+
+  @override
+  String get taWalkthroughGradingFiltersTitle =>
+      'ركز التصحيح حسب الكورس أو الحالة';
+
+  @override
+  String get taWalkthroughGradingFiltersBody =>
+      'استخدم فلاتر الكورس وحالة التسليم للتركيز على العمل الذي يحتاج انتباها.';
+
+  @override
+  String get taWalkthroughGradingListTitle => 'صحح من بطاقات التسليم';
+
+  @override
+  String get taWalkthroughGradingListBody =>
+      'افتح التسليمات وافحص الملفات وأدخل الدرجات وأضف الملاحظات واحفظ قرار التصحيح.';
+
+  @override
+  String get taWalkthroughAttendanceHeaderTitle => 'أدر جلسات الحضور';
+
+  @override
+  String get taWalkthroughAttendanceHeaderBody =>
+      'يبدأ الحضور بسياق الكورس والجلسة حتى تطابق القائمة الحصة التي تعمل عليها.';
+
+  @override
+  String get taWalkthroughAttendanceControlsTitle => 'اختر عرض الحضور';
+
+  @override
+  String get taWalkthroughAttendanceControlsBody =>
+      'استخدم أدوات التحكم للتنقل بين الفصول والجلسات والتواريخ ووضع القائمة.';
+
+  @override
+  String get taWalkthroughAttendanceRosterTitle => 'حدد الحضور واحفظه';
+
+  @override
+  String get taWalkthroughAttendanceRosterBody =>
+      'حدد حاضر أو متأخر أو معذور أو غائب ثم احفظ الدفعة.';
+
+  @override
+  String get taWalkthroughRosterHeaderTitle => 'راجع قوائم الشعب';
+
+  @override
+  String get taWalkthroughRosterHeaderBody =>
+      'يعرض العنوان ملخص الكورس والشعبة المختارة قبل فحص الطلاب.';
+
+  @override
+  String get taWalkthroughRosterControlsTitle => 'اختر وفلتر الطلاب';
+
+  @override
+  String get taWalkthroughRosterControlsBody =>
+      'اختر الشعبة وبدل طريقة العرض وابحث في الطلاب ورتب القائمة.';
+
+  @override
+  String get taWalkthroughRosterListTitle => 'افحص سجلات الطلاب';
+
+  @override
+  String get taWalkthroughRosterListBody =>
+      'صفوف الطلاب تعرض تفاصيل التسجيل وسياق الدرجات والملاحظات وحالة القائمة.';
+
+  @override
+  String get taWalkthroughDiscussionsHeaderTitle => 'راقب نقاشات الكورسات';
+
+  @override
+  String get taWalkthroughDiscussionsHeaderBody =>
+      'ملخص النقاش يعرض النشاط والموضوعات المثبتة والردود والكورسات التي تحتاج متابعة.';
+
+  @override
+  String get taWalkthroughDiscussionsFiltersTitle => 'فلتر عبء النقاشات';
+
+  @override
+  String get taWalkthroughDiscussionsFiltersBody =>
+      'ابحث في الكورسات وفلتر حسب النشط أو غير المجاب أو المثبت أو المغلق أو الهادئ.';
+
+  @override
+  String get taWalkthroughDiscussionsListTitle => 'افتح موضوعات النقاش';
+
+  @override
+  String get taWalkthroughDiscussionsListBody =>
+      'بطاقات الكورسات تعرض أحدث الموضوعات والمؤشرات ومداخل الرد والإشراف.';
+
+  @override
+  String get taWalkthroughQuizHeaderTitle => 'أدر اختبارات الخلفية';
+
+  @override
+  String get taWalkthroughQuizHeaderBody =>
+      'أنشئ وأدر الاختبارات المتصلة بالخلفية للنشر والمحاولات والتصحيح والإحصاءات.';
+
+  @override
+  String get taWalkthroughQuizFiltersTitle => 'ابحث وفلتر الاختبارات';
+
+  @override
+  String get taWalkthroughQuizFiltersBody =>
+      'استخدم البحث وفلاتر الحالة للوصول إلى المسودات والاختبارات المنشورة والمغلقة.';
+
+  @override
+  String get taWalkthroughQuizListTitle => 'اعمل مع بطاقات الاختبار';
+
+  @override
+  String get taWalkthroughQuizListBody =>
+      'كل بطاقة تعرض التعديل والنشر والإغلاق والمحاولات والإحصاءات والتصحيح والحذف.';
+
+  @override
+  String get taWalkthroughAnalyticsStatsTitle => 'اقرأ تحليلات المعيد';
+
+  @override
+  String get taWalkthroughAnalyticsStatsBody =>
+      'بطاقات المؤشرات تلخص الحضور والتسليمات والطلاب المعرضين للخطر ومؤشرات التفاعل.';
+
+  @override
+  String get taWalkthroughAnalyticsChartsTitle => 'قارن اتجاهات النشاط';
+
+  @override
+  String get taWalkthroughAnalyticsChartsBody =>
+      'تساعدك الرسوم على مقارنة الحضور والتسليمات وتوزيع الدرجات عبر الوقت.';
+
+  @override
+  String get taWalkthroughAnalyticsInsightsTitle => 'استخدم رؤى التحليلات';
+
+  @override
+  String get taWalkthroughAnalyticsInsightsBody =>
+      'تبرز رؤى الذكاء الاصطناعي الطلاب والمعامل وأنماط الكورس التي تحتاج متابعة.';
+
+  @override
+  String get taWalkthroughAiStartersTitle => 'ابدأ بمقترحات المعيد';
+
+  @override
+  String get taWalkthroughAiStartersBody =>
+      'استخدم المقترحات السريعة للمساعدة في التصحيح والملاحظات والروبرك والشرح والاختبارات وتحضير المعامل.';
+
+  @override
+  String get taWalkthroughAiHistoryTitle => 'راجع محادثة الذكاء الاصطناعي';
+
+  @override
+  String get taWalkthroughAiHistoryBody =>
+      'يحافظ سجل المحادثة على ردود الذكاء الاصطناعي والاقتراحات أثناء تحسين سؤالك.';
+
+  @override
+  String get taWalkthroughAiComposerTitle => 'اسأل سؤالا مركزا';
+
+  @override
+  String get taWalkthroughAiComposerBody =>
+      'اكتب سؤالك واختر الوضع المناسب ثم أرسله عندما تريد دعما مخصصا لعمل المعيد.';
 }

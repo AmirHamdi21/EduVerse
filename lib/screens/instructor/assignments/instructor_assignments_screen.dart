@@ -1,4 +1,6 @@
 import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:flutter/material.dart';
@@ -138,18 +140,21 @@ class _InstructorAssignmentsViewState
               );
             }
 
-            return Scaffold(
-              backgroundColor: InstructorColors.background(isDark),
-              floatingActionButton: widget.canManage
-                  ? FloatingActionButton.extended(
-                      onPressed: _openCreateAssignment,
-                      backgroundColor: InstructorColors.primary,
-                      foregroundColor: Colors.white,
-                      icon: const Icon(Icons.add_rounded),
-                      label: Text(l10n.createAssignment),
-                    )
-                  : null,
-              body: SafeArea(child: content),
+            return InstructorWalkthroughRouteMarker(
+              segmentId: InstructorWalkthroughIds.assignments,
+              child: Scaffold(
+                backgroundColor: InstructorColors.background(isDark),
+                floatingActionButton: widget.canManage
+                    ? FloatingActionButton.extended(
+                        onPressed: _openCreateAssignment,
+                        backgroundColor: InstructorColors.primary,
+                        foregroundColor: Colors.white,
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text(l10n.createAssignment),
+                      )
+                    : null,
+                body: SafeArea(child: content),
+              ),
             );
           },
         );
@@ -162,7 +167,7 @@ class _InstructorAssignmentsViewState
       backgroundColor: InstructorColors.background(isDark),
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: _safeBackToDashboard,
         icon: Icon(
           Icons.arrow_back_rounded,
           color: InstructorColors.textPrimaryColor(isDark),
@@ -190,6 +195,14 @@ class _InstructorAssignmentsViewState
       floating: true,
       snap: true,
     );
+  }
+
+  void _safeBackToDashboard() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/instructor/dashboard');
+    }
   }
 
   SliverToBoxAdapter _buildLoadingHeader(bool isDark, AppLocalizations l10n) {
@@ -257,10 +270,22 @@ class _InstructorAssignmentsViewState
     return SliverMainAxisGroup(
       slivers: <Widget>[
         SliverToBoxAdapter(
-          child: _buildSummaryHeader(isDark, l10n, r, state, assignments),
+          child: WalkthroughTarget(
+            id: InstructorWalkthroughIds.assignmentsHeader,
+            child: _buildSummaryHeader(isDark, l10n, r, state, assignments),
+          ),
         ),
         SliverToBoxAdapter(
-          child: _buildFilterMenus(isDark, l10n, r, state, assignments.length),
+          child: WalkthroughTarget(
+            id: InstructorWalkthroughIds.assignmentsFilters,
+            child: _buildFilterMenus(
+              isDark,
+              l10n,
+              r,
+              state,
+              assignments.length,
+            ),
+          ),
         ),
         if (courseIds.isEmpty)
           SliverFillRemaining(
@@ -276,13 +301,20 @@ class _InstructorAssignmentsViewState
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final courseId = courseIds[index];
-                return _buildCourseAssignmentsCard(
+                final card = _buildCourseAssignmentsCard(
                   isDark,
                   l10n,
                   state,
                   courseId,
                   grouped[courseId] ?? const <AssignmentModel>[],
                 );
+                if (index == 0) {
+                  return WalkthroughTarget(
+                    id: InstructorWalkthroughIds.assignmentsList,
+                    child: card,
+                  );
+                }
+                return card;
               }, childCount: courseIds.length),
             ),
           ),
@@ -348,7 +380,9 @@ class _InstructorAssignmentsViewState
     final subtitle = selectedCourse == null
         ? l10n.instructorAssignmentsHeaderSubtitle
         : '${selectedCourse.course.code} • ${selectedCourse.course.name}';
-    final courseCount = selectedCourse == null ? state.teachingCourses.length : 1;
+    final courseCount = selectedCourse == null
+        ? state.teachingCourses.length
+        : 1;
 
     final stats = <({IconData icon, String label, String value, Color color})>[
       (
@@ -579,9 +613,10 @@ class _InstructorAssignmentsViewState
     final selectedCourseLabel = selectedCourse == null
         ? l10n.allCourses
         : '${selectedCourse.course.code} • ${selectedCourse.course.name}';
-    final selectedCourseValue = state.teachingCourses.any(
-      (course) => course.courseId == state.selectedCourseId,
-    )
+    final selectedCourseValue =
+        state.teachingCourses.any(
+          (course) => course.courseId == state.selectedCourseId,
+        )
         ? state.selectedCourseId
         : null;
 
@@ -653,15 +688,15 @@ class _InstructorAssignmentsViewState
                         ),
                       ),
                       ...state.teachingCourses.map((course) {
-                          return DropdownMenuItem<int?>(
-                            value: course.courseId,
-                            child: Text(
-                              '${course.course.code} • ${course.course.name}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        }),
+                        return DropdownMenuItem<int?>(
+                          value: course.courseId,
+                          child: Text(
+                            '${course.course.code} • ${course.course.name}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }),
                     ],
                     onChanged: (value) {
                       context.read<InstructorAssignmentsCubit>().selectCourse(

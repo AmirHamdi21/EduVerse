@@ -1,4 +1,6 @@
 import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -72,46 +74,49 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: widget.embedded
-              ? null
-              : TADrawer(currentRoute: '/ta/labs', isDark: isDark),
-          // T031: Create Lab FAB
-          floatingActionButton: widget.embedded
-              ? null
-              : FloatingActionButton.extended(
-                  onPressed: () => _openCreateLabForm(isDark),
-                  backgroundColor: TAColors.primary,
-                  foregroundColor: Colors.white,
-                  icon: const Icon(Icons.add_rounded),
-                  label: Text(l10n.taLabsCreateLab),
-                ),
-          body: SafeArea(
-            top: !widget.embedded,
-            child: BlocBuilder<TALabsCubit, TALabsState>(
-              builder: (context, labsState) {
-                final content = RefreshIndicator(
-                  onRefresh: () => context.read<TALabsCubit>().fetchTALabs(),
-                  color: TAColors.primary,
-                  child: CustomScrollView(
-                    slivers: [
-                      if (!widget.embedded) _buildAppBar(isDark, l10n),
-                      _buildContent(isDark, l10n, labsState),
-                    ],
+        return TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.labs,
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: TAColors.scaffoldColor(isDark),
+            drawer: widget.embedded
+                ? null
+                : TADrawer(currentRoute: '/ta/labs', isDark: isDark),
+            // T031: Create Lab FAB
+            floatingActionButton: widget.embedded
+                ? null
+                : FloatingActionButton.extended(
+                    onPressed: () => _openCreateLabForm(isDark),
+                    backgroundColor: TAColors.primary,
+                    foregroundColor: Colors.white,
+                    icon: const Icon(Icons.add_rounded),
+                    label: Text(l10n.taLabsCreateLab),
                   ),
-                );
-
-                if (widget.embedded) {
-                  return Container(
-                    color: TAColors.scaffoldColor(isDark),
-                    child: content,
+            body: SafeArea(
+              top: !widget.embedded,
+              child: BlocBuilder<TALabsCubit, TALabsState>(
+                builder: (context, labsState) {
+                  final content = RefreshIndicator(
+                    onRefresh: () => context.read<TALabsCubit>().fetchTALabs(),
+                    color: TAColors.primary,
+                    child: CustomScrollView(
+                      slivers: [
+                        if (!widget.embedded) _buildAppBar(isDark, l10n),
+                        _buildContent(isDark, l10n, labsState),
+                      ],
+                    ),
                   );
-                }
 
-                return content;
-              },
+                  if (widget.embedded) {
+                    return Container(
+                      color: TAColors.scaffoldColor(isDark),
+                      child: content,
+                    );
+                  }
+
+                  return content;
+                },
+              ),
             ),
           ),
         );
@@ -185,21 +190,27 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         final visibleLabs = _applyFilters(allAssignedLabs);
         final headerSlivers = <Widget>[
           SliverToBoxAdapter(
-            child: _buildSummaryHeader(
-              isDark,
-              l10n,
-              r,
-              allAssignedLabs,
-              assignedCourseIds,
+            child: WalkthroughTarget(
+              id: TAWalkthroughIds.labsHeader,
+              child: _buildSummaryHeader(
+                isDark,
+                l10n,
+                r,
+                allAssignedLabs,
+                assignedCourseIds,
+              ),
             ),
           ),
           SliverToBoxAdapter(
-            child: _buildFilterMenus(
-              isDark,
-              l10n,
-              r,
-              assignedCourses,
-              visibleLabs.length,
+            child: WalkthroughTarget(
+              id: TAWalkthroughIds.labsFilters,
+              child: _buildFilterMenus(
+                isDark,
+                l10n,
+                r,
+                assignedCourses,
+                visibleLabs.length,
+              ),
             ),
           ),
         ];
@@ -678,10 +689,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                   }
                   setState(() => _selectedStateFilter = value);
                 },
-                selectedLabel: _stateFilterLabel(
-                  l10n,
-                  _selectedStateFilter,
-                ),
+                selectedLabel: _stateFilterLabel(l10n, _selectedStateFilter),
               )
             else
               Row(
@@ -904,13 +912,20 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         delegate: SliverChildBuilderDelegate((context, index) {
           final courseId = courseIds[index];
           final courseLabs = grouped[courseId] ?? [];
-          return _buildCourseLabsCard(
+          final card = _buildCourseLabsCard(
             courseId,
             courseLabs,
             isDark,
             l10n,
             assignedCourses,
           );
+          if (index == 0) {
+            return WalkthroughTarget(
+              id: TAWalkthroughIds.labsList,
+              child: card,
+            );
+          }
+          return card;
         }, childCount: courseIds.length),
       ),
     );
@@ -1638,7 +1653,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
           courses: courses,
           labService: _labService,
           onSave: (data) async {
-            final result = await context.read<TALabsCubit>().createLabRecord(data);
+            final result = await context.read<TALabsCubit>().createLabRecord(
+              data,
+            );
             return LabEditorSaveResult(
               lab: result.data,
               errorMessage: result.isSuccess
