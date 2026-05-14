@@ -24,6 +24,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginSubtitle => 'قم بتسجيل الدخول لمتابعة التعلم';
 
   @override
+  String get loginHeroSubtitle => 'تعلّم بذكاء. وتقدّم كل يوم.';
+
+  @override
   String get signupTitle => 'إنشاء حساب';
 
   @override
@@ -61,6 +64,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPassword => 'هل نسيت كلمة المرور؟';
+
+  @override
+  String get rememberMe => 'تذكرني';
+
+  @override
+  String get orContinueWith => 'أو';
+
+  @override
+  String get signInWithOutlook => 'تسجيل الدخول باستخدام Outlook';
+
+  @override
+  String get quickLoginDev => 'دخول سريع (تطوير)';
 
   @override
   String get dontHaveAccount => 'ليس لديك حساب؟';

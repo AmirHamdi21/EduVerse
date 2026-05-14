@@ -24,6 +24,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Sign in to continue learning';
 
   @override
+  String get loginHeroSubtitle => 'Learn smarter. Grow daily.';
+
+  @override
   String get signupTitle => 'Create Account';
 
   @override
@@ -61,6 +64,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get rememberMe => 'Remember me';
+
+  @override
+  String get orContinueWith => 'or';
+
+  @override
+  String get signInWithOutlook => 'Sign in with Outlook';
+
+  @override
+  String get quickLoginDev => 'Quick Login (Dev)';
 
   @override
   String get dontHaveAccount => 'Don\'t have an account?';

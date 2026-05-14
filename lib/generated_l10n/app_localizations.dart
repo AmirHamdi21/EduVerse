@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'Sign in to continue learning'**
   String get loginSubtitle;
 
+  /// No description provided for @loginHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn smarter. Grow daily.'**
+  String get loginHeroSubtitle;
+
   /// No description provided for @signupTitle.
   ///
   /// In en, this message translates to:
@@ -205,6 +211,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot Password?'**
   String get forgotPassword;
+
+  /// No description provided for @rememberMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember me'**
+  String get rememberMe;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orContinueWith;
+
+  /// No description provided for @signInWithOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Outlook'**
+  String get signInWithOutlook;
+
+  /// No description provided for @quickLoginDev.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Login (Dev)'**
+  String get quickLoginDev;
 
   /// No description provided for @dontHaveAccount.
   ///

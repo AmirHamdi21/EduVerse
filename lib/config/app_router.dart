@@ -228,7 +228,7 @@ import 'package:edu_verse/screens/auth/reset_password_screen.dart';
 import 'package:edu_verse/screens/onBoarding/onboarding_screen.dart';
 import 'package:edu_verse/services/auth_role_resolver.dart';
 import '../screens/splash/splash_screen.dart';
-import '../screens/auth/login_screen.dart';
+import '../screens/auth/login_v2_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../models/core/enrollment_model.dart';
@@ -358,7 +358,10 @@ class AppRouter {
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginV2Screen(),
+      ),
       GoRoute(
         path: '/register',
         builder: (context, state) => const RegisterScreen(),
