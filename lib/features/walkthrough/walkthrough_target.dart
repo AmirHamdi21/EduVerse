@@ -87,6 +87,21 @@ class TAWalkthroughRouteMarker extends StatefulWidget {
       _TAWalkthroughRouteMarkerState();
 }
 
+class StudentWalkthroughRouteMarker extends StatefulWidget {
+  const StudentWalkthroughRouteMarker({
+    super.key,
+    required this.segmentId,
+    required this.child,
+  });
+
+  final String segmentId;
+  final Widget child;
+
+  @override
+  State<StudentWalkthroughRouteMarker> createState() =>
+      _StudentWalkthroughRouteMarkerState();
+}
+
 class _InstructorWalkthroughRouteMarkerState
     extends _RoleWalkthroughRouteMarkerState<InstructorWalkthroughRouteMarker> {
   _InstructorWalkthroughRouteMarkerState() : super(WalkthroughRole.instructor);
@@ -95,6 +110,11 @@ class _InstructorWalkthroughRouteMarkerState
 class _TAWalkthroughRouteMarkerState
     extends _RoleWalkthroughRouteMarkerState<TAWalkthroughRouteMarker> {
   _TAWalkthroughRouteMarkerState() : super(WalkthroughRole.ta);
+}
+
+class _StudentWalkthroughRouteMarkerState
+    extends _RoleWalkthroughRouteMarkerState<StudentWalkthroughRouteMarker> {
+  _StudentWalkthroughRouteMarkerState() : super(WalkthroughRole.student);
 }
 
 abstract class _RoleWalkthroughRouteMarkerState<T extends StatefulWidget>
@@ -107,6 +127,7 @@ abstract class _RoleWalkthroughRouteMarkerState<T extends StatefulWidget>
     final widget = this.widget;
     if (widget is InstructorWalkthroughRouteMarker) return widget.segmentId;
     if (widget is TAWalkthroughRouteMarker) return widget.segmentId;
+    if (widget is StudentWalkthroughRouteMarker) return widget.segmentId;
     throw StateError('Unsupported walkthrough marker');
   }
 
@@ -114,6 +135,7 @@ abstract class _RoleWalkthroughRouteMarkerState<T extends StatefulWidget>
     final widget = this.widget;
     if (widget is InstructorWalkthroughRouteMarker) return widget.child;
     if (widget is TAWalkthroughRouteMarker) return widget.child;
+    if (widget is StudentWalkthroughRouteMarker) return widget.child;
     throw StateError('Unsupported walkthrough marker');
   }
 
@@ -129,6 +151,8 @@ abstract class _RoleWalkthroughRouteMarkerState<T extends StatefulWidget>
     final oldSegmentId = oldWidget is InstructorWalkthroughRouteMarker
         ? oldWidget.segmentId
         : oldWidget is TAWalkthroughRouteMarker
+        ? oldWidget.segmentId
+        : oldWidget is StudentWalkthroughRouteMarker
         ? oldWidget.segmentId
         : null;
     if (oldSegmentId != _segmentId) {

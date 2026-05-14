@@ -71,7 +71,9 @@ class OverviewTab extends StatelessWidget {
         tint: CMColors.accent,
       ),
       _OverviewItem(
-        icon: course.isActive ? Icons.verified_outlined : Icons.archive_outlined,
+        icon: course.isActive
+            ? Icons.verified_outlined
+            : Icons.archive_outlined,
         label: course.isActive ? l10n.activeLabel : l10n.archived,
         tint: course.isActive ? CMColors.success : CMColors.warning,
       ),
@@ -203,12 +205,7 @@ class OverviewTab extends StatelessWidget {
       child: _ResponsiveWrapGrid(
         minTileWidth: 180,
         children: actions
-            .map(
-              (action) => _QuickActionCard(
-                action: action,
-                isDark: isDark,
-              ),
-            )
+            .map((action) => _QuickActionCard(action: action, isDark: isDark))
             .toList(growable: false),
       ),
     );
@@ -226,10 +223,9 @@ class OverviewTab extends StatelessWidget {
           : Column(
               children: List.generate(schedules.length, (index) {
                 final schedule = schedules[index];
-                final location = [
-                  schedule.room,
-                  schedule.building,
-                ].where((value) => value != null && value.isNotEmpty).join(' • ');
+                final location = [schedule.room, schedule.building]
+                    .where((value) => value != null && value.isNotEmpty)
+                    .join(' • ');
 
                 return Column(
                   children: [
@@ -239,10 +235,7 @@ class OverviewTab extends StatelessWidget {
                       isDark: isDark,
                     ),
                     if (index < schedules.length - 1)
-                      Divider(
-                        height: 1,
-                        color: CMColors.borderColor(isDark),
-                      ),
+                      Divider(height: 1, color: CMColors.borderColor(isDark)),
                   ],
                 );
               }),
@@ -264,15 +257,9 @@ class OverviewTab extends StatelessWidget {
                 final deadline = deadlines[index];
                 return Column(
                   children: [
-                    _DeadlineTile(
-                      deadline: deadline,
-                      isDark: isDark,
-                    ),
+                    _DeadlineTile(deadline: deadline, isDark: isDark),
                     if (index < deadlines.length - 1)
-                      Divider(
-                        height: 1,
-                        color: CMColors.borderColor(isDark),
-                      ),
+                      Divider(height: 1, color: CMColors.borderColor(isDark)),
                   ],
                 );
               }),
@@ -374,10 +361,7 @@ class _ResponsiveWrapGrid extends StatelessWidget {
   final List<Widget> children;
   final double minTileWidth;
 
-  const _ResponsiveWrapGrid({
-    required this.children,
-    this.minTileWidth = 150,
-  });
+  const _ResponsiveWrapGrid({required this.children, this.minTileWidth = 150});
 
   @override
   Widget build(BuildContext context) {
@@ -422,10 +406,7 @@ class _OverviewPill extends StatelessWidget {
   final _OverviewItem item;
   final bool isDark;
 
-  const _OverviewPill({
-    required this.item,
-    required this.isDark,
-  });
+  const _OverviewPill({required this.item, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -469,10 +450,7 @@ class _ProgressPill extends StatelessWidget {
   final _OverviewItem item;
   final bool isDark;
 
-  const _ProgressPill({
-    required this.item,
-    required this.isDark,
-  });
+  const _ProgressPill({required this.item, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -555,10 +533,7 @@ class _QuickActionCard extends StatelessWidget {
   final _QuickActionItem action;
   final bool isDark;
 
-  const _QuickActionCard({
-    required this.action,
-    required this.isDark,
-  });
+  const _QuickActionCard({required this.action, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -666,10 +641,7 @@ class _DeadlineTile extends StatelessWidget {
   final DeadlineCardModel deadline;
   final bool isDark;
 
-  const _DeadlineTile({
-    required this.deadline,
-    required this.isDark,
-  });
+  const _DeadlineTile({required this.deadline, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -738,10 +710,7 @@ class _AnnouncementTile extends StatelessWidget {
   final AnnouncementModel announcement;
   final bool isDark;
 
-  const _AnnouncementTile({
-    required this.announcement,
-    required this.isDark,
-  });
+  const _AnnouncementTile({required this.announcement, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -806,10 +775,7 @@ class _EmptyMessage extends StatelessWidget {
   final String message;
   final bool isDark;
 
-  const _EmptyMessage({
-    required this.message,
-    required this.isDark,
-  });
+  const _EmptyMessage({required this.message, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -821,10 +787,7 @@ class _EmptyMessage extends StatelessWidget {
       ),
       child: Text(
         message,
-        style: TextStyle(
-          color: CMColors.textSub(isDark),
-          fontSize: 13,
-        ),
+        style: TextStyle(color: CMColors.textSub(isDark), fontSize: 13),
       ),
     );
   }

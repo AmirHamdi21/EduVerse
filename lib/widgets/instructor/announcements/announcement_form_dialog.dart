@@ -521,7 +521,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                             ? color.withValues(alpha: 0.2)
                             : color.withValues(alpha: 0.08))
                       : (widget.isDark
-                            ? AnnouncementColors.darkSurface.withValues(alpha: 0.5)
+                            ? AnnouncementColors.darkSurface.withValues(
+                                alpha: 0.5,
+                              )
                             : AnnouncementColors.surface),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
@@ -661,9 +663,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(
-              color: errorText != null
-                  ? AnnouncementColors.delete
-                  : _accentColor,
+          color: errorText != null ? AnnouncementColors.delete : _accentColor,
           width: 2,
         ),
       ),

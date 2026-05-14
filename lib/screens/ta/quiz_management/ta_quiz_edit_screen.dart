@@ -8,8 +8,8 @@ import 'package:edu_verse/bloc/ta/ta_courses_cubit.dart';
 import 'package:edu_verse/bloc/ta/ta_courses_state.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
-import 'package:go_router/go_router.dart';
 
 class TAQuizEditScreen extends StatefulWidget {
   final QuizModel quiz;
@@ -161,7 +161,10 @@ class _EditState extends State<TAQuizEditScreen>
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                       child: Row(
                         children: [
-                          _headerBtn(() => context.pop()),
+                          _headerBtn(
+                            context,
+                            () => safeBack(context, '/ta/dashboard'),
+                          ),
                           const SizedBox(width: 14),
                           Expanded(
                             child: Column(
@@ -241,18 +244,14 @@ class _EditState extends State<TAQuizEditScreen>
     );
   }
 
-  Widget _headerBtn(VoidCallback onTap) => Container(
+  Widget _headerBtn(BuildContext context, VoidCallback onTap) => Container(
     decoration: BoxDecoration(
       color: Colors.white.withValues(alpha: 0.15),
       borderRadius: BorderRadius.circular(12),
     ),
     child: IconButton(
       onPressed: onTap,
-      icon: const Icon(
-        Icons.arrow_back_ios_rounded,
-        color: Colors.white,
-        size: 18,
-      ),
+      icon: Icon(iosBackIcon(context), color: Colors.white, size: 18),
     ),
   );
 
@@ -807,7 +806,7 @@ class _EditState extends State<TAQuizEditScreen>
           ),
         ),
       );
-      context.pop();
+      safeBack(context, '/ta/dashboard');
     }
   }
 

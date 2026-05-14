@@ -8,6 +8,7 @@ import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
 import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:go_router/go_router.dart';
@@ -170,11 +171,7 @@ class _State extends State<TAQuizManagementScreen>
     ),
     child: IconButton(
       onPressed: _handleBackPressed,
-      icon: const Icon(
-        Icons.arrow_back_ios_rounded,
-        color: Colors.white,
-        size: 18,
-      ),
+      icon: Icon(iosBackIcon(context), color: Colors.white, size: 18),
     ),
   );
 
@@ -373,11 +370,7 @@ class _State extends State<TAQuizManagementScreen>
   }
 
   void _handleBackPressed() {
-    if (context.canPop()) {
-      context.pop();
-      return;
-    }
-    context.go('/ta/dashboard');
+    safeBack(context, '/ta/dashboard');
   }
 }
 

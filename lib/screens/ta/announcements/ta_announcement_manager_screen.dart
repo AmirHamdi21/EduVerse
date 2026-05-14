@@ -9,6 +9,7 @@ import '../../../models/instructor/announcement_model.dart';
 import '../../../services/api/communication_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/announcements/announcement_barrel.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 
@@ -509,7 +510,7 @@ class _TAAnnouncementManagerScreenState
           const SizedBox(width: 12),
           FilledButton.icon(
             onPressed: () => _showCreateDialog(isDark),
-              style: FilledButton.styleFrom(
+            style: FilledButton.styleFrom(
               backgroundColor: TAColors.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -531,9 +532,9 @@ class _TAAnnouncementManagerScreenState
       child: Row(
         children: [
           IconButton(
-            onPressed: () => context.pop(),
+            onPressed: () => safeBack(context, '/ta/dashboard'),
             icon: Icon(
-              Icons.arrow_back_ios_rounded,
+              iosBackIcon(context),
               color: AnnouncementColors.textPrimaryColor(isDark),
             ),
             style: IconButton.styleFrom(

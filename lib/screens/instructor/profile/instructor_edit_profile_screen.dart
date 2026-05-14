@@ -12,6 +12,7 @@ class InstructorEditProfileScreen extends StatelessWidget {
       title: 'Edit Instructor Profile',
       roleLabel: 'Instructor',
       theme: RoleProfileTheme.instructor(),
+      fallbackRoute: '/instructor/dashboard',
     );
   }
 }

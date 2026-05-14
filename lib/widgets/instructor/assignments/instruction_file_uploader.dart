@@ -94,9 +94,7 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
                 ? _darkCardColor().withValues(alpha: 0.65)
                 : Colors.white.withValues(alpha: 0.92),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: _primaryColor.withValues(alpha: 0.12),
-            ),
+            border: Border.all(color: _primaryColor.withValues(alpha: 0.12)),
           ),
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
@@ -114,8 +112,9 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
                         onPressed: _pickAndUpload,
                         style: FilledButton.styleFrom(
                           foregroundColor: _primaryColor,
-                          backgroundColor:
-                              _primaryColor.withValues(alpha: 0.12),
+                          backgroundColor: _primaryColor.withValues(
+                            alpha: 0.12,
+                          ),
                         ),
                         icon: const Icon(Icons.add_rounded),
                         label: const Text('Add Files'),
@@ -149,7 +148,8 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
           _UploadItemTile(
             item: _items[index],
             useTAColors: widget.useTAColors,
-            onRetry: _items[index].localPath == null ||
+            onRetry:
+                _items[index].localPath == null ||
                     _items[index].errorMessage == null
                 ? null
                 : () => _retryUpload(index),
@@ -180,10 +180,7 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
             color: _primaryColor.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(
-            Icons.upload_file_rounded,
-            color: _primaryColor,
-          ),
+          child: Icon(Icons.upload_file_rounded, color: _primaryColor),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -622,8 +619,9 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
   }
 
   Future<void> _openPreview(DriveFileModel file) async {
-    final previewUrl =
-        file.iframeUrl.trim().isNotEmpty ? file.iframeUrl : file.webViewLink;
+    final previewUrl = file.iframeUrl.trim().isNotEmpty
+        ? file.iframeUrl
+        : file.webViewLink;
 
     await showDialog<void>(
       context: context,
@@ -666,15 +664,19 @@ class _UploadItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = item.uploadedFile?.fileName ?? item.displayName ?? 'File';
-    final primaryColor =
-        useTAColors ? TAColors.primary : InstructorColors.primary;
-    final warningColor =
-        useTAColors ? TAColors.warning : InstructorColors.warning;
+    final primaryColor = useTAColors
+        ? TAColors.primary
+        : InstructorColors.primary;
+    final warningColor = useTAColors
+        ? TAColors.warning
+        : InstructorColors.warning;
     final errorColor = useTAColors ? TAColors.error : InstructorColors.error;
-    final errorLightColor =
-        useTAColors ? TAColors.errorLight : InstructorColors.errorLight;
-    final darkCardColor =
-        useTAColors ? TAColors.darkCard : InstructorColors.darkCard;
+    final errorLightColor = useTAColors
+        ? TAColors.errorLight
+        : InstructorColors.errorLight;
+    final darkCardColor = useTAColors
+        ? TAColors.darkCard
+        : InstructorColors.darkCard;
     final textPrimaryColor = useTAColors
         ? TAColors.textPrimaryColor(isDark)
         : InstructorColors.textPrimaryColor(isDark);
@@ -684,8 +686,8 @@ class _UploadItemTile extends StatelessWidget {
     final backgroundColor = item.errorMessage != null
         ? errorLightColor.withValues(alpha: isDark ? 0.10 : 0.55)
         : (isDark
-            ? darkCardColor.withValues(alpha: 0.72)
-            : Colors.white.withValues(alpha: 0.96));
+              ? darkCardColor.withValues(alpha: 0.72)
+              : Colors.white.withValues(alpha: 0.96));
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),

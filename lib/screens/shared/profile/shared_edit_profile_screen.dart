@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/auth/auth_event.dart';
@@ -8,18 +7,21 @@ import '../../../bloc/profile/profile_cubit.dart';
 import '../../../bloc/profile/profile_models.dart';
 import '../../../bloc/profile/profile_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import 'role_profile_theme.dart';
 
 class SharedEditProfileScreen extends StatefulWidget {
   final String title;
   final RoleProfileTheme theme;
   final String roleLabel;
+  final String fallbackRoute;
 
   const SharedEditProfileScreen({
     super.key,
     required this.title,
     required this.theme,
     required this.roleLabel,
+    required this.fallbackRoute,
   });
 
   @override
@@ -305,7 +307,10 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
                               child: OutlinedButton(
                                 onPressed: state.isSaving
                                     ? null
-                                    : () => context.pop(),
+                                    : () => safeBack(
+                                        context,
+                                        widget.fallbackRoute,
+                                      ),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: theme.textSecondary(isDark),
                                   side: BorderSide(color: theme.border(isDark)),
@@ -415,14 +420,14 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
     return Row(
       children: [
         _buildUtilityButton(
-          onTap: () => context.pop(),
+          onTap: () => safeBack(context, widget.fallbackRoute),
           isDark: isDark,
           theme: theme,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.arrow_back_ios_new_rounded,
+                iosBackIcon(context),
                 size: 16,
                 color: theme.textPrimary(isDark),
               ),
@@ -758,7 +763,7 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
         ..showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context).profileUpdated)),
         );
-      context.pop();
+      safeBack(context, widget.fallbackRoute);
     }
   }
 

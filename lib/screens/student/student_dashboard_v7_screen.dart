@@ -13,6 +13,8 @@ import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_state.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/features/walkthrough/student_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/core/enrollment_model.dart';
 import 'package:edu_verse/widgets/shared/current_user_identity.dart';
@@ -142,67 +144,94 @@ class _StudentDashboardV7ScreenState extends State<StudentDashboardV7Screen> {
       builder: (context, themeState) {
         final isDark = themeState.isDark;
 
-        return Scaffold(
-          backgroundColor: _DashboardColors.background(isDark),
-          drawer: const StudentDrawer(),
-          body: SafeArea(
-            bottom: false,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: _DashboardColors.pageGradient(isDark),
+        return StudentWalkthroughRouteMarker(
+          segmentId: StudentWalkthroughIds.dashboard,
+          child: Scaffold(
+            backgroundColor: _DashboardColors.background(isDark),
+            drawer: const StudentDrawer(),
+            body: SafeArea(
+              bottom: false,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: _DashboardColors.pageGradient(isDark),
+                  ),
                 ),
-              ),
-              child: Stack(
-                children: [
-                  NotificationListener<ScrollNotification>(
-                    onNotification: _handleDashboardScroll,
-                    child: RefreshIndicator(
-                      color: _DashboardColors.primaryBlue,
-                      onRefresh: _refreshDashboard,
-                      child: ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.only(bottom: 76),
-                        children: [
-                          _CenteredDashboardContent(
-                            child: _StudentV7TopBar(isDark: isDark),
-                          ),
-                          _CenteredDashboardContent(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                              child: Column(
-                                children: [
-                                  _StudentV7StatsCard(isDark: isDark),
-                                  const SizedBox(height: 12),
-                                  _StudentV7QuickAccessCard(isDark: isDark),
-                                  const SizedBox(height: 12),
-                                  _StudentV7CoursesCard(isDark: isDark),
-                                  const SizedBox(height: 12),
-                                  _StudentV7InsightCard(isDark: isDark),
-                                  const SizedBox(height: 12),
-                                  _StudentV7TodoCard(isDark: isDark),
-                                  const SizedBox(height: 12),
-                                  _StudentV7AskAiButton(isDark: isDark),
-                                ],
+                child: Stack(
+                  children: [
+                    NotificationListener<ScrollNotification>(
+                      onNotification: _handleDashboardScroll,
+                      child: RefreshIndicator(
+                        color: _DashboardColors.primaryBlue,
+                        onRefresh: _refreshDashboard,
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.only(bottom: 76),
+                          children: [
+                            _CenteredDashboardContent(
+                              child: WalkthroughTarget(
+                                id: StudentWalkthroughIds.dashboardTop,
+                                child: _StudentV7TopBar(isDark: isDark),
                               ),
                             ),
-                          ),
-                        ],
+                            _CenteredDashboardContent(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  0,
+                                  16,
+                                  16,
+                                ),
+                                child: Column(
+                                  children: [
+                                    WalkthroughTarget(
+                                      id: StudentWalkthroughIds.dashboardStats,
+                                      child: _StudentV7StatsCard(
+                                        isDark: isDark,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    WalkthroughTarget(
+                                      id: StudentWalkthroughIds.dashboardQuick,
+                                      child: _StudentV7QuickAccessCard(
+                                        isDark: isDark,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    WalkthroughTarget(
+                                      id: StudentWalkthroughIds
+                                          .dashboardCourses,
+                                      child: _StudentV7CoursesCard(
+                                        isDark: isDark,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    _StudentV7InsightCard(isDark: isDark),
+                                    const SizedBox(height: 12),
+                                    _StudentV7TodoCard(isDark: isDark),
+                                    const SizedBox(height: 12),
+                                    _StudentV7AskAiButton(isDark: isDark),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: _bottomNavVisibleNotifier,
-                    builder: (context, isBottomNavVisible, child) {
-                      return StudentLiquidGlassBottomNav(
-                        isDark: isDark,
-                        isVisible: isBottomNavVisible,
-                      );
-                    },
-                  ),
-                ],
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _bottomNavVisibleNotifier,
+                      builder: (context, isBottomNavVisible, child) {
+                        return StudentLiquidGlassBottomNav(
+                          isDark: isDark,
+                          isVisible: isBottomNavVisible,
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -13,6 +13,7 @@ class TAProfileScreen extends StatelessWidget {
       roleFallbackLabel: 'Teaching Assistant',
       title: 'Teaching Assistant Profile',
       theme: RoleProfileTheme.ta(),
+      fallbackRoute: '/ta/dashboard',
     );
   }
 }

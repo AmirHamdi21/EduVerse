@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../bloc/instructor/instructor_assignments_cubit.dart';
 import '../../../bloc/instructor/instructor_assignments_state.dart';
@@ -9,6 +8,7 @@ import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/assignments/grading_panel.dart';
 import '../../../widgets/instructor/assignments/submission_content_viewer.dart';
 
@@ -119,6 +119,10 @@ class _SubmissionGradingViewState extends State<_SubmissionGradingView> {
 
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              onPressed: () => safeBack(context, '/instructor/dashboard'),
+              icon: Icon(iosBackIcon(context)),
+            ),
             title: Text(
               studentName ?? widget.assignmentTitle ?? 'Grade Submission',
             ),
@@ -204,7 +208,7 @@ class _SubmissionGradingViewState extends State<_SubmissionGradingView> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-      context.pop(true);
+      safeBack(context, '/instructor/dashboard', true);
     }
   }
 

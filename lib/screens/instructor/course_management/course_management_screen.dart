@@ -31,6 +31,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/lab_service.dart';
 import '../../../services/api/material_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/shared/course_details/course_detail_search_tab.dart';
 import '../materials/material_preview_screen.dart';
 import '../../../widgets/instructor/course_management/course_management_barrel.dart';
@@ -246,7 +247,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
               ),
               const SizedBox(height: 16),
               OutlinedButton(
-                onPressed: () => Navigator.of(context).maybePop(),
+                onPressed: () => safeBack(context, '/instructor/dashboard'),
                 child: Text(l10n.back),
               ),
             ],
@@ -672,7 +673,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
           child: Row(
             children: [
               _buildTopIconButton(
-                icon: Icons.arrow_back_ios_new_rounded,
+                icon: iosBackIcon(context),
                 isDark: isDark,
                 backgroundColor: actionButtonColor,
                 onTap: _handleBackPressed,
@@ -1917,11 +1918,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       if (!mounted) {
         return;
       }
-      if (context.canPop()) {
-        context.pop();
-      } else {
-        context.go('/instructor/courses');
-      }
+      safeBack(context, '/instructor/dashboard');
     });
   }
 

@@ -2,7 +2,7 @@ import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
-import 'package:edu_verse/widgets/ta/dashboard/ta_drawer.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +40,6 @@ class TAAssignmentsScreen extends StatefulWidget {
 enum _TAAssignmentStateFilter { all, draft, published, closed, archived }
 
 class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int? _selectedCourseId;
   _TAAssignmentStateFilter _selectedStatusFilter = _TAAssignmentStateFilter.all;
 
@@ -140,12 +139,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             return TAWalkthroughRouteMarker(
               segmentId: TAWalkthroughIds.assignments,
               child: Scaffold(
-                key: _scaffoldKey,
                 backgroundColor: TAColors.scaffoldColor(isDark),
-                drawer: TADrawer(
-                  currentRoute: '/ta/assignments',
-                  isDark: isDark,
-                ),
                 floatingActionButton: widget.embedded
                     ? null
                     : FloatingActionButton.extended(
@@ -169,9 +163,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
       backgroundColor: TAColors.scaffoldColor(isDark),
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        onPressed: () => safeBack(context, '/ta/dashboard'),
         icon: Icon(
-          Icons.menu_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
       ),

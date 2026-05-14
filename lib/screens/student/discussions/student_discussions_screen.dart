@@ -1,4 +1,6 @@
 import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/features/walkthrough/student_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/discussion/discussion_models.dart';
 import 'package:edu_verse/models/core/enrollment_model.dart';
@@ -34,8 +36,7 @@ enum _CourseFilter { all, active, unanswered, pinned, locked, quiet }
 
 enum _CourseSort { latestActivity, mostPosts, mostReplies, courseCode }
 
-class _StudentDiscussionsScreenState
-    extends State<StudentDiscussionsScreen> {
+class _StudentDiscussionsScreenState extends State<StudentDiscussionsScreen> {
   late final DiscussionService _discussionService;
   late final EnrollmentService _enrollmentService;
 
@@ -124,58 +125,66 @@ class _StudentDiscussionsScreenState
       if (courseId == null || courseId <= 0) {
         continue;
       }
-      threadsByCourse.putIfAbsent(courseId, () => <DiscussionThread>[]).add(
-        thread,
-      );
+      threadsByCourse
+          .putIfAbsent(courseId, () => <DiscussionThread>[])
+          .add(thread);
     }
 
-    final summaries = _courses.map((course) {
-      final threads = threadsByCourse[course.course?.courseId ?? 0] ?? const <DiscussionThread>[];
-      final latestActivity = threads.isEmpty
-          ? null
-          : threads
-              .map((thread) => thread.updatedAt ?? thread.createdAt)
-              .reduce((a, b) => a.isAfter(b) ? a : b);
+    final summaries = _courses
+        .map((course) {
+          final threads =
+              threadsByCourse[course.course?.courseId ?? 0] ??
+              const <DiscussionThread>[];
+          final latestActivity = threads.isEmpty
+              ? null
+              : threads
+                    .map((thread) => thread.updatedAt ?? thread.createdAt)
+                    .reduce((a, b) => a.isAfter(b) ? a : b);
 
-      return _CourseSummary(
-        course: course,
-        threads: threads,
-        latestActivity: latestActivity,
-      );
-    }).toList(growable: false);
+          return _CourseSummary(
+            course: course,
+            threads: threads,
+            latestActivity: latestActivity,
+          );
+        })
+        .toList(growable: false);
 
-    final filtered = summaries.where((summary) {
-      final courseName = summary.course.course?.name ?? '';
-      final courseCode = summary.course.course?.code ?? '';
-      final matchesSearch =
-          normalizedSearch.isEmpty ||
-          courseName.toLowerCase().contains(normalizedSearch) ||
-          courseCode.toLowerCase().contains(normalizedSearch) ||
-          (summary.latestThread?.title.toLowerCase().contains(normalizedSearch) ??
-              false) ||
-          (summary.latestThread?.description
-                  .toLowerCase()
-                  .contains(normalizedSearch) ??
-              false);
-      if (!matchesSearch) {
-        return false;
-      }
+    final filtered = summaries
+        .where((summary) {
+          final courseName = summary.course.course?.name ?? '';
+          final courseCode = summary.course.course?.code ?? '';
+          final matchesSearch =
+              normalizedSearch.isEmpty ||
+              courseName.toLowerCase().contains(normalizedSearch) ||
+              courseCode.toLowerCase().contains(normalizedSearch) ||
+              (summary.latestThread?.title.toLowerCase().contains(
+                    normalizedSearch,
+                  ) ??
+                  false) ||
+              (summary.latestThread?.description.toLowerCase().contains(
+                    normalizedSearch,
+                  ) ??
+                  false);
+          if (!matchesSearch) {
+            return false;
+          }
 
-      switch (_selectedFilter) {
-        case _CourseFilter.all:
-          return true;
-        case _CourseFilter.active:
-          return summary.threadCount > 0;
-        case _CourseFilter.unanswered:
-          return summary.unansweredCount > 0;
-        case _CourseFilter.pinned:
-          return summary.pinnedCount > 0;
-        case _CourseFilter.locked:
-          return summary.lockedCount > 0;
-        case _CourseFilter.quiet:
-          return summary.threadCount == 0;
-      }
-    }).toList(growable: false);
+          switch (_selectedFilter) {
+            case _CourseFilter.all:
+              return true;
+            case _CourseFilter.active:
+              return summary.threadCount > 0;
+            case _CourseFilter.unanswered:
+              return summary.unansweredCount > 0;
+            case _CourseFilter.pinned:
+              return summary.pinnedCount > 0;
+            case _CourseFilter.locked:
+              return summary.lockedCount > 0;
+            case _CourseFilter.quiet:
+              return summary.threadCount == 0;
+          }
+        })
+        .toList(growable: false);
 
     filtered.sort((a, b) {
       switch (_selectedSort) {
@@ -183,7 +192,9 @@ class _StudentDiscussionsScreenState
           final aValue = a.latestActivity;
           final bValue = b.latestActivity;
           if (aValue == null && bValue == null) {
-            return (a.course.course?.code ?? '').compareTo(b.course.course?.code ?? '');
+            return (a.course.course?.code ?? '').compareTo(
+              b.course.course?.code ?? '',
+            );
           }
           if (aValue == null) {
             return 1;
@@ -197,7 +208,9 @@ class _StudentDiscussionsScreenState
         case _CourseSort.mostReplies:
           return b.replyCount.compareTo(a.replyCount);
         case _CourseSort.courseCode:
-          return (a.course.course?.code ?? '').compareTo(b.course.course?.code ?? '');
+          return (a.course.course?.code ?? '').compareTo(
+            b.course.course?.code ?? '',
+          );
       }
     });
 
@@ -213,134 +226,164 @@ class _StudentDiscussionsScreenState
         final r = context.responsive;
         final summaries = _buildSummaries();
 
-        return Scaffold(
-          backgroundColor: StudentDiscussionPalette.background(isDark),
-          body: SafeArea(
-            child: RefreshIndicator(
-              onRefresh: _loadData,
-              color: StudentDiscussionPalette.primary,
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: <Widget>[
-                  _buildAppBar(isDark, l10n),
-                  if (_loading) ...<Widget>[
-                    SliverToBoxAdapter(
-                      child: StudentDiscussionSummaryHeader(
-                        isDark: isDark,
-                        responsive: r,
-                        title: l10n.studentDiscussionHubTitle,
-                        subtitle: l10n.studentDiscussionHubSubtitle,
-                        icon: Icons.forum_rounded,
-                        stats: <({
-                          IconData icon,
-                          String label,
-                          String value,
-                          Color color,
-                        })>[
-                          (
-                            icon: Icons.menu_book_rounded,
-                            label: l10n.course,
-                            value: '—',
-                            color: StudentDiscussionPalette.teal,
-                          ),
-                          (
-                            icon: Icons.forum_rounded,
-                            label: l10n.instructorDiscussionPostsLabel,
-                            value: '—',
-                            color: StudentDiscussionPalette.accent,
-                          ),
-                          (
-                            icon: Icons.push_pin_rounded,
-                            label: l10n.instructorDiscussionPinnedLabel,
-                            value: '—',
-                            color: StudentDiscussionPalette.warning,
-                          ),
-                          (
-                            icon: Icons.reply_all_rounded,
-                            label: l10n.instructorDiscussionRepliesLabel,
-                            value: '—',
-                            color: StudentDiscussionPalette.success,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          return _buildSkeletonCard(isDark);
-                        }, childCount: 3),
-                      ),
-                    ),
-                  ] else if (_errorMessage != null) ...<Widget>[
-                    SliverFillRemaining(
-                      child: StudentDiscussionEmptyState(
-                        isDark: isDark,
-                        icon: Icons.error_outline_rounded,
-                        title: l10n.instructorDiscussionLoadFailedTitle,
-                        message: _errorMessage!,
-                        action: FilledButton.icon(
-                          onPressed: _loadData,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: StudentDiscussionPalette.primary,
-                            foregroundColor: Colors.white,
-                          ),
-                          icon: const Icon(Icons.refresh_rounded),
-                          label: Text(l10n.retry),
-                        ),
-                      ),
-                    ),
-                  ] else ...<Widget>[
-                    SliverToBoxAdapter(
-                      child: StudentDiscussionSummaryHeader(
-                        isDark: isDark,
-                        responsive: r,
-                        title: l10n.studentDiscussionHubTitle,
-                        subtitle: l10n.studentDiscussionHubSubtitle,
-                        icon: Icons.forum_rounded,
-                        stats: _buildHeaderStats(l10n),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: _buildFilters(isDark, l10n, r, summaries.length),
-                    ),
-                    if (_courses.isEmpty)
-                      SliverFillRemaining(
-                        child: StudentDiscussionEmptyState(
+        return StudentWalkthroughRouteMarker(
+          segmentId: StudentWalkthroughIds.discussions,
+          child: Scaffold(
+            backgroundColor: StudentDiscussionPalette.background(isDark),
+            body: SafeArea(
+              child: RefreshIndicator(
+                onRefresh: _loadData,
+                color: StudentDiscussionPalette.primary,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: <Widget>[
+                    _buildAppBar(isDark, l10n),
+                    if (_loading) ...<Widget>[
+                      SliverToBoxAdapter(
+                        child: StudentDiscussionSummaryHeader(
                           isDark: isDark,
-                          icon: Icons.school_outlined,
-                          title: l10n.studentDiscussionNoCoursesTitle,
-                          message: l10n.studentDiscussionNoCoursesSubtitle,
+                          responsive: r,
+                          title: l10n.studentDiscussionHubTitle,
+                          subtitle: l10n.studentDiscussionHubSubtitle,
+                          icon: Icons.forum_rounded,
+                          stats:
+                              <
+                                ({
+                                  IconData icon,
+                                  String label,
+                                  String value,
+                                  Color color,
+                                })
+                              >[
+                                (
+                                  icon: Icons.menu_book_rounded,
+                                  label: l10n.course,
+                                  value: '—',
+                                  color: StudentDiscussionPalette.teal,
+                                ),
+                                (
+                                  icon: Icons.forum_rounded,
+                                  label: l10n.instructorDiscussionPostsLabel,
+                                  value: '—',
+                                  color: StudentDiscussionPalette.accent,
+                                ),
+                                (
+                                  icon: Icons.push_pin_rounded,
+                                  label: l10n.instructorDiscussionPinnedLabel,
+                                  value: '—',
+                                  color: StudentDiscussionPalette.warning,
+                                ),
+                                (
+                                  icon: Icons.reply_all_rounded,
+                                  label: l10n.instructorDiscussionRepliesLabel,
+                                  value: '—',
+                                  color: StudentDiscussionPalette.success,
+                                ),
+                              ],
                         ),
-                      )
-                    else if (summaries.isEmpty)
-                      SliverFillRemaining(
-                        child: StudentDiscussionEmptyState(
-                          isDark: isDark,
-                          icon: Icons.filter_alt_off_rounded,
-                          title: l10n.studentDiscussionNoMatchingCoursesTitle,
-                          message:
-                              l10n.studentDiscussionNoMatchingCoursesSubtitle,
-                        ),
-                      )
-                    else
+                      ),
                       SliverPadding(
                         padding: const EdgeInsets.all(16),
                         sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                            return _buildCourseCard(
-                              context,
-                              summaries[index],
-                              isDark,
-                              l10n,
-                              r,
-                              index,
-                            );
-                          }, childCount: summaries.length),
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            return _buildSkeletonCard(isDark);
+                          }, childCount: 3),
                         ),
                       ),
+                    ] else if (_errorMessage != null) ...<Widget>[
+                      SliverFillRemaining(
+                        child: StudentDiscussionEmptyState(
+                          isDark: isDark,
+                          icon: Icons.error_outline_rounded,
+                          title: l10n.instructorDiscussionLoadFailedTitle,
+                          message: _errorMessage!,
+                          action: FilledButton.icon(
+                            onPressed: _loadData,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: StudentDiscussionPalette.primary,
+                              foregroundColor: Colors.white,
+                            ),
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: Text(l10n.retry),
+                          ),
+                        ),
+                      ),
+                    ] else ...<Widget>[
+                      SliverToBoxAdapter(
+                        child: WalkthroughTarget(
+                          id: StudentWalkthroughIds.discussionsHeader,
+                          child: StudentDiscussionSummaryHeader(
+                            isDark: isDark,
+                            responsive: r,
+                            title: l10n.studentDiscussionHubTitle,
+                            subtitle: l10n.studentDiscussionHubSubtitle,
+                            icon: Icons.forum_rounded,
+                            stats: _buildHeaderStats(l10n),
+                          ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: WalkthroughTarget(
+                          id: StudentWalkthroughIds.discussionsFilters,
+                          child: _buildFilters(
+                            isDark,
+                            l10n,
+                            r,
+                            summaries.length,
+                          ),
+                        ),
+                      ),
+                      if (_courses.isEmpty)
+                        SliverFillRemaining(
+                          child: StudentDiscussionEmptyState(
+                            isDark: isDark,
+                            icon: Icons.school_outlined,
+                            title: l10n.studentDiscussionNoCoursesTitle,
+                            message: l10n.studentDiscussionNoCoursesSubtitle,
+                          ),
+                        )
+                      else if (summaries.isEmpty)
+                        SliverFillRemaining(
+                          child: StudentDiscussionEmptyState(
+                            isDark: isDark,
+                            icon: Icons.filter_alt_off_rounded,
+                            title: l10n.studentDiscussionNoMatchingCoursesTitle,
+                            message:
+                                l10n.studentDiscussionNoMatchingCoursesSubtitle,
+                          ),
+                        )
+                      else
+                        SliverPadding(
+                          padding: const EdgeInsets.all(16),
+                          sliver: SliverToBoxAdapter(
+                            child: WalkthroughTarget(
+                              id: StudentWalkthroughIds.discussionsList,
+                              child: Column(
+                                children: [
+                                  for (
+                                    var index = 0;
+                                    index < summaries.length;
+                                    index++
+                                  )
+                                    _buildCourseCard(
+                                      context,
+                                      summaries[index],
+                                      isDark,
+                                      l10n,
+                                      r,
+                                      index,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -356,7 +399,7 @@ class _StudentDiscussionsScreenState
       floating: true,
       snap: true,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: () => _leaveStudentDiscussionsScreen(context),
         icon: Icon(
           Icons.arrow_back_rounded,
           color: StudentDiscussionPalette.textPrimaryColor(isDark),
@@ -603,7 +646,9 @@ class _StudentDiscussionsScreenState
                         Text(
                           summary.course.course?.name ?? '',
                           style: TextStyle(
-                            color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                            color: StudentDiscussionPalette.textPrimaryColor(
+                              isDark,
+                            ),
                             fontSize: r.isMobile ? 20 : 22,
                             fontWeight: FontWeight.w800,
                             height: 1.15,
@@ -613,7 +658,9 @@ class _StudentDiscussionsScreenState
                         Text(
                           '${l10n.instructorDiscussionSectionLabel} ${summary.course.section?.sectionNumber ?? '—'} • ${summary.course.semester?.name ?? '—'}',
                           style: TextStyle(
-                            color: StudentDiscussionPalette.textSecondaryColor(isDark),
+                            color: StudentDiscussionPalette.textSecondaryColor(
+                              isDark,
+                            ),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -627,7 +674,9 @@ class _StudentDiscussionsScreenState
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: StudentDiscussionPalette.primary.withValues(alpha: 0.1),
+                      color: StudentDiscussionPalette.primary.withValues(
+                        alpha: 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Text(
@@ -679,15 +728,15 @@ class _StudentDiscussionsScreenState
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? StudentDiscussionPalette.surfaceColor(isDark).withValues(
-                          alpha: 0.75,
-                        )
+                      ? StudentDiscussionPalette.surfaceColor(
+                          isDark,
+                        ).withValues(alpha: 0.75)
                       : const Color(0xFFF8FBFF),
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
-                    color: StudentDiscussionPalette.borderColor(isDark).withValues(
-                      alpha: 0.55,
-                    ),
+                    color: StudentDiscussionPalette.borderColor(
+                      isDark,
+                    ).withValues(alpha: 0.55),
                   ),
                 ),
                 child: latestThread == null
@@ -697,7 +746,9 @@ class _StudentDiscussionsScreenState
                           Text(
                             l10n.instructorDiscussionNoPostsCardTitle,
                             style: TextStyle(
-                              color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                              color: StudentDiscussionPalette.textPrimaryColor(
+                                isDark,
+                              ),
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -706,7 +757,10 @@ class _StudentDiscussionsScreenState
                           Text(
                             l10n.instructorDiscussionNoPostsCardSubtitle,
                             style: TextStyle(
-                              color: StudentDiscussionPalette.textSecondaryColor(isDark),
+                              color:
+                                  StudentDiscussionPalette.textSecondaryColor(
+                                    isDark,
+                                  ),
                               fontSize: 12,
                               height: 1.4,
                             ),
@@ -719,7 +773,10 @@ class _StudentDiscussionsScreenState
                           Text(
                             l10n.instructorDiscussionLatestPostLabel,
                             style: TextStyle(
-                              color: StudentDiscussionPalette.textSecondaryColor(isDark),
+                              color:
+                                  StudentDiscussionPalette.textSecondaryColor(
+                                    isDark,
+                                  ),
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                             ),
@@ -730,7 +787,9 @@ class _StudentDiscussionsScreenState
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                              color: StudentDiscussionPalette.textPrimaryColor(
+                                isDark,
+                              ),
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
                             ),
@@ -741,7 +800,10 @@ class _StudentDiscussionsScreenState
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: StudentDiscussionPalette.textSecondaryColor(isDark),
+                              color:
+                                  StudentDiscussionPalette.textSecondaryColor(
+                                    isDark,
+                                  ),
                               fontSize: 12,
                               height: 1.45,
                             ),
@@ -752,9 +814,10 @@ class _StudentDiscussionsScreenState
                               Icon(
                                 Icons.schedule_rounded,
                                 size: 14,
-                                color: StudentDiscussionPalette.textTertiaryColor(
-                                  isDark,
-                                ),
+                                color:
+                                    StudentDiscussionPalette.textTertiaryColor(
+                                      isDark,
+                                    ),
                               ),
                               const SizedBox(width: 6),
                               Expanded(
@@ -764,9 +827,10 @@ class _StudentDiscussionsScreenState
                                     summary.latestActivity,
                                   ),
                                   style: TextStyle(
-                                    color: StudentDiscussionPalette.textTertiaryColor(
-                                      isDark,
-                                    ),
+                                    color:
+                                        StudentDiscussionPalette.textTertiaryColor(
+                                          isDark,
+                                        ),
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -785,7 +849,9 @@ class _StudentDiscussionsScreenState
                   style: OutlinedButton.styleFrom(
                     foregroundColor: StudentDiscussionPalette.primary,
                     side: BorderSide(
-                      color: StudentDiscussionPalette.primary.withValues(alpha: 0.25),
+                      color: StudentDiscussionPalette.primary.withValues(
+                        alpha: 0.25,
+                      ),
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -846,6 +912,15 @@ class _StudentDiscussionsScreenState
   }
 }
 
+void _leaveStudentDiscussionsScreen(BuildContext context) {
+  if (context.canPop()) {
+    context.pop();
+    return;
+  }
+
+  context.go('/dashboard');
+}
+
 class _CourseSummary {
   const _CourseSummary({
     required this.course,
@@ -859,10 +934,8 @@ class _CourseSummary {
 
   int get threadCount => threads.length;
 
-  int get replyCount => threads.fold<int>(
-    0,
-    (total, thread) => total + thread.replyCount,
-  );
+  int get replyCount =>
+      threads.fold<int>(0, (total, thread) => total + thread.replyCount);
 
   int get pinnedCount => threads.where((thread) => thread.isPinned).length;
 
@@ -884,11 +957,3 @@ class _CourseSummary {
     return sorted.first;
   }
 }
-
-
-
-
-
-
-
-

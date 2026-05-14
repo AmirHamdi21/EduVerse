@@ -17,9 +17,6 @@ class LabsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InstructorLabsScreen(
-      initialCourseId: courseId,
-      embedded: true,
-    );
+    return InstructorLabsScreen(initialCourseId: courseId, embedded: true);
   }
 }

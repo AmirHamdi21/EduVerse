@@ -8,6 +8,8 @@ import '../../../bloc/attendance/attendance_cubit.dart';
 import '../../../bloc/attendance/attendance_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../features/walkthrough/student_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/attendance/student_face_reference_model.dart';
 import '../../../widgets/student/attendance/attendance_stats_card.dart';
@@ -61,48 +63,57 @@ class _AttendanceScreenState extends State<AttendanceScreen>
         builder: (context, themeState) {
           final isDark = themeState.isDark;
 
-          return Scaffold(
-            backgroundColor: isDark
-                ? const Color(0xFF0F172A)
-                : const Color(0xFFF8FAFC),
-            body: SafeArea(
-              child: Column(
-                children: [
-                  _buildAppBar(context, isDark),
-                  _buildTabBar(context, isDark),
-                  Expanded(
-                    child: BlocConsumer<AttendanceCubit, AttendanceState>(
-                      listener: (context, state) {
-                        if (state.errorMessage != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.errorMessage!),
-                              backgroundColor: const Color(0xFFEF4444),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          );
-                          context.read<AttendanceCubit>().clearError();
-                        }
-                      },
-                      builder: (context, state) {
-                        if (state.isLoading) {
-                          return _buildLoadingState(isDark);
-                        }
-
-                        return TabBarView(
-                          controller: _tabController,
-                          children: [
-                            _buildOverviewTab(state, isDark),
-                            _buildCalendarTab(state, isDark),
-                          ],
-                        );
-                      },
+          return StudentWalkthroughRouteMarker(
+            segmentId: StudentWalkthroughIds.attendance,
+            child: Scaffold(
+              backgroundColor: isDark
+                  ? const Color(0xFF0F172A)
+                  : const Color(0xFFF8FAFC),
+              body: SafeArea(
+                child: Column(
+                  children: [
+                    WalkthroughTarget(
+                      id: StudentWalkthroughIds.attendanceHeader,
+                      child: _buildAppBar(context, isDark),
                     ),
-                  ),
-                ],
+                    WalkthroughTarget(
+                      id: StudentWalkthroughIds.attendanceTabs,
+                      child: _buildTabBar(context, isDark),
+                    ),
+                    Expanded(
+                      child: BlocConsumer<AttendanceCubit, AttendanceState>(
+                        listener: (context, state) {
+                          if (state.errorMessage != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(state.errorMessage!),
+                                backgroundColor: const Color(0xFFEF4444),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            );
+                            context.read<AttendanceCubit>().clearError();
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state.isLoading) {
+                            return _buildLoadingState(isDark);
+                          }
+
+                          return TabBarView(
+                            controller: _tabController,
+                            children: [
+                              _buildOverviewTab(state, isDark),
+                              _buildCalendarTab(state, isDark),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -292,10 +303,16 @@ class _AttendanceScreenState extends State<AttendanceScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const AttendanceStatsCard(),
+          const WalkthroughTarget(
+            id: StudentWalkthroughIds.attendanceStats,
+            child: AttendanceStatsCard(),
+          ),
           _buildFaceSetupSection(state, isDark),
           const SizedBox(height: 8),
-          const CourseAttendanceList(),
+          const WalkthroughTarget(
+            id: StudentWalkthroughIds.attendanceList,
+            child: CourseAttendanceList(),
+          ),
           const SizedBox(height: 24),
         ],
       ),

@@ -83,7 +83,7 @@ class _QuestionGroupEditViewState extends State<_QuestionGroupEditView> {
           leading: IconButton(
             onPressed: () => _handleBack(context),
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              safeFeatureBackIcon(context),
               color: InstructorColors.textPrimaryColor(isDark),
             ),
           ),

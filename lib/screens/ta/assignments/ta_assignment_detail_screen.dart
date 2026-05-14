@@ -4,7 +4,6 @@ import 'package:edu_verse/widgets/student/shared/drive_file_preview_screen.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +18,7 @@ import '../../../screens/instructor/create_assignment_screen.dart';
 import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/assignments/grading_panel.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 
@@ -328,9 +328,9 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
     return Row(
       children: <Widget>[
         _buildIconShell(
-          icon: Icons.arrow_back_ios_new_rounded,
+          icon: iosBackIcon(context),
           isDark: isDark,
-          onTap: () => context.pop(),
+          onTap: () => safeBack(context, '/ta/dashboard'),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -2590,7 +2590,7 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
     }
 
     _showSnack(l10n.assignmentDeletedSuccess);
-    context.pop(true);
+    safeBack(context, '/ta/dashboard', true);
   }
 
   Future<void> _updateStatus(api.AssignmentStatus status) async {

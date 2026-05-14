@@ -10,9 +10,9 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
 import 'package:edu_verse/services/api/quiz_ai_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:go_router/go_router.dart';
 
 class InstructorQuizCreateScreen extends StatefulWidget {
   const InstructorQuizCreateScreen({super.key});
@@ -121,12 +121,8 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(
-              Icons.arrow_back_ios_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
+            onPressed: () => safeBack(context, '/instructor/dashboard'),
+            icon: Icon(iosBackIcon(context), color: Colors.white, size: 18),
           ),
         ),
         const SizedBox(width: 14),
@@ -1860,7 +1856,7 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
           ),
         ),
       );
-      context.pop();
+      safeBack(context, '/instructor/dashboard');
     }
   }
 }

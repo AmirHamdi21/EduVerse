@@ -9,7 +9,9 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/ta_courses_theme.dart';
+import '../../../features/walkthrough/role_walkthrough_cubit.dart';
 import '../../../features/walkthrough/ta_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_models.dart';
 import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/assignments/assignment_model.dart';
@@ -1111,6 +1113,13 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     TACoursesState state,
     List<CourseMaterialModel> materials,
   ) {
+    final walkthroughState = context.watch<RoleWalkthroughCubit>().state;
+    final showWalkthroughDemo =
+        walkthroughState.isActive &&
+        walkthroughState.role == WalkthroughRole.ta &&
+        walkthroughState.segment?.id == TAWalkthroughIds.courseDetails &&
+        materials.isEmpty;
+
     return switch (state.materialsData) {
       TASubTabInitial<List<CourseMaterialModel>>() ||
       TASubTabLoading<List<CourseMaterialModel>>() => _buildDetailTabSkeleton(
@@ -1121,12 +1130,14 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         _buildInlineErrorState(isDark, message),
       TASubTabLoaded<List<CourseMaterialModel>>() =>
         materials.isEmpty
-            ? _buildCenteredEmptyState(
-                isDark: isDark,
-                icon: Icons.video_library_outlined,
-                title: l10n.courseMaterials,
-                message: l10n.taCourseDetailContentEmpty,
-              )
+            ? showWalkthroughDemo
+                  ? _TACourseContentWalkthroughDemo(isDark: isDark)
+                  : _buildCenteredEmptyState(
+                      isDark: isDark,
+                      icon: Icons.video_library_outlined,
+                      title: l10n.courseMaterials,
+                      message: l10n.taCourseDetailContentEmpty,
+                    )
             : ListView(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                 children: _buildMaterialWeekCards(
@@ -2571,6 +2582,210 @@ class _TACourseDetailTabSpec {
     required this.label,
     this.compact = false,
   });
+}
+
+class _TACourseContentWalkthroughDemo extends StatelessWidget {
+  const _TACourseContentWalkthroughDemo({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return IgnorePointer(
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        children: [
+          _TACourseContentDemoWeek(
+            isDark: isDark,
+            title: '${l10n.week} 4',
+            subtitle: l10n.taWalkthroughCourseDemoWeekSubtitle,
+            materials: [
+              _TACourseContentDemoMaterial(
+                icon: Icons.play_circle_outline_rounded,
+                color: TAColors.primary,
+                title: l10n.taWalkthroughCourseDemoVideoTitle,
+                subtitle: l10n.taWalkthroughCourseDemoVideoBody,
+              ),
+              _TACourseContentDemoMaterial(
+                icon: Icons.description_outlined,
+                color: TAColors.info,
+                title: l10n.taWalkthroughCourseDemoSheetTitle,
+                subtitle: l10n.taWalkthroughCourseDemoSheetBody,
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          _TACourseContentDemoWeek(
+            isDark: isDark,
+            title: '${l10n.week} 5',
+            subtitle: l10n.taWalkthroughCourseDemoNextWeekSubtitle,
+            materials: [
+              _TACourseContentDemoMaterial(
+                icon: Icons.science_outlined,
+                color: TAColors.success,
+                title: l10n.taWalkthroughCourseDemoLabTitle,
+                subtitle: l10n.taWalkthroughCourseDemoLabBody,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TACourseContentDemoWeek extends StatelessWidget {
+  const _TACourseContentDemoWeek({
+    required this.isDark,
+    required this.title,
+    required this.subtitle,
+    required this.materials,
+  });
+
+  final bool isDark;
+  final String title;
+  final String subtitle;
+  final List<_TACourseContentDemoMaterial> materials;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF101828) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: TACoursesTheme.borderColor(isDark)),
+        boxShadow: [
+          BoxShadow(
+            color: TAColors.primary.withValues(alpha: isDark ? 0.16 : 0.08),
+            blurRadius: 22,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  gradient: TAColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.calendar_view_week_rounded,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: TACoursesTheme.primaryText(isDark),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: TACoursesTheme.secondaryText(isDark),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ...materials.map(
+            (material) => Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: material.build(context, isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TACourseContentDemoMaterial {
+  const _TACourseContentDemoMaterial({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+
+  Widget build(BuildContext context, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF131E31) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: color),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: TACoursesTheme.primaryText(isDark),
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: TACoursesTheme.secondaryText(isDark),
+                    height: 1.35,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: TACoursesTheme.secondaryText(isDark),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _TADetailHeroMetric {

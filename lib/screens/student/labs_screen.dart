@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../bloc/labs/labs_cubit.dart';
 import '../../bloc/labs/labs_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
@@ -8,6 +9,8 @@ import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/responsive.dart';
 import '../../config/app_theme.dart';
+import '../../features/walkthrough/student_walkthrough_registry.dart';
+import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/core/course_model.dart';
 import '../../models/labs/lab_model.dart';
@@ -67,52 +70,60 @@ class _LabsScreenState extends State<LabsScreen> {
           value: isDark
               ? SystemUiOverlayStyle.light
               : SystemUiOverlayStyle.dark,
-          child: Scaffold(
-            backgroundColor: _StudentLabColors.background(isDark),
-            body: SafeArea(
-              child: BlocConsumer<LabsCubit, LabsState>(
-                listener: (context, state) {
-                  final error = state.error;
-                  if (error == null || error.isEmpty) {
-                    return;
-                  }
+          child: StudentWalkthroughRouteMarker(
+            segmentId: StudentWalkthroughIds.labs,
+            child: Scaffold(
+              backgroundColor: _StudentLabColors.background(isDark),
+              body: SafeArea(
+                child: BlocConsumer<LabsCubit, LabsState>(
+                  listener: (context, state) {
+                    final error = state.error;
+                    if (error == null || error.isEmpty) {
+                      return;
+                    }
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(error),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                  context.read<LabsCubit>().clearError();
-                },
-                builder: (context, state) {
-                  return RefreshIndicator(
-                    onRefresh: () => context.read<LabsCubit>().refreshLabs(),
-                    color: _StudentLabColors.primary,
-                    child: CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      slivers: <Widget>[
-                        _buildAppBar(context, isDark, l10n),
-                        if (state.isLoading && state.labs.isEmpty) ...<Widget>[
-                          _buildLoadingHero(isDark, l10n),
-                          _buildLoadingSkeleton(isDark),
-                        ] else if (!state.isLoading &&
-                            state.enrolledCourses.isEmpty)
-                          SliverFillRemaining(
-                            child: _buildNoCoursesState(context, isDark, l10n),
-                          )
-                        else if (state.error != null &&
-                            state.labs.isEmpty &&
-                            !state.isLoading)
-                          SliverFillRemaining(
-                            child: _buildErrorState(context, isDark, l10n),
-                          )
-                        else
-                          _buildLoadedContent(context, isDark, l10n, state),
-                      ],
-                    ),
-                  );
-                },
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                    context.read<LabsCubit>().clearError();
+                  },
+                  builder: (context, state) {
+                    return RefreshIndicator(
+                      onRefresh: () => context.read<LabsCubit>().refreshLabs(),
+                      color: _StudentLabColors.primary,
+                      child: CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: <Widget>[
+                          _buildAppBar(context, isDark, l10n),
+                          if (state.isLoading &&
+                              state.labs.isEmpty) ...<Widget>[
+                            _buildLoadingHero(isDark, l10n),
+                            _buildLoadingSkeleton(isDark),
+                          ] else if (!state.isLoading &&
+                              state.enrolledCourses.isEmpty)
+                            SliverFillRemaining(
+                              child: _buildNoCoursesState(
+                                context,
+                                isDark,
+                                l10n,
+                              ),
+                            )
+                          else if (state.error != null &&
+                              state.labs.isEmpty &&
+                              !state.isLoading)
+                            SliverFillRemaining(
+                              child: _buildErrorState(context, isDark, l10n),
+                            )
+                          else
+                            _buildLoadedContent(context, isDark, l10n, state),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -132,7 +143,7 @@ class _LabsScreenState extends State<LabsScreen> {
       floating: true,
       snap: true,
       leading: IconButton(
-        onPressed: () => Navigator.of(context).maybePop(),
+        onPressed: () => _leaveStudentAcademicScreen(context),
         icon: Icon(
           Icons.arrow_back_rounded,
           color: _StudentLabColors.textPrimary(isDark),
@@ -160,10 +171,7 @@ class _LabsScreenState extends State<LabsScreen> {
     );
   }
 
-  SliverToBoxAdapter _buildLoadingHero(
-    bool isDark,
-    AppLocalizations l10n,
-  ) {
+  SliverToBoxAdapter _buildLoadingHero(bool isDark, AppLocalizations l10n) {
     return SliverToBoxAdapter(
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -231,23 +239,29 @@ class _LabsScreenState extends State<LabsScreen> {
     return SliverMainAxisGroup(
       slivers: <Widget>[
         SliverToBoxAdapter(
-          child: _buildSummaryHeader(
-            context,
-            isDark,
-            l10n,
-            responsive,
-            state,
-            labs,
+          child: WalkthroughTarget(
+            id: StudentWalkthroughIds.labsHeader,
+            child: _buildSummaryHeader(
+              context,
+              isDark,
+              l10n,
+              responsive,
+              state,
+              labs,
+            ),
           ),
         ),
         SliverToBoxAdapter(
-          child: _buildFilterCard(
-            context,
-            isDark,
-            l10n,
-            responsive,
-            state,
-            labs.length,
+          child: WalkthroughTarget(
+            id: StudentWalkthroughIds.labsFilters,
+            child: _buildFilterCard(
+              context,
+              isDark,
+              l10n,
+              responsive,
+              state,
+              labs.length,
+            ),
           ),
         ),
         if (courseIds.isEmpty)
@@ -257,18 +271,23 @@ class _LabsScreenState extends State<LabsScreen> {
         else
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final courseId = courseIds[index];
-                return _buildCourseCard(
-                  context,
-                  isDark,
-                  l10n,
-                  state,
-                  courseId,
-                  grouped[courseId] ?? const <LabModel>[],
-                );
-              }, childCount: courseIds.length),
+            sliver: SliverToBoxAdapter(
+              child: WalkthroughTarget(
+                id: StudentWalkthroughIds.labsList,
+                child: Column(
+                  children: [
+                    for (final courseId in courseIds)
+                      _buildCourseCard(
+                        context,
+                        isDark,
+                        l10n,
+                        state,
+                        courseId,
+                        grouped[courseId] ?? const <LabModel>[],
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
       ],
@@ -284,7 +303,9 @@ class _LabsScreenState extends State<LabsScreen> {
     List<LabModel> labs,
   ) {
     final selectedCourse = state.selectedCourse;
-    final courseCount = selectedCourse == null ? state.enrolledCourses.length : 1;
+    final courseCount = selectedCourse == null
+        ? state.enrolledCourses.length
+        : 1;
     final subtitle = selectedCourse == null
         ? _studentHeroSubtitle()
         : '${selectedCourse.code} • ${selectedCourse.name}';
@@ -435,17 +456,19 @@ class _LabsScreenState extends State<LabsScreen> {
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats.map((stat) {
-                          return SizedBox(
-                            width: itemWidth,
-                            child: _buildHeroStatCard(
-                              icon: stat.icon,
-                              label: stat.label,
-                              value: stat.value,
-                              color: stat.color,
-                            ),
-                          );
-                        }).toList(growable: false),
+                        children: stats
+                            .map((stat) {
+                              return SizedBox(
+                                width: itemWidth,
+                                child: _buildHeroStatCard(
+                                  icon: stat.icon,
+                                  label: stat.label,
+                                  value: stat.value,
+                                  color: stat.color,
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
                       );
                     },
                   ),
@@ -743,29 +766,31 @@ class _LabsScreenState extends State<LabsScreen> {
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items.map((_) {
-          return Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Row(
-              children: <Widget>[
-                Icon(icon, size: 18, color: _StudentLabColors.primary),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    selectedLabel,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: _StudentLabColors.textPrimary(isDark),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+        return items
+            .map((_) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Row(
+                  children: <Widget>[
+                    Icon(icon, size: 18, color: _StudentLabColors.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        selectedLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: _StudentLabColors.textPrimary(isDark),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }).toList(growable: false);
+              );
+            })
+            .toList(growable: false);
       },
       items: items,
       onChanged: onChanged,
@@ -1048,7 +1073,9 @@ class _LabsScreenState extends State<LabsScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: _StudentLabColors.primary,
                       side: BorderSide(
-                        color: _StudentLabColors.primary.withValues(alpha: 0.26),
+                        color: _StudentLabColors.primary.withValues(
+                          alpha: 0.26,
+                        ),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -1158,7 +1185,8 @@ class _LabsScreenState extends State<LabsScreen> {
       context,
       icon: Icons.science_outlined,
       title: 'No labs available',
-      message: state.searchQuery.trim().isNotEmpty || state.filter.hasActiveFilters
+      message:
+          state.searchQuery.trim().isNotEmpty || state.filter.hasActiveFilters
           ? 'Try a different search or reset the current filters.'
           : l10n.noLabsDescription,
       isDark: isDark,
@@ -1319,6 +1347,15 @@ class _LabsScreenState extends State<LabsScreen> {
       ),
     );
   }
+}
+
+void _leaveStudentAcademicScreen(BuildContext context) {
+  if (context.canPop()) {
+    context.pop();
+    return;
+  }
+
+  context.go('/dashboard');
 }
 
 class _StudentLabColors {

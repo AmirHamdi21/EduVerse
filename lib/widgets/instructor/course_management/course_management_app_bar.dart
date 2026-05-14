@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import '../../../utils/navigation/safe_back.dart';
 import 'course_management_colors.dart';
 
 /// AppBar for Course Management - matches instructor courses screen style
@@ -184,12 +184,12 @@ class CourseManagementAppBar extends StatelessWidget {
           ],
         ),
         child: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          iosBackIcon(context),
           color: isDark ? Colors.white : CMColors.primary,
           size: 16,
         ),
       ),
-      onPressed: () => context.pop(),
+      onPressed: () => safeBack(context, '/instructor/dashboard'),
     );
   }
 

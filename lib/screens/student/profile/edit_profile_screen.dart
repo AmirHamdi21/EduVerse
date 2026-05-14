@@ -12,6 +12,7 @@ class EditProfileScreen extends StatelessWidget {
       title: 'Edit Profile',
       roleLabel: 'Student',
       theme: RoleProfileTheme.student(),
+      fallbackRoute: '/dashboard',
     );
   }
 }

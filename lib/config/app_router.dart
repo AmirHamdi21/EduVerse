@@ -218,6 +218,7 @@ import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
 import 'package:edu_verse/screens/shared/chat/user_profile_screen.dart';
 import 'package:edu_verse/screens/shared/chat/group_profile_screen.dart';
 import 'package:edu_verse/bloc/chat/chat_models.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -262,6 +263,40 @@ class AppRouter {
     }
 
     return _parsePositiveInt(state.uri.queryParameters['courseId']);
+  }
+
+  static Widget _taRouteFallback(BuildContext context, String message) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/ta/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(message, textAlign: TextAlign.center),
+        ),
+      ),
+    );
+  }
+
+  static Widget _instructorRouteFallback(BuildContext context, String message) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/instructor/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(message, textAlign: TextAlign.center),
+        ),
+      ),
+    );
   }
 
   static String? _handleRedirect(GoRouterState state) {
@@ -552,6 +587,7 @@ class AppRouter {
         path: '/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF3B82F6), // Student blue
+          fallbackRoute: '/dashboard',
         ),
       ),
       GoRoute(
@@ -822,8 +858,9 @@ class AppRouter {
         builder: (context, state) {
           final labId = state.pathParameters['labId'] ?? '';
           if (labId.trim().isEmpty) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid lab detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid lab detail route',
             );
           }
 
@@ -917,9 +954,7 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid group id')),
-            );
+            return _instructorRouteFallback(context, 'Invalid group id');
           }
           return QuestionGroupEditScreen(groupId: groupId);
         },
@@ -929,8 +964,9 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question group route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question group route',
             );
           }
           return QuestionGroupAddQuestionsScreen(groupId: groupId);
@@ -941,8 +977,9 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question group route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question group route',
             );
           }
           return QuestionGroupLinkQuestionsScreen(groupId: groupId);
@@ -953,8 +990,9 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question group route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question group route',
             );
           }
           final refreshToken = state.uri.queryParameters['refresh'];
@@ -971,8 +1009,9 @@ class AppRouter {
             state.pathParameters['questionId'] ?? '',
           );
           if (questionId == null || questionId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question edit route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question edit route',
             );
           }
           return QuestionBankEditScreen(
@@ -988,8 +1027,9 @@ class AppRouter {
             state.pathParameters['questionId'] ?? '',
           );
           if (questionId == null || questionId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question detail route',
             );
           }
           return QuestionBankDetailScreen(questionId: questionId);
@@ -1012,8 +1052,9 @@ class AppRouter {
         builder: (context, state) {
           final draftId = int.tryParse(state.pathParameters['draftId'] ?? '');
           if (draftId == null || draftId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid draft detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid draft detail route',
             );
           }
           return ExamDraftDetailScreen(draftId: draftId);
@@ -1024,8 +1065,9 @@ class AppRouter {
         builder: (context, state) {
           final examId = int.tryParse(state.pathParameters['examId'] ?? '');
           if (examId == null || examId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid exam paper export route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid exam paper export route',
             );
           }
           return ExamPaperExportPreviewScreen(examId: examId);
@@ -1036,8 +1078,9 @@ class AppRouter {
         builder: (context, state) {
           final examId = int.tryParse(state.pathParameters['examId'] ?? '');
           if (examId == null || examId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid exam detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid exam detail route',
             );
           }
           return ExamSavedDetailScreen(examId: examId);
@@ -1076,8 +1119,9 @@ class AppRouter {
             state.pathParameters['assignmentId'] ?? '',
           );
           if (assignmentId == null || assignmentId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid assignment submissions route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid assignment submissions route',
             );
           }
           final extra = state.extra;
@@ -1110,9 +1154,7 @@ class AppRouter {
               assignmentId <= 0 ||
               submissionId == null ||
               submissionId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid grading route')),
-            );
+            return _instructorRouteFallback(context, 'Invalid grading route');
           }
 
           String? assignmentTitle;
@@ -1161,8 +1203,9 @@ class AppRouter {
             state.pathParameters['assignmentId'] ?? '',
           );
           if (assignmentId == null || assignmentId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid assignment detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid assignment detail route',
             );
           }
 
@@ -1294,6 +1337,7 @@ class AppRouter {
         path: '/instructor/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF155CFB), // Instructor blue
+          fallbackRoute: '/instructor/dashboard',
         ),
       ),
       GoRoute(
@@ -1305,8 +1349,9 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           if (courseId == null || courseId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid instructor discussion route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid instructor discussion route',
             );
           }
           TeachingCourseModel? course;
@@ -1332,10 +1377,9 @@ class AppRouter {
               courseId <= 0 ||
               threadId == null ||
               threadId <= 0) {
-            return const Scaffold(
-              body: Center(
-                child: Text('Invalid instructor discussion post route'),
-              ),
+            return _instructorRouteFallback(
+              context,
+              'Invalid instructor discussion post route',
             );
           }
 
@@ -1376,7 +1420,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _instructorRouteFallback(context, 'Quiz not found');
           }
           return InstructorQuizEditScreen(quiz: quiz);
         },
@@ -1386,7 +1430,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _instructorRouteFallback(context, 'Quiz not found');
           }
           return InstructorQuizAttemptsScreen(quiz: quiz);
         },
@@ -1398,9 +1442,7 @@ class AppRouter {
           final quiz = extra?['quiz'] as quiz_models.QuizModel?;
           final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
           if (quiz == null || attempt == null) {
-            return const Scaffold(
-              body: Center(child: Text('Grading data not found')),
-            );
+            return _instructorRouteFallback(context, 'Grading data not found');
           }
           return InstructorQuizGradingScreen(quiz: quiz, attempt: attempt);
         },
@@ -1410,7 +1452,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _instructorRouteFallback(context, 'Quiz not found');
           }
           return InstructorQuizStatisticsScreen(quiz: quiz);
         },
@@ -1436,8 +1478,9 @@ class AppRouter {
             state.pathParameters['assignmentId'] ?? '',
           );
           if (assignmentId == null || assignmentId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid TA assignment detail route')),
+            return _taRouteFallback(
+              context,
+              'Invalid TA assignment detail route',
             );
           }
 
@@ -1487,7 +1530,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _taRouteFallback(context, 'Quiz not found');
           }
           return TAQuizEditScreen(quiz: quiz);
         },
@@ -1497,7 +1540,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _taRouteFallback(context, 'Quiz not found');
           }
           return TAQuizAttemptsScreen(quiz: quiz);
         },
@@ -1509,9 +1552,7 @@ class AppRouter {
           final quiz = extra?['quiz'] as quiz_models.QuizModel?;
           final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
           if (quiz == null || attempt == null) {
-            return const Scaffold(
-              body: Center(child: Text('Grading data not found')),
-            );
+            return _taRouteFallback(context, 'Grading data not found');
           }
           return TAQuizGradingScreen(quiz: quiz, attempt: attempt);
         },
@@ -1521,7 +1562,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _taRouteFallback(context, 'Quiz not found');
           }
           return TAQuizStatisticsScreen(quiz: quiz);
         },
@@ -1543,9 +1584,7 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           if (courseId == null || courseId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid TA discussion route')),
-            );
+            return _taRouteFallback(context, 'Invalid TA discussion route');
           }
           TeachingCourseModel? course;
           final extra = state.extra;
@@ -1570,8 +1609,9 @@ class AppRouter {
               courseId <= 0 ||
               threadId == null ||
               threadId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid TA discussion post route')),
+            return _taRouteFallback(
+              context,
+              'Invalid TA discussion post route',
             );
           }
 
@@ -1607,6 +1647,10 @@ class AppRouter {
           final sectionName = extra?['sectionName'] as String? ?? 'Section';
           final courseId =
               int.tryParse(extra?['courseId']?.toString() ?? '') ?? 0;
+
+          if (sectionId <= 0 || courseId <= 0) {
+            return _taRouteFallback(context, 'Invalid TA section route');
+          }
 
           return TASectionMaterialsScreen(
             sectionId: sectionId,
@@ -1667,6 +1711,7 @@ class AppRouter {
         path: '/ta/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF8B5CF6), // TA violet
+          fallbackRoute: '/ta/dashboard',
         ),
       ),
 
@@ -1781,6 +1826,7 @@ class AppRouter {
         path: '/admin/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF4F46E5), // Admin indigo
+          fallbackRoute: '/admin/dashboard',
         ),
       ),
       GoRoute(
@@ -1966,6 +2012,7 @@ class AppRouter {
         path: '/it-admin/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF3B82F6), // IT Admin blue
+          fallbackRoute: '/it-admin/dashboard',
         ),
       ),
       GoRoute(

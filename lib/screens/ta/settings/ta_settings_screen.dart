@@ -9,8 +9,8 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
-import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/ta/settings/ta_settings_barrel.dart';
 
 class TASettingsScreen extends StatefulWidget {
@@ -22,7 +22,6 @@ class TASettingsScreen extends StatefulWidget {
 
 class _TASettingsScreenState extends State<TASettingsScreen>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
@@ -91,9 +90,7 @@ class _TASettingsScreenState extends State<TASettingsScreen>
         final isDark = themeState.themeMode == AppThemeMode.dark;
 
         return Scaffold(
-          key: _scaffoldKey,
           backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: const TADrawer(),
           appBar: _buildAppBar(l10n, isDark),
           body: FadeTransition(
             opacity: _fadeAnimation,
@@ -405,10 +402,10 @@ class _TASettingsScreenState extends State<TASettingsScreen>
       elevation: 0,
       leading: IconButton(
         icon: Icon(
-          Icons.menu_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
-        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        onPressed: () => safeBack(context, '/ta/dashboard'),
       ),
       title: Text(
         l10n.settings,

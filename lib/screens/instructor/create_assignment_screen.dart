@@ -12,6 +12,7 @@ import '../../services/api/assignment_service.dart';
 import '../../services/api/core_api_client.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/storage_service.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/instructor/assignments/assignment_create_form.dart';
 import '../../widgets/instructor/shared/instructor_colors.dart';
 import '../../widgets/ta/shared/ta_colors.dart';
@@ -128,8 +129,9 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
     final background = widget.useTAColors
         ? TAColors.scaffoldColor(isDark)
         : (isDark ? InstructorColors.darkBg : InstructorColors.lightBackground);
-    final warningColor =
-        widget.useTAColors ? TAColors.warning : InstructorColors.warning;
+    final warningColor = widget.useTAColors
+        ? TAColors.warning
+        : InstructorColors.warning;
 
     if (_fetchingAssignment) {
       return Scaffold(
@@ -153,6 +155,12 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             surfaceTintColor: Colors.transparent,
+            leading: IconButton(
+              onPressed: _submitting
+                  ? null
+                  : () => safeBack(context, '/instructor/dashboard'),
+              icon: Icon(iosBackIcon(context)),
+            ),
             title: Text(
               isEdit
                   ? l10n.instructorAssignmentEditScreenTitle
@@ -160,8 +168,9 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
             ),
             actions: <Widget>[
               IconButton(
-                onPressed:
-                    _submitting ? null : () => Navigator.of(context).pop(),
+                onPressed: _submitting
+                    ? null
+                    : () => safeBack(context, '/instructor/dashboard'),
                 icon: const Icon(Icons.close_rounded),
                 tooltip: l10n.cancel,
               ),
@@ -188,8 +197,10 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.only(top: 1),
-                              child: Icon(Icons.warning_amber_rounded,
-                                  color: warningColor),
+                              child: Icon(
+                                Icons.warning_amber_rounded,
+                                color: warningColor,
+                              ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -254,8 +265,9 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       return;
     }
 
-    final savedAssignmentId =
-        isEdit ? editId : _resolveCreatedAssignmentId(cubit.state, data);
+    final savedAssignmentId = isEdit
+        ? editId
+        : _resolveCreatedAssignmentId(cubit.state, data);
 
     if (savedAssignmentId > 0 && _activeAssignmentId != savedAssignmentId) {
       setState(() {

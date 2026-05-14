@@ -18386,4 +18386,382 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get taWalkthroughAiComposerBody =>
       'Type a question, choose the right mode, and send it when you want targeted TA support.';
+
+  @override
+  String get studentWalkthroughDashboardTopTitle =>
+      'Start from your student command bar';
+
+  @override
+  String get studentWalkthroughDashboardTopBody =>
+      'Use search, notifications, profile, and the menu to move through your student work without leaving the dashboard.';
+
+  @override
+  String get studentWalkthroughDashboardStatsTitle =>
+      'Read your academic snapshot';
+
+  @override
+  String get studentWalkthroughDashboardStatsBody =>
+      'These numbers summarize active courses, pending work, grades, attendance, and recent progress.';
+
+  @override
+  String get studentWalkthroughDashboardQuickTitle =>
+      'Jump into common student actions';
+
+  @override
+  String get studentWalkthroughDashboardQuickBody =>
+      'Open courses, assignments, labs, quizzes, discussions, grades, attendance, and AI help from one compact area.';
+
+  @override
+  String get studentWalkthroughDashboardCoursesTitle =>
+      'Continue your current courses';
+
+  @override
+  String get studentWalkthroughDashboardCoursesBody =>
+      'Course cards keep your active learning spaces close so you can return to materials, tasks, and discussions quickly.';
+
+  @override
+  String get studentWalkthroughCoursesHeaderTitle =>
+      'Browse your enrolled courses';
+
+  @override
+  String get studentWalkthroughCoursesHeaderBody =>
+      'The course header combines search, status, progress, and course metrics for your enrolled sections.';
+
+  @override
+  String get studentWalkthroughCoursesControlsTitle =>
+      'Filter and sort courses';
+
+  @override
+  String get studentWalkthroughCoursesControlsBody =>
+      'Use status, semester, and sort controls to find the exact course space you need.';
+
+  @override
+  String get studentWalkthroughCoursesListTitle => 'Open a course workspace';
+
+  @override
+  String get studentWalkthroughCoursesListBody =>
+      'Course cards lead to materials, assignments, labs, announcements, discussions, grades, and instructor details.';
+
+  @override
+  String get studentWalkthroughCoursesJoinTitle =>
+      'Join or register when available';
+
+  @override
+  String get studentWalkthroughCoursesJoinBody =>
+      'Use this action to reach course joining or registration options when your enrollment period allows it.';
+
+  @override
+  String get studentWalkthroughCourseDetailsHeroTitle =>
+      'Review the course overview';
+
+  @override
+  String get studentWalkthroughCourseDetailsHeroBody =>
+      'The top area shows course identity, instructor context, progress, and featured materials.';
+
+  @override
+  String get studentWalkthroughCourseDetailsTabsTitle =>
+      'Move between course tabs';
+
+  @override
+  String get studentWalkthroughCourseDetailsTabsBody =>
+      'Tabs keep search, content, overview, notes, announcements, discussions, assignments, labs, and prerequisites in one hub.';
+
+  @override
+  String get studentWalkthroughCourseDetailsContentTitle =>
+      'Work in the selected course area';
+
+  @override
+  String get studentWalkthroughCourseDetailsContentBody =>
+      'This panel changes with the active tab so you can focus on one course workflow at a time.';
+
+  @override
+  String get studentWalkthroughRegistrationHeaderTitle =>
+      'Check registration status';
+
+  @override
+  String get studentWalkthroughRegistrationHeaderBody =>
+      'The header shows the active registration period and the context for adding or dropping courses.';
+
+  @override
+  String get studentWalkthroughRegistrationStatsTitle =>
+      'Review registration limits';
+
+  @override
+  String get studentWalkthroughRegistrationStatsBody =>
+      'Stats summarize available courses, registered courses, credits, and registration progress.';
+
+  @override
+  String get studentWalkthroughRegistrationFiltersTitle =>
+      'Find eligible courses';
+
+  @override
+  String get studentWalkthroughRegistrationFiltersBody =>
+      'Search and filter by department or level before selecting a course section.';
+
+  @override
+  String get studentWalkthroughRegistrationCoursesTitle =>
+      'Choose course sections carefully';
+
+  @override
+  String get studentWalkthroughRegistrationCoursesBody =>
+      'Available and registered course cards show section details, capacity, and enrollment actions.';
+
+  @override
+  String get studentWalkthroughAssignmentsHeaderTitle =>
+      'Track assignment work';
+
+  @override
+  String get studentWalkthroughAssignmentsHeaderBody =>
+      'The summary shows submitted, pending, overdue, and graded assignments across your courses.';
+
+  @override
+  String get studentWalkthroughAssignmentsFiltersTitle =>
+      'Focus assignment lists';
+
+  @override
+  String get studentWalkthroughAssignmentsFiltersBody =>
+      'Use course and status filters to find upcoming work, submitted work, or items needing attention.';
+
+  @override
+  String get studentWalkthroughAssignmentsListTitle =>
+      'Open assignment details';
+
+  @override
+  String get studentWalkthroughAssignmentsListBody =>
+      'Assignment cards show due dates, submission state, grades, and entry points for upload or review.';
+
+  @override
+  String get studentWalkthroughLabsHeaderTitle => 'Track lab activity';
+
+  @override
+  String get studentWalkthroughLabsHeaderBody =>
+      'The lab summary highlights practical work, due dates, and submission progress.';
+
+  @override
+  String get studentWalkthroughLabsFiltersTitle => 'Filter labs by context';
+
+  @override
+  String get studentWalkthroughLabsFiltersBody =>
+      'Search and filter labs by course or state to find the experiment or submission you need.';
+
+  @override
+  String get studentWalkthroughLabsListTitle => 'Open lab submissions';
+
+  @override
+  String get studentWalkthroughLabsListBody =>
+      'Lab cards collect instructions, resources, due dates, submission history, and upload entry points.';
+
+  @override
+  String get studentWalkthroughGradesGpaTitle => 'Review your grade snapshot';
+
+  @override
+  String get studentWalkthroughGradesGpaBody =>
+      'The GPA card summarizes semester and cumulative performance before you inspect each course.';
+
+  @override
+  String get studentWalkthroughGradesTabsTitle => 'Switch grade views';
+
+  @override
+  String get studentWalkthroughGradesTabsBody =>
+      'Use semester controls and tabs to compare current grades, history, analytics, and reports.';
+
+  @override
+  String get studentWalkthroughGradesListTitle => 'Inspect course grades';
+
+  @override
+  String get studentWalkthroughGradesListBody =>
+      'Grade cards show course scores, credits, trends, and detail sheets for deeper review.';
+
+  @override
+  String get studentWalkthroughAttendanceHeaderTitle =>
+      'Open attendance tracking';
+
+  @override
+  String get studentWalkthroughAttendanceHeaderBody =>
+      'The header gives quick access to attendance search and the current attendance area.';
+
+  @override
+  String get studentWalkthroughAttendanceTabsTitle => 'Switch attendance views';
+
+  @override
+  String get studentWalkthroughAttendanceTabsBody =>
+      'Move between overview and calendar views to understand attendance by course or date.';
+
+  @override
+  String get studentWalkthroughAttendanceStatsTitle => 'Read attendance stats';
+
+  @override
+  String get studentWalkthroughAttendanceStatsBody =>
+      'Stats summarize presence, absences, late records, and overall attendance health.';
+
+  @override
+  String get studentWalkthroughAttendanceListTitle => 'Check course attendance';
+
+  @override
+  String get studentWalkthroughAttendanceListBody =>
+      'Course attendance rows show per-course attendance progress and lead to detailed records.';
+
+  @override
+  String get studentWalkthroughQuizzesHeaderTitle => 'Open backend quizzes';
+
+  @override
+  String get studentWalkthroughQuizzesHeaderBody =>
+      'This screen lists instructor-published quizzes that are wired to backend attempts and results.';
+
+  @override
+  String get studentWalkthroughQuizzesSearchTitle => 'Search assigned quizzes';
+
+  @override
+  String get studentWalkthroughQuizzesSearchBody =>
+      'Search by quiz title or course to find the assessment you are ready to take.';
+
+  @override
+  String get studentWalkthroughQuizzesListTitle =>
+      'Start or resume quiz attempts';
+
+  @override
+  String get studentWalkthroughQuizzesListBody =>
+      'Quiz cards show attempts, timing, history, and the actions to start or resume backend quizzes.';
+
+  @override
+  String get studentWalkthroughDiscussionsHeaderTitle =>
+      'Enter course discussions';
+
+  @override
+  String get studentWalkthroughDiscussionsHeaderBody =>
+      'The summary shows course discussion activity, pinned threads, replies, and active conversations.';
+
+  @override
+  String get studentWalkthroughDiscussionsFiltersTitle =>
+      'Filter discussion spaces';
+
+  @override
+  String get studentWalkthroughDiscussionsFiltersBody =>
+      'Search courses and filter by active, unanswered, pinned, locked, or quiet discussions.';
+
+  @override
+  String get studentWalkthroughDiscussionsListTitle =>
+      'Open discussion threads';
+
+  @override
+  String get studentWalkthroughDiscussionsListBody =>
+      'Course cards show thread metrics and latest activity so you can enter the right conversation.';
+
+  @override
+  String get studentWalkthroughAiHeaderTitle => 'Choose AI study context';
+
+  @override
+  String get studentWalkthroughAiHeaderBody =>
+      'Use AI modes and course context to shape the assistant around the work you are studying.';
+
+  @override
+  String get studentWalkthroughAiMessagesTitle => 'Review the AI conversation';
+
+  @override
+  String get studentWalkthroughAiMessagesBody =>
+      'The chat area keeps explanations, follow-ups, and study guidance visible while you work.';
+
+  @override
+  String get studentWalkthroughAiQuickTitle => 'Use quick AI prompts';
+
+  @override
+  String get studentWalkthroughAiQuickBody =>
+      'Quick actions help you ask for summaries, explanations, practice, and planning without starting from scratch.';
+
+  @override
+  String get studentWalkthroughAiComposerTitle => 'Ask your own question';
+
+  @override
+  String get studentWalkthroughAiComposerBody =>
+      'Type a focused question, attach context when needed, and send it when you want personalized study help.';
+
+  @override
+  String get studentWalkthroughAiDemoStudyTitle => 'Database Systems exam prep';
+
+  @override
+  String get studentWalkthroughAiDemoStudyPreview =>
+      'Explain normalization with examples, then turn the key ideas into practice questions.';
+
+  @override
+  String get studentWalkthroughAiDemoLabTitle => 'Operating Systems lab recap';
+
+  @override
+  String get studentWalkthroughAiDemoLabPreview =>
+      'Summarize process scheduling and show where round-robin differs from priority scheduling.';
+
+  @override
+  String get instructorWalkthroughQuestionBankDemoTitleOne =>
+      'Process scheduling MCQ';
+
+  @override
+  String get instructorWalkthroughQuestionBankDemoBodyOne =>
+      'Which scheduling algorithm gives each ready process a fixed time slice before moving it to the back of the queue?';
+
+  @override
+  String get instructorWalkthroughQuestionBankDemoTitleTwo =>
+      'Database normalization case';
+
+  @override
+  String get instructorWalkthroughQuestionBankDemoBodyTwo =>
+      'Grouped questions can keep a shared prompt, media, status, and review actions together for reuse.';
+
+  @override
+  String get instructorWalkthroughExamDemoTitleOne =>
+      'Midterm draft from approved questions';
+
+  @override
+  String get instructorWalkthroughExamDemoBodyOne =>
+      'Draft records show editable exam work, selected questions, generation mode, and next review actions.';
+
+  @override
+  String get instructorWalkthroughExamDemoTitleTwo =>
+      'Final exam saved version';
+
+  @override
+  String get instructorWalkthroughExamDemoBodyTwo =>
+      'Saved exams expose publish state, export options, and the record actions instructors continue from.';
+
+  @override
+  String get taWalkthroughCourseDemoWeekSubtitle =>
+      'Published resources for this section';
+
+  @override
+  String get taWalkthroughCourseDemoNextWeekSubtitle =>
+      'Upcoming preparation materials';
+
+  @override
+  String get taWalkthroughCourseDemoVideoTitle => 'Lecture recap video';
+
+  @override
+  String get taWalkthroughCourseDemoVideoBody =>
+      'Review the key explanation before helping students in lab or discussion.';
+
+  @override
+  String get taWalkthroughCourseDemoSheetTitle => 'Practice worksheet';
+
+  @override
+  String get taWalkthroughCourseDemoSheetBody =>
+      'Open attached exercises, examples, and reference files for the active week.';
+
+  @override
+  String get taWalkthroughCourseDemoLabTitle => 'Lab preparation notes';
+
+  @override
+  String get taWalkthroughCourseDemoLabBody =>
+      'Use materials to prepare checks, hints, and support before the lab session.';
+
+  @override
+  String get taWalkthroughAiDemoFeedbackTitle =>
+      'Feedback for process scheduler submissions';
+
+  @override
+  String get taWalkthroughAiDemoFeedbackPreview =>
+      'Draft concise feedback that names the scheduling bug, expected fix, and next practice step.';
+
+  @override
+  String get taWalkthroughAiDemoLabTitle => 'Lab support plan';
+
+  @override
+  String get taWalkthroughAiDemoLabPreview =>
+      'Prepare hints, common mistakes, and a quick rubric for tomorrow\'s lab review.';
 }

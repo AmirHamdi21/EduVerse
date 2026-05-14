@@ -155,7 +155,9 @@ class _MenuCard extends StatelessWidget {
             color: InstructorCoursesTheme.cardBackground(isDark),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isActive ? color : InstructorCoursesTheme.borderColor(isDark),
+              color: isActive
+                  ? color
+                  : InstructorCoursesTheme.borderColor(isDark),
               width: isActive ? 1.4 : 1,
             ),
             boxShadow: [
@@ -204,7 +206,9 @@ class _MenuCard extends StatelessWidget {
                             ? color
                             : InstructorCoursesTheme.secondaryText(isDark),
                         fontSize: 11.5,
-                        fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isActive
+                            ? FontWeight.w700
+                            : FontWeight.w500,
                       ),
                     ),
                   ],

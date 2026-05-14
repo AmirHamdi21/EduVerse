@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../bloc/assignments/assignment_bloc.dart';
@@ -11,6 +12,8 @@ import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/responsive.dart';
 import '../../config/app_theme.dart';
+import '../../features/walkthrough/student_walkthrough_registry.dart';
+import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/assignments/assignment_model.dart';
 import '../../models/core/course_model.dart';
@@ -63,60 +66,66 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
           value: isDark
               ? SystemUiOverlayStyle.light
               : SystemUiOverlayStyle.dark,
-          child: Scaffold(
-            backgroundColor: _StudentAssignmentColors.background(isDark),
-            body: SafeArea(
-              child: BlocConsumer<AssignmentBloc, AssignmentState>(
-                listener: (context, state) {
-                  final error = state.error;
-                  if (error == null || error.isEmpty) {
-                    return;
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(error),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                  context.read<AssignmentBloc>().add(const ClearError());
-                },
-                builder: (context, state) {
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<AssignmentBloc>().add(
-                        RefreshAssignments(courseId: state.selectedCourseId),
-                      );
-                      await context.read<AssignmentBloc>().stream.firstWhere(
-                        (next) => !next.isListLoading,
-                      );
-                    },
-                    color: _StudentAssignmentColors.primary,
-                    child: CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      slivers: <Widget>[
-                        _buildAppBar(context, isDark, l10n),
-                        if (state.isListLoading && state.assignments.isEmpty) ...<
-                          Widget
-                        >[
-                          _buildLoadingHero(isDark, l10n),
-                          _buildLoadingSkeleton(isDark),
-                        ] else if (!state.isListLoading &&
-                            state.enrolledCourses.isEmpty)
-                          SliverFillRemaining(
-                            child: _buildNoCoursesState(context, isDark, l10n),
-                          )
-                        else if (state.error != null &&
-                            state.assignments.isEmpty &&
-                            !state.isListLoading)
-                          SliverFillRemaining(
-                            child: _buildErrorState(context, isDark, l10n),
-                          )
-                        else
-                          _buildLoadedContent(context, isDark, l10n, state),
-                      ],
-                    ),
-                  );
-                },
+          child: StudentWalkthroughRouteMarker(
+            segmentId: StudentWalkthroughIds.assignments,
+            child: Scaffold(
+              backgroundColor: _StudentAssignmentColors.background(isDark),
+              body: SafeArea(
+                child: BlocConsumer<AssignmentBloc, AssignmentState>(
+                  listener: (context, state) {
+                    final error = state.error;
+                    if (error == null || error.isEmpty) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                    context.read<AssignmentBloc>().add(const ClearError());
+                  },
+                  builder: (context, state) {
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        context.read<AssignmentBloc>().add(
+                          RefreshAssignments(courseId: state.selectedCourseId),
+                        );
+                        await context.read<AssignmentBloc>().stream.firstWhere(
+                          (next) => !next.isListLoading,
+                        );
+                      },
+                      color: _StudentAssignmentColors.primary,
+                      child: CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: <Widget>[
+                          _buildAppBar(context, isDark, l10n),
+                          if (state.isListLoading &&
+                              state.assignments.isEmpty) ...<Widget>[
+                            _buildLoadingHero(isDark, l10n),
+                            _buildLoadingSkeleton(isDark),
+                          ] else if (!state.isListLoading &&
+                              state.enrolledCourses.isEmpty)
+                            SliverFillRemaining(
+                              child: _buildNoCoursesState(
+                                context,
+                                isDark,
+                                l10n,
+                              ),
+                            )
+                          else if (state.error != null &&
+                              state.assignments.isEmpty &&
+                              !state.isListLoading)
+                            SliverFillRemaining(
+                              child: _buildErrorState(context, isDark, l10n),
+                            )
+                          else
+                            _buildLoadedContent(context, isDark, l10n, state),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -136,7 +145,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
       floating: true,
       snap: true,
       leading: IconButton(
-        onPressed: () => Navigator.of(context).maybePop(),
+        onPressed: () => _leaveStudentAcademicScreen(context),
         icon: Icon(
           Icons.arrow_back_rounded,
           color: _StudentAssignmentColors.textPrimary(isDark),
@@ -164,10 +173,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     );
   }
 
-  SliverToBoxAdapter _buildLoadingHero(
-    bool isDark,
-    AppLocalizations l10n,
-  ) {
+  SliverToBoxAdapter _buildLoadingHero(bool isDark, AppLocalizations l10n) {
     return SliverToBoxAdapter(
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -226,9 +232,9 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     final assignments = state.filteredAssignments;
     final grouped = <int, List<AssignmentModel>>{};
     for (final assignment in assignments) {
-      grouped.putIfAbsent(assignment.courseId, () => <AssignmentModel>[]).add(
-        assignment,
-      );
+      grouped
+          .putIfAbsent(assignment.courseId, () => <AssignmentModel>[])
+          .add(assignment);
     }
 
     final courseIds = grouped.keys.toList(growable: false);
@@ -237,23 +243,29 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     return SliverMainAxisGroup(
       slivers: <Widget>[
         SliverToBoxAdapter(
-          child: _buildSummaryHeader(
-            context,
-            isDark,
-            l10n,
-            responsive,
-            state,
-            assignments,
+          child: WalkthroughTarget(
+            id: StudentWalkthroughIds.assignmentsHeader,
+            child: _buildSummaryHeader(
+              context,
+              isDark,
+              l10n,
+              responsive,
+              state,
+              assignments,
+            ),
           ),
         ),
         SliverToBoxAdapter(
-          child: _buildFilterCard(
-            context,
-            isDark,
-            l10n,
-            responsive,
-            state,
-            assignments.length,
+          child: WalkthroughTarget(
+            id: StudentWalkthroughIds.assignmentsFilters,
+            child: _buildFilterCard(
+              context,
+              isDark,
+              l10n,
+              responsive,
+              state,
+              assignments.length,
+            ),
           ),
         ),
         if (courseIds.isEmpty)
@@ -263,18 +275,23 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         else
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final courseId = courseIds[index];
-                return _buildCourseCard(
-                  context,
-                  isDark,
-                  l10n,
-                  state,
-                  courseId,
-                  grouped[courseId] ?? const <AssignmentModel>[],
-                );
-              }, childCount: courseIds.length),
+            sliver: SliverToBoxAdapter(
+              child: WalkthroughTarget(
+                id: StudentWalkthroughIds.assignmentsList,
+                child: Column(
+                  children: [
+                    for (final courseId in courseIds)
+                      _buildCourseCard(
+                        context,
+                        isDark,
+                        l10n,
+                        state,
+                        courseId,
+                        grouped[courseId] ?? const <AssignmentModel>[],
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
       ],
@@ -290,7 +307,9 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     List<AssignmentModel> assignments,
   ) {
     final selectedCourse = _selectedCourse(state);
-    final courseCount = selectedCourse == null ? state.enrolledCourses.length : 1;
+    final courseCount = selectedCourse == null
+        ? state.enrolledCourses.length
+        : 1;
     final gradedCount = assignments.where((item) => item.grade != null).length;
     final subtitle = selectedCourse == null
         ? _studentHeroSubtitle()
@@ -442,17 +461,19 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats.map((stat) {
-                          return SizedBox(
-                            width: itemWidth,
-                            child: _buildHeroStatCard(
-                              icon: stat.icon,
-                              label: stat.label,
-                              value: stat.value,
-                              color: stat.color,
-                            ),
-                          );
-                        }).toList(growable: false),
+                        children: stats
+                            .map((stat) {
+                              return SizedBox(
+                                width: itemWidth,
+                                child: _buildHeroStatCard(
+                                  icon: stat.icon,
+                                  label: stat.label,
+                                  value: stat.value,
+                                  color: stat.color,
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
                       );
                     },
                   ),
@@ -721,29 +742,35 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items.map((_) {
-          return Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Row(
-              children: <Widget>[
-                Icon(icon, size: 18, color: _StudentAssignmentColors.primary),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    selectedLabel,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: _StudentAssignmentColors.textPrimary(isDark),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+        return items
+            .map((_) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      icon,
+                      size: 18,
+                      color: _StudentAssignmentColors.primary,
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        selectedLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: _StudentAssignmentColors.textPrimary(isDark),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }).toList(growable: false);
+              );
+            })
+            .toList(growable: false);
       },
       items: items,
       onChanged: onChanged,
@@ -774,9 +801,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         color: _StudentAssignmentColors.card(isDark),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: _StudentAssignmentColors.border(
-            isDark,
-          ).withValues(alpha: 0.6),
+          color: _StudentAssignmentColors.border(isDark).withValues(alpha: 0.6),
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
@@ -1214,10 +1239,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     }
   }
 
-  String _statusLabel(
-    AppLocalizations l10n,
-    AssignmentFilterStatus status,
-  ) {
+  String _statusLabel(AppLocalizations l10n, AssignmentFilterStatus status) {
     switch (status) {
       case AssignmentFilterStatus.submitted:
         return l10n.submitted;
@@ -1230,10 +1252,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     }
   }
 
-  String _filterLabel(
-    AppLocalizations l10n,
-    AssignmentFilterStatus status,
-  ) {
+  String _filterLabel(AppLocalizations l10n, AssignmentFilterStatus status) {
     switch (status) {
       case AssignmentFilterStatus.all:
         return l10n.all;
@@ -1363,6 +1382,15 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         ? cleaned.toUpperCase()
         : cleaned.substring(0, 4).toUpperCase();
   }
+}
+
+void _leaveStudentAcademicScreen(BuildContext context) {
+  if (context.canPop()) {
+    context.pop();
+    return;
+  }
+
+  context.go('/dashboard');
 }
 
 class _StudentAssignmentColors {

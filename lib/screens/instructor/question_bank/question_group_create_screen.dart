@@ -82,7 +82,7 @@ class _QuestionGroupCreateViewState extends State<_QuestionGroupCreateView> {
           leading: IconButton(
             onPressed: () => _handleBack(context),
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              safeFeatureBackIcon(context),
               color: InstructorColors.textPrimaryColor(isDark),
             ),
           ),

@@ -9,6 +9,7 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/discussion_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -399,7 +400,7 @@ class _TADiscussionsScreenState extends State<TADiscussionsScreen> {
       leading: IconButton(
         onPressed: _handleBackPressed,
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
       ),
@@ -426,11 +427,7 @@ class _TADiscussionsScreenState extends State<TADiscussionsScreen> {
   }
 
   void _handleBackPressed() {
-    if (context.canPop()) {
-      context.pop();
-      return;
-    }
-    context.go('/ta/dashboard');
+    safeBack(context, '/ta/dashboard');
   }
 
   List<({IconData icon, String label, String value, Color color})>

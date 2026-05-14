@@ -59,7 +59,7 @@ class _QuestionBankDetailViewState extends State<_QuestionBankDetailView> {
         leading: IconButton(
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
+            safeFeatureBackIcon(context),
             color: InstructorColors.textPrimaryColor(isDark),
           ),
           onPressed: () =>

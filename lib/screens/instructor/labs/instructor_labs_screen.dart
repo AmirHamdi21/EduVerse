@@ -1,6 +1,7 @@
 import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -265,7 +266,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
       leading: IconButton(
         onPressed: _safeBackToDashboard,
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: InstructorColors.textPrimaryColor(isDark),
         ),
       ),
@@ -295,11 +296,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   }
 
   void _safeBackToDashboard() {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go('/instructor/dashboard');
-    }
+    safeBack(context, '/instructor/dashboard');
   }
 
   SliverMainAxisGroup _buildLoadedContent(

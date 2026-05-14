@@ -82,7 +82,8 @@ class _RoleWalkthroughOverlayState extends State<RoleWalkthroughOverlay> {
         final rawRect = cubit.targetRect(step.targetId);
         final waitElapsed = DateTime.now().difference(_stepShownAt);
         final shouldWaitForTarget =
-            rawRect == null && step.allowFallback && waitElapsed < _targetWait;
+            rawRect == null &&
+            (!step.allowFallback || waitElapsed < _targetWait);
 
         if (shouldWaitForTarget) {
           return const IgnorePointer(child: SizedBox.expand());
@@ -178,7 +179,7 @@ class _OutsideSpotlightBlur extends StatelessWidget {
         final size = Size(constraints.maxWidth, constraints.maxHeight);
         final rect = targetRect!.intersect(Offset.zero & size);
         if (rect.isEmpty) {
-          return const Positioned.fill(child: _BlurRegion());
+          return const SizedBox.expand(child: _BlurRegion());
         }
 
         return Stack(
@@ -655,7 +656,19 @@ class _WalkthroughRoleColors {
     textSecondary: TAColors.textSecondary,
   );
 
+  static const _WalkthroughRoleColors student = _WalkthroughRoleColors(
+    primary: Color(0xFF2563EB),
+    accent: Color(0xFF06B6D4),
+    border: Color(0xFFD7E3FF),
+    textPrimary: Color(0xFF0F172A),
+    textSecondary: Color(0xFF64748B),
+  );
+
   static _WalkthroughRoleColors forRole(WalkthroughRole? role) {
-    return role == WalkthroughRole.ta ? ta : instructor;
+    return switch (role) {
+      WalkthroughRole.ta => ta,
+      WalkthroughRole.student => student,
+      WalkthroughRole.instructor || null => instructor,
+    };
   }
 }

@@ -848,7 +848,7 @@ class _ExamPaperExportPreviewScreenState
                   context,
                   '/instructor/exam-generator/exams/${widget.examId}',
                 ),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          icon: Icon(safeFeatureBackIcon(context)),
         ),
         title: Text(l10n.examPaperDesignerTitle),
         actions: [

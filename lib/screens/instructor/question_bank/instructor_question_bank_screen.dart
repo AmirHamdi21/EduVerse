@@ -1,5 +1,7 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/role_walkthrough_cubit.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_models.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +16,7 @@ import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 
@@ -118,15 +121,9 @@ class _InstructorQuestionBankViewState
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            onPressed: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go('/instructor/dashboard');
-              }
-            },
+            onPressed: () => safeBack(context, '/instructor/dashboard'),
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              iosBackIcon(context),
               color: InstructorColors.textPrimaryColor(isDark),
             ),
           ),
@@ -249,6 +246,18 @@ class _InstructorQuestionBankViewState
                 children: const [QuestionBankSkeletons(itemCount: 5)],
               );
             }
+            final walkthroughState = context
+                .watch<RoleWalkthroughCubit>()
+                .state;
+            final showWalkthroughDemo =
+                walkthroughState.isActive &&
+                walkthroughState.role == WalkthroughRole.instructor &&
+                walkthroughState.segment?.id ==
+                    InstructorWalkthroughIds.questionBank &&
+                state.questions.isEmpty &&
+                state.groups.isEmpty &&
+                state.total == 0 &&
+                state.errorMessage == null;
 
             final content = RefreshIndicator(
               color: InstructorColors.primary,
@@ -303,16 +312,22 @@ class _InstructorQuestionBankViewState
                           context.read<QuestionBankCubit>().refresh(),
                     )
                   else if (state.questions.isEmpty)
-                    QuestionBankEmptyState(
-                      title: l10n.questionBankEmptyTitle,
-                      message: l10n.questionBankEmptyMessage,
-                      action: FilledButton.icon(
-                        onPressed: () =>
-                            context.push('/instructor/question-bank/create'),
-                        icon: const Icon(Icons.add_rounded),
-                        label: Text(l10n.questionBankCreateQuestion),
-                      ),
-                    )
+                    if (showWalkthroughDemo)
+                      WalkthroughTarget(
+                        id: InstructorWalkthroughIds.questionBankFeed,
+                        child: _QuestionBankWalkthroughDemoFeed(isDark: isDark),
+                      )
+                    else
+                      QuestionBankEmptyState(
+                        title: l10n.questionBankEmptyTitle,
+                        message: l10n.questionBankEmptyMessage,
+                        action: FilledButton.icon(
+                          onPressed: () =>
+                              context.push('/instructor/question-bank/create'),
+                          icon: const Icon(Icons.add_rounded),
+                          label: Text(l10n.questionBankCreateQuestion),
+                        ),
+                      )
                   else
                     WalkthroughTarget(
                       id: InstructorWalkthroughIds.questionBankFeed,
@@ -2559,6 +2574,149 @@ class _ErrorRetry extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuestionBankWalkthroughDemoFeed extends StatelessWidget {
+  const _QuestionBankWalkthroughDemoFeed({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return IgnorePointer(
+      child: Column(
+        children: [
+          _QuestionBankWalkthroughDemoCard(
+            isDark: isDark,
+            icon: Icons.check_circle_rounded,
+            accent: InstructorColors.success,
+            title: l10n.instructorWalkthroughQuestionBankDemoTitleOne,
+            body: l10n.instructorWalkthroughQuestionBankDemoBodyOne,
+            chips: [l10n.approved, l10n.medium, l10n.multipleChoice],
+          ),
+          const SizedBox(height: 12),
+          _QuestionBankWalkthroughDemoCard(
+            isDark: isDark,
+            icon: Icons.account_tree_rounded,
+            accent: InstructorColors.cyan,
+            title: l10n.instructorWalkthroughQuestionBankDemoTitleTwo,
+            body: l10n.instructorWalkthroughQuestionBankDemoBodyTwo,
+            chips: [l10n.qbGroups, l10n.qbUnderReview, l10n.essay],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuestionBankWalkthroughDemoCard extends StatelessWidget {
+  const _QuestionBankWalkthroughDemoCard({
+    required this.isDark,
+    required this.icon,
+    required this.accent,
+    required this.title,
+    required this.body,
+    required this.chips,
+  });
+
+  final bool isDark;
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final String body;
+  final List<String> chips;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: accent.withValues(alpha: 0.18)),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: isDark ? 0.16 : 0.08),
+            blurRadius: 22,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: accent),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(isDark),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  body,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorColors.textSecondaryColor(isDark),
+                    height: 1.35,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: chips
+                      .map(
+                        (chip) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            chip,
+                            style: TextStyle(
+                              color: accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.more_horiz_rounded,
+            color: InstructorColors.textSecondaryColor(isDark),
+          ),
         ],
       ),
     );

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 
 class TASearchScreen extends StatefulWidget {
@@ -240,9 +241,9 @@ class _TASearchScreenState extends State<TASearchScreen>
       child: Row(
         children: [
           IconButton(
-            onPressed: () => context.pop(),
+            onPressed: () => safeBack(context, '/ta/dashboard'),
             icon: Icon(
-              Icons.arrow_back_rounded,
+              iosBackIcon(context),
               color: TAColors.textPrimaryColor(isDark),
             ),
           ),

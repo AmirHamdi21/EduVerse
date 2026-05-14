@@ -8,6 +8,8 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/student_quiz_cubit.dart';
 import 'package:edu_verse/bloc/quiz/student_quiz_state.dart';
 import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/features/walkthrough/student_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/widgets/student/quizzes/student_quiz_card.dart';
 import 'package:edu_verse/widgets/student/quizzes/student_attempt_history.dart';
 import 'package:go_router/go_router.dart';
@@ -56,116 +58,132 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
             ? const Color(0xFF0F172A)
             : const Color(0xFFF8FAFC);
 
-        return Scaffold(
-          backgroundColor: bgColor,
-          body: Stack(
-            children: [
-              // Gradient header
-              Container(
-                height: 260,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: isDark
-                        ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
-                        : [const Color(0xFF2B7FFF), const Color(0xFF155DFC)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+        return StudentWalkthroughRouteMarker(
+          segmentId: StudentWalkthroughIds.quizzes,
+          child: Scaffold(
+            backgroundColor: bgColor,
+            body: Stack(
+              children: [
+                // Gradient header
+                Container(
+                  height: 260,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isDark
+                          ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                          : [const Color(0xFF2B7FFF), const Color(0xFF155DFC)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
                 ),
-              ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    // ── Header ──────────────────────────────────────────
-                    FadeTransition(
-                      opacity: _fadeAnim,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          responsive.p20,
-                          responsive.p16,
-                          responsive.p20,
-                          responsive.p12,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                SafeArea(
+                  child: Column(
+                    children: [
+                      // ── Header ──────────────────────────────────────────
+                      FadeTransition(
+                        opacity: _fadeAnim,
+                        child: WalkthroughTarget(
+                          id: StudentWalkthroughIds.quizzesHeader,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              responsive.p20,
+                              responsive.p16,
+                              responsive.p20,
+                              responsive.p12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _backButton(isDark),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Icon(
-                                    Icons.quiz_rounded,
+                                Row(
+                                  children: [
+                                    _backButton(isDark),
+                                    const Spacer(),
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.15,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.quiz_rounded,
+                                        color: Colors.white,
+                                        size: 22,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: responsive.p16),
+                                const Text(
+                                  'Quizzes',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w800,
                                     color: Colors.white,
-                                    size: 22,
                                   ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Test your knowledge with instructor quizzes',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                  ),
+                                ),
+                                SizedBox(height: responsive.p16),
+                                WalkthroughTarget(
+                                  id: StudentWalkthroughIds.quizzesSearch,
+                                  child: _searchBar(isDark),
                                 ),
                               ],
                             ),
-                            SizedBox(height: responsive.p16),
-                            const Text(
-                              'Quizzes',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Test your knowledge with instructor quizzes',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white.withValues(alpha: 0.85),
-                              ),
-                            ),
-                            SizedBox(height: responsive.p16),
-                            _searchBar(isDark),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: responsive.p12),
-
-                    // ── Body ────────────────────────────────────────────
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: bgColor,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(28),
-                            topRight: Radius.circular(28),
                           ),
                         ),
-                        child: BlocBuilder<StudentQuizCubit, StudentQuizState>(
-                          builder: (context, state) {
-                            if (state is StudentQuizLoading ||
-                                state is StudentQuizStarting ||
-                                state is StudentQuizActive ||
-                                state is StudentQuizSubmitting ||
-                                state is StudentQuizResultLoaded) {
-                              return _loadingView(isDark);
-                            }
-                            if (state is StudentQuizError) {
-                              return _errorView(isDark, state.message);
-                            }
-                            if (state is StudentQuizzesLoaded) {
-                              return _quizListView(isDark, state, responsive);
-                            }
-                            return const SizedBox.shrink();
-                          },
+                      ),
+                      SizedBox(height: responsive.p12),
+
+                      // ── Body ────────────────────────────────────────────
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: bgColor,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(28),
+                              topRight: Radius.circular(28),
+                            ),
+                          ),
+                          child:
+                              BlocBuilder<StudentQuizCubit, StudentQuizState>(
+                                builder: (context, state) {
+                                  if (state is StudentQuizLoading ||
+                                      state is StudentQuizStarting ||
+                                      state is StudentQuizActive ||
+                                      state is StudentQuizSubmitting ||
+                                      state is StudentQuizResultLoaded) {
+                                    return _loadingView(isDark);
+                                  }
+                                  if (state is StudentQuizError) {
+                                    return _errorView(isDark, state.message);
+                                  }
+                                  if (state is StudentQuizzesLoaded) {
+                                    return _quizListView(
+                                      isDark,
+                                      state,
+                                      responsive,
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -179,7 +197,7 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
         borderRadius: BorderRadius.circular(12),
       ),
       child: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: () => _leaveStudentQuizScreen(context),
         icon: const Icon(
           Icons.arrow_back_ios_rounded,
           color: Colors.white,
@@ -298,27 +316,30 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
     return RefreshIndicator(
       onRefresh: () => context.read<StudentQuizCubit>().loadQuizzes(),
       color: const Color(0xFF2B7FFF),
-      child: ListView.builder(
-        padding: EdgeInsets.all(responsive.p16),
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
+      child: WalkthroughTarget(
+        id: StudentWalkthroughIds.quizzesList,
+        child: ListView.builder(
+          padding: EdgeInsets.all(responsive.p16),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          itemCount: quizzes.length,
+          itemBuilder: (context, index) {
+            final quiz = quizzes[index];
+            return StudentQuizCard(
+              quiz: quiz,
+              remainingAttempts: state.remainingAttempts(quiz.id),
+              inProgressAttempt: state.inProgressAttempt(quiz.id),
+              isDark: isDark,
+              onStart: () => _onStartQuiz(quiz.id),
+              onResume: () => _onStartQuiz(quiz.id),
+              onViewHistory: () => _showAttemptHistory(
+                isDark,
+                state.myAttempts.where((a) => a.quizId == quiz.id).toList(),
+              ),
+            );
+          },
         ),
-        itemCount: quizzes.length,
-        itemBuilder: (context, index) {
-          final quiz = quizzes[index];
-          return StudentQuizCard(
-            quiz: quiz,
-            remainingAttempts: state.remainingAttempts(quiz.id),
-            inProgressAttempt: state.inProgressAttempt(quiz.id),
-            isDark: isDark,
-            onStart: () => _onStartQuiz(quiz.id),
-            onResume: () => _onStartQuiz(quiz.id),
-            onViewHistory: () => _showAttemptHistory(
-              isDark,
-              state.myAttempts.where((a) => a.quizId == quiz.id).toList(),
-            ),
-          );
-        },
       ),
     );
   }
@@ -402,4 +423,13 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
       ),
     );
   }
+}
+
+void _leaveStudentQuizScreen(BuildContext context) {
+  if (context.canPop()) {
+    context.pop();
+    return;
+  }
+
+  context.go('/dashboard');
 }

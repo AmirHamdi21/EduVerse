@@ -5,6 +5,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/course_management/course_management_colors.dart';
 
 class InstructorVideoPlayerScreen extends StatefulWidget {
@@ -113,6 +114,10 @@ class _InstructorVideoPlayerScreenState
                 backgroundColor: CMColors.cardColor(isDark),
                 surfaceTintColor: Colors.transparent,
                 foregroundColor: CMColors.text(isDark),
+                leading: IconButton(
+                  onPressed: () => safeBack(context, '/instructor/dashboard'),
+                  icon: Icon(iosBackIcon(context)),
+                ),
                 titleSpacing: 0,
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

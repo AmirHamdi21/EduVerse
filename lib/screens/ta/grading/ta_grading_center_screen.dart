@@ -5,7 +5,6 @@ import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,6 +21,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../bloc/ta/ta_courses_cubit.dart';
 import '../../../bloc/ta/ta_courses_state.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/student/shared/drive_file_preview_screen.dart';
 import '../../../widgets/student/academic/academic_list_skeleton.dart';
 
@@ -300,7 +300,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
       leading: IconButton(
         onPressed: _handleBackPressed,
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
       ),
@@ -445,11 +445,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
   }
 
   void _handleBackPressed() {
-    if (context.canPop()) {
-      context.pop();
-      return;
-    }
-    context.go('/ta/dashboard');
+    safeBack(context, '/ta/dashboard');
   }
 
   Widget _buildSummaryHeader(bool isDark, AppLocalizations l10n) {

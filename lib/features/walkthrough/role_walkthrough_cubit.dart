@@ -2,15 +2,20 @@ import 'dart:async';
 
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
 import 'package:edu_verse/bloc/auth/auth_state.dart';
+import 'package:edu_verse/bloc/courses/courses_bloc.dart';
+import 'package:edu_verse/bloc/courses/courses_state.dart'
+    hide InstructorCoursesLoaded;
 import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
 import 'package:edu_verse/bloc/instructor/instructor_courses_state.dart';
 import 'package:edu_verse/bloc/ta/ta_courses_cubit.dart';
 import 'package:edu_verse/bloc/ta/ta_courses_state.dart';
 import 'package:edu_verse/config/app_router.dart';
 import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/student_walkthrough_registry.dart';
 import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_models.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_service.dart';
+import 'package:edu_verse/models/core/enrollment_model.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -226,13 +231,13 @@ class RoleWalkthroughCubit extends Cubit<RoleWalkthroughState> {
       return;
     }
 
-    final route = _routeForSegment(context, nextIndex);
-    if (route == null) {
+    final target = _targetForSegment(context, nextIndex);
+    if (target == null) {
       await complete(context);
       return;
     }
     _moveTo(nextIndex, 0);
-    AppRouter.router.go(route);
+    AppRouter.router.go(target.location, extra: target.extra);
   }
 
   void previous(BuildContext context) {
@@ -251,10 +256,10 @@ class RoleWalkthroughCubit extends Cubit<RoleWalkthroughState> {
     if (previousIndex == null) return;
 
     final previousSegment = state.segments[previousIndex];
-    final route = _routeForSegment(context, previousIndex);
-    if (route == null) return;
+    final target = _targetForSegment(context, previousIndex);
+    if (target == null) return;
     _moveTo(previousIndex, previousSegment.steps.length - 1);
-    AppRouter.router.go(route);
+    AppRouter.router.go(target.location, extra: target.extra);
   }
 
   Future<void> skip(BuildContext context) async {
@@ -288,6 +293,9 @@ class RoleWalkthroughCubit extends Cubit<RoleWalkthroughState> {
     }
     if (isClosed) return;
     emit(const RoleWalkthroughState());
+    if (role != null) {
+      AppRouter.router.go(_dashboardRouteFor(role));
+    }
   }
 
   void _moveTo(int segmentIndex, int stepIndex) {
@@ -312,28 +320,32 @@ class RoleWalkthroughCubit extends Cubit<RoleWalkthroughState> {
   }) {
     var index = from;
     while (index >= 0 && index < state.segments.length) {
-      final route = _routeForSegment(context, index);
-      if (route != null) return index;
+      final target = _targetForSegment(context, index);
+      if (target != null) return index;
       index += direction;
     }
     return null;
   }
 
-  String? _routeForSegment(BuildContext context, int segmentIndex) {
+  _WalkthroughRouteTarget? _targetForSegment(
+    BuildContext context,
+    int segmentIndex,
+  ) {
     final role = state.role;
     if (role == null) return null;
     final segment = _segmentsFor(role)[segmentIndex];
     if (!segment.needsCourse) {
-      return segment.route;
+      return _WalkthroughRouteTarget(segment.route);
     }
 
     return switch (role) {
-      WalkthroughRole.instructor => _instructorCourseRoute(context),
-      WalkthroughRole.ta => _taCourseRoute(context),
+      WalkthroughRole.instructor => _instructorCourseTarget(context),
+      WalkthroughRole.ta => _taCourseTarget(context),
+      WalkthroughRole.student => _studentCourseTarget(context),
     };
   }
 
-  String? _instructorCourseRoute(BuildContext context) {
+  _WalkthroughRouteTarget? _instructorCourseTarget(BuildContext context) {
     final coursesState = context.read<InstructorCoursesBloc>().state;
     if (coursesState is! InstructorCoursesLoaded ||
         coursesState.courses.isEmpty) {
@@ -341,10 +353,10 @@ class RoleWalkthroughCubit extends Cubit<RoleWalkthroughState> {
     }
     final courseId = coursesState.courses.first.courseId;
     if (courseId <= 0) return null;
-    return '/instructor/courses/$courseId';
+    return _WalkthroughRouteTarget('/instructor/courses/$courseId');
   }
 
-  String? _taCourseRoute(BuildContext context) {
+  _WalkthroughRouteTarget? _taCourseTarget(BuildContext context) {
     final coursesState = context.read<TACoursesCubit>().state.coursesStatus;
     if (coursesState is! TASubTabLoaded<List<TeachingCourseModel>> ||
         coursesState.data.isEmpty) {
@@ -352,7 +364,21 @@ class RoleWalkthroughCubit extends Cubit<RoleWalkthroughState> {
     }
     final courseId = coursesState.data.first.courseId;
     if (courseId <= 0) return null;
-    return '/ta/course/$courseId';
+    return _WalkthroughRouteTarget('/ta/course/$courseId');
+  }
+
+  _WalkthroughRouteTarget? _studentCourseTarget(BuildContext context) {
+    final coursesState = context.read<CoursesBloc>().state;
+    List<CourseEnrollmentModel> enrollments = const <CourseEnrollmentModel>[];
+    if (coursesState is CoursesLoaded) {
+      enrollments = coursesState.enrollments;
+    } else if (coursesState is CoursesLoading) {
+      enrollments = coursesState.cachedData
+          .whereType<CourseEnrollmentModel>()
+          .toList(growable: false);
+    }
+    if (enrollments.isEmpty) return null;
+    return _WalkthroughRouteTarget('/course-details', extra: enrollments.first);
   }
 
   ({int userId})? _roleUser(BuildContext context, WalkthroughRole? role) {
@@ -370,6 +396,10 @@ class RoleWalkthroughCubit extends Cubit<RoleWalkthroughState> {
           normalized == 'ta' ||
               normalized == 'teaching_assistant' ||
               normalized == 'teaching assistant',
+        WalkthroughRole.student =>
+          normalized == 'student' ||
+              normalized == 'learner' ||
+              normalized == 'pupil',
       };
     });
     if (!hasRole || authState.user.userId <= 0) return null;
@@ -444,6 +474,7 @@ List<WalkthroughSegment> _segmentsFor(WalkthroughRole? role) {
   return switch (role) {
     WalkthroughRole.instructor => InstructorWalkthroughRegistry.segments,
     WalkthroughRole.ta => TAWalkthroughRegistry.segments,
+    WalkthroughRole.student => StudentWalkthroughRegistry.segments,
     null => const <WalkthroughSegment>[],
   };
 }
@@ -452,5 +483,21 @@ String _firstSegmentId(WalkthroughRole role) {
   return switch (role) {
     WalkthroughRole.instructor => InstructorWalkthroughIds.dashboard,
     WalkthroughRole.ta => TAWalkthroughIds.dashboard,
+    WalkthroughRole.student => StudentWalkthroughIds.dashboard,
   };
+}
+
+String _dashboardRouteFor(WalkthroughRole role) {
+  return switch (role) {
+    WalkthroughRole.instructor => '/instructor/dashboard',
+    WalkthroughRole.ta => '/ta/dashboard',
+    WalkthroughRole.student => '/dashboard',
+  };
+}
+
+class _WalkthroughRouteTarget {
+  const _WalkthroughRouteTarget(this.location, {this.extra});
+
+  final String location;
+  final Object? extra;
 }

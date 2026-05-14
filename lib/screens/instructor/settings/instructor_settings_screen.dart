@@ -6,6 +6,7 @@ import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 import '../../../widgets/instructor/settings/grading_settings_sheet.dart';
 import '../../../widgets/instructor/settings/assignment_settings_sheet.dart';
@@ -181,9 +182,9 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => context.pop(),
+            onPressed: () => safeBack(context, '/instructor/dashboard'),
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              iosBackIcon(context),
               color: InstructorColors.textPrimaryColor(isDark),
               size: 20,
             ),

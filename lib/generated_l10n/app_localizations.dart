@@ -34742,6 +34742,606 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Type a question, choose the right mode, and send it when you want targeted TA support.'**
   String get taWalkthroughAiComposerBody;
+
+  /// No description provided for @studentWalkthroughDashboardTopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from your student command bar'**
+  String get studentWalkthroughDashboardTopTitle;
+
+  /// No description provided for @studentWalkthroughDashboardTopBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use search, notifications, profile, and the menu to move through your student work without leaving the dashboard.'**
+  String get studentWalkthroughDashboardTopBody;
+
+  /// No description provided for @studentWalkthroughDashboardStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read your academic snapshot'**
+  String get studentWalkthroughDashboardStatsTitle;
+
+  /// No description provided for @studentWalkthroughDashboardStatsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'These numbers summarize active courses, pending work, grades, attendance, and recent progress.'**
+  String get studentWalkthroughDashboardStatsBody;
+
+  /// No description provided for @studentWalkthroughDashboardQuickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump into common student actions'**
+  String get studentWalkthroughDashboardQuickTitle;
+
+  /// No description provided for @studentWalkthroughDashboardQuickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open courses, assignments, labs, quizzes, discussions, grades, attendance, and AI help from one compact area.'**
+  String get studentWalkthroughDashboardQuickBody;
+
+  /// No description provided for @studentWalkthroughDashboardCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue your current courses'**
+  String get studentWalkthroughDashboardCoursesTitle;
+
+  /// No description provided for @studentWalkthroughDashboardCoursesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Course cards keep your active learning spaces close so you can return to materials, tasks, and discussions quickly.'**
+  String get studentWalkthroughDashboardCoursesBody;
+
+  /// No description provided for @studentWalkthroughCoursesHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse your enrolled courses'**
+  String get studentWalkthroughCoursesHeaderTitle;
+
+  /// No description provided for @studentWalkthroughCoursesHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The course header combines search, status, progress, and course metrics for your enrolled sections.'**
+  String get studentWalkthroughCoursesHeaderBody;
+
+  /// No description provided for @studentWalkthroughCoursesControlsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter and sort courses'**
+  String get studentWalkthroughCoursesControlsTitle;
+
+  /// No description provided for @studentWalkthroughCoursesControlsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use status, semester, and sort controls to find the exact course space you need.'**
+  String get studentWalkthroughCoursesControlsBody;
+
+  /// No description provided for @studentWalkthroughCoursesListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a course workspace'**
+  String get studentWalkthroughCoursesListTitle;
+
+  /// No description provided for @studentWalkthroughCoursesListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Course cards lead to materials, assignments, labs, announcements, discussions, grades, and instructor details.'**
+  String get studentWalkthroughCoursesListBody;
+
+  /// No description provided for @studentWalkthroughCoursesJoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join or register when available'**
+  String get studentWalkthroughCoursesJoinTitle;
+
+  /// No description provided for @studentWalkthroughCoursesJoinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this action to reach course joining or registration options when your enrollment period allows it.'**
+  String get studentWalkthroughCoursesJoinBody;
+
+  /// No description provided for @studentWalkthroughCourseDetailsHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the course overview'**
+  String get studentWalkthroughCourseDetailsHeroTitle;
+
+  /// No description provided for @studentWalkthroughCourseDetailsHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The top area shows course identity, instructor context, progress, and featured materials.'**
+  String get studentWalkthroughCourseDetailsHeroBody;
+
+  /// No description provided for @studentWalkthroughCourseDetailsTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move between course tabs'**
+  String get studentWalkthroughCourseDetailsTabsTitle;
+
+  /// No description provided for @studentWalkthroughCourseDetailsTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tabs keep search, content, overview, notes, announcements, discussions, assignments, labs, and prerequisites in one hub.'**
+  String get studentWalkthroughCourseDetailsTabsBody;
+
+  /// No description provided for @studentWalkthroughCourseDetailsContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work in the selected course area'**
+  String get studentWalkthroughCourseDetailsContentTitle;
+
+  /// No description provided for @studentWalkthroughCourseDetailsContentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This panel changes with the active tab so you can focus on one course workflow at a time.'**
+  String get studentWalkthroughCourseDetailsContentBody;
+
+  /// No description provided for @studentWalkthroughRegistrationHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check registration status'**
+  String get studentWalkthroughRegistrationHeaderTitle;
+
+  /// No description provided for @studentWalkthroughRegistrationHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The header shows the active registration period and the context for adding or dropping courses.'**
+  String get studentWalkthroughRegistrationHeaderBody;
+
+  /// No description provided for @studentWalkthroughRegistrationStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review registration limits'**
+  String get studentWalkthroughRegistrationStatsTitle;
+
+  /// No description provided for @studentWalkthroughRegistrationStatsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats summarize available courses, registered courses, credits, and registration progress.'**
+  String get studentWalkthroughRegistrationStatsBody;
+
+  /// No description provided for @studentWalkthroughRegistrationFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find eligible courses'**
+  String get studentWalkthroughRegistrationFiltersTitle;
+
+  /// No description provided for @studentWalkthroughRegistrationFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and filter by department or level before selecting a course section.'**
+  String get studentWalkthroughRegistrationFiltersBody;
+
+  /// No description provided for @studentWalkthroughRegistrationCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose course sections carefully'**
+  String get studentWalkthroughRegistrationCoursesTitle;
+
+  /// No description provided for @studentWalkthroughRegistrationCoursesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Available and registered course cards show section details, capacity, and enrollment actions.'**
+  String get studentWalkthroughRegistrationCoursesBody;
+
+  /// No description provided for @studentWalkthroughAssignmentsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track assignment work'**
+  String get studentWalkthroughAssignmentsHeaderTitle;
+
+  /// No description provided for @studentWalkthroughAssignmentsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The summary shows submitted, pending, overdue, and graded assignments across your courses.'**
+  String get studentWalkthroughAssignmentsHeaderBody;
+
+  /// No description provided for @studentWalkthroughAssignmentsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus assignment lists'**
+  String get studentWalkthroughAssignmentsFiltersTitle;
+
+  /// No description provided for @studentWalkthroughAssignmentsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use course and status filters to find upcoming work, submitted work, or items needing attention.'**
+  String get studentWalkthroughAssignmentsFiltersBody;
+
+  /// No description provided for @studentWalkthroughAssignmentsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open assignment details'**
+  String get studentWalkthroughAssignmentsListTitle;
+
+  /// No description provided for @studentWalkthroughAssignmentsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment cards show due dates, submission state, grades, and entry points for upload or review.'**
+  String get studentWalkthroughAssignmentsListBody;
+
+  /// No description provided for @studentWalkthroughLabsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track lab activity'**
+  String get studentWalkthroughLabsHeaderTitle;
+
+  /// No description provided for @studentWalkthroughLabsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The lab summary highlights practical work, due dates, and submission progress.'**
+  String get studentWalkthroughLabsHeaderBody;
+
+  /// No description provided for @studentWalkthroughLabsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter labs by context'**
+  String get studentWalkthroughLabsFiltersTitle;
+
+  /// No description provided for @studentWalkthroughLabsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and filter labs by course or state to find the experiment or submission you need.'**
+  String get studentWalkthroughLabsFiltersBody;
+
+  /// No description provided for @studentWalkthroughLabsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open lab submissions'**
+  String get studentWalkthroughLabsListTitle;
+
+  /// No description provided for @studentWalkthroughLabsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab cards collect instructions, resources, due dates, submission history, and upload entry points.'**
+  String get studentWalkthroughLabsListBody;
+
+  /// No description provided for @studentWalkthroughGradesGpaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review your grade snapshot'**
+  String get studentWalkthroughGradesGpaTitle;
+
+  /// No description provided for @studentWalkthroughGradesGpaBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The GPA card summarizes semester and cumulative performance before you inspect each course.'**
+  String get studentWalkthroughGradesGpaBody;
+
+  /// No description provided for @studentWalkthroughGradesTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch grade views'**
+  String get studentWalkthroughGradesTabsTitle;
+
+  /// No description provided for @studentWalkthroughGradesTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use semester controls and tabs to compare current grades, history, analytics, and reports.'**
+  String get studentWalkthroughGradesTabsBody;
+
+  /// No description provided for @studentWalkthroughGradesListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect course grades'**
+  String get studentWalkthroughGradesListTitle;
+
+  /// No description provided for @studentWalkthroughGradesListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade cards show course scores, credits, trends, and detail sheets for deeper review.'**
+  String get studentWalkthroughGradesListBody;
+
+  /// No description provided for @studentWalkthroughAttendanceHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open attendance tracking'**
+  String get studentWalkthroughAttendanceHeaderTitle;
+
+  /// No description provided for @studentWalkthroughAttendanceHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The header gives quick access to attendance search and the current attendance area.'**
+  String get studentWalkthroughAttendanceHeaderBody;
+
+  /// No description provided for @studentWalkthroughAttendanceTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch attendance views'**
+  String get studentWalkthroughAttendanceTabsTitle;
+
+  /// No description provided for @studentWalkthroughAttendanceTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Move between overview and calendar views to understand attendance by course or date.'**
+  String get studentWalkthroughAttendanceTabsBody;
+
+  /// No description provided for @studentWalkthroughAttendanceStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read attendance stats'**
+  String get studentWalkthroughAttendanceStatsTitle;
+
+  /// No description provided for @studentWalkthroughAttendanceStatsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats summarize presence, absences, late records, and overall attendance health.'**
+  String get studentWalkthroughAttendanceStatsBody;
+
+  /// No description provided for @studentWalkthroughAttendanceListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check course attendance'**
+  String get studentWalkthroughAttendanceListTitle;
+
+  /// No description provided for @studentWalkthroughAttendanceListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Course attendance rows show per-course attendance progress and lead to detailed records.'**
+  String get studentWalkthroughAttendanceListBody;
+
+  /// No description provided for @studentWalkthroughQuizzesHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open backend quizzes'**
+  String get studentWalkthroughQuizzesHeaderTitle;
+
+  /// No description provided for @studentWalkthroughQuizzesHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This screen lists instructor-published quizzes that are wired to backend attempts and results.'**
+  String get studentWalkthroughQuizzesHeaderBody;
+
+  /// No description provided for @studentWalkthroughQuizzesSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search assigned quizzes'**
+  String get studentWalkthroughQuizzesSearchTitle;
+
+  /// No description provided for @studentWalkthroughQuizzesSearchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by quiz title or course to find the assessment you are ready to take.'**
+  String get studentWalkthroughQuizzesSearchBody;
+
+  /// No description provided for @studentWalkthroughQuizzesListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start or resume quiz attempts'**
+  String get studentWalkthroughQuizzesListTitle;
+
+  /// No description provided for @studentWalkthroughQuizzesListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz cards show attempts, timing, history, and the actions to start or resume backend quizzes.'**
+  String get studentWalkthroughQuizzesListBody;
+
+  /// No description provided for @studentWalkthroughDiscussionsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter course discussions'**
+  String get studentWalkthroughDiscussionsHeaderTitle;
+
+  /// No description provided for @studentWalkthroughDiscussionsHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The summary shows course discussion activity, pinned threads, replies, and active conversations.'**
+  String get studentWalkthroughDiscussionsHeaderBody;
+
+  /// No description provided for @studentWalkthroughDiscussionsFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter discussion spaces'**
+  String get studentWalkthroughDiscussionsFiltersTitle;
+
+  /// No description provided for @studentWalkthroughDiscussionsFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses and filter by active, unanswered, pinned, locked, or quiet discussions.'**
+  String get studentWalkthroughDiscussionsFiltersBody;
+
+  /// No description provided for @studentWalkthroughDiscussionsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open discussion threads'**
+  String get studentWalkthroughDiscussionsListTitle;
+
+  /// No description provided for @studentWalkthroughDiscussionsListBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Course cards show thread metrics and latest activity so you can enter the right conversation.'**
+  String get studentWalkthroughDiscussionsListBody;
+
+  /// No description provided for @studentWalkthroughAiHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose AI study context'**
+  String get studentWalkthroughAiHeaderTitle;
+
+  /// No description provided for @studentWalkthroughAiHeaderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use AI modes and course context to shape the assistant around the work you are studying.'**
+  String get studentWalkthroughAiHeaderBody;
+
+  /// No description provided for @studentWalkthroughAiMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the AI conversation'**
+  String get studentWalkthroughAiMessagesTitle;
+
+  /// No description provided for @studentWalkthroughAiMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The chat area keeps explanations, follow-ups, and study guidance visible while you work.'**
+  String get studentWalkthroughAiMessagesBody;
+
+  /// No description provided for @studentWalkthroughAiQuickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use quick AI prompts'**
+  String get studentWalkthroughAiQuickTitle;
+
+  /// No description provided for @studentWalkthroughAiQuickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions help you ask for summaries, explanations, practice, and planning without starting from scratch.'**
+  String get studentWalkthroughAiQuickBody;
+
+  /// No description provided for @studentWalkthroughAiComposerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your own question'**
+  String get studentWalkthroughAiComposerTitle;
+
+  /// No description provided for @studentWalkthroughAiComposerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a focused question, attach context when needed, and send it when you want personalized study help.'**
+  String get studentWalkthroughAiComposerBody;
+
+  /// No description provided for @studentWalkthroughAiDemoStudyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Database Systems exam prep'**
+  String get studentWalkthroughAiDemoStudyTitle;
+
+  /// No description provided for @studentWalkthroughAiDemoStudyPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain normalization with examples, then turn the key ideas into practice questions.'**
+  String get studentWalkthroughAiDemoStudyPreview;
+
+  /// No description provided for @studentWalkthroughAiDemoLabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Operating Systems lab recap'**
+  String get studentWalkthroughAiDemoLabTitle;
+
+  /// No description provided for @studentWalkthroughAiDemoLabPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize process scheduling and show where round-robin differs from priority scheduling.'**
+  String get studentWalkthroughAiDemoLabPreview;
+
+  /// No description provided for @instructorWalkthroughQuestionBankDemoTitleOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Process scheduling MCQ'**
+  String get instructorWalkthroughQuestionBankDemoTitleOne;
+
+  /// No description provided for @instructorWalkthroughQuestionBankDemoBodyOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Which scheduling algorithm gives each ready process a fixed time slice before moving it to the back of the queue?'**
+  String get instructorWalkthroughQuestionBankDemoBodyOne;
+
+  /// No description provided for @instructorWalkthroughQuestionBankDemoTitleTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Database normalization case'**
+  String get instructorWalkthroughQuestionBankDemoTitleTwo;
+
+  /// No description provided for @instructorWalkthroughQuestionBankDemoBodyTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped questions can keep a shared prompt, media, status, and review actions together for reuse.'**
+  String get instructorWalkthroughQuestionBankDemoBodyTwo;
+
+  /// No description provided for @instructorWalkthroughExamDemoTitleOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Midterm draft from approved questions'**
+  String get instructorWalkthroughExamDemoTitleOne;
+
+  /// No description provided for @instructorWalkthroughExamDemoBodyOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft records show editable exam work, selected questions, generation mode, and next review actions.'**
+  String get instructorWalkthroughExamDemoBodyOne;
+
+  /// No description provided for @instructorWalkthroughExamDemoTitleTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Final exam saved version'**
+  String get instructorWalkthroughExamDemoTitleTwo;
+
+  /// No description provided for @instructorWalkthroughExamDemoBodyTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved exams expose publish state, export options, and the record actions instructors continue from.'**
+  String get instructorWalkthroughExamDemoBodyTwo;
+
+  /// No description provided for @taWalkthroughCourseDemoWeekSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Published resources for this section'**
+  String get taWalkthroughCourseDemoWeekSubtitle;
+
+  /// No description provided for @taWalkthroughCourseDemoNextWeekSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming preparation materials'**
+  String get taWalkthroughCourseDemoNextWeekSubtitle;
+
+  /// No description provided for @taWalkthroughCourseDemoVideoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lecture recap video'**
+  String get taWalkthroughCourseDemoVideoTitle;
+
+  /// No description provided for @taWalkthroughCourseDemoVideoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the key explanation before helping students in lab or discussion.'**
+  String get taWalkthroughCourseDemoVideoBody;
+
+  /// No description provided for @taWalkthroughCourseDemoSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice worksheet'**
+  String get taWalkthroughCourseDemoSheetTitle;
+
+  /// No description provided for @taWalkthroughCourseDemoSheetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open attached exercises, examples, and reference files for the active week.'**
+  String get taWalkthroughCourseDemoSheetBody;
+
+  /// No description provided for @taWalkthroughCourseDemoLabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab preparation notes'**
+  String get taWalkthroughCourseDemoLabTitle;
+
+  /// No description provided for @taWalkthroughCourseDemoLabBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use materials to prepare checks, hints, and support before the lab session.'**
+  String get taWalkthroughCourseDemoLabBody;
+
+  /// No description provided for @taWalkthroughAiDemoFeedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback for process scheduler submissions'**
+  String get taWalkthroughAiDemoFeedbackTitle;
+
+  /// No description provided for @taWalkthroughAiDemoFeedbackPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft concise feedback that names the scheduling bug, expected fix, and next practice step.'**
+  String get taWalkthroughAiDemoFeedbackPreview;
+
+  /// No description provided for @taWalkthroughAiDemoLabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab support plan'**
+  String get taWalkthroughAiDemoLabTitle;
+
+  /// No description provided for @taWalkthroughAiDemoLabPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare hints, common mistakes, and a quick rubric for tomorrow\'s lab review.'**
+  String get taWalkthroughAiDemoLabPreview;
 }
 
 class _AppLocalizationsDelegate

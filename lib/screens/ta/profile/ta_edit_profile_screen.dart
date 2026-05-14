@@ -12,6 +12,7 @@ class TAEditProfileScreen extends StatelessWidget {
       title: 'Edit Teaching Assistant Profile',
       roleLabel: 'Teaching Assistant',
       theme: RoleProfileTheme.ta(),
+      fallbackRoute: '/ta/dashboard',
     );
   }
 }

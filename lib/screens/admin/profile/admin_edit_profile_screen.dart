@@ -12,6 +12,7 @@ class AdminEditProfileScreen extends StatelessWidget {
       title: 'Edit Admin Profile',
       roleLabel: 'Administrator',
       theme: RoleProfileTheme.admin(),
+      fallbackRoute: '/admin/dashboard',
     );
   }
 }

@@ -9,6 +9,7 @@ import '../../../models/instructor/announcement_model.dart';
 import '../../../services/api/communication_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/announcements/announcement_barrel.dart';
 
 class AnnouncementManagerScreen extends StatefulWidget {
@@ -97,8 +98,10 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
     final filteredOptions = widget.initialCourseId == null
         ? options
         : options
-            .where((option) => option['id'] == widget.initialCourseId.toString())
-            .toList(growable: false);
+              .where(
+                (option) => option['id'] == widget.initialCourseId.toString(),
+              )
+              .toList(growable: false);
 
     if (!mounted) return;
     setState(() {
@@ -142,7 +145,10 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
     if (widget.initialCourseId != null) {
       final targetCourseId = widget.initialCourseId.toString();
       filtered = filtered
-          .where((announcement) => (announcement.courseId ?? '').trim() == targetCourseId)
+          .where(
+            (announcement) =>
+                (announcement.courseId ?? '').trim() == targetCourseId,
+          )
           .toList(growable: false);
     }
 
@@ -433,7 +439,9 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
                             Text(
                               l10n.announcementsManager,
                               style: TextStyle(
-                                color: AnnouncementColors.textPrimaryColor(isDark),
+                                color: AnnouncementColors.textPrimaryColor(
+                                  isDark,
+                                ),
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -442,7 +450,9 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
                             Text(
                               l10n.announcementsManagerSubtitle,
                               style: TextStyle(
-                                color: AnnouncementColors.textSecondaryColor(isDark),
+                                color: AnnouncementColors.textSecondaryColor(
+                                  isDark,
+                                ),
                                 fontSize: 13,
                               ),
                             ),
@@ -524,9 +534,9 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
       child: Row(
         children: [
           IconButton(
-            onPressed: () => context.pop(),
+            onPressed: () => safeBack(context, '/instructor/dashboard'),
             icon: Icon(
-              Icons.arrow_back_ios_rounded,
+              iosBackIcon(context),
               color: AnnouncementColors.textPrimaryColor(isDark),
             ),
             style: IconButton.styleFrom(

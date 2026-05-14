@@ -19,10 +19,10 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/lab_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../shared/lab_editor_screen.dart';
 import '../../../widgets/shared/modern_action_sheet.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
-import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/instructor/labs/lab_create_form.dart';
 
 /// T029: TA Labs List Screen — fully refactored from mock data to TALabsCubit.
@@ -46,7 +46,6 @@ class TALabsListScreen extends StatefulWidget {
 enum _TALabStateFilter { all, active, draft, closed, archived }
 
 class _TALabsListScreenState extends State<TALabsListScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final LabService _labService = LabService(
     coreApiClient: CoreApiClient(storageService: StorageService()),
   );
@@ -77,11 +76,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         return TAWalkthroughRouteMarker(
           segmentId: TAWalkthroughIds.labs,
           child: Scaffold(
-            key: _scaffoldKey,
             backgroundColor: TAColors.scaffoldColor(isDark),
-            drawer: widget.embedded
-                ? null
-                : TADrawer(currentRoute: '/ta/labs', isDark: isDark),
             // T031: Create Lab FAB
             floatingActionButton: widget.embedded
                 ? null
@@ -129,9 +124,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       backgroundColor: TAColors.scaffoldColor(isDark),
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        onPressed: () => safeBack(context, '/ta/dashboard'),
         icon: Icon(
-          Icons.menu_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
       ),

@@ -5,6 +5,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/instructor_search_model.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 
 /// Instructor Search Screen - Overall search for instructor features
@@ -236,7 +237,7 @@ class _InstructorSearchScreenState extends State<InstructorSearchScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.pop(),
+            onTap: () => safeBack(context, '/instructor/dashboard'),
             child: Container(
               width: 40,
               height: 40,
@@ -247,7 +248,7 @@ class _InstructorSearchScreenState extends State<InstructorSearchScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                Icons.arrow_back_ios_new_rounded,
+                iosBackIcon(context),
                 color: InstructorColors.textPrimaryColor(isDark),
                 size: 20,
               ),

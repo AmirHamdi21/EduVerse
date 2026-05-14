@@ -1,7 +1,7 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-enum WalkthroughRole { instructor, ta }
+enum WalkthroughRole { instructor, ta, student }
 
 enum WalkthroughTargetShape { roundedRect, circle }
 

@@ -319,30 +319,6 @@ class TAWalkthroughRegistry {
       ],
     ),
     WalkthroughSegment(
-      id: TAWalkthroughIds.analytics,
-      route: '/ta/analytics',
-      steps: <WalkthroughStep>[
-        WalkthroughStep(
-          targetId: TAWalkthroughIds.analyticsStats,
-          icon: Icons.query_stats_rounded,
-          title: _tAnalyticsStats,
-          body: _bAnalyticsStats,
-        ),
-        WalkthroughStep(
-          targetId: TAWalkthroughIds.analyticsCharts,
-          icon: Icons.bar_chart_rounded,
-          title: _tAnalyticsCharts,
-          body: _bAnalyticsCharts,
-        ),
-        WalkthroughStep(
-          targetId: TAWalkthroughIds.analyticsInsights,
-          icon: Icons.psychology_rounded,
-          title: _tAnalyticsInsights,
-          body: _bAnalyticsInsights,
-        ),
-      ],
-    ),
-    WalkthroughSegment(
       id: TAWalkthroughIds.ai,
       route: '/ta/ai-assistant',
       steps: <WalkthroughStep>[
@@ -496,18 +472,6 @@ class TAWalkthroughRegistry {
       l.taWalkthroughQuizFiltersBody;
   static String _tQuizList(AppLocalizations l) => l.taWalkthroughQuizListTitle;
   static String _bQuizList(AppLocalizations l) => l.taWalkthroughQuizListBody;
-  static String _tAnalyticsStats(AppLocalizations l) =>
-      l.taWalkthroughAnalyticsStatsTitle;
-  static String _bAnalyticsStats(AppLocalizations l) =>
-      l.taWalkthroughAnalyticsStatsBody;
-  static String _tAnalyticsCharts(AppLocalizations l) =>
-      l.taWalkthroughAnalyticsChartsTitle;
-  static String _bAnalyticsCharts(AppLocalizations l) =>
-      l.taWalkthroughAnalyticsChartsBody;
-  static String _tAnalyticsInsights(AppLocalizations l) =>
-      l.taWalkthroughAnalyticsInsightsTitle;
-  static String _bAnalyticsInsights(AppLocalizations l) =>
-      l.taWalkthroughAnalyticsInsightsBody;
   static String _tAiStarters(AppLocalizations l) =>
       l.taWalkthroughAiStartersTitle;
   static String _bAiStarters(AppLocalizations l) =>

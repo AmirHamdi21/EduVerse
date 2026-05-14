@@ -399,7 +399,9 @@ class LabCreateFormState extends State<LabCreateForm> {
                     return;
                   }
                   setState(() {
-                    _uploadedInstructionFiles = List<DriveFileModel>.from(files);
+                    _uploadedInstructionFiles = List<DriveFileModel>.from(
+                      files,
+                    );
                   });
                 },
               ),

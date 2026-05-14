@@ -41,7 +41,13 @@ class AiChatAppBar extends StatelessWidget {
     bool isDark,
   ) {
     return GestureDetector(
-      // onTap: () => context.pop(),
+      onTap: () {
+        if (context.canPop()) {
+          context.pop();
+          return;
+        }
+        context.go('/dashboard');
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(

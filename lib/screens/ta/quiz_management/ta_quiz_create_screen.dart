@@ -10,9 +10,9 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
 import 'package:edu_verse/services/api/quiz_ai_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:go_router/go_router.dart';
 
 class TAQuizCreateScreen extends StatefulWidget {
   const TAQuizCreateScreen({super.key});
@@ -121,12 +121,8 @@ class _CreateState extends State<TAQuizCreateScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(
-              Icons.arrow_back_ios_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
+            onPressed: () => safeBack(context, '/ta/dashboard'),
+            icon: Icon(iosBackIcon(context), color: Colors.white, size: 18),
           ),
         ),
         const SizedBox(width: 14),
@@ -710,11 +706,12 @@ class _CreateState extends State<TAQuizCreateScreen> {
       physics: const BouncingScrollPhysics(),
       itemCount: _questions.length + 2, // +1 for AI panel, +1 for add button
       itemBuilder: (_, i) {
-        if (i == 0)
+        if (i == 0) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: _aiPanel(dk),
           );
+        }
         if (i == _questions.length + 1) {
           return Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -1820,7 +1817,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
           ),
         ),
       );
-      context.pop();
+      safeBack(context, '/ta/dashboard');
     }
   }
 }

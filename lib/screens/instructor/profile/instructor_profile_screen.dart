@@ -13,6 +13,7 @@ class InstructorProfileScreen extends StatelessWidget {
       roleFallbackLabel: 'Instructor',
       title: 'Instructor Profile',
       theme: RoleProfileTheme.instructor(),
+      fallbackRoute: '/instructor/dashboard',
     );
   }
 }

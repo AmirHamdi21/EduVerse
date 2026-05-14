@@ -16,6 +16,7 @@ import '../../../models/instructor/extended_course_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/courses/course_preview_modal.dart';
 import '../../../widgets/instructor/courses/course_skeleton_card.dart';
 import '../../../widgets/instructor/courses/empty_courses_message.dart';
@@ -560,11 +561,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   }
 
   void _safeBackToDashboard() {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go('/instructor/dashboard');
-    }
+    safeBack(context, '/instructor/dashboard');
   }
 
   Widget _buildHeaderActions(bool isDark) {

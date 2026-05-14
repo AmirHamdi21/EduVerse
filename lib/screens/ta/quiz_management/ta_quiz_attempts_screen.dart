@@ -5,6 +5,7 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -53,9 +54,10 @@ class _S extends State<TAQuizAttemptsScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
-                              onPressed: () => context.pop(),
-                              icon: const Icon(
-                                Icons.arrow_back_ios_rounded,
+                              onPressed: () =>
+                                  safeBack(context, '/ta/dashboard'),
+                              icon: Icon(
+                                iosBackIcon(context),
                                 color: Colors.white,
                                 size: 18,
                               ),

@@ -12,6 +12,7 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 import 'question_bank_create_screen.dart';
 
 class QuestionBankBulkCreateScreen extends StatelessWidget {
@@ -77,7 +78,7 @@ class _QuestionBankBulkCreateViewState
           leading: IconButton(
             onPressed: () => _handleBack(context),
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              safeFeatureBackIcon(context),
               color: InstructorColors.textPrimaryColor(isDark),
             ),
           ),
@@ -325,11 +326,7 @@ class _QuestionBankBulkCreateViewState
 }
 
 void _leaveBulkCreate(BuildContext context, {required bool changed}) {
-  if (context.canPop()) {
-    context.pop(changed);
-    return;
-  }
-  context.go('/instructor/question-bank');
+  safeFeatureBack(context, '/instructor/question-bank', changed);
 }
 
 class _BulkCoreDetailsSection extends StatelessWidget {

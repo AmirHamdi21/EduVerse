@@ -4,6 +4,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/upload_materials/ta_upload_materials_barrel.dart';
 
@@ -56,7 +57,6 @@ class TASectionMaterialsScreen extends StatefulWidget {
 }
 
 class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isLoading = true;
   String _searchQuery = '';
   String _selectedFileType = 'all';
@@ -401,11 +401,17 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
         final l10n = AppLocalizations.of(context);
 
         return Scaffold(
-          key: _scaffoldKey,
           backgroundColor: TAColors.scaffoldColor(isDark),
           appBar: AppBar(
             backgroundColor: TAColors.scaffoldColor(isDark),
             surfaceTintColor: Colors.transparent,
+            leading: IconButton(
+              onPressed: () => safeBack(context, '/ta/dashboard'),
+              icon: Icon(
+                iosBackIcon(context),
+                color: TAColors.textPrimaryColor(isDark),
+              ),
+            ),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

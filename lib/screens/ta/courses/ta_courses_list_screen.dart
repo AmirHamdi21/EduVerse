@@ -13,12 +13,12 @@ import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/extended_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/ta/courses/ta_course_search_bar.dart';
 import '../../../widgets/ta/courses/ta_courses_header.dart';
 import '../../../widgets/ta/courses/ta_courses_list_view.dart';
 import '../../../widgets/ta/courses/ta_level_filter_button.dart';
 import '../../../widgets/ta/courses/ta_sort_button.dart';
-import '../../../widgets/ta/dashboard/ta_drawer.dart';
 
 class TACoursesListScreen extends StatefulWidget {
   const TACoursesListScreen({super.key});
@@ -28,7 +28,6 @@ class TACoursesListScreen extends StatefulWidget {
 }
 
 class _TACoursesListScreenState extends State<TACoursesListScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
 
   String _searchQuery = '';
@@ -206,9 +205,7 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
         return TAWalkthroughRouteMarker(
           segmentId: TAWalkthroughIds.courses,
           child: Scaffold(
-            key: _scaffoldKey,
             backgroundColor: TACoursesTheme.scaffoldBackground(isDark),
-            drawer: TADrawer(currentRoute: '/ta/courses', isDark: isDark),
             body: DecoratedBox(
               decoration: TACoursesTheme.scaffoldDecoration(isDark),
               child: SafeArea(
@@ -259,10 +256,10 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
                                               title: l10n.taCourses,
                                               subtitle:
                                                   l10n.taCoursesShellSubtitle,
-                                              onMenuTap: () {
-                                                _scaffoldKey.currentState
-                                                    ?.openDrawer();
-                                              },
+                                              onBackTap: () => safeBack(
+                                                context,
+                                                '/ta/dashboard',
+                                              ),
                                               searchBar: TACourseSearchBar(
                                                 controller: _searchController,
                                                 onSearchChanged: (query) {

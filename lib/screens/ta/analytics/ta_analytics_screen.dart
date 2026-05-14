@@ -7,8 +7,8 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../features/walkthrough/ta_walkthrough_registry.dart';
 import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
-import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/ta/analytics/ta_analytics_barrel.dart';
 
 class TAAnalyticsScreen extends StatefulWidget {
@@ -19,8 +19,6 @@ class TAAnalyticsScreen extends StatefulWidget {
 }
 
 class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   bool _isLoading = true;
   int _attendanceFilterIndex = 0;
   int _submissionFilterIndex = 0;
@@ -159,9 +157,7 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
         return TAWalkthroughRouteMarker(
           segmentId: TAWalkthroughIds.analytics,
           child: Scaffold(
-            key: _scaffoldKey,
             backgroundColor: TAColors.scaffoldColor(isDark),
-            drawer: const TADrawer(),
             appBar: _buildAppBar(l10n, isDark),
             body: _isLoading
                 ? _buildLoadingState(isDark)
@@ -210,10 +206,10 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
       elevation: 0,
       leading: IconButton(
         icon: Icon(
-          Icons.menu_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
-        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        onPressed: () => safeBack(context, '/ta/dashboard'),
       ),
       title: Text(
         l10n.taAnalyticsTitle,

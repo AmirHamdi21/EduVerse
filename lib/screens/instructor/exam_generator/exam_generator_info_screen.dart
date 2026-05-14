@@ -2,6 +2,7 @@ import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 
 void showExamGeneratorInfoSheet(BuildContext context) {
@@ -95,7 +96,13 @@ class ExamGeneratorInfoScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(title: Text(l10n.examGeneratorInfoTitle)),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/instructor/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
+        title: Text(l10n.examGeneratorInfoTitle),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [

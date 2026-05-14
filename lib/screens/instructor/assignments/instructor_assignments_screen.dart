@@ -2,6 +2,7 @@ import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -169,7 +170,7 @@ class _InstructorAssignmentsViewState
       leading: IconButton(
         onPressed: _safeBackToDashboard,
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: InstructorColors.textPrimaryColor(isDark),
         ),
       ),
@@ -198,11 +199,7 @@ class _InstructorAssignmentsViewState
   }
 
   void _safeBackToDashboard() {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go('/instructor/dashboard');
-    }
+    safeBack(context, '/instructor/dashboard');
   }
 
   SliverToBoxAdapter _buildLoadingHeader(bool isDark, AppLocalizations l10n) {
