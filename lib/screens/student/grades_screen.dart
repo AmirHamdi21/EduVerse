@@ -12,6 +12,7 @@ import '../../features/walkthrough/student_walkthrough_registry.dart';
 import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/grades/grade_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../services/api/core_api_client.dart';
 import '../../services/api/grades_service.dart';
 import '../../services/api/student_stats_service.dart';
@@ -322,7 +323,7 @@ class _GradesScreenState extends State<GradesScreen>
                         ),
                       ),
                       child: Icon(
-                        Icons.arrow_back_ios_rounded,
+                        iosBackIcon(context),
                         color: isDark ? Colors.white : const Color(0xFF1E293B),
                         size: 22,
                       ),
@@ -1089,10 +1090,5 @@ class _GradesScreenState extends State<GradesScreen>
 }
 
 void _leaveStudentGradesScreen(BuildContext context) {
-  if (context.canPop()) {
-    context.pop();
-    return;
-  }
-
-  context.go('/dashboard');
+  safeBack(context, '/dashboard');
 }

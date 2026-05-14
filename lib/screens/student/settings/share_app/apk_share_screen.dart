@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../bloc/theme/theme_bloc.dart';
 import '../../../../generated_l10n/app_localizations.dart';
 import '../../../../services/app_share_service.dart';
+import '../../../../utils/navigation/safe_back.dart';
 
 class ApkShareScreen extends StatefulWidget {
   const ApkShareScreen({super.key});
@@ -127,10 +128,10 @@ class _ApkShareScreenState extends State<ApkShareScreen>
       leading: IconButton(
         onPressed: () {
           HapticFeedback.lightImpact();
-          context.pop();
+          safeBack(context, '/dashboard');
         },
         icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          iosBackIcon(context),
           color: isDark ? Colors.white : Colors.black87,
         ),
       ),
@@ -595,10 +596,10 @@ class _ApkShareScreenState extends State<ApkShareScreen>
     return TextButton.icon(
       onPressed: () {
         HapticFeedback.lightImpact();
-        context.pop();
+        safeBack(context, '/dashboard');
       },
       icon: Icon(
-        Icons.arrow_back_rounded,
+        iosBackIcon(context),
         size: 18,
         color: isDark ? Colors.white54 : Colors.black45,
       ),

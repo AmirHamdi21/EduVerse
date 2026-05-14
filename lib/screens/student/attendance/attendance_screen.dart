@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../bloc/attendance/attendance_cubit.dart';
 import '../../../bloc/attendance/attendance_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
@@ -12,6 +11,7 @@ import '../../../features/walkthrough/student_walkthrough_registry.dart';
 import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/attendance/student_face_reference_model.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/student/attendance/attendance_stats_card.dart';
 import '../../../widgets/student/attendance/attendance_calendar.dart';
 import '../../../widgets/student/attendance/course_attendance_list.dart';
@@ -150,7 +150,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                Icons.arrow_back_ios_new_rounded,
+                iosBackIcon(context),
                 size: 18,
                 color: isDark ? Colors.white : const Color(0xFF1E293B),
               ),
@@ -204,12 +204,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
   }
 
   void _leaveAttendanceScreen(BuildContext context) {
-    if (context.canPop()) {
-      context.pop();
-      return;
-    }
-
-    context.go('/dashboard');
+    safeBack(context, '/dashboard');
   }
 
   Widget _buildTabBar(BuildContext context, bool isDark) {

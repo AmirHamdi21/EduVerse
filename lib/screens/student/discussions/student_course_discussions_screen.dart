@@ -7,6 +7,7 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/discussion_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -136,34 +137,38 @@ class _StudentCourseDiscussionsScreenState
 
   List<DiscussionThread> _visibleThreads() {
     final normalizedSearch = _searchQuery.trim().toLowerCase();
-    final filtered = _threads.where((thread) {
-      final matchesSearch =
-          normalizedSearch.isEmpty ||
-          thread.title.toLowerCase().contains(normalizedSearch) ||
-          thread.description.toLowerCase().contains(normalizedSearch) ||
-          thread.createdByName.toLowerCase().contains(normalizedSearch);
-      if (!matchesSearch) {
-        return false;
-      }
+    final filtered = _threads
+        .where((thread) {
+          final matchesSearch =
+              normalizedSearch.isEmpty ||
+              thread.title.toLowerCase().contains(normalizedSearch) ||
+              thread.description.toLowerCase().contains(normalizedSearch) ||
+              thread.createdByName.toLowerCase().contains(normalizedSearch);
+          if (!matchesSearch) {
+            return false;
+          }
 
-      switch (_selectedFilter) {
-        case _PostFilter.all:
-          return true;
-        case _PostFilter.open:
-          return !thread.isLocked;
-        case _PostFilter.pinned:
-          return thread.isPinned;
-        case _PostFilter.locked:
-          return thread.isLocked;
-        case _PostFilter.unanswered:
-          return thread.replyCount == 0;
-      }
-    }).toList(growable: false);
+          switch (_selectedFilter) {
+            case _PostFilter.all:
+              return true;
+            case _PostFilter.open:
+              return !thread.isLocked;
+            case _PostFilter.pinned:
+              return thread.isPinned;
+            case _PostFilter.locked:
+              return thread.isLocked;
+            case _PostFilter.unanswered:
+              return thread.replyCount == 0;
+          }
+        })
+        .toList(growable: false);
 
     filtered.sort((a, b) {
       switch (_selectedSort) {
         case _PostSort.latest:
-          return (b.updatedAt ?? b.createdAt).compareTo(a.updatedAt ?? a.createdAt);
+          return (b.updatedAt ?? b.createdAt).compareTo(
+            a.updatedAt ?? a.createdAt,
+          );
         case _PostSort.mostReplies:
           return b.replyCount.compareTo(a.replyCount);
         case _PostSort.mostViews:
@@ -370,37 +375,40 @@ class _StudentCourseDiscussionsScreenState
                         title: l10n.studentCourseDiscussionHeaderTitle,
                         subtitle: l10n.studentCourseDiscussionHeaderSubtitle,
                         icon: Icons.groups_rounded,
-                        stats: <({
-                          IconData icon,
-                          String label,
-                          String value,
-                          Color color,
-                        })>[
-                          (
-                            icon: Icons.forum_rounded,
-                            label: l10n.instructorDiscussionPostsLabel,
-                            value: '—',
-                            color: StudentDiscussionPalette.accent,
-                          ),
-                          (
-                            icon: Icons.reply_all_rounded,
-                            label: l10n.instructorDiscussionRepliesLabel,
-                            value: '—',
-                            color: StudentDiscussionPalette.success,
-                          ),
-                          (
-                            icon: Icons.push_pin_rounded,
-                            label: l10n.instructorDiscussionPinnedLabel,
-                            value: '—',
-                            color: StudentDiscussionPalette.warning,
-                          ),
-                          (
-                            icon: Icons.lock_rounded,
-                            label: l10n.instructorDiscussionLockedLabel,
-                            value: '—',
-                            color: StudentDiscussionPalette.pink,
-                          ),
-                        ],
+                        stats:
+                            <
+                              ({
+                                IconData icon,
+                                String label,
+                                String value,
+                                Color color,
+                              })
+                            >[
+                              (
+                                icon: Icons.forum_rounded,
+                                label: l10n.instructorDiscussionPostsLabel,
+                                value: '—',
+                                color: StudentDiscussionPalette.accent,
+                              ),
+                              (
+                                icon: Icons.reply_all_rounded,
+                                label: l10n.instructorDiscussionRepliesLabel,
+                                value: '—',
+                                color: StudentDiscussionPalette.success,
+                              ),
+                              (
+                                icon: Icons.push_pin_rounded,
+                                label: l10n.instructorDiscussionPinnedLabel,
+                                value: '—',
+                                color: StudentDiscussionPalette.warning,
+                              ),
+                              (
+                                icon: Icons.lock_rounded,
+                                label: l10n.instructorDiscussionLockedLabel,
+                                value: '—',
+                                color: StudentDiscussionPalette.pink,
+                              ),
+                            ],
                       ),
                     ),
                     SliverPadding(
@@ -467,7 +475,10 @@ class _StudentCourseDiscussionsScreenState
                       SliverPadding(
                         padding: const EdgeInsets.all(16),
                         sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
                             final thread = threads[index];
                             return _buildThreadCard(
                               context,
@@ -497,9 +508,9 @@ class _StudentCourseDiscussionsScreenState
       floating: true,
       snap: true,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: () => safeBack(context, '/dashboard'),
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: StudentDiscussionPalette.textPrimaryColor(isDark),
         ),
       ),
@@ -533,7 +544,9 @@ class _StudentCourseDiscussionsScreenState
     );
     final pinnedCount = _threads.where((thread) => thread.isPinned).length;
     final lockedCount = _threads.where((thread) => thread.isLocked).length;
-    final unanswered = _threads.where((thread) => thread.replyCount == 0).length;
+    final unanswered = _threads
+        .where((thread) => thread.replyCount == 0)
+        .length;
 
     return <({IconData icon, String label, String value, Color color})>[
       (
@@ -728,7 +741,9 @@ class _StudentCourseDiscussionsScreenState
                         Text(
                           thread.title,
                           style: TextStyle(
-                            color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                            color: StudentDiscussionPalette.textPrimaryColor(
+                              isDark,
+                            ),
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
                           ),
@@ -739,7 +754,9 @@ class _StudentCourseDiscussionsScreenState
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: StudentDiscussionPalette.textSecondaryColor(isDark),
+                            color: StudentDiscussionPalette.textSecondaryColor(
+                              isDark,
+                            ),
                             fontSize: 13,
                             height: 1.45,
                           ),
@@ -798,7 +815,9 @@ class _StudentCourseDiscussionsScreenState
                             value: 'delete',
                             child: Text(
                               l10n.delete,
-                              style: const TextStyle(color: StudentDiscussionPalette.error),
+                              style: const TextStyle(
+                                color: StudentDiscussionPalette.error,
+                              ),
                             ),
                           ),
                       ],
@@ -847,9 +866,8 @@ class _StudentCourseDiscussionsScreenState
                 children: <Widget>[
                   CircleAvatar(
                     radius: 15,
-                    backgroundColor: StudentDiscussionPalette.primary.withValues(
-                      alpha: 0.12,
-                    ),
+                    backgroundColor: StudentDiscussionPalette.primary
+                        .withValues(alpha: 0.12),
                     child: Text(
                       studentDiscussionInitials(thread.createdByName),
                       style: const TextStyle(
@@ -870,16 +888,23 @@ class _StudentCourseDiscussionsScreenState
                             thread.createdByName,
                           ),
                           style: TextStyle(
-                            color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                            color: StudentDiscussionPalette.textPrimaryColor(
+                              isDark,
+                            ),
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          studentDiscussionFormatDate(context, thread.createdAt),
+                          studentDiscussionFormatDate(
+                            context,
+                            thread.createdAt,
+                          ),
                           style: TextStyle(
-                            color: StudentDiscussionPalette.textTertiaryColor(isDark),
+                            color: StudentDiscussionPalette.textTertiaryColor(
+                              isDark,
+                            ),
                             fontSize: 11,
                           ),
                         ),
@@ -891,7 +916,9 @@ class _StudentCourseDiscussionsScreenState
                     style: OutlinedButton.styleFrom(
                       foregroundColor: StudentDiscussionPalette.primary,
                       side: BorderSide(
-                        color: StudentDiscussionPalette.primary.withValues(alpha: 0.25),
+                        color: StudentDiscussionPalette.primary.withValues(
+                          alpha: 0.25,
+                        ),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -909,7 +936,10 @@ class _StudentCourseDiscussionsScreenState
     );
   }
 
-  Future<void> _openThread(BuildContext context, DiscussionThread thread) async {
+  Future<void> _openThread(
+    BuildContext context,
+    DiscussionThread thread,
+  ) async {
     await context.push(
       '/course/${widget.courseId}/discussions/${thread.id}',
       extra: <String, dynamic>{'course': _course, 'thread': thread},
@@ -948,10 +978,3 @@ class _StudentCourseDiscussionsScreenState
     );
   }
 }
-
-
-
-
-
-
-

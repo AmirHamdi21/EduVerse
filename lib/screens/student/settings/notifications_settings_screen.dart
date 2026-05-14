@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../common/service_error.dart';
@@ -43,8 +43,7 @@ class _NotificationsSettingsScreenState
     final api = context.read<NotificationApiService>();
 
     try {
-      final preferenceResult =
-          await api.getPreferences();
+      final preferenceResult = await api.getPreferences();
       final devicePreferences = await _devicePreferencesService.load();
 
       if (!mounted) return;
@@ -66,8 +65,8 @@ class _NotificationsSettingsScreenState
     HapticFeedback.mediumImpact();
 
     final api = context.read<NotificationApiService>();
-    final ServiceResult<NotificationPreferenceModel> saveResult =
-        await api.updatePreferences(_serverPreferences);
+    final ServiceResult<NotificationPreferenceModel> saveResult = await api
+        .updatePreferences(_serverPreferences);
     await _devicePreferencesService.save(_devicePreferences);
 
     if (!mounted) return;
@@ -99,9 +98,9 @@ class _NotificationsSettingsScreenState
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => safeBack(context, '/dashboard'),
           icon: Icon(
-            Icons.arrow_back_rounded,
+            iosBackIcon(context),
             color: isDark ? Colors.white : Colors.black87,
           ),
         ),
@@ -140,22 +139,26 @@ class _NotificationsSettingsScreenState
                     _buildToggleItem(
                       isDark,
                       title: 'Email Notifications',
-                      subtitle: 'Allow email delivery for supported notification types',
+                      subtitle:
+                          'Allow email delivery for supported notification types',
                       value: _serverPreferences.emailEnabled,
                       onChanged: (value) => setState(
-                        () => _serverPreferences =
-                            _serverPreferences.copyWith(emailEnabled: value),
+                        () => _serverPreferences = _serverPreferences.copyWith(
+                          emailEnabled: value,
+                        ),
                       ),
                     ),
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
                       title: 'Push Preference',
-                      subtitle: 'Store your push delivery preference on the server',
+                      subtitle:
+                          'Store your push delivery preference on the server',
                       value: _serverPreferences.pushEnabled,
                       onChanged: (value) => setState(
-                        () => _serverPreferences =
-                            _serverPreferences.copyWith(pushEnabled: value),
+                        () => _serverPreferences = _serverPreferences.copyWith(
+                          pushEnabled: value,
+                        ),
                       ),
                     ),
                     _buildDivider(isDark),
@@ -165,8 +168,9 @@ class _NotificationsSettingsScreenState
                       subtitle: 'Allow SMS notifications when supported',
                       value: _serverPreferences.smsEnabled,
                       onChanged: (value) => setState(
-                        () => _serverPreferences =
-                            _serverPreferences.copyWith(smsEnabled: value),
+                        () => _serverPreferences = _serverPreferences.copyWith(
+                          smsEnabled: value,
+                        ),
                       ),
                     ),
                     _buildDivider(isDark),
@@ -188,8 +192,9 @@ class _NotificationsSettingsScreenState
                       subtitle: 'Receive grade and grading-related emails',
                       value: _serverPreferences.gradeEmail,
                       onChanged: (value) => setState(
-                        () => _serverPreferences =
-                            _serverPreferences.copyWith(gradeEmail: value),
+                        () => _serverPreferences = _serverPreferences.copyWith(
+                          gradeEmail: value,
+                        ),
                       ),
                     ),
                     _buildDivider(isDark),
@@ -199,8 +204,9 @@ class _NotificationsSettingsScreenState
                       subtitle: 'Receive assignment and deadline emails',
                       value: _serverPreferences.assignmentEmail,
                       onChanged: (value) => setState(
-                        () => _serverPreferences =
-                            _serverPreferences.copyWith(assignmentEmail: value),
+                        () => _serverPreferences = _serverPreferences.copyWith(
+                          assignmentEmail: value,
+                        ),
                       ),
                     ),
                     _buildDivider(isDark),
@@ -210,8 +216,9 @@ class _NotificationsSettingsScreenState
                       subtitle: 'Receive message and discussion emails',
                       value: _serverPreferences.messageEmail,
                       onChanged: (value) => setState(
-                        () => _serverPreferences =
-                            _serverPreferences.copyWith(messageEmail: value),
+                        () => _serverPreferences = _serverPreferences.copyWith(
+                          messageEmail: value,
+                        ),
                       ),
                     ),
                   ],
@@ -236,7 +243,8 @@ class _NotificationsSettingsScreenState
                           ),
                           const SizedBox(height: 8),
                           DropdownButtonFormField<int>(
-                            initialValue: _serverPreferences.deadlineReminderDays,
+                            initialValue:
+                                _serverPreferences.deadlineReminderDays,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                             ),
@@ -251,10 +259,8 @@ class _NotificationsSettingsScreenState
                             onChanged: (value) {
                               if (value == null) return;
                               setState(
-                                () => _serverPreferences =
-                                    _serverPreferences.copyWith(
-                                      deadlineReminderDays: value,
-                                    ),
+                                () => _serverPreferences = _serverPreferences
+                                    .copyWith(deadlineReminderDays: value),
                               );
                             },
                           ),
@@ -267,10 +273,9 @@ class _NotificationsSettingsScreenState
                                   title: 'Quiet hours start',
                                   value: _serverPreferences.quietHoursStart,
                                   onChanged: (value) => setState(
-                                    () => _serverPreferences =
-                                        _serverPreferences.copyWith(
-                                          quietHoursStart: value,
-                                        ),
+                                    () =>
+                                        _serverPreferences = _serverPreferences
+                                            .copyWith(quietHoursStart: value),
                                   ),
                                 ),
                               ),
@@ -281,10 +286,9 @@ class _NotificationsSettingsScreenState
                                   title: 'Quiet hours end',
                                   value: _serverPreferences.quietHoursEnd,
                                   onChanged: (value) => setState(
-                                    () => _serverPreferences =
-                                        _serverPreferences.copyWith(
-                                          quietHoursEnd: value,
-                                        ),
+                                    () =>
+                                        _serverPreferences = _serverPreferences
+                                            .copyWith(quietHoursEnd: value),
                                   ),
                                 ),
                               ),
@@ -304,7 +308,8 @@ class _NotificationsSettingsScreenState
                     _buildToggleItem(
                       isDark,
                       title: 'Foreground alerts',
-                      subtitle: 'Show an in-app alert when new notifications arrive',
+                      subtitle:
+                          'Show an in-app alert when new notifications arrive',
                       value: _devicePreferences.foregroundAlertsEnabled,
                       onChanged: (value) => setState(
                         () => _devicePreferences = _devicePreferences.copyWith(
@@ -319,19 +324,22 @@ class _NotificationsSettingsScreenState
                       subtitle: 'Play an in-app sound when alerts arrive',
                       value: _devicePreferences.soundEnabled,
                       onChanged: (value) => setState(
-                        () => _devicePreferences =
-                            _devicePreferences.copyWith(soundEnabled: value),
+                        () => _devicePreferences = _devicePreferences.copyWith(
+                          soundEnabled: value,
+                        ),
                       ),
                     ),
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
                       title: 'Vibration / haptic feedback',
-                      subtitle: 'Use haptic feedback for incoming in-app alerts',
+                      subtitle:
+                          'Use haptic feedback for incoming in-app alerts',
                       value: _devicePreferences.vibrationEnabled,
                       onChanged: (value) => setState(
-                        () => _devicePreferences =
-                            _devicePreferences.copyWith(vibrationEnabled: value),
+                        () => _devicePreferences = _devicePreferences.copyWith(
+                          vibrationEnabled: value,
+                        ),
                       ),
                     ),
                     _buildDivider(isDark),
@@ -341,8 +349,9 @@ class _NotificationsSettingsScreenState
                       subtitle: 'Show notification body in foreground alerts',
                       value: _devicePreferences.showPreview,
                       onChanged: (value) => setState(
-                        () => _devicePreferences =
-                            _devicePreferences.copyWith(showPreview: value),
+                        () => _devicePreferences = _devicePreferences.copyWith(
+                          showPreview: value,
+                        ),
                       ),
                     ),
                   ],
@@ -397,10 +406,7 @@ class _NotificationsSettingsScreenState
     );
   }
 
-  Widget _buildSettingsCard(
-    bool isDark, {
-    required List<Widget> children,
-  }) {
+  Widget _buildSettingsCard(bool isDark, {required List<Widget> children}) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,

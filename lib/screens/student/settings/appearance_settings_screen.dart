@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/theme/theme_state.dart';
@@ -40,9 +40,9 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => safeBack(context, '/dashboard'),
           icon: Icon(
-            Icons.arrow_back_rounded,
+            iosBackIcon(context),
             color: isDark ? Colors.white : Colors.black87,
           ),
         ),

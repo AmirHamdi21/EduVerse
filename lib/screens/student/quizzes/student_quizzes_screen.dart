@@ -13,6 +13,7 @@ import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/widgets/student/quizzes/student_quiz_card.dart';
 import 'package:edu_verse/widgets/student/quizzes/student_attempt_history.dart';
 import 'package:go_router/go_router.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 
 class StudentQuizzesScreen extends StatefulWidget {
   const StudentQuizzesScreen({super.key});
@@ -198,11 +199,7 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
       ),
       child: IconButton(
         onPressed: () => _leaveStudentQuizScreen(context),
-        icon: const Icon(
-          Icons.arrow_back_ios_rounded,
-          color: Colors.white,
-          size: 18,
-        ),
+        icon: Icon(iosBackIcon(context), color: Colors.white, size: 18),
       ),
     );
   }
@@ -426,10 +423,5 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
 }
 
 void _leaveStudentQuizScreen(BuildContext context) {
-  if (context.canPop()) {
-    context.pop();
-    return;
-  }
-
-  context.go('/dashboard');
+  safeBack(context, '/dashboard');
 }

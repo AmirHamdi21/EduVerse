@@ -5,7 +5,7 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/student_quiz_cubit.dart';
 import 'package:edu_verse/bloc/quiz/student_quiz_state.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
-import 'package:go_router/go_router.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'dart:math' as math;
 
 class StudentQuizResultScreen extends StatelessWidget {
@@ -35,7 +35,7 @@ class StudentQuizResultScreen extends StatelessWidget {
               backgroundColor: bg,
               body: Center(
                 child: ElevatedButton(
-                  onPressed: () => context.pop(),
+                  onPressed: () => safeBack(context, '/dashboard'),
                   child: const Text('Go Back'),
                 ),
               ),
@@ -87,7 +87,7 @@ class StudentQuizResultScreen extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             context.read<StudentQuizCubit>().backToList();
-                            context.pop();
+                            safeBack(context, '/dashboard');
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -95,8 +95,8 @@ class StudentQuizResultScreen extends StatelessWidget {
                               color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(
-                              Icons.arrow_back_ios_rounded,
+                            child: Icon(
+                              iosBackIcon(context),
                               color: Colors.white,
                               size: 18,
                             ),
@@ -246,7 +246,7 @@ class StudentQuizResultScreen extends StatelessWidget {
                             false,
                             () {
                               context.read<StudentQuizCubit>().backToList();
-                              context.pop();
+                              safeBack(context, '/dashboard');
                             },
                           ),
                         ),

@@ -6,6 +6,7 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/notifications/swipe_action_model.dart';
 import '../../../services/notification_swipe_settings_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 class NotificationSwipeSettingsScreen extends StatefulWidget {
   const NotificationSwipeSettingsScreen({super.key});
@@ -127,7 +128,7 @@ class _NotificationSwipeSettingsScreenState
           GestureDetector(
             onTap: () {
               HapticFeedback.lightImpact();
-              Navigator.of(context).pop();
+              safeBack(context, '/dashboard');
             },
             child: Container(
               width: 44,
@@ -139,7 +140,7 @@ class _NotificationSwipeSettingsScreenState
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
-                Icons.arrow_back_ios_new_rounded,
+                iosBackIcon(context),
                 size: 18,
                 color: isDark ? Colors.white : const Color(0xFF1E293B),
               ),
@@ -804,7 +805,9 @@ class _NotificationSwipeSettingsScreenState
                         ? Colors.white.withValues(alpha: 0.1)
                         : Colors.grey.shade200,
                     thumbColor: const Color(0xFF8B5CF6),
-                    overlayColor: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                    overlayColor: const Color(
+                      0xFF8B5CF6,
+                    ).withValues(alpha: 0.2),
                     trackHeight: 4,
                     thumbShape: const RoundSliderThumbShape(
                       enabledThumbRadius: 8,

@@ -14,6 +14,7 @@ import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/registration/registration_available_course_model.dart';
 import '../../models/registration/registration_available_section_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/registration/available_course_card.dart';
 import '../../widgets/student/registration/registered_course_card.dart';
 import '../../widgets/student/registration/registration_empty_state.dart';
@@ -53,6 +54,10 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
           child: Scaffold(
             backgroundColor: StudentCoursesTheme.scaffoldBackground(isDark),
             appBar: AppBar(
+              leading: IconButton(
+                onPressed: () => safeBack(context, '/dashboard'),
+                icon: Icon(iosBackIcon(context)),
+              ),
               title: Text(AppLocalizations.of(context).registration),
               elevation: 0,
               backgroundColor: Colors.transparent,

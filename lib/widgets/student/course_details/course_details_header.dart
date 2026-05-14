@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 class CourseDetailsHeader extends StatelessWidget {
   final String title;
@@ -38,12 +39,8 @@ class CourseDetailsHeader extends StatelessWidget {
           Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
             child: IconButton(
-              onPressed: onBackPressed ?? () => Navigator.pop(context),
-              icon: Icon(
-                Icons.arrow_back_ios_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
+              onPressed: onBackPressed ?? () => safeBack(context, '/dashboard'),
+              icon: Icon(iosBackIcon(context), color: Colors.white, size: 20),
             ),
           ),
           const SizedBox(width: 4),

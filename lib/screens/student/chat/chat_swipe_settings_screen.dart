@@ -6,6 +6,7 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/chat/chat_swipe_action_model.dart';
 import '../../../services/chat_swipe_settings_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 class ChatSwipeSettingsScreen extends StatefulWidget {
   const ChatSwipeSettingsScreen({super.key});
@@ -126,7 +127,7 @@ class _ChatSwipeSettingsScreenState extends State<ChatSwipeSettingsScreen>
           GestureDetector(
             onTap: () {
               HapticFeedback.lightImpact();
-              Navigator.of(context).pop();
+              safeBack(context, '/dashboard');
             },
             child: Container(
               width: 44,
@@ -138,7 +139,7 @@ class _ChatSwipeSettingsScreenState extends State<ChatSwipeSettingsScreen>
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
-                Icons.arrow_back_ios_new_rounded,
+                iosBackIcon(context),
                 size: 18,
                 color: isDark ? Colors.white : const Color(0xFF1E293B),
               ),

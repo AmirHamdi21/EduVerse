@@ -6,6 +6,7 @@ import '../../../bloc/voice_to_text/voice_to_text_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/student/voice_to_text/voice_recording_button.dart';
 import '../../../widgets/student/voice_to_text/waveform_visualizer.dart';
 import '../../../widgets/student/voice_to_text/transcription_card.dart';
@@ -246,7 +247,7 @@ class _VoiceToTextScreenContent extends StatelessWidget {
         children: [
           // Back Button
           GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => safeBack(context, '/dashboard'),
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -255,11 +256,7 @@ class _VoiceToTextScreenContent extends StatelessWidget {
                     : Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
-                size: 16,
-              ),
+              child: Icon(iosBackIcon(context), color: Colors.white, size: 16),
             ),
           ),
           const SizedBox(width: 16),

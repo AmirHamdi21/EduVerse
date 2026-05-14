@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../bloc/labs/labs_cubit.dart';
 import '../../bloc/labs/labs_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
@@ -14,6 +13,7 @@ import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/core/course_model.dart';
 import '../../models/labs/lab_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/academic/academic_list_skeleton.dart';
 import 'lab_detail_screen.dart';
 
@@ -145,7 +145,7 @@ class _LabsScreenState extends State<LabsScreen> {
       leading: IconButton(
         onPressed: () => _leaveStudentAcademicScreen(context),
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: _StudentLabColors.textPrimary(isDark),
         ),
       ),
@@ -1350,12 +1350,7 @@ class _LabsScreenState extends State<LabsScreen> {
 }
 
 void _leaveStudentAcademicScreen(BuildContext context) {
-  if (context.canPop()) {
-    context.pop();
-    return;
-  }
-
-  context.go('/dashboard');
+  safeBack(context, '/dashboard');
 }
 
 class _StudentLabColors {

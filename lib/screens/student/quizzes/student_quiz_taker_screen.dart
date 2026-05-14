@@ -9,6 +9,7 @@ import 'package:edu_verse/bloc/quiz/student_quiz_state.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
 import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:go_router/go_router.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 
 class StudentQuizTakerScreen extends StatefulWidget {
   const StudentQuizTakerScreen({super.key});
@@ -147,7 +148,7 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                         ElevatedButton(
                           onPressed: () {
                             context.read<StudentQuizCubit>().backToList();
-                            context.pop();
+                            safeBack(context, '/dashboard');
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF2B7FFF),
@@ -168,7 +169,7 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
               backgroundColor: bg,
               body: Center(
                 child: ElevatedButton(
-                  onPressed: () => context.pop(),
+                  onPressed: () => safeBack(context, '/dashboard'),
                   child: const Text('Go Back'),
                 ),
               ),
@@ -917,7 +918,7 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
               Navigator.pop(ctx);
               context.read<StudentQuizCubit>().saveProgress();
               context.read<StudentQuizCubit>().backToList();
-              context.pop();
+              safeBack(context, '/dashboard');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),

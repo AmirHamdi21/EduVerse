@@ -1015,7 +1015,6 @@ class _InstructorCourseRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final course = metrics.course;
-    final avg = InstructorDashboardV9Metrics.courseAverage(course);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 9),
@@ -1046,7 +1045,7 @@ class _InstructorCourseRow extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '${course.enrolledCount} · ${avg.round()}%',
+                '${course.enrolledCount} ${l10n.students}',
                 style: TextStyle(
                   color: _InstructorV9Colors.mutedText(isDark),
                   fontSize: 11,
@@ -1054,20 +1053,6 @@ class _InstructorCourseRow extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 7),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: avg / 100,
-              minHeight: 5,
-              backgroundColor: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.white.withValues(alpha: 0.80),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                _InstructorV9Colors.purple,
-              ),
-            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -1627,6 +1612,23 @@ class _TinyActionButton extends StatelessWidget {
                   ? _InstructorV9Colors.purple
                   : _InstructorV9Colors.secondaryButton(isDark),
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isPrimary
+                    ? _InstructorV9Colors.purple
+                    : _InstructorV9Colors.secondaryButtonBorder(isDark),
+                width: 1.1,
+              ),
+              boxShadow: isPrimary
+                  ? const <BoxShadow>[]
+                  : [
+                      BoxShadow(
+                        color:
+                            (isDark ? Colors.black : InstructorColors.primary)
+                                .withValues(alpha: isDark ? 0.12 : 0.06),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
             ),
             child: Center(
               child: Text(
@@ -1834,8 +1836,12 @@ class _InstructorV9Colors {
       : InstructorColors.primarySurface.withValues(alpha: 0.72);
 
   static Color secondaryButton(bool isDark) => isDark
-      ? Colors.white.withValues(alpha: 0.14)
-      : Colors.white.withValues(alpha: 0.82);
+      ? Colors.white.withValues(alpha: 0.10)
+      : InstructorColors.primarySurface.withValues(alpha: 0.34);
+
+  static Color secondaryButtonBorder(bool isDark) => isDark
+      ? Colors.white.withValues(alpha: 0.22)
+      : InstructorColors.primary.withValues(alpha: 0.20);
 
   static Color hairline(bool isDark) => isDark
       ? InstructorColors.darkBorder.withValues(alpha: 0.55)

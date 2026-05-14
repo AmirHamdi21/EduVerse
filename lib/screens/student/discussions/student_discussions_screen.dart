@@ -9,6 +9,7 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/discussion_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -401,7 +402,7 @@ class _StudentDiscussionsScreenState extends State<StudentDiscussionsScreen> {
       leading: IconButton(
         onPressed: () => _leaveStudentDiscussionsScreen(context),
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: StudentDiscussionPalette.textPrimaryColor(isDark),
         ),
       ),
@@ -913,12 +914,7 @@ class _StudentDiscussionsScreenState extends State<StudentDiscussionsScreen> {
 }
 
 void _leaveStudentDiscussionsScreen(BuildContext context) {
-  if (context.canPop()) {
-    context.pop();
-    return;
-  }
-
-  context.go('/dashboard');
+  safeBack(context, '/dashboard');
 }
 
 class _CourseSummary {

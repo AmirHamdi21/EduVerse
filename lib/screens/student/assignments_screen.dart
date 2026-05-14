@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../bloc/assignments/assignment_bloc.dart';
@@ -18,6 +17,7 @@ import '../../generated_l10n/app_localizations.dart';
 import '../../models/assignments/assignment_model.dart';
 import '../../models/core/course_model.dart';
 import '../../models/core/enums/assignment_enums.dart' as api;
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/academic/academic_list_skeleton.dart';
 import 'assignment_detail_screen.dart';
 
@@ -147,7 +147,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
       leading: IconButton(
         onPressed: () => _leaveStudentAcademicScreen(context),
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: _StudentAssignmentColors.textPrimary(isDark),
         ),
       ),
@@ -1385,12 +1385,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 }
 
 void _leaveStudentAcademicScreen(BuildContext context) {
-  if (context.canPop()) {
-    context.pop();
-    return;
-  }
-
-  context.go('/dashboard');
+  safeBack(context, '/dashboard');
 }
 
 class _StudentAssignmentColors {

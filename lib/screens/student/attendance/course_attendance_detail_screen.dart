@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/attendance/attendance_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 enum _CourseAttendanceViewMode { sessions, calendar }
 
@@ -115,7 +115,7 @@ class _CourseAttendanceDetailScreenState
     return Row(
       children: [
         _buildIconButton(
-          icon: Icons.arrow_back_ios_new_rounded,
+          icon: iosBackIcon(context),
           isDark: isDark,
           onTap: () => _leaveCourseAttendanceDetail(context),
         ),
@@ -149,12 +149,7 @@ class _CourseAttendanceDetailScreenState
   }
 
   void _leaveCourseAttendanceDetail(BuildContext context) {
-    if (context.canPop()) {
-      context.pop();
-      return;
-    }
-
-    context.go('/attendance');
+    safeBack(context, '/dashboard');
   }
 
   Widget _buildHero(BuildContext context, bool isDark) {

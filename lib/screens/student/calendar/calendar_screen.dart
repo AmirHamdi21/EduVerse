@@ -8,12 +8,12 @@ import 'package:edu_verse/common/utils/student_courses_theme.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/schedule_api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/shared/loading/calendar_screen_skeleton.dart';
 import 'package:edu_verse/widgets/student/calendar/add_event_sheet.dart';
 import 'package:edu_verse/widgets/student/calendar/event_details_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -226,13 +226,13 @@ class _CalendarView extends StatelessWidget {
       child: Row(
         children: [
           _buildUtilityButton(
-            onTap: () => context.pop(),
+            onTap: () => safeBack(context, '/dashboard'),
             isDark: isDark,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  iosBackIcon(context),
                   size: 16,
                   color: InstructorColors.textPrimaryColor(isDark),
                 ),

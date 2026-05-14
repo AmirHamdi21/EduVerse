@@ -4,7 +4,7 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_event.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
-import 'package:go_router/go_router.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 
 class AiChatAppBar extends StatelessWidget {
   final VoidCallback onClearChat;
@@ -41,13 +41,7 @@ class AiChatAppBar extends StatelessWidget {
     bool isDark,
   ) {
     return GestureDetector(
-      onTap: () {
-        if (context.canPop()) {
-          context.pop();
-          return;
-        }
-        context.go('/dashboard');
-      },
+      onTap: () => safeBack(context, '/dashboard'),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -61,7 +55,7 @@ class AiChatAppBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.arrow_back_ios_new_rounded,
+              iosBackIcon(context),
               size: 16,
               color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
             ),

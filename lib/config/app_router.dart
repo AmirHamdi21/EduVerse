@@ -282,6 +282,23 @@ class AppRouter {
     );
   }
 
+  static Widget _studentRouteFallback(BuildContext context, String message) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(message, textAlign: TextAlign.center),
+        ),
+      ),
+    );
+  }
+
   static Widget _instructorRouteFallback(BuildContext context, String message) {
     return Scaffold(
       appBar: AppBar(
@@ -405,9 +422,7 @@ class AppRouter {
         builder: (context, state) {
           final quizSession = state.extra as QuizSession?;
           if (quizSession == null) {
-            return const Scaffold(
-              body: Center(child: Text('Course not found')),
-            );
+            return _studentRouteFallback(context, 'Course not found');
           }
           return QuizQuestionsScreen(quizSession: quizSession);
         }, // Placeholder
@@ -417,9 +432,7 @@ class AppRouter {
         builder: (context, state) {
           final quizSession = state.extra as QuizSession?;
           if (quizSession == null) {
-            return const Scaffold(
-              body: Center(child: Text('Course not found')),
-            );
+            return _studentRouteFallback(context, 'Course not found');
           }
           return QuizResultScreen(quizSession: quizSession);
         }, // Placeholder
@@ -466,7 +479,7 @@ class AppRouter {
             );
           }
 
-          return const Scaffold(body: Center(child: Text('Course not found')));
+          return _studentRouteFallback(context, 'Course not found');
         },
       ),
       GoRoute(
@@ -474,9 +487,7 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! Map<String, dynamic>) {
-            return const Scaffold(
-              body: Center(child: Text('Instructor not found')),
-            );
+            return _studentRouteFallback(context, 'Instructor not found');
           }
 
           final dynamic rawInstructorId = extra['instructorId'];
@@ -485,9 +496,7 @@ class AppRouter {
               : int.tryParse(rawInstructorId?.toString() ?? '');
 
           if (instructorId == null || instructorId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Instructor not found')),
-            );
+            return _studentRouteFallback(context, 'Instructor not found');
           }
 
           final dynamic rawCourseId = extra['courseId'];
@@ -595,8 +604,9 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           if (courseId == null || courseId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid course discussions route')),
+            return _studentRouteFallback(
+              context,
+              'Invalid course discussions route',
             );
           }
 
@@ -628,8 +638,9 @@ class AppRouter {
               courseId <= 0 ||
               threadId == null ||
               threadId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid discussion post route')),
+            return _studentRouteFallback(
+              context,
+              'Invalid discussion post route',
             );
           }
 
@@ -668,8 +679,9 @@ class AppRouter {
         builder: (context, state) {
           final userId = int.tryParse(state.pathParameters['userId'] ?? '');
           if (userId == null || userId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid user profile request')),
+            return _studentRouteFallback(
+              context,
+              'Invalid user profile request',
             );
           }
           return UserProfileScreen(userId: userId);
@@ -682,8 +694,9 @@ class AppRouter {
             state.pathParameters['conversationId'] ?? '',
           );
           if (conversationId == null || conversationId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid group profile request')),
+            return _studentRouteFallback(
+              context,
+              'Invalid group profile request',
             );
           }
           return ChatGroupProfileScreen(conversationId: conversationId);

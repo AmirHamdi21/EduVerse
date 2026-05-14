@@ -8,6 +8,7 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/materials/announcement_model.dart';
 import '../../../services/api/communication_service.dart';
 import '../../../services/api/core_api_client.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 class StudentAnnouncementsScreen extends StatefulWidget {
   const StudentAnnouncementsScreen({super.key});
@@ -269,9 +270,9 @@ class _StudentAnnouncementsScreenState
             Row(
               children: [
                 IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
+                  onPressed: () => safeBack(context, '/dashboard'),
+                  icon: Icon(
+                    iosBackIcon(context),
                     color: Colors.white,
                     size: 18,
                   ),

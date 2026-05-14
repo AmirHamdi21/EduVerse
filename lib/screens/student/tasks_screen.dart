@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import '../../../bloc/tasks/tasks_cubit.dart';
 import '../../../bloc/tasks/tasks_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
@@ -294,9 +295,9 @@ class _TasksScreenState extends State<TasksScreen>
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => safeBack(context, '/dashboard'),
                       icon: Icon(
-                        Icons.arrow_back_ios_rounded,
+                        iosBackIcon(context),
                         color: isDark ? Colors.white : Colors.black87,
                       ),
                       padding: EdgeInsets.zero,

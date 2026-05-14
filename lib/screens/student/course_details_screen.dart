@@ -17,6 +17,7 @@ import '../../models/core/course_structure_model.dart';
 import '../../models/courses/instructor_assignment_model.dart';
 import '../../models/materials/course_material_model.dart';
 import '../../models/ta/ta_assignment_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/course_details/announcements_tab_content.dart';
 import '../../widgets/student/course_details/assignments_tab_content.dart';
 import '../../widgets/student/course_details/course_tab_content.dart';
@@ -512,7 +513,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             child: Row(
               children: [
                 _buildTopIconButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
+                  icon: iosBackIcon(context),
                   isDark: isDark,
                   backgroundColor: themeButtonColor,
                   onTap: _handleBackPressed,
@@ -1482,11 +1483,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
       if (!mounted) {
         return;
       }
-      if (context.canPop()) {
-        context.pop();
-      } else {
-        context.go('/dashboard');
-      }
+      safeBack(context, '/dashboard');
     });
   }
 
