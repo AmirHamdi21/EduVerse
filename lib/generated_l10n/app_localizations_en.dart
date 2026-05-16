@@ -18857,4 +18857,92 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get taWalkthroughAiDemoLabPreview =>
       'Prepare hints, common mistakes, and a quick rubric for tomorrow\'s lab review.';
+
+  @override
+  String get sharedSettingsProfileLoadingTitle => 'Loading your profile';
+
+  @override
+  String get sharedSettingsProfileLoadingMessage =>
+      'We are pulling your account details so settings stay tied to your real data.';
+
+  @override
+  String get sharedSettingsProfileErrorTitle =>
+      'Profile details could not load';
+
+  @override
+  String get sharedSettingsProfileErrorMessage =>
+      'Check your connection and try again. Your settings are still available.';
+
+  @override
+  String get sharedSettingsPasswordFailed =>
+      'We could not update your password. Check the current password and try again.';
+
+  @override
+  String get sharedSettingsProfileUpdateFailed =>
+      'We could not update your profile details. Please try again.';
+
+  @override
+  String get sharedSettingsDeleteAccountUnavailableSubtitle =>
+      'Managed through support';
+
+  @override
+  String get sharedSettingsDeleteAccountUnavailableTitle =>
+      'Account deletion needs support';
+
+  @override
+  String get sharedSettingsDeleteAccountUnavailableMessage =>
+      'For your safety, account deletion is handled by EduVerse support until the backend deletion workflow is available. Contact support and they will help verify and process the request.';
+
+  @override
+  String get sharedSettingsPercentage => 'Percentage';
+
+  @override
+  String get sharedSettingsLetterGrade => 'Letter Grade';
+
+  @override
+  String get sharedSettingsPoints => 'Points';
+
+  @override
+  String sharedSettingsDaysCount(int count) {
+    return '$count days';
+  }
+
+  @override
+  String sharedSettingsMinutesCount(int count) {
+    return '$count min';
+  }
+
+  @override
+  String get sharedSettingsMonday => 'Monday';
+
+  @override
+  String get sharedSettingsWednesday => 'Wednesday';
+
+  @override
+  String get sharedSettingsFriday => 'Friday';
+
+  @override
+  String get sharedSettingsAvailableDays => 'Available days';
+
+  @override
+  String get sharedSettingsOfficeHoursNote =>
+      'Office-hour availability is saved locally for now and will be synced when the scheduling API is ready.';
+
+  @override
+  String get sharedSettingsShowAISuggestions => 'Show AI Suggestions';
+
+  @override
+  String get sharedSettingsShowAISuggestionsDesc =>
+      'Display AI-generated feedback suggestions while grading.';
+
+  @override
+  String get sharedSettingsAutoSaveGradesDesc =>
+      'Automatically save grading progress while you work.';
+
+  @override
+  String get sharedSettingsPlagiarismCheck => 'Plagiarism Check';
+
+  @override
+  String get sharedSettingsPlagiarismCheckDesc =>
+      'Run a plagiarism check before finalizing submissions.';
 }

@@ -235,29 +235,51 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-            ),
+          SizedBox(
+            width: double.infinity,
             child: TextField(
               controller: _searchController,
               onChanged: _filterFAQs,
+              style: const TextStyle(
+                color: Color(0xFF111827),
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+              cursorColor: const Color(0xFF2563EB),
               decoration: InputDecoration(
                 hintText: l10n.searchHelp,
-                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 15),
-                border: InputBorder.none,
-                icon: Icon(Icons.search_rounded, color: Colors.grey[400]),
+                hintStyle: TextStyle(color: Colors.grey[500], fontSize: 15),
+                filled: true,
+                fillColor: Colors.white,
+                prefixIcon: Icon(Icons.search_rounded, color: Colors.grey[400]),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: Icon(
+                          Icons.clear_rounded,
+                          color: Colors.grey[500],
+                        ),
                         onPressed: () {
                           _searchController.clear();
                           _filterFAQs('');
                         },
                       )
                     : null,
+                contentPadding: const EdgeInsetsDirectional.symmetric(
+                  horizontal: 16,
+                  vertical: 18,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),

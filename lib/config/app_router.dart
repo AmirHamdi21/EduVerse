@@ -4,7 +4,6 @@ import 'package:edu_verse/screens/student/assignments_screen.dart';
 import 'package:edu_verse/screens/student/chat/chat_swipe_settings_screen.dart';
 import 'package:edu_verse/screens/student/profile/profile_screen.dart';
 import 'package:edu_verse/screens/student/profile/edit_profile_screen.dart';
-import 'package:edu_verse/screens/student/settings/settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/appearance_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/language_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/notifications_settings_screen.dart';
@@ -97,7 +96,6 @@ import 'package:edu_verse/screens/instructor/notifications/instructor_notificati
 import 'package:edu_verse/screens/instructor/roster/instructor_roster_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_edit_profile_screen.dart';
-import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_course_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussion_post_detail_screen.dart';
@@ -136,7 +134,9 @@ import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart'
 import 'package:edu_verse/screens/ta/sections/ta_section_materials_screen.dart';
 import 'package:edu_verse/screens/ta/grading/ta_grading_center_screen.dart';
 import 'package:edu_verse/screens/ta/analytics/ta_analytics_screen.dart';
-import 'package:edu_verse/screens/ta/settings/ta_settings_screen.dart';
+import 'package:edu_verse/features/shared_settings/settings_role_resolver.dart';
+import 'package:edu_verse/features/shared_settings/shared_settings_role.dart';
+import 'package:edu_verse/features/shared_settings/shared_settings_screen.dart';
 import 'package:edu_verse/screens/ta/profile/ta_profile_screen.dart';
 import 'package:edu_verse/screens/ta/profile/ta_edit_profile_screen.dart';
 import 'package:edu_verse/screens/ta/calendar/ta_calendar_screen.dart';
@@ -719,108 +719,151 @@ class AppRouter {
       ),
       GoRoute(
         path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
+        builder: (context, state) =>
+            const SharedSettingsScreen(role: SharedSettingsRole.student),
       ),
       GoRoute(
         path: '/settings/appearance',
-        builder: (context, state) => const AppearanceSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const AppearanceSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/language',
-        builder: (context, state) => const LanguageSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const LanguageSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/notifications',
-        builder: (context, state) => const NotificationsSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const NotificationsSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/email-notifications',
-        builder: (context, state) => const EmailNotificationsSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const EmailNotificationsSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/two-factor-auth',
-        builder: (context, state) => const TwoFactorAuthSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const TwoFactorAuthSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/connected-devices',
-        builder: (context, state) => const ConnectedDevicesSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const ConnectedDevicesSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/privacy',
-        builder: (context, state) => const PrivacySettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const PrivacySettingsScreen()),
       ),
       GoRoute(
         path: '/settings/login-history',
-        builder: (context, state) => const LoginHistoryScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const LoginHistoryScreen()),
       ),
       GoRoute(
         path: '/settings/ai',
-        builder: (context, state) => const AISettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const AISettingsScreen()),
       ),
       GoRoute(
         path: '/settings/storage',
-        builder: (context, state) => const StorageSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const StorageSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/help',
-        builder: (context, state) => const HelpCenterScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const HelpCenterScreen()),
       ),
       GoRoute(
         path: '/settings/about',
-        builder: (context, state) => const AboutScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const AboutScreen()),
       ),
       GoRoute(
         path: '/settings/email',
-        builder: (context, state) => const EmailPreferencesScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const EmailPreferencesScreen()),
       ),
       GoRoute(
         path: '/settings/dnd',
-        builder: (context, state) => const DoNotDisturbScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const DoNotDisturbScreen()),
       ),
       GoRoute(
         path: '/settings/terms',
-        builder: (context, state) => const TermsOfServiceScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const TermsOfServiceScreen()),
       ),
       GoRoute(
         path: '/settings/privacy-policy',
-        builder: (context, state) => const PrivacyPolicyScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const PrivacyPolicyScreen()),
       ),
       GoRoute(
         path: '/settings/blocked-users',
-        builder: (context, state) => const BlockedUsersScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const BlockedUsersScreen()),
       ),
       GoRoute(
         path: '/settings/swipe-actions',
-        builder: (context, state) => const SwipeActionsSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const SwipeActionsSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/swipe-actions/notifications',
-        builder: (context, state) => const NotificationSwipeSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const NotificationSwipeSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/swipe-actions/chats',
-        builder: (context, state) =>
-            const settings_chat.ChatSwipeSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const settings_chat.ChatSwipeSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/swipe-actions/files',
-        builder: (context, state) => const FileSwipeSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const FileSwipeSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/swipe-actions/notes',
-        builder: (context, state) => const NoteSwipeSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const NoteSwipeSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/share-app',
-        builder: (context, state) => const ShareAppScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const ShareAppScreen()),
       ),
       GoRoute(
         path: '/settings/share-app/qr',
-        builder: (context, state) => const QrCodeShareScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const QrCodeShareScreen()),
       ),
       GoRoute(
         path: '/settings/share-app/apk',
-        builder: (context, state) => const ApkShareScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const ApkShareScreen()),
       ),
 
       // ============ INSTRUCTOR ROUTES ============
@@ -1347,7 +1390,8 @@ class AppRouter {
       ),
       GoRoute(
         path: '/instructor/settings',
-        builder: (context, state) => const InstructorSettingsScreen(),
+        builder: (context, state) =>
+            const SharedSettingsScreen(role: SharedSettingsRole.instructor),
       ),
       GoRoute(
         path: '/instructor/messages',
@@ -1690,7 +1734,8 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ta/settings',
-        builder: (context, state) => const TASettingsScreen(),
+        builder: (context, state) =>
+            const SharedSettingsScreen(role: SharedSettingsRole.ta),
       ),
       GoRoute(
         path: '/ta/profile',
@@ -2047,4 +2092,16 @@ class AppRouter {
     errorBuilder: (context, state) =>
         Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),
   );
+}
+
+Widget _settingsScoped(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+) {
+  final role = SettingsRoleResolver.fromQueryOrContext(
+    context,
+    state.uri.queryParameters['role'],
+  );
+  return SharedSettingsRoleScope(role: role, child: child);
 }

@@ -7262,5 +7262,43 @@
   "taWalkthroughAiDemoFeedbackTitle": "تغذية راجعة لتسليمات جدولة العمليات",
   "taWalkthroughAiDemoFeedbackPreview": "اكتب ملاحظات مختصرة توضح خطأ الجدولة والإصلاح المتوقع وخطوة التدريب التالية.",
   "taWalkthroughAiDemoLabTitle": "خطة دعم للمعمل",
-  "taWalkthroughAiDemoLabPreview": "حضّر تلميحات وأخطاء شائعة وروبرك سريع لمراجعة معمل الغد."
+  "taWalkthroughAiDemoLabPreview": "حضّر تلميحات وأخطاء شائعة وروبرك سريع لمراجعة معمل الغد.",
+  "sharedSettingsProfileLoadingTitle": "جار تحميل ملفك الشخصي",
+  "sharedSettingsProfileLoadingMessage": "نحمّل بيانات حسابك حتى تبقى الإعدادات مرتبطة ببياناتك الحقيقية.",
+  "sharedSettingsProfileErrorTitle": "تعذر تحميل بيانات الملف الشخصي",
+  "sharedSettingsProfileErrorMessage": "تحقق من الاتصال وحاول مرة أخرى. ستظل الإعدادات متاحة.",
+  "sharedSettingsPasswordFailed": "تعذر تحديث كلمة المرور. تحقق من كلمة المرور الحالية وحاول مرة أخرى.",
+  "sharedSettingsProfileUpdateFailed": "تعذر تحديث بيانات ملفك الشخصي. حاول مرة أخرى.",
+  "sharedSettingsDeleteAccountUnavailableSubtitle": "يتم عبر الدعم",
+  "sharedSettingsDeleteAccountUnavailableTitle": "حذف الحساب يحتاج إلى الدعم",
+  "sharedSettingsDeleteAccountUnavailableMessage": "حرصا على أمانك، يتم حذف الحساب من خلال دعم EduVerse إلى أن تتوفر آلية الحذف في الخلفية. تواصل مع الدعم وسيساعدونك في التحقق وتنفيذ الطلب.",
+  "sharedSettingsPercentage": "نسبة مئوية",
+  "sharedSettingsLetterGrade": "تقدير بالحروف",
+  "sharedSettingsPoints": "نقاط",
+  "sharedSettingsDaysCount": "{count} أيام",
+  "@sharedSettingsDaysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharedSettingsMinutesCount": "{count} دقيقة",
+  "@sharedSettingsMinutesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharedSettingsMonday": "الإثنين",
+  "sharedSettingsWednesday": "الأربعاء",
+  "sharedSettingsFriday": "الجمعة",
+  "sharedSettingsAvailableDays": "الأيام المتاحة",
+  "sharedSettingsOfficeHoursNote": "يتم حفظ إتاحة ساعات المكتب محليا الآن وستتم مزامنتها عند جاهزية واجهة الجدولة.",
+  "sharedSettingsShowAISuggestions": "إظهار اقتراحات الذكاء الاصطناعي",
+  "sharedSettingsShowAISuggestionsDesc": "عرض اقتراحات تغذية راجعة مولدة بالذكاء الاصطناعي أثناء التصحيح.",
+  "sharedSettingsAutoSaveGradesDesc": "حفظ تقدم التصحيح تلقائيا أثناء العمل.",
+  "sharedSettingsPlagiarismCheck": "فحص الانتحال",
+  "sharedSettingsPlagiarismCheckDesc": "تشغيل فحص الانتحال قبل اعتماد التسليمات."
 }

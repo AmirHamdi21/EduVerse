@@ -18763,4 +18763,92 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get taWalkthroughAiDemoLabPreview =>
       'حضّر تلميحات وأخطاء شائعة وروبرك سريع لمراجعة معمل الغد.';
+
+  @override
+  String get sharedSettingsProfileLoadingTitle => 'جار تحميل ملفك الشخصي';
+
+  @override
+  String get sharedSettingsProfileLoadingMessage =>
+      'نحمّل بيانات حسابك حتى تبقى الإعدادات مرتبطة ببياناتك الحقيقية.';
+
+  @override
+  String get sharedSettingsProfileErrorTitle =>
+      'تعذر تحميل بيانات الملف الشخصي';
+
+  @override
+  String get sharedSettingsProfileErrorMessage =>
+      'تحقق من الاتصال وحاول مرة أخرى. ستظل الإعدادات متاحة.';
+
+  @override
+  String get sharedSettingsPasswordFailed =>
+      'تعذر تحديث كلمة المرور. تحقق من كلمة المرور الحالية وحاول مرة أخرى.';
+
+  @override
+  String get sharedSettingsProfileUpdateFailed =>
+      'تعذر تحديث بيانات ملفك الشخصي. حاول مرة أخرى.';
+
+  @override
+  String get sharedSettingsDeleteAccountUnavailableSubtitle => 'يتم عبر الدعم';
+
+  @override
+  String get sharedSettingsDeleteAccountUnavailableTitle =>
+      'حذف الحساب يحتاج إلى الدعم';
+
+  @override
+  String get sharedSettingsDeleteAccountUnavailableMessage =>
+      'حرصا على أمانك، يتم حذف الحساب من خلال دعم EduVerse إلى أن تتوفر آلية الحذف في الخلفية. تواصل مع الدعم وسيساعدونك في التحقق وتنفيذ الطلب.';
+
+  @override
+  String get sharedSettingsPercentage => 'نسبة مئوية';
+
+  @override
+  String get sharedSettingsLetterGrade => 'تقدير بالحروف';
+
+  @override
+  String get sharedSettingsPoints => 'نقاط';
+
+  @override
+  String sharedSettingsDaysCount(int count) {
+    return '$count أيام';
+  }
+
+  @override
+  String sharedSettingsMinutesCount(int count) {
+    return '$count دقيقة';
+  }
+
+  @override
+  String get sharedSettingsMonday => 'الإثنين';
+
+  @override
+  String get sharedSettingsWednesday => 'الأربعاء';
+
+  @override
+  String get sharedSettingsFriday => 'الجمعة';
+
+  @override
+  String get sharedSettingsAvailableDays => 'الأيام المتاحة';
+
+  @override
+  String get sharedSettingsOfficeHoursNote =>
+      'يتم حفظ إتاحة ساعات المكتب محليا الآن وستتم مزامنتها عند جاهزية واجهة الجدولة.';
+
+  @override
+  String get sharedSettingsShowAISuggestions =>
+      'إظهار اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get sharedSettingsShowAISuggestionsDesc =>
+      'عرض اقتراحات تغذية راجعة مولدة بالذكاء الاصطناعي أثناء التصحيح.';
+
+  @override
+  String get sharedSettingsAutoSaveGradesDesc =>
+      'حفظ تقدم التصحيح تلقائيا أثناء العمل.';
+
+  @override
+  String get sharedSettingsPlagiarismCheck => 'فحص الانتحال';
+
+  @override
+  String get sharedSettingsPlagiarismCheckDesc =>
+      'تشغيل فحص الانتحال قبل اعتماد التسليمات.';
 }

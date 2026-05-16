@@ -7265,5 +7265,43 @@
   "taWalkthroughAiDemoFeedbackTitle": "Feedback for process scheduler submissions",
   "taWalkthroughAiDemoFeedbackPreview": "Draft concise feedback that names the scheduling bug, expected fix, and next practice step.",
   "taWalkthroughAiDemoLabTitle": "Lab support plan",
-  "taWalkthroughAiDemoLabPreview": "Prepare hints, common mistakes, and a quick rubric for tomorrow's lab review."
+  "taWalkthroughAiDemoLabPreview": "Prepare hints, common mistakes, and a quick rubric for tomorrow's lab review.",
+  "sharedSettingsProfileLoadingTitle": "Loading your profile",
+  "sharedSettingsProfileLoadingMessage": "We are pulling your account details so settings stay tied to your real data.",
+  "sharedSettingsProfileErrorTitle": "Profile details could not load",
+  "sharedSettingsProfileErrorMessage": "Check your connection and try again. Your settings are still available.",
+  "sharedSettingsPasswordFailed": "We could not update your password. Check the current password and try again.",
+  "sharedSettingsProfileUpdateFailed": "We could not update your profile details. Please try again.",
+  "sharedSettingsDeleteAccountUnavailableSubtitle": "Managed through support",
+  "sharedSettingsDeleteAccountUnavailableTitle": "Account deletion needs support",
+  "sharedSettingsDeleteAccountUnavailableMessage": "For your safety, account deletion is handled by EduVerse support until the backend deletion workflow is available. Contact support and they will help verify and process the request.",
+  "sharedSettingsPercentage": "Percentage",
+  "sharedSettingsLetterGrade": "Letter Grade",
+  "sharedSettingsPoints": "Points",
+  "sharedSettingsDaysCount": "{count} days",
+  "@sharedSettingsDaysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharedSettingsMinutesCount": "{count} min",
+  "@sharedSettingsMinutesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharedSettingsMonday": "Monday",
+  "sharedSettingsWednesday": "Wednesday",
+  "sharedSettingsFriday": "Friday",
+  "sharedSettingsAvailableDays": "Available days",
+  "sharedSettingsOfficeHoursNote": "Office-hour availability is saved locally for now and will be synced when the scheduling API is ready.",
+  "sharedSettingsShowAISuggestions": "Show AI Suggestions",
+  "sharedSettingsShowAISuggestionsDesc": "Display AI-generated feedback suggestions while grading.",
+  "sharedSettingsAutoSaveGradesDesc": "Automatically save grading progress while you work.",
+  "sharedSettingsPlagiarismCheck": "Plagiarism Check",
+  "sharedSettingsPlagiarismCheckDesc": "Run a plagiarism check before finalizing submissions."
 }

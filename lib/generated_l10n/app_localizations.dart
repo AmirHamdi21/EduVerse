@@ -35516,6 +35516,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Prepare hints, common mistakes, and a quick rubric for tomorrow\'s lab review.'**
   String get taWalkthroughAiDemoLabPreview;
+
+  /// No description provided for @sharedSettingsProfileLoadingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading your profile'**
+  String get sharedSettingsProfileLoadingTitle;
+
+  /// No description provided for @sharedSettingsProfileLoadingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We are pulling your account details so settings stay tied to your real data.'**
+  String get sharedSettingsProfileLoadingMessage;
+
+  /// No description provided for @sharedSettingsProfileErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile details could not load'**
+  String get sharedSettingsProfileErrorTitle;
+
+  /// No description provided for @sharedSettingsProfileErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again. Your settings are still available.'**
+  String get sharedSettingsProfileErrorMessage;
+
+  /// No description provided for @sharedSettingsPasswordFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not update your password. Check the current password and try again.'**
+  String get sharedSettingsPasswordFailed;
+
+  /// No description provided for @sharedSettingsProfileUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not update your profile details. Please try again.'**
+  String get sharedSettingsProfileUpdateFailed;
+
+  /// No description provided for @sharedSettingsDeleteAccountUnavailableSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Managed through support'**
+  String get sharedSettingsDeleteAccountUnavailableSubtitle;
+
+  /// No description provided for @sharedSettingsDeleteAccountUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deletion needs support'**
+  String get sharedSettingsDeleteAccountUnavailableTitle;
+
+  /// No description provided for @sharedSettingsDeleteAccountUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'For your safety, account deletion is handled by EduVerse support until the backend deletion workflow is available. Contact support and they will help verify and process the request.'**
+  String get sharedSettingsDeleteAccountUnavailableMessage;
+
+  /// No description provided for @sharedSettingsPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage'**
+  String get sharedSettingsPercentage;
+
+  /// No description provided for @sharedSettingsLetterGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Letter Grade'**
+  String get sharedSettingsLetterGrade;
+
+  /// No description provided for @sharedSettingsPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get sharedSettingsPoints;
+
+  /// No description provided for @sharedSettingsDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String sharedSettingsDaysCount(int count);
+
+  /// No description provided for @sharedSettingsMinutesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min'**
+  String sharedSettingsMinutesCount(int count);
+
+  /// No description provided for @sharedSettingsMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get sharedSettingsMonday;
+
+  /// No description provided for @sharedSettingsWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get sharedSettingsWednesday;
+
+  /// No description provided for @sharedSettingsFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get sharedSettingsFriday;
+
+  /// No description provided for @sharedSettingsAvailableDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Available days'**
+  String get sharedSettingsAvailableDays;
+
+  /// No description provided for @sharedSettingsOfficeHoursNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Office-hour availability is saved locally for now and will be synced when the scheduling API is ready.'**
+  String get sharedSettingsOfficeHoursNote;
+
+  /// No description provided for @sharedSettingsShowAISuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Show AI Suggestions'**
+  String get sharedSettingsShowAISuggestions;
+
+  /// No description provided for @sharedSettingsShowAISuggestionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Display AI-generated feedback suggestions while grading.'**
+  String get sharedSettingsShowAISuggestionsDesc;
+
+  /// No description provided for @sharedSettingsAutoSaveGradesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically save grading progress while you work.'**
+  String get sharedSettingsAutoSaveGradesDesc;
+
+  /// No description provided for @sharedSettingsPlagiarismCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Plagiarism Check'**
+  String get sharedSettingsPlagiarismCheck;
+
+  /// No description provided for @sharedSettingsPlagiarismCheckDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Run a plagiarism check before finalizing submissions.'**
+  String get sharedSettingsPlagiarismCheckDesc;
 }
 
 class _AppLocalizationsDelegate
