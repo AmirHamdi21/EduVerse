@@ -27,6 +27,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginHeroSubtitle => 'Learn smarter. Grow daily.';
 
   @override
+  String get loginInvalidCredentialsTitle => 'We couldn\'t sign you in';
+
+  @override
+  String get loginInvalidCredentialsMessage =>
+      'The email or password doesn\'t match our records. Check your details and try again.';
+
+  @override
+  String get loginInvalidCredentialsHint =>
+      'Passwords are case-sensitive, so even a small typo can block sign-in.';
+
+  @override
+  String get loginAuthProblemTitle => 'Sign-in needs another look';
+
+  @override
+  String get loginAuthProblemMessage =>
+      'We couldn\'t complete sign-in right now. Please check your details or try again in a moment.';
+
+  @override
   String get signupTitle => 'Create Account';
 
   @override
@@ -454,6 +472,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashSubtitle => 'Learning Management System';
+
+  @override
+  String get splashV8Kicker => 'EDUVERSE · 2026';
+
+  @override
+  String get splashV8PillLabel => 'SHAPING YOUR PATH';
+
+  @override
+  String get splashV8Wordmark => 'EduVerse';
+
+  @override
+  String get splashV8Tagline => 'A future you teach yourself.';
 
   @override
   String get noInternetConnection =>
@@ -4710,6 +4740,54 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingDescription4 =>
       'Join thousands of students achieving their academic goals. Your journey to smarter learning starts now.';
+
+  @override
+  String get onboardingV6AudioLabel => 'AUDIO LESSONS';
+
+  @override
+  String get onboardingV6AudioTitle => 'Learn while\nyou walk.';
+
+  @override
+  String get onboardingV6AudioBody =>
+      'Crisp, hand-narrated lessons. Pause, rewind, master.';
+
+  @override
+  String get onboardingV6AudioTag => '15-min avg';
+
+  @override
+  String get onboardingV6TutorLabel => 'AI TUTOR';
+
+  @override
+  String get onboardingV6TutorTitle => 'Ask anything,\nanytime.';
+
+  @override
+  String get onboardingV6TutorBody =>
+      'A patient, brilliant tutor that meets you where you are.';
+
+  @override
+  String get onboardingV6TutorTag => '24/7';
+
+  @override
+  String get onboardingV6InsightLabel => 'INSTANT INSIGHT';
+
+  @override
+  String get onboardingV6InsightTitle => 'See ideas\nclick into place.';
+
+  @override
+  String get onboardingV6InsightBody =>
+      'Animated visuals turn abstract concepts into intuitions.';
+
+  @override
+  String get onboardingV6InsightTag => 'Live';
+
+  @override
+  String get onboardingV6PreferencesLabel => 'YOUR PREFERENCES';
+
+  @override
+  String get onboardingV6PreferencesTitle => 'Make it\nfeel like you.';
+
+  @override
+  String get onboardingV6PreferencesInstant => 'Changes apply instantly';
 
   @override
   String get shareApp => 'Share App';

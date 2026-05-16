@@ -134,6 +134,36 @@ abstract class AppLocalizations {
   /// **'Learn smarter. Grow daily.'**
   String get loginHeroSubtitle;
 
+  /// No description provided for @loginInvalidCredentialsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t sign you in'**
+  String get loginInvalidCredentialsTitle;
+
+  /// No description provided for @loginInvalidCredentialsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The email or password doesn\'t match our records. Check your details and try again.'**
+  String get loginInvalidCredentialsMessage;
+
+  /// No description provided for @loginInvalidCredentialsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords are case-sensitive, so even a small typo can block sign-in.'**
+  String get loginInvalidCredentialsHint;
+
+  /// No description provided for @loginAuthProblemTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in needs another look'**
+  String get loginAuthProblemTitle;
+
+  /// No description provided for @loginAuthProblemMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t complete sign-in right now. Please check your details or try again in a moment.'**
+  String get loginAuthProblemMessage;
+
   /// No description provided for @signupTitle.
   ///
   /// In en, this message translates to:
@@ -967,6 +997,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Learning Management System'**
   String get splashSubtitle;
+
+  /// No description provided for @splashV8Kicker.
+  ///
+  /// In en, this message translates to:
+  /// **'EDUVERSE · 2026'**
+  String get splashV8Kicker;
+
+  /// No description provided for @splashV8PillLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'SHAPING YOUR PATH'**
+  String get splashV8PillLabel;
+
+  /// No description provided for @splashV8Wordmark.
+  ///
+  /// In en, this message translates to:
+  /// **'EduVerse'**
+  String get splashV8Wordmark;
+
+  /// No description provided for @splashV8Tagline.
+  ///
+  /// In en, this message translates to:
+  /// **'A future you teach yourself.'**
+  String get splashV8Tagline;
 
   /// No description provided for @noInternetConnection.
   ///
@@ -9109,6 +9163,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Join thousands of students achieving their academic goals. Your journey to smarter learning starts now.'**
   String get onboardingDescription4;
+
+  /// No description provided for @onboardingV6AudioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AUDIO LESSONS'**
+  String get onboardingV6AudioLabel;
+
+  /// No description provided for @onboardingV6AudioTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn while\nyou walk.'**
+  String get onboardingV6AudioTitle;
+
+  /// No description provided for @onboardingV6AudioBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Crisp, hand-narrated lessons. Pause, rewind, master.'**
+  String get onboardingV6AudioBody;
+
+  /// No description provided for @onboardingV6AudioTag.
+  ///
+  /// In en, this message translates to:
+  /// **'15-min avg'**
+  String get onboardingV6AudioTag;
+
+  /// No description provided for @onboardingV6TutorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AI TUTOR'**
+  String get onboardingV6TutorLabel;
+
+  /// No description provided for @onboardingV6TutorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything,\nanytime.'**
+  String get onboardingV6TutorTitle;
+
+  /// No description provided for @onboardingV6TutorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A patient, brilliant tutor that meets you where you are.'**
+  String get onboardingV6TutorBody;
+
+  /// No description provided for @onboardingV6TutorTag.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7'**
+  String get onboardingV6TutorTag;
+
+  /// No description provided for @onboardingV6InsightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTANT INSIGHT'**
+  String get onboardingV6InsightLabel;
+
+  /// No description provided for @onboardingV6InsightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See ideas\nclick into place.'**
+  String get onboardingV6InsightTitle;
+
+  /// No description provided for @onboardingV6InsightBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Animated visuals turn abstract concepts into intuitions.'**
+  String get onboardingV6InsightBody;
+
+  /// No description provided for @onboardingV6InsightTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get onboardingV6InsightTag;
+
+  /// No description provided for @onboardingV6PreferencesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR PREFERENCES'**
+  String get onboardingV6PreferencesLabel;
+
+  /// No description provided for @onboardingV6PreferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make it\nfeel like you.'**
+  String get onboardingV6PreferencesTitle;
+
+  /// No description provided for @onboardingV6PreferencesInstant.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes apply instantly'**
+  String get onboardingV6PreferencesInstant;
 
   /// No description provided for @shareApp.
   ///

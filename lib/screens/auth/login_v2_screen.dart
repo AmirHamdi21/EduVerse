@@ -176,109 +176,26 @@ class _LoginV2ScreenState extends State<LoginV2Screen>
 
   Future<void> _showErrorDialog(String message) {
     final l = AppLocalizations.of(context);
+    final copy = _resolveLoginErrorCopy(l, message);
 
     return showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black.withValues(alpha: 0.45),
-      transitionDuration: const Duration(milliseconds: 240),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      transitionDuration: const Duration(milliseconds: 280),
       pageBuilder: (dialogContext, _, __) {
         final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
         return SafeArea(
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
               child: Material(
                 color: Colors.transparent,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                    child: Container(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: (isDark ? Colors.black : Colors.white)
-                            .withValues(alpha: isDark ? 0.86 : 0.95),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: Colors.white.withValues(
-                            alpha: isDark ? 0.12 : 0.7,
-                          ),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _systemRed.withValues(alpha: 0.2),
-                            blurRadius: 32,
-                            offset: const Offset(0, 18),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: _systemRed,
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: const Icon(
-                              Icons.error_outline_rounded,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            l.error,
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.3,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            message,
-                            style: TextStyle(
-                              color: (isDark ? _darkLabel : _lightLabel)
-                                  .withValues(alpha: 0.72),
-                              fontSize: 15,
-                              height: 1.45,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            child: FilledButton(
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: _systemBlue,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: Text(
-                                MaterialLocalizations.of(
-                                  dialogContext,
-                                ).okButtonLabel,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                child: _LoginErrorDialogContent(
+                  copy: copy,
+                  isDark: isDark,
+                  onAction: () => Navigator.of(dialogContext).pop(),
                 ),
               ),
             ),
@@ -299,6 +216,35 @@ class _LoginV2ScreenState extends State<LoginV2Screen>
           ),
         );
       },
+    );
+  }
+
+  _LoginErrorCopy _resolveLoginErrorCopy(
+    AppLocalizations l,
+    String backendMessage,
+  ) {
+    final normalized = backendMessage.trim().toLowerCase();
+    final isInvalidCredentials =
+        normalized.contains('invalid credential') ||
+        normalized.contains('bad credential') ||
+        normalized.contains('incorrect') ||
+        normalized.contains('unauthorized') ||
+        normalized.contains('401') ||
+        normalized.contains('email or password') ||
+        normalized.contains('user not found') ||
+        normalized.contains('wrong password');
+
+    if (isInvalidCredentials) {
+      return _LoginErrorCopy(
+        title: l.loginInvalidCredentialsTitle,
+        message: l.loginInvalidCredentialsMessage,
+        hint: l.loginInvalidCredentialsHint,
+      );
+    }
+
+    return _LoginErrorCopy(
+      title: l.loginAuthProblemTitle,
+      message: l.loginAuthProblemMessage,
     );
   }
 
@@ -406,6 +352,262 @@ class _LoginV2ScreenState extends State<LoginV2Screen>
   }
 }
 
+class _LoginErrorCopy {
+  const _LoginErrorCopy({
+    required this.title,
+    required this.message,
+    this.hint,
+  });
+
+  final String title;
+  final String message;
+  final String? hint;
+}
+
+class _LoginErrorDialogContent extends StatelessWidget {
+  const _LoginErrorDialogContent({
+    required this.copy,
+    required this.isDark,
+    required this.onAction,
+  });
+
+  final _LoginErrorCopy copy;
+  final bool isDark;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final textColor = isDark ? Colors.white : Colors.black;
+    final bodyColor =
+        (isDark
+                ? _LoginV2ScreenState._darkLabel
+                : _LoginV2ScreenState._lightLabel)
+            .withValues(alpha: isDark ? 0.82 : 0.78);
+    final glassStroke = Colors.white.withValues(alpha: isDark ? 0.18 : 0.72);
+    final accent = Color.lerp(
+      _LoginV2ScreenState._systemRed,
+      _LoginV2ScreenState._systemBlueDark,
+      0.16,
+    )!;
+
+    return Semantics(
+      namesRoute: true,
+      label: copy.title,
+      child: ConstrainedBox(
+        key: const Key('login-v2-auth-error-dialog'),
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                gradient: LinearGradient(
+                  begin: AlignmentDirectional.topStart,
+                  end: AlignmentDirectional.bottomEnd,
+                  colors: isDark
+                      ? <Color>[
+                          const Color(0xFF1C1C1E).withValues(alpha: 0.82),
+                          Colors.black.withValues(alpha: 0.68),
+                        ]
+                      : <Color>[
+                          Colors.white.withValues(alpha: 0.86),
+                          const Color(0xFFF2F2F7).withValues(alpha: 0.72),
+                        ],
+                ),
+                border: Border.all(color: glassStroke),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.2),
+                    blurRadius: 52,
+                    offset: const Offset(0, 28),
+                  ),
+                  BoxShadow(
+                    color: accent.withValues(alpha: isDark ? 0.18 : 0.14),
+                    blurRadius: 34,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Center(
+                      child: Container(
+                        width: 42,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: textColor.withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(22),
+                        gradient: const LinearGradient(
+                          begin: AlignmentDirectional.topStart,
+                          end: AlignmentDirectional.bottomEnd,
+                          colors: <Color>[Color(0xFFFF453A), Color(0xFFFF9F0A)],
+                        ),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: Color(0x33FF453A),
+                            blurRadius: 28,
+                            offset: Offset(0, 14),
+                          ),
+                        ],
+                      ),
+                      child: const SizedBox(
+                        width: 58,
+                        height: 58,
+                        child: Icon(
+                          Icons.lock_person_rounded,
+                          color: Colors.white,
+                          size: 31,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      copy.title,
+                      key: const Key('login-v2-auth-error-title'),
+                      style: _iosTextStyle(
+                        color: textColor,
+                        fontSize: 23,
+                        fontWeight: FontWeight.w800,
+                        height: 1.08,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      copy.message,
+                      key: const Key('login-v2-auth-error-message'),
+                      style: _iosTextStyle(
+                        color: bodyColor,
+                        fontSize: 15.5,
+                        height: 1.45,
+                      ),
+                    ),
+                    if (copy.hint != null) ...<Widget>[
+                      const SizedBox(height: 18),
+                      _LoginErrorHint(
+                        text: copy.hint!,
+                        isDark: isDark,
+                        accent: accent,
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 54,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(17),
+                          gradient: LinearGradient(
+                            begin: AlignmentDirectional.centerStart,
+                            end: AlignmentDirectional.centerEnd,
+                            colors: <Color>[
+                              _LoginV2ScreenState._systemBlue,
+                              _LoginV2ScreenState._systemBlueDark,
+                            ],
+                          ),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: _LoginV2ScreenState._systemBlueDark
+                                  .withValues(alpha: 0.28),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: FilledButton(
+                          key: const Key('login-v2-auth-error-action'),
+                          onPressed: onAction,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(17),
+                            ),
+                          ),
+                          child: Text(
+                            l.tryAgain,
+                            style: _iosTextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginErrorHint extends StatelessWidget {
+  const _LoginErrorHint({
+    required this.text,
+    required this.isDark,
+    required this.accent,
+  });
+
+  final String text;
+  final bool isDark;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = isDark ? Colors.white : Colors.black;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: foreground.withValues(alpha: isDark ? 0.08 : 0.05),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.68),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 14, 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Icon(Icons.info_outline_rounded, color: accent, size: 19),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                text,
+                key: const Key('login-v2-auth-error-hint'),
+                style: _iosTextStyle(
+                  color: foreground.withValues(alpha: isDark ? 0.76 : 0.66),
+                  fontSize: 13.5,
+                  height: 1.38,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _LoginV2Content extends StatelessWidget {
   const _LoginV2Content({
     required this.isDark,
@@ -476,11 +678,11 @@ class _LoginV2Content extends StatelessWidget {
               ],
             ),
           ),
-          PositionedDirectional(
-            top: media.padding.top + 8,
-            end: 16,
-            child: _TopControls(isDark: isDark),
-          ),
+          // PositionedDirectional(
+          //   top: media.padding.top + 8,
+          //   end: 16,
+          //   child: _TopControls(isDark: isDark),
+          // ),
           PositionedDirectional(
             start: 28,
             end: 28,
@@ -1352,7 +1554,9 @@ class _RememberForgotRow extends StatelessWidget {
             alignment: AlignmentDirectional.centerEnd,
             child: TextButton(
               key: const Key('login-v2-forgot-button'),
-              onPressed: () => context.push('/forgot-password'),
+              onPressed: () {
+                // context.push('/forgot-password');
+              },
               style: TextButton.styleFrom(
                 foregroundColor: isDark
                     ? _LoginV2ScreenState._systemBlueDark
@@ -1853,7 +2057,9 @@ class _RegisterLink extends StatelessWidget {
     return Center(
       child: TextButton(
         key: const Key('login-v2-register-button'),
-        onPressed: () => context.push('/register'),
+        onPressed: () {
+          // context.push('/register');
+        },
         style: TextButton.styleFrom(
           foregroundColor: accent,
           textStyle: _iosTextStyle(fontSize: 15, letterSpacing: -0.15),

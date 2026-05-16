@@ -223,11 +223,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/config/auth_route_notifier.dart';
+import 'package:edu_verse/features/onboarding_v6/onboarding_v6_screen.dart';
+import 'package:edu_verse/features/splash_v8/splash_v8_screen.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
 import 'package:edu_verse/screens/auth/reset_password_screen.dart';
-import 'package:edu_verse/screens/onBoarding/onboarding_screen.dart';
 import 'package:edu_verse/services/auth_role_resolver.dart';
-import '../screens/splash/splash_screen.dart';
 import '../screens/auth/login_v2_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
@@ -353,10 +353,10 @@ class AppRouter {
     refreshListenable: authRouteNotifier,
     redirect: (context, state) => _handleRedirect(state),
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      GoRoute(path: '/', builder: (context, state) => const SplashV8Screen()),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        builder: (context, state) => const OnboardingV6Screen(),
       ),
       GoRoute(
         path: '/login',

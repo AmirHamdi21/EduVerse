@@ -27,6 +27,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginHeroSubtitle => 'تعلّم بذكاء. وتقدّم كل يوم.';
 
   @override
+  String get loginInvalidCredentialsTitle => 'تعذر تسجيل الدخول';
+
+  @override
+  String get loginInvalidCredentialsMessage =>
+      'البريد الإلكتروني أو كلمة المرور لا يطابقان سجلاتنا. تحقق من البيانات ثم حاول مرة أخرى.';
+
+  @override
+  String get loginInvalidCredentialsHint =>
+      'كلمات المرور حساسة لحالة الأحرف، لذلك قد يمنع أي خطأ بسيط تسجيل الدخول.';
+
+  @override
+  String get loginAuthProblemTitle => 'يرجى مراجعة بيانات الدخول';
+
+  @override
+  String get loginAuthProblemMessage =>
+      'تعذر إكمال تسجيل الدخول الآن. تحقق من البيانات أو حاول مرة أخرى بعد قليل.';
+
+  @override
   String get signupTitle => 'إنشاء حساب';
 
   @override
@@ -453,6 +471,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get splashSubtitle => 'نظام إدارة التعلم';
+
+  @override
+  String get splashV8Kicker => 'إديفيرس · ٢٠٢٦';
+
+  @override
+  String get splashV8PillLabel => 'نرسم مسارك';
+
+  @override
+  String get splashV8Wordmark => 'إديفيرس';
+
+  @override
+  String get splashV8Tagline => 'مستقبل تتعلمه بطريقتك.';
 
   @override
   String get noInternetConnection =>
@@ -4696,6 +4726,52 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get onboardingDescription4 =>
       'انضم إلى آلاف الطلاب الذين يحققون أهدافهم الأكاديمية. رحلتك نحو تعلم أذكى تبدأ الآن.';
+
+  @override
+  String get onboardingV6AudioLabel => 'دروس صوتية';
+
+  @override
+  String get onboardingV6AudioTitle => 'تعلّم وأنت\nتمشي.';
+
+  @override
+  String get onboardingV6AudioBody => 'دروس واضحة بصوت بشري. أوقف، أعد، وأتقن.';
+
+  @override
+  String get onboardingV6AudioTag => 'متوسط 15 دقيقة';
+
+  @override
+  String get onboardingV6TutorLabel => 'معلّم ذكي';
+
+  @override
+  String get onboardingV6TutorTitle => 'اسأل عن أي شيء،\nفي أي وقت.';
+
+  @override
+  String get onboardingV6TutorBody => 'معلّم صبور وذكي يواكب مستواك.';
+
+  @override
+  String get onboardingV6TutorTag => '24/7';
+
+  @override
+  String get onboardingV6InsightLabel => 'فهم فوري';
+
+  @override
+  String get onboardingV6InsightTitle => 'شاهد الأفكار\nتتضح أمامك.';
+
+  @override
+  String get onboardingV6InsightBody =>
+      'تحوّل الرسوم المتحركة المفاهيم المجردة إلى حدس واضح.';
+
+  @override
+  String get onboardingV6InsightTag => 'مباشر';
+
+  @override
+  String get onboardingV6PreferencesLabel => 'تفضيلاتك';
+
+  @override
+  String get onboardingV6PreferencesTitle => 'ليصبح التطبيق\nمناسباً لك.';
+
+  @override
+  String get onboardingV6PreferencesInstant => 'تُطبَّق التغييرات فوراً';
 
   @override
   String get shareApp => 'مشاركة التطبيق';

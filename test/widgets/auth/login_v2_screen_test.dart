@@ -1,5 +1,6 @@
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
 import 'package:edu_verse/bloc/auth/auth_event.dart';
+import 'package:edu_verse/bloc/auth/auth_state.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
@@ -23,6 +24,10 @@ class _RecordingAuthBloc extends AuthBloc {
   @override
   void add(AuthEvent event) {
     recordedEvents.add(event);
+  }
+
+  void failWith(String message) {
+    emit(AuthError(message));
   }
 }
 
@@ -249,6 +254,41 @@ void main() {
       expect(request.email, 'student@example.com');
       expect(request.password, 'secret');
       expect(request.rememberMe, isFalse);
+    });
+
+    testWidgets('shows a friendly glass dialog for invalid credentials', (
+      tester,
+    ) async {
+      final handles = await _pumpLoginV2(tester, isDark: true);
+
+      handles.authBloc.failWith('Invalid credentials');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 320));
+
+      expect(
+        find.byKey(const Key('login-v2-auth-error-dialog')),
+        findsOneWidget,
+      );
+      expect(find.text("We couldn't sign you in"), findsOneWidget);
+      expect(
+        find.text(
+          "The email or password doesn't match our records. Check your details and try again.",
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'Passwords are case-sensitive, so even a small typo can block sign-in.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Invalid credentials'), findsNothing);
+      expect(find.text('Error'), findsNothing);
+
+      await tester.tap(find.byKey(const Key('login-v2-auth-error-action')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('login-v2-auth-error-dialog')), findsNothing);
     });
 
     testWidgets('quick login menu fills local role credentials', (
