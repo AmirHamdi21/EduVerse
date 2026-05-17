@@ -1181,6 +1181,130 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationJustNow => 'Just now';
 
   @override
+  String get notificationNow => 'Now';
+
+  @override
+  String get notificationSettingsSaved => 'Notification settings saved';
+
+  @override
+  String get notificationSettingsPartiallySaved =>
+      'Local alert settings were saved, but server preferences could not be updated.';
+
+  @override
+  String get notificationAccountPreferences =>
+      'Account Notification Preferences';
+
+  @override
+  String get notificationPermissionTitle => 'Android notification permission';
+
+  @override
+  String get notificationPermissionAllowed =>
+      'System cards are enabled for background and closed-app notifications.';
+
+  @override
+  String get notificationPermissionDenied =>
+      'System cards are blocked. Open Android settings to allow EduVerse notifications.';
+
+  @override
+  String get notificationPermissionNotDetermined =>
+      'Allow EduVerse to show Android notification cards.';
+
+  @override
+  String get notificationPermissionUnsupported =>
+      'System notification permission is not available on this platform.';
+
+  @override
+  String get notificationPermissionRequest => 'Allow';
+
+  @override
+  String get notificationPermissionOpenSettings => 'Open Settings';
+
+  @override
+  String get notificationEmailDeliveryDesc =>
+      'Allow email delivery for supported notification types.';
+
+  @override
+  String get notificationPushPreference => 'Push Preference';
+
+  @override
+  String get notificationPushPreferenceDesc =>
+      'Store your push delivery preference on the server.';
+
+  @override
+  String get smsNotifications => 'SMS Notifications';
+
+  @override
+  String get notificationSmsDesc => 'Allow SMS notifications when supported.';
+
+  @override
+  String get notificationAnnouncementEmails => 'Announcement Emails';
+
+  @override
+  String get notificationAnnouncementEmailsDesc =>
+      'Receive announcement notifications by email.';
+
+  @override
+  String get notificationGradeEmails => 'Grade Emails';
+
+  @override
+  String get notificationGradeEmailsDesc =>
+      'Receive grade and grading-related emails.';
+
+  @override
+  String get notificationAssignmentEmails => 'Assignment Emails';
+
+  @override
+  String get notificationAssignmentEmailsDesc =>
+      'Receive assignment and deadline emails.';
+
+  @override
+  String get notificationMessageEmails => 'Message Emails';
+
+  @override
+  String get notificationMessageEmailsDesc =>
+      'Receive message and discussion emails.';
+
+  @override
+  String get notificationRemindersQuietHours => 'Reminders & Quiet Hours';
+
+  @override
+  String get notificationDeadlineReminderDays => 'Deadline reminder days';
+
+  @override
+  String get notificationQuietHoursStart => 'Quiet hours start';
+
+  @override
+  String get notificationQuietHoursEnd => 'Quiet hours end';
+
+  @override
+  String get notificationInAppDevicePreferences => 'In-App Device Preferences';
+
+  @override
+  String get notificationForegroundAlerts => 'Foreground alerts';
+
+  @override
+  String get notificationForegroundAlertsDesc =>
+      'Show a liquid-glass alert when new notifications arrive while the app is open.';
+
+  @override
+  String get notificationSoundInAppDesc =>
+      'Play an in-app sound when alerts arrive.';
+
+  @override
+  String get notificationVibrationHaptic => 'Vibration / haptic feedback';
+
+  @override
+  String get notificationVibrationHapticDesc =>
+      'Use haptic feedback for incoming in-app alerts.';
+
+  @override
+  String get notificationShowPreview => 'Show preview';
+
+  @override
+  String get notificationShowPreviewDesc =>
+      'Show notification body in foreground alerts.';
+
+  @override
   String notificationMinutesAgo(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

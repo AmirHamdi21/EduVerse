@@ -36,9 +36,14 @@ import 'package:edu_verse/bloc/ta/ta_labs_cubit.dart';
 import 'package:edu_verse/config/auth_route_notifier.dart';
 import 'package:edu_verse/config/app_router.dart';
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/features/notification_surfaces/android_push_notification_coordinator.dart';
+import 'package:edu_verse/features/notification_surfaces/eduverse_local_notification_service.dart';
+import 'package:edu_verse/features/notification_surfaces/liquid_notification_banner.dart';
 import 'package:edu_verse/features/walkthrough/role_walkthrough_cubit.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_service.dart';
 import 'package:edu_verse/features/walkthrough/walkthrough_overlay.dart';
+import 'package:edu_verse/models/notifications/device_notification_preferences.dart';
+import 'package:edu_verse/models/notifications/notification_model.dart';
 import 'package:edu_verse/services/api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
@@ -60,7 +65,10 @@ import 'package:edu_verse/services/api/student_stats_service.dart';
 import 'package:edu_verse/services/api/notification_api_service.dart';
 import 'package:edu_verse/services/notifications/device_notification_preferences_service.dart';
 import 'package:edu_verse/services/notifications/notification_socket_service.dart';
+import 'package:edu_verse/utils/notifications/notification_action_resolver.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -70,6 +78,13 @@ import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(
+      eduVerseFirebaseMessagingBackgroundHandler,
+    );
+    await EduVerseLocalNotificationService.ensureInitializedForBackground();
+  }
   if (Platform.isAndroid || Platform.isIOS) {
     await FlutterDownloader.initialize(debug: false, ignoreSsl: false);
   }
@@ -141,11 +156,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late NotificationSocketService _notificationSocketService;
   late DeviceNotificationPreferencesService
   _deviceNotificationPreferencesService;
+  late AndroidPushNotificationCoordinator _pushNotificationCoordinator;
   StreamSubscription<String>? _sessionExpirySubscription;
   StreamSubscription<AuthState>? _authStateSubscription;
   StreamSubscription<dynamic>? _incomingNotificationSubscription;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+  NotificationModel? _surfaceNotification;
+  DeviceNotificationPreferences _surfaceDevicePreferences =
+      const DeviceNotificationPreferences();
+  Timer? _surfaceNotificationTimer;
 
   @override
   void initState() {
@@ -153,11 +173,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _storageService = StorageService();
     _themeBloc = ThemeBloc(storageService: _storageService);
-    _authBloc = AuthBloc(
-      apiService: ApiService(),
-      storageService: _storageService,
-    );
-    _authBloc.add(const AuthCheckRequested());
     _languageCubit = LanguageCubit();
 
     final coreApiClient = CoreApiClient(storageService: _storageService);
@@ -188,6 +203,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       notificationSocketService: _notificationSocketService,
       storageService: _storageService,
     )..loadNotifications();
+    _pushNotificationCoordinator = AndroidPushNotificationCoordinator(
+      notificationApiService: _notificationApiService,
+      notificationCubit: _notificationCubit,
+    );
+    unawaited(
+      _pushNotificationCoordinator.initialize(
+        onNotificationTap: _handleNotificationTap,
+      ),
+    );
+    _authBloc = AuthBloc(
+      apiService: ApiService(),
+      storageService: _storageService,
+      onBeforeLogout: _pushNotificationCoordinator.unregisterCurrentToken,
+    );
+    _authBloc.add(const AuthCheckRequested());
     _tasksCubit = TasksCubit()..loadTasks();
     _gradesCubit = GradesCubit(
       gradesService: GradesService(coreApiClient: coreApiClient),
@@ -232,6 +262,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _authStateSubscription = _authBloc.stream.listen((authState) {
       if (authState is AuthAuthenticated) {
         _notificationCubit.ensureCurrentSessionLoaded();
+        unawaited(
+          _pushNotificationCoordinator.startForUser(
+            authState.user,
+            _languageCubit.state,
+          ),
+        );
         return;
       }
       if (authState is AuthUnauthenticated) {
@@ -254,22 +290,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           if (devicePreferences.soundEnabled) {
             SystemSound.play(SystemSoundType.click);
           }
-
-          final content =
-              devicePreferences.showPreview &&
-                  notification.message.trim().isNotEmpty
-              ? '${notification.title}: ${notification.message}'
-              : notification.title;
-
-          _scaffoldMessengerKey.currentState
-            ?..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(content),
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 3),
-              ),
-            );
+          _showNotificationBanner(notification, devicePreferences);
         });
 
     // ── Course API layer (Phase 1+) ────────────────────────
@@ -358,6 +379,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       _restoreSystemUiOverlays();
+      unawaited(_notificationCubit.syncLatestNotifications());
     }
   }
 
@@ -367,6 +389,59 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _initializeLanguage() async {
     await _languageCubit.initialize();
+  }
+
+  void _showNotificationBanner(
+    NotificationModel notification,
+    DeviceNotificationPreferences preferences,
+  ) {
+    _surfaceNotificationTimer?.cancel();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _surfaceNotification = notification;
+      _surfaceDevicePreferences = preferences;
+    });
+    _surfaceNotificationTimer = Timer(
+      const Duration(seconds: 5),
+      _dismissNotificationBanner,
+    );
+  }
+
+  void _dismissNotificationBanner() {
+    _surfaceNotificationTimer?.cancel();
+    _surfaceNotificationTimer = null;
+    if (!mounted || _surfaceNotification == null) {
+      return;
+    }
+    setState(() => _surfaceNotification = null);
+  }
+
+  Future<void> _handleNotificationTap(NotificationModel notification) async {
+    _dismissNotificationBanner();
+    await _notificationCubit.markAsRead(notification.id);
+
+    final user = await _storageService.getUserData();
+    final route = NotificationActionResolver.resolveRoute(
+      notification,
+      rolePrefix: _rolePrefixFor(user),
+    );
+    if (route == null || route.trim().isEmpty) {
+      return;
+    }
+    AppRouter.router.push(route);
+  }
+
+  String _rolePrefixFor(dynamic user) {
+    final role = user?.primaryRoleName.toString().toLowerCase() ?? 'student';
+    if (role.contains('instructor')) {
+      return '/instructor';
+    }
+    if (role.contains('ta') || role.contains('teaching_assistant')) {
+      return '/ta';
+    }
+    return '/student';
   }
 
   @override
@@ -402,6 +477,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _sessionExpirySubscription?.cancel();
     _authStateSubscription?.cancel();
     _incomingNotificationSubscription?.cancel();
+    unawaited(_pushNotificationCoordinator.dispose());
+    _surfaceNotificationTimer?.cancel();
     super.dispose();
   }
 
@@ -488,8 +565,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                         : ThemeMode.light,
                     routerConfig: AppRouter.router,
                     builder: (context, child) {
-                      return WalkthroughHost(
-                        child: child ?? const SizedBox.shrink(),
+                      return Stack(
+                        children: [
+                          WalkthroughHost(
+                            child: child ?? const SizedBox.shrink(),
+                          ),
+                          if (_surfaceNotification != null)
+                            PositionedDirectional(
+                              top: 0,
+                              start: 0,
+                              end: 0,
+                              child: LiquidNotificationBanner(
+                                notification: _surfaceNotification!,
+                                showPreview:
+                                    _surfaceDevicePreferences.showPreview,
+                                onTap: () => unawaited(
+                                  _handleNotificationTap(_surfaceNotification!),
+                                ),
+                                onDismiss: _dismissNotificationBanner,
+                              ),
+                            ),
+                        ],
                       );
                     },
                   );

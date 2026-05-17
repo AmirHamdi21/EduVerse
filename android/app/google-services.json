@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260506206761",
+    "project_id": "eduverse-82865",
+    "storage_bucket": "eduverse-82865.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260506206761:android:e881a7c3db0a5cc9ca1238",
+        "android_client_info": {
+          "package_name": "com.eduverse.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXM9mIUKW56WG81s7Mo0wmdKS84Y_JR9I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

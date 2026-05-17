@@ -45,6 +45,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   StreamSubscription<NotificationModel>? _notificationSubscription;
   StreamSubscription<int>? _unreadCountSubscription;
   StreamSubscription<bool>? _connectionSubscription;
+  bool _syncInFlight = false;
 
   Future<void> initializeRealtime() async {
     if (isClosed) {
@@ -307,7 +308,17 @@ class NotificationCubit extends Cubit<NotificationState> {
     );
   }
 
-  void _handleIncomingNotification(NotificationModel notification) {
+  void ingestExternalNotification(
+    NotificationModel notification, {
+    bool surface = true,
+  }) {
+    _handleIncomingNotification(notification, surface: surface);
+  }
+
+  void _handleIncomingNotification(
+    NotificationModel notification, {
+    bool surface = true,
+  }) {
     if (isClosed) {
       return;
     }
@@ -316,6 +327,10 @@ class NotificationCubit extends Cubit<NotificationState> {
         notification.userId != state.sessionUserId) {
       return;
     }
+    final existingIndex = state.notifications.indexWhere(
+      (n) => n.id == notification.id,
+    );
+    final isNewNotification = existingIndex == -1;
     final withoutDuplicate = state.notifications
         .where((n) => n.id != notification.id)
         .toList();
@@ -325,10 +340,15 @@ class NotificationCubit extends Cubit<NotificationState> {
     _emitIfOpen(
       state.copyWith(
         notifications: updated,
-        unreadCount: state.unreadCount + (notification.isRead ? 0 : 1),
+        unreadCount: isNewNotification
+            ? state.unreadCount + (notification.isRead ? 0 : 1)
+            : _calculateUnreadCount(updated, fallback: state.unreadCount),
       ),
     );
-    if (!isClosed && !_incomingNotificationController.isClosed) {
+    if (surface &&
+        isNewNotification &&
+        !isClosed &&
+        !_incomingNotificationController.isClosed) {
       _incomingNotificationController.add(notification);
     }
   }
@@ -352,6 +372,71 @@ class NotificationCubit extends Cubit<NotificationState> {
       return;
     }
     await initializeRealtime();
+  }
+
+  Future<void> syncLatestNotifications() async {
+    if (isClosed || _syncInFlight) {
+      return;
+    }
+
+    final sessionUserId = await _currentSessionUserId();
+    if (isClosed) {
+      return;
+    }
+    if (sessionUserId == null) {
+      await clearForSignedOutSession();
+      return;
+    }
+    if (state.sessionUserId != sessionUserId ||
+        state.status == NotificationLoadingStatus.initial) {
+      await loadNotifications();
+      return;
+    }
+
+    _syncInFlight = true;
+    try {
+      final result = await _notificationApiService.getAll(limit: 100, page: 1);
+      if (isClosed || !await _isStillCurrentSession(sessionUserId)) {
+        return;
+      }
+      if (!result.isSuccess || result.data == null) {
+        await initializeRealtime();
+        return;
+      }
+
+      final notifications =
+          result.data!
+              .map(ApiNotificationModel.fromJson)
+              .map((api) => api.toNotificationModel())
+              .toList()
+            ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      var unreadCount = notifications.where((n) => !n.isRead).length;
+      final countResult = await _notificationApiService.getUnreadCount();
+      if (isClosed || !await _isStillCurrentSession(sessionUserId)) {
+        return;
+      }
+      if (countResult.isSuccess && countResult.data != null) {
+        unreadCount = countResult.data!;
+      }
+
+      _emitIfOpen(
+        state.copyWith(
+          status: NotificationLoadingStatus.loaded,
+          notifications: notifications,
+          unreadCount: unreadCount,
+          sessionUserId: sessionUserId,
+          errorMessage: null,
+        ),
+      );
+      await initializeRealtime();
+    } catch (_) {
+      if (!isClosed) {
+        await initializeRealtime();
+      }
+    } finally {
+      _syncInFlight = false;
+    }
   }
 
   Future<void> clearForSignedOutSession() async {

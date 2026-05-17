@@ -5,6 +5,7 @@ import 'package:edu_verse/utils/navigation/safe_back.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../common/service_error.dart';
+import '../../../features/notification_surfaces/android_notification_permission_coordinator.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/notifications/device_notification_preferences.dart';
 import '../../../models/notifications/notification_preference_model.dart';
@@ -23,11 +24,17 @@ class _NotificationsSettingsScreenState
     extends State<NotificationsSettingsScreen> {
   final DeviceNotificationPreferencesService _devicePreferencesService =
       DeviceNotificationPreferencesService();
+  final AndroidNotificationPermissionCoordinator _permissionCoordinator =
+      const AndroidNotificationPermissionCoordinator();
 
   NotificationPreferenceModel _serverPreferences =
       const NotificationPreferenceModel();
   DeviceNotificationPreferences _devicePreferences =
       const DeviceNotificationPreferences();
+  EduVerseNotificationPermissionSnapshot _permissionSnapshot =
+      const EduVerseNotificationPermissionSnapshot(
+        EduVerseNotificationPermissionStatus.unsupported,
+      );
 
   bool _isLoading = true;
   bool _isSaving = false;
@@ -45,6 +52,7 @@ class _NotificationsSettingsScreenState
     try {
       final preferenceResult = await api.getPreferences();
       final devicePreferences = await _devicePreferencesService.load();
+      final permissionSnapshot = await _permissionCoordinator.status();
 
       if (!mounted) return;
       setState(() {
@@ -52,6 +60,7 @@ class _NotificationsSettingsScreenState
           _serverPreferences = preferenceResult.data!;
         }
         _devicePreferences = devicePreferences;
+        _permissionSnapshot = permissionSnapshot;
         _isLoading = false;
       });
     } catch (_) {
@@ -76,12 +85,28 @@ class _NotificationsSettingsScreenState
       SnackBar(
         content: Text(
           saveResult.isSuccess
-              ? 'Notification settings saved'
-              : 'Saved local settings, but server preferences failed to update',
+              ? AppLocalizations.of(context).notificationSettingsSaved
+              : AppLocalizations.of(context).notificationSettingsPartiallySaved,
         ),
         behavior: SnackBarBehavior.floating,
       ),
     );
+  }
+
+  Future<void> _requestPermission() async {
+    HapticFeedback.selectionClick();
+    final snapshot = await _permissionCoordinator.request();
+    if (!mounted) return;
+    setState(() => _permissionSnapshot = snapshot);
+  }
+
+  Future<void> _openSystemSettings() async {
+    HapticFeedback.selectionClick();
+    await _permissionCoordinator.openSystemSettings();
+    if (!mounted) return;
+    final snapshot = await _permissionCoordinator.status();
+    if (!mounted) return;
+    setState(() => _permissionSnapshot = snapshot);
   }
 
   @override
@@ -121,7 +146,7 @@ class _NotificationsSettingsScreenState
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Save'),
+                : Text(l10n.save),
           ),
         ],
       ),
@@ -131,16 +156,20 @@ class _NotificationsSettingsScreenState
               padding: const EdgeInsets.all(16),
               physics: const BouncingScrollPhysics(),
               children: [
-                _buildSectionHeader('Account Notification Preferences', isDark),
+                _buildSectionHeader(
+                  l10n.notificationAccountPreferences,
+                  isDark,
+                ),
                 const SizedBox(height: 12),
                 _buildSettingsCard(
                   isDark,
                   children: [
+                    _buildPermissionItem(l10n, isDark),
+                    _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Email Notifications',
-                      subtitle:
-                          'Allow email delivery for supported notification types',
+                      title: l10n.emailNotifications,
+                      subtitle: l10n.notificationEmailDeliveryDesc,
                       value: _serverPreferences.emailEnabled,
                       onChanged: (value) => setState(
                         () => _serverPreferences = _serverPreferences.copyWith(
@@ -151,9 +180,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Push Preference',
-                      subtitle:
-                          'Store your push delivery preference on the server',
+                      title: l10n.notificationPushPreference,
+                      subtitle: l10n.notificationPushPreferenceDesc,
                       value: _serverPreferences.pushEnabled,
                       onChanged: (value) => setState(
                         () => _serverPreferences = _serverPreferences.copyWith(
@@ -164,8 +192,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'SMS Notifications',
-                      subtitle: 'Allow SMS notifications when supported',
+                      title: l10n.smsNotifications,
+                      subtitle: l10n.notificationSmsDesc,
                       value: _serverPreferences.smsEnabled,
                       onChanged: (value) => setState(
                         () => _serverPreferences = _serverPreferences.copyWith(
@@ -176,8 +204,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Announcement Emails',
-                      subtitle: 'Receive announcement notifications by email',
+                      title: l10n.notificationAnnouncementEmails,
+                      subtitle: l10n.notificationAnnouncementEmailsDesc,
                       value: _serverPreferences.announcementEmail,
                       onChanged: (value) => setState(
                         () => _serverPreferences = _serverPreferences.copyWith(
@@ -188,8 +216,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Grade Emails',
-                      subtitle: 'Receive grade and grading-related emails',
+                      title: l10n.notificationGradeEmails,
+                      subtitle: l10n.notificationGradeEmailsDesc,
                       value: _serverPreferences.gradeEmail,
                       onChanged: (value) => setState(
                         () => _serverPreferences = _serverPreferences.copyWith(
@@ -200,8 +228,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Assignment Emails',
-                      subtitle: 'Receive assignment and deadline emails',
+                      title: l10n.notificationAssignmentEmails,
+                      subtitle: l10n.notificationAssignmentEmailsDesc,
                       value: _serverPreferences.assignmentEmail,
                       onChanged: (value) => setState(
                         () => _serverPreferences = _serverPreferences.copyWith(
@@ -212,8 +240,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Message Emails',
-                      subtitle: 'Receive message and discussion emails',
+                      title: l10n.notificationMessageEmails,
+                      subtitle: l10n.notificationMessageEmailsDesc,
                       value: _serverPreferences.messageEmail,
                       onChanged: (value) => setState(
                         () => _serverPreferences = _serverPreferences.copyWith(
@@ -224,7 +252,10 @@ class _NotificationsSettingsScreenState
                   ],
                 ),
                 const SizedBox(height: 24),
-                _buildSectionHeader('Reminders & Quiet Hours', isDark),
+                _buildSectionHeader(
+                  l10n.notificationRemindersQuietHours,
+                  isDark,
+                ),
                 const SizedBox(height: 12),
                 _buildSettingsCard(
                   isDark,
@@ -235,7 +266,7 @@ class _NotificationsSettingsScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Deadline reminder days',
+                            l10n.notificationDeadlineReminderDays,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white : Colors.black87,
@@ -270,7 +301,7 @@ class _NotificationsSettingsScreenState
                               Expanded(
                                 child: _buildTimeField(
                                   isDark,
-                                  title: 'Quiet hours start',
+                                  title: l10n.notificationQuietHoursStart,
                                   value: _serverPreferences.quietHoursStart,
                                   onChanged: (value) => setState(
                                     () =>
@@ -283,7 +314,7 @@ class _NotificationsSettingsScreenState
                               Expanded(
                                 child: _buildTimeField(
                                   isDark,
-                                  title: 'Quiet hours end',
+                                  title: l10n.notificationQuietHoursEnd,
                                   value: _serverPreferences.quietHoursEnd,
                                   onChanged: (value) => setState(
                                     () =>
@@ -300,16 +331,18 @@ class _NotificationsSettingsScreenState
                   ],
                 ),
                 const SizedBox(height: 24),
-                _buildSectionHeader('In-App Device Preferences', isDark),
+                _buildSectionHeader(
+                  l10n.notificationInAppDevicePreferences,
+                  isDark,
+                ),
                 const SizedBox(height: 12),
                 _buildSettingsCard(
                   isDark,
                   children: [
                     _buildToggleItem(
                       isDark,
-                      title: 'Foreground alerts',
-                      subtitle:
-                          'Show an in-app alert when new notifications arrive',
+                      title: l10n.notificationForegroundAlerts,
+                      subtitle: l10n.notificationForegroundAlertsDesc,
                       value: _devicePreferences.foregroundAlertsEnabled,
                       onChanged: (value) => setState(
                         () => _devicePreferences = _devicePreferences.copyWith(
@@ -320,8 +353,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Notification sound',
-                      subtitle: 'Play an in-app sound when alerts arrive',
+                      title: l10n.notificationSound,
+                      subtitle: l10n.notificationSoundInAppDesc,
                       value: _devicePreferences.soundEnabled,
                       onChanged: (value) => setState(
                         () => _devicePreferences = _devicePreferences.copyWith(
@@ -332,9 +365,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Vibration / haptic feedback',
-                      subtitle:
-                          'Use haptic feedback for incoming in-app alerts',
+                      title: l10n.notificationVibrationHaptic,
+                      subtitle: l10n.notificationVibrationHapticDesc,
                       value: _devicePreferences.vibrationEnabled,
                       onChanged: (value) => setState(
                         () => _devicePreferences = _devicePreferences.copyWith(
@@ -345,8 +377,8 @@ class _NotificationsSettingsScreenState
                     _buildDivider(isDark),
                     _buildToggleItem(
                       isDark,
-                      title: 'Show preview',
-                      subtitle: 'Show notification body in foreground alerts',
+                      title: l10n.notificationShowPreview,
+                      subtitle: l10n.notificationShowPreviewDesc,
                       value: _devicePreferences.showPreview,
                       onChanged: (value) => setState(
                         () => _devicePreferences = _devicePreferences.copyWith(
@@ -360,6 +392,87 @@ class _NotificationsSettingsScreenState
               ],
             ),
     );
+  }
+
+  Widget _buildPermissionItem(AppLocalizations l10n, bool isDark) {
+    final isAllowed = _permissionSnapshot.canShowSystemCards;
+    final isDenied =
+        _permissionSnapshot.status ==
+        EduVerseNotificationPermissionStatus.denied;
+    final accent = isAllowed
+        ? const Color(0xFF30D158)
+        : const Color(0xFFFF9F0A);
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: accent.withValues(alpha: isDark ? 0.22 : 0.14),
+            ),
+            child: Icon(
+              isAllowed
+                  ? Icons.notifications_active_rounded
+                  : Icons.notifications_off_rounded,
+              color: accent,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.notificationPermissionTitle,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  _permissionText(l10n),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.white60 : Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          if (!isAllowed)
+            TextButton(
+              onPressed: isDenied ? _openSystemSettings : _requestPermission,
+              child: Text(
+                isDenied
+                    ? l10n.notificationPermissionOpenSettings
+                    : l10n.notificationPermissionRequest,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _permissionText(AppLocalizations l10n) {
+    switch (_permissionSnapshot.status) {
+      case EduVerseNotificationPermissionStatus.authorized:
+        return l10n.notificationPermissionAllowed;
+      case EduVerseNotificationPermissionStatus.denied:
+        return l10n.notificationPermissionDenied;
+      case EduVerseNotificationPermissionStatus.notDetermined:
+        return l10n.notificationPermissionNotDetermined;
+      case EduVerseNotificationPermissionStatus.unsupported:
+        return l10n.notificationPermissionUnsupported;
+    }
   }
 
   Widget _buildTimeField(

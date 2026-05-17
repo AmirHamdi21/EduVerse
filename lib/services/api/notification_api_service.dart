@@ -82,6 +82,44 @@ class NotificationApiService {
     }, fallbackMessage: 'Failed to save notification preferences');
   }
 
+  Future<ServiceResult<Map<String, dynamic>>> registerDeviceToken({
+    required String token,
+    String platform = 'android',
+    String? deviceId,
+    String? deviceName,
+    String? appVersion,
+    String? locale,
+  }) {
+    return RetryHelper.execute<Map<String, dynamic>>(() async {
+      final payload = <String, dynamic>{
+        'token': token,
+        'platform': platform,
+        if (deviceId != null && deviceId.trim().isNotEmpty)
+          'deviceId': deviceId,
+        if (deviceName != null && deviceName.trim().isNotEmpty)
+          'deviceName': deviceName,
+        if (appVersion != null && appVersion.trim().isNotEmpty)
+          'appVersion': appVersion,
+        if (locale != null && locale.trim().isNotEmpty) 'locale': locale,
+      };
+
+      final response = await _client.dio.post(
+        '/notifications/device-tokens',
+        data: payload,
+      );
+      return _extractMap(response.data);
+    }, fallbackMessage: 'Failed to register notification device');
+  }
+
+  Future<ServiceResult<void>> unregisterDeviceToken(String token) {
+    return RetryHelper.executeVoid(() async {
+      await _client.dio.post(
+        '/notifications/device-tokens/unregister',
+        data: {'token': token},
+      );
+    }, fallbackMessage: 'Failed to unregister notification device');
+  }
+
   Future<ServiceResult<void>> markAsRead(dynamic id) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.patch('/notifications/$id/read');

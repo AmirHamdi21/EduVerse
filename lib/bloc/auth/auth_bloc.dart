@@ -236,12 +236,15 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ApiService _apiService;
   final StorageService _storageService;
+  final Future<void> Function()? _onBeforeLogout;
 
   AuthBloc({
     required ApiService apiService,
     required StorageService storageService,
+    Future<void> Function()? onBeforeLogout,
   }) : _apiService = apiService,
        _storageService = storageService,
+       _onBeforeLogout = onBeforeLogout,
        super(const AuthInitial()) {
     // Register event handlers
     on<AuthCheckRequested>(_onAuthCheckRequested);
@@ -323,6 +326,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try {
+      await _onBeforeLogout?.call();
       // Get refresh token before clearing storage
       final refreshToken = await _storageService.getRefreshToken();
       if (refreshToken != null) {

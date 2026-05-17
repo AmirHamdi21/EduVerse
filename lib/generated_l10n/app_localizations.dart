@@ -2342,6 +2342,222 @@ abstract class AppLocalizations {
   /// **'Just now'**
   String get notificationJustNow;
 
+  /// No description provided for @notificationNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get notificationNow;
+
+  /// No description provided for @notificationSettingsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings saved'**
+  String get notificationSettingsSaved;
+
+  /// No description provided for @notificationSettingsPartiallySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Local alert settings were saved, but server preferences could not be updated.'**
+  String get notificationSettingsPartiallySaved;
+
+  /// No description provided for @notificationAccountPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Notification Preferences'**
+  String get notificationAccountPreferences;
+
+  /// No description provided for @notificationPermissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Android notification permission'**
+  String get notificationPermissionTitle;
+
+  /// No description provided for @notificationPermissionAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'System cards are enabled for background and closed-app notifications.'**
+  String get notificationPermissionAllowed;
+
+  /// No description provided for @notificationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'System cards are blocked. Open Android settings to allow EduVerse notifications.'**
+  String get notificationPermissionDenied;
+
+  /// No description provided for @notificationPermissionNotDetermined.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow EduVerse to show Android notification cards.'**
+  String get notificationPermissionNotDetermined;
+
+  /// No description provided for @notificationPermissionUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'System notification permission is not available on this platform.'**
+  String get notificationPermissionUnsupported;
+
+  /// No description provided for @notificationPermissionRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get notificationPermissionRequest;
+
+  /// No description provided for @notificationPermissionOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get notificationPermissionOpenSettings;
+
+  /// No description provided for @notificationEmailDeliveryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow email delivery for supported notification types.'**
+  String get notificationEmailDeliveryDesc;
+
+  /// No description provided for @notificationPushPreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Preference'**
+  String get notificationPushPreference;
+
+  /// No description provided for @notificationPushPreferenceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Store your push delivery preference on the server.'**
+  String get notificationPushPreferenceDesc;
+
+  /// No description provided for @smsNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS Notifications'**
+  String get smsNotifications;
+
+  /// No description provided for @notificationSmsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow SMS notifications when supported.'**
+  String get notificationSmsDesc;
+
+  /// No description provided for @notificationAnnouncementEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement Emails'**
+  String get notificationAnnouncementEmails;
+
+  /// No description provided for @notificationAnnouncementEmailsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive announcement notifications by email.'**
+  String get notificationAnnouncementEmailsDesc;
+
+  /// No description provided for @notificationGradeEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Emails'**
+  String get notificationGradeEmails;
+
+  /// No description provided for @notificationGradeEmailsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive grade and grading-related emails.'**
+  String get notificationGradeEmailsDesc;
+
+  /// No description provided for @notificationAssignmentEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Emails'**
+  String get notificationAssignmentEmails;
+
+  /// No description provided for @notificationAssignmentEmailsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive assignment and deadline emails.'**
+  String get notificationAssignmentEmailsDesc;
+
+  /// No description provided for @notificationMessageEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Emails'**
+  String get notificationMessageEmails;
+
+  /// No description provided for @notificationMessageEmailsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive message and discussion emails.'**
+  String get notificationMessageEmailsDesc;
+
+  /// No description provided for @notificationRemindersQuietHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders & Quiet Hours'**
+  String get notificationRemindersQuietHours;
+
+  /// No description provided for @notificationDeadlineReminderDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline reminder days'**
+  String get notificationDeadlineReminderDays;
+
+  /// No description provided for @notificationQuietHoursStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours start'**
+  String get notificationQuietHoursStart;
+
+  /// No description provided for @notificationQuietHoursEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours end'**
+  String get notificationQuietHoursEnd;
+
+  /// No description provided for @notificationInAppDevicePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'In-App Device Preferences'**
+  String get notificationInAppDevicePreferences;
+
+  /// No description provided for @notificationForegroundAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreground alerts'**
+  String get notificationForegroundAlerts;
+
+  /// No description provided for @notificationForegroundAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Show a liquid-glass alert when new notifications arrive while the app is open.'**
+  String get notificationForegroundAlertsDesc;
+
+  /// No description provided for @notificationSoundInAppDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Play an in-app sound when alerts arrive.'**
+  String get notificationSoundInAppDesc;
+
+  /// No description provided for @notificationVibrationHaptic.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibration / haptic feedback'**
+  String get notificationVibrationHaptic;
+
+  /// No description provided for @notificationVibrationHapticDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use haptic feedback for incoming in-app alerts.'**
+  String get notificationVibrationHapticDesc;
+
+  /// No description provided for @notificationShowPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Show preview'**
+  String get notificationShowPreview;
+
+  /// No description provided for @notificationShowPreviewDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Show notification body in foreground alerts.'**
+  String get notificationShowPreviewDesc;
+
   /// No description provided for @notificationMinutesAgo.
   ///
   /// In en, this message translates to:

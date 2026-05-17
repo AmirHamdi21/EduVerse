@@ -1177,6 +1177,130 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationJustNow => 'الآن';
 
   @override
+  String get notificationNow => 'الآن';
+
+  @override
+  String get notificationSettingsSaved => 'تم حفظ إعدادات الإشعارات';
+
+  @override
+  String get notificationSettingsPartiallySaved =>
+      'تم حفظ إعدادات التنبيهات المحلية، لكن تعذر تحديث تفضيلات الخادم.';
+
+  @override
+  String get notificationAccountPreferences => 'تفضيلات إشعارات الحساب';
+
+  @override
+  String get notificationPermissionTitle => 'إذن إشعارات أندرويد';
+
+  @override
+  String get notificationPermissionAllowed =>
+      'بطاقات النظام مفعلة لإشعارات الخلفية والتطبيق المغلق.';
+
+  @override
+  String get notificationPermissionDenied =>
+      'بطاقات النظام محظورة. افتح إعدادات أندرويد للسماح بإشعارات إديفيرس.';
+
+  @override
+  String get notificationPermissionNotDetermined =>
+      'اسمح لإديفيرس بإظهار بطاقات إشعارات أندرويد.';
+
+  @override
+  String get notificationPermissionUnsupported =>
+      'إذن إشعارات النظام غير متاح على هذا النظام.';
+
+  @override
+  String get notificationPermissionRequest => 'السماح';
+
+  @override
+  String get notificationPermissionOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get notificationEmailDeliveryDesc =>
+      'السماح بوصول البريد الإلكتروني لأنواع الإشعارات المدعومة.';
+
+  @override
+  String get notificationPushPreference => 'تفضيل إشعارات الدفع';
+
+  @override
+  String get notificationPushPreferenceDesc =>
+      'حفظ تفضيل وصول إشعارات الدفع على الخادم.';
+
+  @override
+  String get smsNotifications => 'إشعارات الرسائل النصية';
+
+  @override
+  String get notificationSmsDesc => 'السماح بإشعارات الرسائل النصية عند دعمها.';
+
+  @override
+  String get notificationAnnouncementEmails => 'رسائل إعلانات البريد';
+
+  @override
+  String get notificationAnnouncementEmailsDesc =>
+      'استلام إشعارات الإعلانات عبر البريد الإلكتروني.';
+
+  @override
+  String get notificationGradeEmails => 'رسائل الدرجات';
+
+  @override
+  String get notificationGradeEmailsDesc =>
+      'استلام رسائل الدرجات والتقييم عبر البريد الإلكتروني.';
+
+  @override
+  String get notificationAssignmentEmails => 'رسائل التكليفات';
+
+  @override
+  String get notificationAssignmentEmailsDesc =>
+      'استلام رسائل التكليفات والمواعيد النهائية عبر البريد الإلكتروني.';
+
+  @override
+  String get notificationMessageEmails => 'رسائل المحادثات';
+
+  @override
+  String get notificationMessageEmailsDesc =>
+      'استلام رسائل المحادثات والمناقشات عبر البريد الإلكتروني.';
+
+  @override
+  String get notificationRemindersQuietHours => 'التذكيرات وساعات الهدوء';
+
+  @override
+  String get notificationDeadlineReminderDays => 'أيام تذكير المواعيد النهائية';
+
+  @override
+  String get notificationQuietHoursStart => 'بداية ساعات الهدوء';
+
+  @override
+  String get notificationQuietHoursEnd => 'نهاية ساعات الهدوء';
+
+  @override
+  String get notificationInAppDevicePreferences =>
+      'تفضيلات التنبيهات داخل التطبيق';
+
+  @override
+  String get notificationForegroundAlerts => 'تنبيهات أثناء فتح التطبيق';
+
+  @override
+  String get notificationForegroundAlertsDesc =>
+      'إظهار تنبيه زجاجي عند وصول إشعارات جديدة والتطبيق مفتوح.';
+
+  @override
+  String get notificationSoundInAppDesc =>
+      'تشغيل صوت داخل التطبيق عند وصول التنبيهات.';
+
+  @override
+  String get notificationVibrationHaptic => 'الاهتزاز / رد الفعل اللمسي';
+
+  @override
+  String get notificationVibrationHapticDesc =>
+      'استخدام رد فعل لمسي للتنبيهات الواردة داخل التطبيق.';
+
+  @override
+  String get notificationShowPreview => 'إظهار المعاينة';
+
+  @override
+  String get notificationShowPreviewDesc =>
+      'إظهار نص الإشعار في التنبيهات داخل التطبيق.';
+
+  @override
   String notificationMinutesAgo(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

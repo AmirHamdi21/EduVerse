@@ -5,8 +5,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+apply(plugin = "com.google.gms.google-services")
+
 android {
-    namespace = "com.example.edu_verse"
+    namespace = "com.eduverse.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +24,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.edu_verse"
+        applicationId = "com.eduverse.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -45,5 +47,5 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
