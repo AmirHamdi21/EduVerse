@@ -7,9 +7,9 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/discussion_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_event.dart';
@@ -287,7 +287,7 @@ class _StudentDiscussionPostDetailScreenState
       if (!mounted) {
         return;
       }
-      context.pop(true);
+      safeBack(context, '/dashboard', true);
     } catch (error) {
       if (!mounted) {
         return;
@@ -567,9 +567,9 @@ class _StudentDiscussionPostDetailScreenState
       surfaceTintColor: Colors.transparent,
       floating: true,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: () => safeBack(context, '/dashboard'),
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: StudentDiscussionPalette.textPrimaryColor(isDark),
         ),
       ),

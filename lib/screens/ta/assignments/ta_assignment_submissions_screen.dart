@@ -8,6 +8,7 @@ import '../../../models/assignments/assignment_submission_model.dart';
 import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/instructor/assignments/grading_panel.dart';
 
@@ -62,6 +63,13 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
           appBar: AppBar(
             backgroundColor: TAColors.scaffoldColor(isDark),
             surfaceTintColor: Colors.transparent,
+            leading: IconButton(
+              onPressed: () => safeBack(context, '/ta/dashboard'),
+              icon: Icon(
+                iosBackIcon(context),
+                color: TAColors.textPrimaryColor(isDark),
+              ),
+            ),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

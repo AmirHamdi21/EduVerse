@@ -11,6 +11,7 @@ import '../../services/api/core_api_client.dart';
 import '../../services/api/grades_service.dart';
 import '../../services/api/student_stats_service.dart';
 import '../../services/storage_service.dart';
+import '../../utils/navigation/safe_back.dart';
 
 class GradeAnalysisScreen extends StatefulWidget {
   const GradeAnalysisScreen({super.key});
@@ -122,7 +123,7 @@ class _GradeAnalysisScreenState extends State<GradeAnalysisScreen>
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () => safeBack(context, '/dashboard'),
               borderRadius: BorderRadius.circular(responsive.radius12),
               child: Container(
                 padding: EdgeInsets.all(responsive.p10),
@@ -133,7 +134,7 @@ class _GradeAnalysisScreenState extends State<GradeAnalysisScreen>
                   borderRadius: BorderRadius.circular(responsive.radius12),
                 ),
                 child: Icon(
-                  Icons.arrow_back_ios_rounded,
+                  iosBackIcon(context),
                   color: isDark ? Colors.white : const Color(0xFF1E293B),
                   size: 22,
                 ),

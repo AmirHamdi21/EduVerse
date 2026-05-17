@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/language/language_cubit.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 class InstructorCalendarAppBar extends StatelessWidget {
   final VoidCallback onAddEvent;
@@ -43,7 +43,7 @@ class InstructorCalendarAppBar extends StatelessWidget {
     bool isDark,
   ) {
     return GestureDetector(
-      onTap: () => context.pop(),
+      onTap: () => safeBack(context, '/instructor/dashboard'),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -57,7 +57,7 @@ class InstructorCalendarAppBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.arrow_back_ios_new_rounded,
+              iosBackIcon(context),
               size: 16,
               color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
             ),

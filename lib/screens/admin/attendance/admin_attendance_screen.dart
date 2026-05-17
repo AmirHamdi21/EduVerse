@@ -392,7 +392,7 @@ class _AdminAttendanceBodyState extends State<_AdminAttendanceBody> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<String>(
-          value: state.departmentFilter,
+          initialValue: state.departmentFilter,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             labelText: 'Department',
@@ -491,7 +491,7 @@ class _AdminAttendanceBodyState extends State<_AdminAttendanceBody> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<String>(
-          value: state.statusFilter,
+          initialValue: state.statusFilter,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             labelText: 'Risk Level',

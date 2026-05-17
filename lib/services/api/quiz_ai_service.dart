@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import '../../config/ai_service_endpoints.dart';
 import '../../models/quiz/quiz_api_models.dart';
 
 /// AI Quiz Generation service — mirrors the web's `quizAiGeneration.ts` 1:1.
@@ -14,11 +15,7 @@ import '../../models/quiz/quiz_api_models.dart';
 class QuizAiService {
   /// Base URL for the deployed AI quiz service.
   /// Kept slash-trimmed so endpoint concatenation stays stable.
-  static const String _configuredBaseUrl =
-      'https://eduverse-team-quiz-generation.hf.space/';
-
-  static String get baseUrl =>
-      _configuredBaseUrl.replaceFirst(RegExp(r'/$'), '');
+  static String get baseUrl => AiServiceEndpoints.aiQuizBaseUrl;
 
   /// AI question types accepted by the FastAPI endpoint.
   static const List<String> questionTypes = ['MCQ', 'FillBlank', 'Explain'];

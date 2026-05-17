@@ -7,6 +7,7 @@ import '../../features/courses/bloc/course_detail/course_detail_bloc.dart';
 import '../../features/courses/bloc/course_detail/course_detail_event.dart';
 import '../../features/courses/bloc/course_detail/course_detail_state.dart';
 import '../../models/admin/admin_periods_models.dart';
+import '../../utils/navigation/safe_back.dart';
 
 class CourseInstructorInfoScreen extends StatefulWidget {
   final int instructorId;
@@ -221,8 +222,8 @@ class _CourseInstructorInfoScreenState
     return Row(
       children: [
         _TopActionButton(
-          icon: Icons.arrow_back_ios_new_rounded,
-          onTap: () => Navigator.of(context).pop(),
+          icon: iosBackIcon(context),
+          onTap: () => safeBack(context, '/dashboard'),
           isDark: isDark,
           backgroundColor: cardColor,
           foregroundColor: textColor,

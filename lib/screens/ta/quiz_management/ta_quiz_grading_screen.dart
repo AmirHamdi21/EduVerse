@@ -5,8 +5,8 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
-import 'package:go_router/go_router.dart';
 
 class TAQuizGradingScreen extends StatefulWidget {
   final QuizModel quiz;
@@ -36,7 +36,9 @@ class _GS extends State<TAQuizGradingScreen> {
 
   @override
   void dispose() {
-    for (final c in _gc.values) c.dispose();
+    for (final c in _gc.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -70,9 +72,10 @@ class _GS extends State<TAQuizGradingScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
-                              onPressed: () => context.pop(),
-                              icon: const Icon(
-                                Icons.arrow_back_ios_rounded,
+                              onPressed: () =>
+                                  safeBack(context, '/ta/dashboard'),
+                              icon: Icon(
+                                iosBackIcon(context),
                                 color: Colors.white,
                                 size: 18,
                               ),
@@ -157,13 +160,14 @@ class _GS extends State<TAQuizGradingScreen> {
 
   Widget _body(bool dk) {
     final qs = widget.attempt.questions ?? widget.quiz.questions ?? [];
-    if (qs.isEmpty)
+    if (qs.isEmpty) {
       return Center(
         child: Text(
           'No questions',
           style: TextStyle(color: TAColors.textSecondaryColor(dk)),
         ),
       );
+    }
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
       physics: const BouncingScrollPhysics(),
@@ -394,7 +398,7 @@ class _GS extends State<TAQuizGradingScreen> {
             ),
           ),
         );
-        context.pop();
+        safeBack(context, '/ta/dashboard');
       }
     }
   }

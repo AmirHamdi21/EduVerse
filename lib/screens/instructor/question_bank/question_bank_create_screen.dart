@@ -90,7 +90,7 @@ class _QuestionBankCreateViewState extends State<_QuestionBankCreateView> {
           ),
           leading: IconButton(
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              safeFeatureBackIcon(context),
               color: InstructorColors.textPrimaryColor(isDark),
             ),
             onPressed: () => _handleBack(context),

@@ -1,9 +1,9 @@
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/common/utils/ta_courses_theme.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class TACoursesHeader extends StatelessWidget {
   final String title;
@@ -12,7 +12,7 @@ class TACoursesHeader extends StatelessWidget {
   final Widget? stats;
   final Widget? searchBar;
   final Widget? trailingAction;
-  final VoidCallback onMenuTap;
+  final VoidCallback onBackTap;
   final bool showSearch;
 
   const TACoursesHeader({
@@ -20,7 +20,7 @@ class TACoursesHeader extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.tabBar,
-    required this.onMenuTap,
+    required this.onBackTap,
     this.stats,
     this.searchBar,
     this.trailingAction,
@@ -46,7 +46,7 @@ class TACoursesHeader extends StatelessWidget {
                     isNarrow: isNarrow,
                     searchBar: searchBar,
                     trailingAction: trailingAction,
-                    onMenuTap: onMenuTap,
+                    onBackTap: onBackTap,
                   ),
                 if (showSearch) const SizedBox(height: 12),
                 Container(
@@ -115,23 +115,18 @@ class _HeaderChrome extends StatelessWidget {
   final bool isNarrow;
   final Widget? searchBar;
   final Widget? trailingAction;
-  final VoidCallback onMenuTap;
+  final VoidCallback onBackTap;
 
   const _HeaderChrome({
     required this.isDark,
     required this.isNarrow,
     required this.searchBar,
     required this.trailingAction,
-    required this.onMenuTap,
+    required this.onBackTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textDirection = Directionality.of(context);
-    final backIcon = textDirection == TextDirection.rtl
-        ? Icons.arrow_forward_ios_rounded
-        : Icons.arrow_back_ios_new_rounded;
-
     final menuButton = Container(
       width: 52,
       height: 52,
@@ -150,9 +145,9 @@ class _HeaderChrome extends StatelessWidget {
         ],
       ),
       child: IconButton(
-        onPressed: () => _goToDashboard(context),
+        onPressed: onBackTap,
         icon: Icon(
-          backIcon,
+          iosBackIcon(context),
           color: isDark ? Colors.white : const Color(0xFF0F172A),
           size: 20,
         ),
@@ -211,21 +206,5 @@ class _HeaderChrome extends StatelessWidget {
         ],
       ],
     );
-  }
-
-  void _goToDashboard(BuildContext context) {
-    final GoRouter? router = GoRouter.maybeOf(context);
-    if (router != null) {
-      context.go('/ta/dashboard');
-      return;
-    }
-
-    final navigator = Navigator.of(context);
-    if (navigator.canPop()) {
-      navigator.pop();
-      return;
-    }
-
-    navigator.pushReplacementNamed('/ta/dashboard');
   }
 }

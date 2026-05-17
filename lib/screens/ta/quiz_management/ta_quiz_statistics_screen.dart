@@ -5,8 +5,8 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
-import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 
 class TAQuizStatisticsScreen extends StatefulWidget {
@@ -53,9 +53,10 @@ class _SS extends State<TAQuizStatisticsScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
-                              onPressed: () => context.pop(),
-                              icon: const Icon(
-                                Icons.arrow_back_ios_rounded,
+                              onPressed: () =>
+                                  safeBack(context, '/ta/dashboard'),
+                              icon: Icon(
+                                iosBackIcon(context),
                                 color: Colors.white,
                                 size: 18,
                               ),
@@ -93,22 +94,24 @@ class _SS extends State<TAQuizStatisticsScreen> {
                       child:
                           BlocBuilder<QuizManagementCubit, QuizManagementState>(
                             builder: (_, s) {
-                              if (s is! QuizMgmtLoaded)
+                              if (s is! QuizMgmtLoaded) {
                                 return const Center(
                                   child: CircularProgressIndicator(
                                     color: TAColors.primary,
                                   ),
                                 );
+                              }
                               final loading =
                                   s.loadingStatistics[widget.quiz.id] == true;
                               final stats = s.statisticsMap[widget.quiz.id];
-                              if (loading)
+                              if (loading) {
                                 return const Center(
                                   child: CircularProgressIndicator(
                                     color: TAColors.primary,
                                   ),
                                 );
-                              if (stats == null)
+                              }
+                              if (stats == null) {
                                 return Center(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -132,6 +135,7 @@ class _SS extends State<TAQuizStatisticsScreen> {
                                     ],
                                   ),
                                 );
+                              }
                               return _content(dk, stats);
                             },
                           ),

@@ -15,6 +15,7 @@ import '../../models/labs/lab_model.dart';
 import '../../models/labs/lab_submission_model.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/api/lab_service.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/labs/instruction_viewer.dart';
 import '../../widgets/student/labs/lab_submission_sheet.dart';
 import '../../widgets/student/labs/submission_history_view.dart';
@@ -66,6 +67,10 @@ class LabDetailScreen extends StatelessWidget {
               elevation: 0,
               backgroundColor: Colors.transparent,
               foregroundColor: isDark ? Colors.white : const Color(0xFF1E293B),
+              leading: IconButton(
+                onPressed: () => safeBack(context, '/dashboard'),
+                icon: Icon(iosBackIcon(context)),
+              ),
               title: Text(
                 l10n.labDetails,
                 style: TextStyle(

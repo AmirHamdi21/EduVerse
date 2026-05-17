@@ -1,31 +1,49 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/attendance/attendance_record_model.dart';
 import '../../models/attendance/attendance_session_model.dart';
 import '../../services/api/attendance_service.dart';
 import 'admin_attendance_state.dart';
 
-class AdminAttendanceCubit extends Cubit<AdminAttendanceState> {
+class AdminAttendanceCubit extends Cubit<AdminAttendanceState>
+    with SafeRouteCubitMixin<AdminAttendanceState> {
   final AttendanceService _attendanceService;
+  late final RouteRequestController _overviewRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _coursesRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _studentsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   AdminAttendanceCubit({required AttendanceService attendanceService})
     : _attendanceService = attendanceService,
       super(const AdminAttendanceState());
 
   Future<void> initialize() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     await Future.wait(<Future<void>>[
       loadOverviewStats(),
       loadCourses(),
       loadStudents(),
     ]);
-    emit(state.copyWith(isLoading: false));
+    emitIfOpen(state.copyWith(isLoading: false));
   }
 
   Future<void> loadOverviewStats() async {
-    final sessions = await _attendanceService.getSessions(limit: 200);
+    final requestId = _overviewRequest.begin();
+    final sessions = await _attendanceService.getSessions(
+      limit: 200,
+      cancelToken: _overviewRequest.token,
+    );
+    if (!isRequestCurrent(_overviewRequest, requestId)) {
+      return;
+    }
     if (!sessions.isSuccess || sessions.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           error: sessions.error?.message ?? 'Failed to load overview stats',
         ),
@@ -58,7 +76,7 @@ class AdminAttendanceCubit extends Cubit<AdminAttendanceState> {
     final deptStats = _buildDepartmentStats(items);
     final weekly = _buildWeeklyTrends(items);
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         totalStudents: total,
         presentToday: presentToday,
@@ -72,9 +90,16 @@ class AdminAttendanceCubit extends Cubit<AdminAttendanceState> {
   }
 
   Future<void> loadCourses() async {
-    final sessions = await _attendanceService.getSessions(limit: 200);
+    final requestId = _coursesRequest.begin();
+    final sessions = await _attendanceService.getSessions(
+      limit: 200,
+      cancelToken: _coursesRequest.token,
+    );
+    if (!isRequestCurrent(_coursesRequest, requestId)) {
+      return;
+    }
     if (!sessions.isSuccess || sessions.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           error: sessions.error?.message ?? 'Failed to load courses',
         ),
@@ -112,18 +137,23 @@ class AdminAttendanceCubit extends Cubit<AdminAttendanceState> {
       );
     }).toList();
 
-    emit(state.copyWith(courses: courses));
+    emitIfOpen(state.copyWith(courses: courses));
   }
 
   Future<void> loadStudents() async {
+    final requestId = _studentsRequest.begin();
     final sessions = await _attendanceService.getSessions(
       status: 'completed',
       limit: 15,
       sortBy: 'sessionDate',
       sortOrder: 'DESC',
+      cancelToken: _studentsRequest.token,
     );
+    if (!isRequestCurrent(_studentsRequest, requestId)) {
+      return;
+    }
     if (!sessions.isSuccess || sessions.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           error: sessions.error?.message ?? 'Failed to load students',
         ),
@@ -138,7 +168,13 @@ class AdminAttendanceCubit extends Cubit<AdminAttendanceState> {
     final attendedClasses = <int, int>{};
 
     for (final session in sessions.data!) {
-      final detail = await _attendanceService.getSessionDetails(session.id);
+      final detail = await _attendanceService.getSessionDetails(
+        session.id,
+        cancelToken: _studentsRequest.token,
+      );
+      if (!isRequestCurrent(_studentsRequest, requestId)) {
+        return;
+      }
       final records = detail.data?.records ?? const <AttendanceRecordModel>[];
       for (final record in records) {
         final userId = record.userId;
@@ -168,27 +204,27 @@ class AdminAttendanceCubit extends Cubit<AdminAttendanceState> {
       );
     }).toList()..sort((a, b) => a.attendanceRate.compareTo(b.attendanceRate));
 
-    emit(state.copyWith(students: students));
+    emitIfOpen(state.copyWith(students: students));
   }
 
   void setActiveTab(AdminAttendanceTab tab) {
-    emit(state.copyWith(activeTab: tab));
+    emitIfOpen(state.copyWith(activeTab: tab));
   }
 
   void setCourseSearch(String query) {
-    emit(state.copyWith(courseSearch: query));
+    emitIfOpen(state.copyWith(courseSearch: query));
   }
 
   void setDepartmentFilter(String department) {
-    emit(state.copyWith(departmentFilter: department));
+    emitIfOpen(state.copyWith(departmentFilter: department));
   }
 
   void setStudentSearch(String query) {
-    emit(state.copyWith(studentSearch: query));
+    emitIfOpen(state.copyWith(studentSearch: query));
   }
 
   void setStatusFilter(String status) {
-    emit(state.copyWith(statusFilter: status));
+    emitIfOpen(state.copyWith(statusFilter: status));
   }
 
   List<DepartmentAttendanceData> _buildDepartmentStats(

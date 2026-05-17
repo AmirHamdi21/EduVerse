@@ -304,7 +304,7 @@ class _ProfileHeader extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              context.go('/ta/profile');
+              context.push('/ta/profile');
             },
             child: Stack(
               clipBehavior: Clip.none,
@@ -571,7 +571,7 @@ class _DrawerNavItem extends StatelessWidget {
         onTap: () {
           Navigator.pop(context);
           final current = GoRouterState.of(context).uri.path;
-          if (item.route != current) context.go(item.route);
+          if (item.route != current) context.push(item.route);
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
@@ -892,6 +892,14 @@ class _ThemeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeBackground = isDark
+        ? Color.lerp(TAColors.primary, Colors.white, 0.14)!
+        : Colors.white;
+    final activeForeground = isDark ? Colors.white : TAColors.primary;
+    final activeBorder = isDark
+        ? Color.lerp(TAColors.primaryLight, Colors.white, 0.36)!
+        : TAColors.primary.withValues(alpha: 0.24);
+
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
@@ -899,17 +907,20 @@ class _ThemeOption extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(vertical: 11),
         decoration: BoxDecoration(
-          color: isActive
-              ? (isDark ? TAColors.primary : Colors.white)
-              : Colors.transparent,
+          color: isActive ? activeBackground : Colors.transparent,
           borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isActive ? activeBorder : Colors.transparent,
+            width: 1.1,
+          ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: (isDark ? TAColors.primary : Colors.black)
-                        .withValues(alpha: 0.12),
-                    blurRadius: 9,
-                    offset: const Offset(0, 3),
+                    color: TAColors.primary.withValues(
+                      alpha: isDark ? 0.32 : 0.12,
+                    ),
+                    blurRadius: isDark ? 16 : 12,
+                    offset: const Offset(0, 5),
                   ),
                 ]
               : null,
@@ -921,7 +932,7 @@ class _ThemeOption extends StatelessWidget {
               icon,
               size: 16,
               color: isActive
-                  ? (isDark ? Colors.white : TAColors.primary)
+                  ? activeForeground
                   : _TADrawerV9Colors.mutedText(isDark),
             ),
             const SizedBox(width: 6),
@@ -934,7 +945,7 @@ class _ThemeOption extends StatelessWidget {
                   fontSize: 12,
                   fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
                   color: isActive
-                      ? (isDark ? Colors.white : TAColors.primary)
+                      ? activeForeground
                       : _TADrawerV9Colors.mutedText(isDark),
                 ),
               ),

@@ -1,4 +1,8 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/role_walkthrough_cubit.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_models.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +16,7 @@ import '../../../models/question_bank/question_bank_question_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/question_bank_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
 
@@ -107,250 +112,285 @@ class _InstructorQuestionBankViewState
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
+    return InstructorWalkthroughRouteMarker(
+      segmentId: InstructorWalkthroughIds.questionBank,
+      child: Scaffold(
         backgroundColor: InstructorColors.background(isDark),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/instructor/dashboard');
-            }
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: InstructorColors.textPrimaryColor(isDark),
+        appBar: AppBar(
+          backgroundColor: InstructorColors.background(isDark),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () => safeBack(context, '/instructor/dashboard'),
+            icon: Icon(
+              iosBackIcon(context),
+              color: InstructorColors.textPrimaryColor(isDark),
+            ),
           ),
+          title: Text(
+            l10n.questionBank,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          actions: [
+            BlocBuilder<QuestionBankCubit, QuestionBankState>(
+              builder: (context, state) {
+                return _AppBarActionButton(
+                  tooltip: l10n.qbGroups,
+                  icon: Icons.folder_copy_outlined,
+                  color: InstructorColors.cyan,
+                  isDark: isDark,
+                  onPressed: () =>
+                      context.push('/instructor/question-bank/groups'),
+                );
+              },
+            ),
+            _AppBarActionButton(
+              tooltip: l10n.qbManageChapters,
+              icon: Icons.view_list_outlined,
+              color: InstructorColors.orange,
+              isDark: isDark,
+              onPressed: () =>
+                  context.push('/instructor/question-bank/chapters'),
+            ),
+            BlocBuilder<QuestionBankCubit, QuestionBankState>(
+              builder: (context, state) {
+                return _AppBarActionButton(
+                  tooltip: state.isSelectionMode
+                      ? l10n.cancel
+                      : l10n.qbSelectQuestions,
+                  icon: state.isSelectionMode
+                      ? Icons.close_rounded
+                      : Icons.checklist_rounded,
+                  color: InstructorColors.warning,
+                  isDark: isDark,
+                  onPressed: () => context
+                      .read<QuestionBankCubit>()
+                      .setSelectionMode(!state.isSelectionMode),
+                );
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
         ),
-        title: Text(
-          l10n.questionBank,
-          style: TextStyle(
-            color: InstructorColors.textPrimaryColor(isDark),
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        actions: [
-          BlocBuilder<QuestionBankCubit, QuestionBankState>(
-            builder: (context, state) {
-              return _AppBarActionButton(
-                tooltip: l10n.qbGroups,
-                icon: Icons.folder_copy_outlined,
-                color: InstructorColors.cyan,
+        floatingActionButton: BlocBuilder<QuestionBankCubit, QuestionBankState>(
+          builder: (context, state) {
+            return WalkthroughTarget(
+              id: InstructorWalkthroughIds.questionBankCreate,
+              shape: WalkthroughTargetShape.circle,
+              child: _QuestionBankFabCluster(
+                isOpen: _actionsOpen,
                 isDark: isDark,
-                onPressed: () =>
-                    context.push('/instructor/question-bank/groups'),
-              );
-            },
-          ),
-          _AppBarActionButton(
-            tooltip: l10n.qbManageChapters,
-            icon: Icons.view_list_outlined,
-            color: InstructorColors.orange,
-            isDark: isDark,
-            onPressed: () => context.push('/instructor/question-bank/chapters'),
-          ),
-          BlocBuilder<QuestionBankCubit, QuestionBankState>(
-            builder: (context, state) {
-              return _AppBarActionButton(
-                tooltip: state.isSelectionMode
-                    ? l10n.cancel
-                    : l10n.qbSelectQuestions,
-                icon: state.isSelectionMode
-                    ? Icons.close_rounded
-                    : Icons.checklist_rounded,
-                color: InstructorColors.warning,
-                isDark: isDark,
-                onPressed: () => context
-                    .read<QuestionBankCubit>()
-                    .setSelectionMode(!state.isSelectionMode),
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      floatingActionButton: BlocBuilder<QuestionBankCubit, QuestionBankState>(
-        builder: (context, state) {
-          return _QuestionBankFabCluster(
-            isOpen: _actionsOpen,
-            isDark: isDark,
-            onToggleOpen: () => setState(() => _actionsOpen = !_actionsOpen),
-            onCreateQuestion: () {
-              setState(() => _actionsOpen = false);
-              context.push('/instructor/question-bank/create');
-            },
-            onBulkCreate: () async {
-              setState(() => _actionsOpen = false);
-              final changed = await context.push<bool>(
-                '/instructor/question-bank/bulk-create',
-              );
-              if (changed == true && context.mounted) {
-                await context.read<QuestionBankCubit>().refresh();
-              }
-            },
-            onCreateGroup: () {
-              setState(() => _actionsOpen = false);
-              context.push('/instructor/question-bank/groups/create');
-            },
-          );
-        },
-      ),
-      body: BlocConsumer<QuestionBankCubit, QuestionBankState>(
-        listenWhen: (previous, current) {
-          final previousMessage =
-              previous.errorMessage ?? previous.actionMessage;
-          final currentMessage = current.errorMessage ?? current.actionMessage;
-          return currentMessage != null && currentMessage != previousMessage;
-        },
-        listener: (context, state) {
-          final message = state.errorMessage ?? state.actionMessage;
-          if (message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text(localizedQuestionBankMessage(l10n, message)),
+                onToggleOpen: () =>
+                    setState(() => _actionsOpen = !_actionsOpen),
+                onCreateQuestion: () {
+                  setState(() => _actionsOpen = false);
+                  context.push('/instructor/question-bank/create');
+                },
+                onBulkCreate: () async {
+                  setState(() => _actionsOpen = false);
+                  final changed = await context.push<bool>(
+                    '/instructor/question-bank/bulk-create',
+                  );
+                  if (changed == true && context.mounted) {
+                    await context.read<QuestionBankCubit>().refresh();
+                  }
+                },
+                onCreateGroup: () {
+                  setState(() => _actionsOpen = false);
+                  context.push('/instructor/question-bank/groups/create');
+                },
               ),
             );
-          }
-        },
-        builder: (context, state) {
-          if (_searchController.text != state.search) {
-            _searchController.value = TextEditingValue(
-              text: state.search,
-              selection: TextSelection.collapsed(offset: state.search.length),
-            );
-          }
-
-          final showInitialSkeleton =
-              state.isLoading &&
-              state.questions.isEmpty &&
-              !_hasCompletedInitialLoad;
-          if (!state.isLoading) _hasCompletedInitialLoad = true;
-          if (showInitialSkeleton) {
-            return ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
-              children: const [QuestionBankSkeletons(itemCount: 5)],
-            );
-          }
-
-          final content = RefreshIndicator(
-            color: InstructorColors.primary,
-            onRefresh: () => context.read<QuestionBankCubit>().refresh(),
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 118),
-              children: [
-                QuestionBankHeroHeader(
-                  title: l10n.questionBankHeroTitle,
-                  subtitle: l10n.questionBankHeroSubtitle,
-                  isDark: isDark,
-                  stats: {
-                    l10n.total: state.total.toString(),
-                    l10n.approved: state.approvedCount.toString(),
-                    l10n.draft: state.draftCount.toString(),
-                    l10n.qbUnderReview: state.underReviewCount.toString(),
-                    l10n.qbRejected: state.rejectedCount.toString(),
-                    l10n.archived: state.archivedCount.toString(),
-                  },
+          },
+        ),
+        body: BlocConsumer<QuestionBankCubit, QuestionBankState>(
+          listenWhen: (previous, current) {
+            final previousMessage =
+                previous.errorMessage ?? previous.actionMessage;
+            final currentMessage =
+                current.errorMessage ?? current.actionMessage;
+            return currentMessage != null && currentMessage != previousMessage;
+          },
+          listener: (context, state) {
+            final message = state.errorMessage ?? state.actionMessage;
+            if (message != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(localizedQuestionBankMessage(l10n, message)),
                 ),
-                const SizedBox(height: 14),
-                _QuestionBankControlPanel(
-                  state: state,
-                  searchController: _searchController,
-                  isDark: isDark,
-                  isLoading: state.isLoading && _hasCompletedInitialLoad,
-                  onSearchChanged: (value) => context
-                      .read<QuestionBankCubit>()
-                      .setFilters(search: value, debounceRemote: true),
-                  onFilterAction: _handleFilterAction,
-                ),
-                const SizedBox(height: 14),
-                if (state.isSelectionMode) ...[
-                  _BatchActionBar(state: state, isDark: isDark),
-                  const SizedBox(height: 12),
-                ],
-                if (state.errorMessage != null)
-                  _ErrorRetry(
-                    message: localizedQuestionBankMessage(
-                      l10n,
-                      state.errorMessage!,
+              );
+            }
+          },
+          builder: (context, state) {
+            if (_searchController.text != state.search) {
+              _searchController.value = TextEditingValue(
+                text: state.search,
+                selection: TextSelection.collapsed(offset: state.search.length),
+              );
+            }
+
+            final showInitialSkeleton =
+                state.isLoading &&
+                state.questions.isEmpty &&
+                !_hasCompletedInitialLoad;
+            if (!state.isLoading) _hasCompletedInitialLoad = true;
+            if (showInitialSkeleton) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
+                children: const [QuestionBankSkeletons(itemCount: 5)],
+              );
+            }
+            final walkthroughState = context
+                .watch<RoleWalkthroughCubit>()
+                .state;
+            final showWalkthroughDemo =
+                walkthroughState.isActive &&
+                walkthroughState.role == WalkthroughRole.instructor &&
+                walkthroughState.segment?.id ==
+                    InstructorWalkthroughIds.questionBank &&
+                state.questions.isEmpty &&
+                state.groups.isEmpty &&
+                state.total == 0 &&
+                state.errorMessage == null;
+
+            final content = RefreshIndicator(
+              color: InstructorColors.primary,
+              onRefresh: () => context.read<QuestionBankCubit>().refresh(),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 118),
+                children: [
+                  WalkthroughTarget(
+                    id: InstructorWalkthroughIds.questionBankHeader,
+                    child: QuestionBankHeroHeader(
+                      title: l10n.questionBankHeroTitle,
+                      subtitle: l10n.questionBankHeroSubtitle,
+                      isDark: isDark,
+                      stats: {
+                        l10n.total: state.total.toString(),
+                        l10n.approved: state.approvedCount.toString(),
+                        l10n.draft: state.draftCount.toString(),
+                        l10n.qbUnderReview: state.underReviewCount.toString(),
+                        l10n.qbRejected: state.rejectedCount.toString(),
+                        l10n.archived: state.archivedCount.toString(),
+                      },
                     ),
-                    isDark: isDark,
-                    onRetry: () => context.read<QuestionBankCubit>().refresh(),
-                  )
-                else if (state.questions.isEmpty)
-                  QuestionBankEmptyState(
-                    title: l10n.questionBankEmptyTitle,
-                    message: l10n.questionBankEmptyMessage,
-                    action: FilledButton.icon(
-                      onPressed: () =>
-                          context.push('/instructor/question-bank/create'),
-                      icon: const Icon(Icons.add_rounded),
-                      label: Text(l10n.questionBankCreateQuestion),
+                  ),
+                  const SizedBox(height: 14),
+                  WalkthroughTarget(
+                    id: InstructorWalkthroughIds.questionBankControls,
+                    child: _QuestionBankControlPanel(
+                      state: state,
+                      searchController: _searchController,
+                      isDark: isDark,
+                      isLoading: state.isLoading && _hasCompletedInitialLoad,
+                      onSearchChanged: (value) => context
+                          .read<QuestionBankCubit>()
+                          .setFilters(search: value, debounceRemote: true),
+                      onFilterAction: _handleFilterAction,
                     ),
-                  )
-                else
-                  ..._buildQuestionFeed(context, state, isDark),
-                if (state.hasMore)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Center(
-                      child: OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: InstructorColors.primary,
-                          side: const BorderSide(
-                            color: InstructorColors.primary,
-                            width: 1.4,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 13,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        onPressed: state.isLoadingMore
-                            ? null
-                            : () =>
-                                  context.read<QuestionBankCubit>().loadMore(),
-                        icon: state.isLoadingMore
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.expand_more_rounded),
-                        label: Text(l10n.loadMore),
+                  ),
+                  const SizedBox(height: 14),
+                  if (state.isSelectionMode) ...[
+                    _BatchActionBar(state: state, isDark: isDark),
+                    const SizedBox(height: 12),
+                  ],
+                  if (state.errorMessage != null)
+                    _ErrorRetry(
+                      message: localizedQuestionBankMessage(
+                        l10n,
+                        state.errorMessage!,
                       ),
+                      isDark: isDark,
+                      onRetry: () =>
+                          context.read<QuestionBankCubit>().refresh(),
+                    )
+                  else if (state.questions.isEmpty)
+                    if (showWalkthroughDemo)
+                      WalkthroughTarget(
+                        id: InstructorWalkthroughIds.questionBankFeed,
+                        child: _QuestionBankWalkthroughDemoFeed(isDark: isDark),
+                      )
+                    else
+                      QuestionBankEmptyState(
+                        title: l10n.questionBankEmptyTitle,
+                        message: l10n.questionBankEmptyMessage,
+                        action: FilledButton.icon(
+                          onPressed: () =>
+                              context.push('/instructor/question-bank/create'),
+                          icon: const Icon(Icons.add_rounded),
+                          label: Text(l10n.questionBankCreateQuestion),
+                        ),
+                      )
+                  else
+                    WalkthroughTarget(
+                      id: InstructorWalkthroughIds.questionBankFeed,
+                      child: Column(
+                        children: _buildQuestionFeed(context, state, isDark),
+                      ),
+                    ),
+                  if (state.hasMore)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Center(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: InstructorColors.primary,
+                            side: const BorderSide(
+                              color: InstructorColors.primary,
+                              width: 1.4,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 13,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          onPressed: state.isLoadingMore
+                              ? null
+                              : () => context
+                                    .read<QuestionBankCubit>()
+                                    .loadMore(),
+                          icon: state.isLoadingMore
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.expand_more_rounded),
+                          label: Text(l10n.loadMore),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+
+            return Stack(
+              children: [
+                content,
+                if (state.activeBatchAction != null)
+                  Positioned.fill(
+                    child: _BatchMutationOverlay(
+                      action: state.activeBatchAction!,
+                      selectedCount: state.selectedQuestionCount,
+                      isDark: isDark,
                     ),
                   ),
               ],
-            ),
-          );
-
-          return Stack(
-            children: [
-              content,
-              if (state.activeBatchAction != null)
-                Positioned.fill(
-                  child: _BatchMutationOverlay(
-                    action: state.activeBatchAction!,
-                    selectedCount: state.selectedQuestionCount,
-                    isDark: isDark,
-                  ),
-                ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -2534,6 +2574,149 @@ class _ErrorRetry extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuestionBankWalkthroughDemoFeed extends StatelessWidget {
+  const _QuestionBankWalkthroughDemoFeed({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return IgnorePointer(
+      child: Column(
+        children: [
+          _QuestionBankWalkthroughDemoCard(
+            isDark: isDark,
+            icon: Icons.check_circle_rounded,
+            accent: InstructorColors.success,
+            title: l10n.instructorWalkthroughQuestionBankDemoTitleOne,
+            body: l10n.instructorWalkthroughQuestionBankDemoBodyOne,
+            chips: [l10n.approved, l10n.medium, l10n.multipleChoice],
+          ),
+          const SizedBox(height: 12),
+          _QuestionBankWalkthroughDemoCard(
+            isDark: isDark,
+            icon: Icons.account_tree_rounded,
+            accent: InstructorColors.cyan,
+            title: l10n.instructorWalkthroughQuestionBankDemoTitleTwo,
+            body: l10n.instructorWalkthroughQuestionBankDemoBodyTwo,
+            chips: [l10n.qbGroups, l10n.qbUnderReview, l10n.essay],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuestionBankWalkthroughDemoCard extends StatelessWidget {
+  const _QuestionBankWalkthroughDemoCard({
+    required this.isDark,
+    required this.icon,
+    required this.accent,
+    required this.title,
+    required this.body,
+    required this.chips,
+  });
+
+  final bool isDark;
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final String body;
+  final List<String> chips;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: accent.withValues(alpha: 0.18)),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: isDark ? 0.16 : 0.08),
+            blurRadius: 22,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: accent),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(isDark),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  body,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorColors.textSecondaryColor(isDark),
+                    height: 1.35,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: chips
+                      .map(
+                        (chip) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            chip,
+                            style: TextStyle(
+                              color: accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.more_horiz_rounded,
+            color: InstructorColors.textSecondaryColor(isDark),
+          ),
         ],
       ),
     );

@@ -1,4 +1,8 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/role_walkthrough_cubit.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_models.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +16,7 @@ import '../../../models/instructor/teaching_course_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/exam_generator_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
 import '../../../widgets/instructor/question_bank/question_bank_mutation_overlay.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
@@ -41,152 +46,191 @@ class _InstructorExamGeneratorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
-        title: Text(l10n.examGenerator),
-        actions: [
-          BlocBuilder<ExamGeneratorCubit, ExamGeneratorState>(
-            buildWhen: (previous, current) =>
-                previous.selectionMode != current.selectionMode ||
-                previous.drafts != current.drafts ||
-                previous.exams != current.exams ||
-                previous.selectedListKind != current.selectedListKind ||
-                previous.selectedDraftStatus != current.selectedDraftStatus ||
-                previous.selectedExamStatus != current.selectedExamStatus ||
-                previous.search != current.search,
-            builder: (context, state) {
-              final records = _recordsFor(state);
-              if (records.isEmpty) return const SizedBox.shrink();
-              return IconButton(
-                tooltip: state.selectionMode
-                    ? 'Clear selection'
-                    : 'Select exam records',
-                onPressed: () {
-                  final cubit = context.read<ExamGeneratorCubit>();
-                  if (state.selectionMode) {
-                    cubit.setSelectionMode(false);
-                  } else {
-                    cubit.setSelectionMode(true);
-                  }
-                },
-                icon: Icon(
-                  state.selectionMode
-                      ? Icons.close_rounded
-                      : Icons.checklist_rounded,
-                ),
-              );
-            },
+    return InstructorWalkthroughRouteMarker(
+      segmentId: InstructorWalkthroughIds.examGenerator,
+      child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => safeBack(context, '/instructor/dashboard'),
+            icon: Icon(iosBackIcon(context)),
           ),
-          IconButton(
-            tooltip: l10n.examGeneratorInfoTitle,
-            onPressed: () => showExamGeneratorInfoSheet(context),
-            icon: const Icon(Icons.info_outline_rounded),
-          ),
-          BlocBuilder<ExamGeneratorCubit, ExamGeneratorState>(
-            buildWhen: (previous, current) =>
-                previous.isLoading != current.isLoading,
-            builder: (context, state) {
-              return IconButton(
-                tooltip: l10n.refresh,
-                onPressed: state.isLoading
-                    ? null
-                    : () => context.read<ExamGeneratorCubit>().refresh(),
-                icon: const Icon(Icons.refresh_rounded),
-              );
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: _CreateDraftFab(
-        onPressed: () => context.push('/instructor/exam-generator/create'),
-      ),
-      body: BlocConsumer<ExamGeneratorCubit, ExamGeneratorState>(
-        listenWhen: (previous, current) =>
-            previous.errorMessage != current.errorMessage ||
-            previous.actionMessage != current.actionMessage,
-        listener: (context, state) {
-          final message = state.errorMessage ?? state.actionMessage;
-          if (message == null || message.isEmpty) return;
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
-        },
-        builder: (context, state) {
-          final body =
-              state.isLoading &&
-                  state.drafts.isEmpty &&
-                  state.exams.isEmpty &&
-                  !state.isRefreshing
-              ? const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: ExamGeneratorSkeletons(itemCount: 5),
-                )
-              : RefreshIndicator(
-                  onRefresh: () =>
-                      context.read<ExamGeneratorCubit>().refresh(quiet: true),
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
-                    children: [
-                      ExamGeneratorHeroHeader(
-                        title: l10n.examGeneratorHeroTitle,
-                        subtitle: l10n.examGeneratorHeroSubtitle,
-                        isDark: isDark,
-                        stats: {
-                          l10n.drafts:
-                              (state.stats?.openDrafts ?? state.drafts.length)
-                                  .toString(),
-                          l10n.savedExams:
-                              (state.stats?.savedExams ?? state.exams.length)
-                                  .toString(),
-                          l10n.examPublished: (state.stats?.publishedExams ?? 0)
-                              .toString(),
-                          l10n.examApprovedPool:
-                              (state.stats?.approvedQuestionPool ?? 0)
-                                  .toString(),
-                        },
-                      ),
-                      const SizedBox(height: 14),
-                      _PoolReadinessPanel(state: state),
-                      const SizedBox(height: 14),
-                      _FilterPanel(state: state, onPickDate: _pickDate),
-                      if (state.isRefreshing) ...[
-                        const SizedBox(height: 10),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(999),
-                          child: const LinearProgressIndicator(minHeight: 3),
-                        ),
-                      ],
-                      if (state.selectionMode) ...[
-                        const SizedBox(height: 14),
-                        _ExamSelectionActionBar(state: state),
-                      ],
-                      const SizedBox(height: 14),
-                      if (state.errorMessage != null &&
-                          state.drafts.isEmpty &&
-                          state.exams.isEmpty)
-                        Center(child: Text(state.errorMessage!))
-                      else
-                        _CombinedExamList(state: state),
-                    ],
+          title: Text(l10n.examGenerator),
+          actions: [
+            BlocBuilder<ExamGeneratorCubit, ExamGeneratorState>(
+              buildWhen: (previous, current) =>
+                  previous.selectionMode != current.selectionMode ||
+                  previous.drafts != current.drafts ||
+                  previous.exams != current.exams ||
+                  previous.selectedListKind != current.selectedListKind ||
+                  previous.selectedDraftStatus != current.selectedDraftStatus ||
+                  previous.selectedExamStatus != current.selectedExamStatus ||
+                  previous.search != current.search,
+              builder: (context, state) {
+                final records = _recordsFor(state);
+                if (records.isEmpty) return const SizedBox.shrink();
+                return IconButton(
+                  tooltip: state.selectionMode
+                      ? 'Clear selection'
+                      : 'Select exam records',
+                  onPressed: () {
+                    final cubit = context.read<ExamGeneratorCubit>();
+                    if (state.selectionMode) {
+                      cubit.setSelectionMode(false);
+                    } else {
+                      cubit.setSelectionMode(true);
+                    }
+                  },
+                  icon: Icon(
+                    state.selectionMode
+                        ? Icons.close_rounded
+                        : Icons.checklist_rounded,
                   ),
                 );
-          return Stack(
-            children: [
-              body,
-              if (state.activeMutationAction != null)
-                Positioned.fill(
-                  child: QuestionBankMutationOverlay(
-                    title: _mutationTitle(state.activeMutationAction!),
-                    message:
-                        'Please wait until the selected exam records are updated.',
-                    isDark: isDark,
-                    color: _mutationColor(state.activeMutationAction!),
+              },
+            ),
+            IconButton(
+              tooltip: l10n.examGeneratorInfoTitle,
+              onPressed: () => showExamGeneratorInfoSheet(context),
+              icon: const Icon(Icons.info_outline_rounded),
+            ),
+            BlocBuilder<ExamGeneratorCubit, ExamGeneratorState>(
+              buildWhen: (previous, current) =>
+                  previous.isLoading != current.isLoading,
+              builder: (context, state) {
+                return IconButton(
+                  tooltip: l10n.refresh,
+                  onPressed: state.isLoading
+                      ? null
+                      : () => context.read<ExamGeneratorCubit>().refresh(),
+                  icon: const Icon(Icons.refresh_rounded),
+                );
+              },
+            ),
+          ],
+        ),
+        floatingActionButton: WalkthroughTarget(
+          id: InstructorWalkthroughIds.examGeneratorCreate,
+          shape: WalkthroughTargetShape.circle,
+          child: _CreateDraftFab(
+            onPressed: () => context.push('/instructor/exam-generator/create'),
+          ),
+        ),
+        body: BlocConsumer<ExamGeneratorCubit, ExamGeneratorState>(
+          listenWhen: (previous, current) =>
+              previous.errorMessage != current.errorMessage ||
+              previous.actionMessage != current.actionMessage,
+          listener: (context, state) {
+            final message = state.errorMessage ?? state.actionMessage;
+            if (message == null || message.isEmpty) return;
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(message)));
+          },
+          builder: (context, state) {
+            final walkthroughState = context
+                .watch<RoleWalkthroughCubit>()
+                .state;
+            final showWalkthroughDemo =
+                walkthroughState.isActive &&
+                walkthroughState.role == WalkthroughRole.instructor &&
+                walkthroughState.segment?.id ==
+                    InstructorWalkthroughIds.examGenerator &&
+                state.drafts.isEmpty &&
+                state.exams.isEmpty &&
+                state.errorMessage == null;
+            final body =
+                state.isLoading &&
+                    state.drafts.isEmpty &&
+                    state.exams.isEmpty &&
+                    !state.isRefreshing
+                ? const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: ExamGeneratorSkeletons(itemCount: 5),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () =>
+                        context.read<ExamGeneratorCubit>().refresh(quiet: true),
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
+                      children: [
+                        WalkthroughTarget(
+                          id: InstructorWalkthroughIds.examGeneratorHeader,
+                          child: ExamGeneratorHeroHeader(
+                            title: l10n.examGeneratorHeroTitle,
+                            subtitle: l10n.examGeneratorHeroSubtitle,
+                            isDark: isDark,
+                            stats: {
+                              l10n.drafts:
+                                  (state.stats?.openDrafts ??
+                                          state.drafts.length)
+                                      .toString(),
+                              l10n.savedExams:
+                                  (state.stats?.savedExams ??
+                                          state.exams.length)
+                                      .toString(),
+                              l10n.examPublished:
+                                  (state.stats?.publishedExams ?? 0).toString(),
+                              l10n.examApprovedPool:
+                                  (state.stats?.approvedQuestionPool ?? 0)
+                                      .toString(),
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        _PoolReadinessPanel(state: state),
+                        const SizedBox(height: 14),
+                        WalkthroughTarget(
+                          id: InstructorWalkthroughIds.examGeneratorFilters,
+                          child: _FilterPanel(
+                            state: state,
+                            onPickDate: _pickDate,
+                          ),
+                        ),
+                        if (state.isRefreshing) ...[
+                          const SizedBox(height: 10),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(999),
+                            child: const LinearProgressIndicator(minHeight: 3),
+                          ),
+                        ],
+                        if (state.selectionMode) ...[
+                          const SizedBox(height: 14),
+                          _ExamSelectionActionBar(state: state),
+                        ],
+                        const SizedBox(height: 14),
+                        if (state.errorMessage != null &&
+                            state.drafts.isEmpty &&
+                            state.exams.isEmpty)
+                          Center(child: Text(state.errorMessage!))
+                        else
+                          WalkthroughTarget(
+                            id: InstructorWalkthroughIds.examGeneratorList,
+                            child: _CombinedExamList(
+                              state: state,
+                              showWalkthroughDemo: showWalkthroughDemo,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+            return Stack(
+              children: [
+                body,
+                if (state.activeMutationAction != null)
+                  Positioned.fill(
+                    child: QuestionBankMutationOverlay(
+                      title: _mutationTitle(state.activeMutationAction!),
+                      message:
+                          'Please wait until the selected exam records are updated.',
+                      isDark: isDark,
+                      color: _mutationColor(state.activeMutationAction!),
+                    ),
                   ),
-                ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -698,15 +742,22 @@ class _FilterPanel extends StatelessWidget {
 }
 
 class _CombinedExamList extends StatelessWidget {
-  const _CombinedExamList({required this.state});
+  const _CombinedExamList({
+    required this.state,
+    this.showWalkthroughDemo = false,
+  });
 
   final ExamGeneratorState state;
+  final bool showWalkthroughDemo;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final records = _recordsFor(state);
     if (records.isEmpty) {
+      if (showWalkthroughDemo) {
+        return const _ExamGeneratorWalkthroughDemoList();
+      }
       return ExamGeneratorEmptyState(
         title: l10n.examGeneratorNoRecords,
         message: l10n.examGeneratorNoRecordsMessage,
@@ -786,6 +837,152 @@ class _CombinedExamList extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _ExamGeneratorWalkthroughDemoList extends StatelessWidget {
+  const _ExamGeneratorWalkthroughDemoList();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return IgnorePointer(
+      child: Column(
+        children: [
+          _ExamGeneratorWalkthroughDemoCard(
+            isDark: isDark,
+            icon: Icons.edit_document,
+            accent: InstructorColors.primary,
+            title: l10n.instructorWalkthroughExamDemoTitleOne,
+            body: l10n.instructorWalkthroughExamDemoBodyOne,
+            chips: [l10n.draft, l10n.manual, l10n.qbQuestionCount(24)],
+          ),
+          const SizedBox(height: 12),
+          _ExamGeneratorWalkthroughDemoCard(
+            isDark: isDark,
+            icon: Icons.verified_rounded,
+            accent: InstructorColors.cyan,
+            title: l10n.instructorWalkthroughExamDemoTitleTwo,
+            body: l10n.instructorWalkthroughExamDemoBodyTwo,
+            chips: [
+              l10n.savedExams,
+              l10n.examPublished,
+              l10n.qbQuestionCount(36),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExamGeneratorWalkthroughDemoCard extends StatelessWidget {
+  const _ExamGeneratorWalkthroughDemoCard({
+    required this.isDark,
+    required this.icon,
+    required this.accent,
+    required this.title,
+    required this.body,
+    required this.chips,
+  });
+
+  final bool isDark;
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final String body;
+  final List<String> chips;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: accent.withValues(alpha: 0.18)),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: isDark ? 0.16 : 0.08),
+            blurRadius: 22,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [accent, InstructorColors.cyan]),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: Colors.white),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(isDark),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  body,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorColors.textSecondaryColor(isDark),
+                    height: 1.35,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: chips
+                      .map(
+                        (chip) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            chip,
+                            style: TextStyle(
+                              color: accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.more_horiz_rounded,
+            color: InstructorColors.textSecondaryColor(isDark),
+          ),
+        ],
+      ),
     );
   }
 }

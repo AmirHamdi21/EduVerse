@@ -8,6 +8,7 @@ import 'package:edu_verse/models/flashcard_model.dart';
 import 'package:edu_verse/models/quiz_models.dart';
 import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:go_router/go_router.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import '../../widgets/student/ai_quiz/ai_quiz_barrel.dart';
 
 class AiQuizGeneratorScreen extends StatefulWidget {
@@ -211,9 +212,10 @@ class _AiQuizGeneratorScreenState extends State<AiQuizGeneratorScreen>
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: IconButton(
-                                      onPressed: () => context.go('/dashboard'),
-                                      icon: const Icon(
-                                        Icons.arrow_back_ios_rounded,
+                                      onPressed: () =>
+                                          safeBack(context, '/dashboard'),
+                                      icon: Icon(
+                                        iosBackIcon(context),
                                         color: Colors.white,
                                         size: 20,
                                       ),

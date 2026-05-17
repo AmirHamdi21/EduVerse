@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/attendance/attendance_record_model.dart';
 import '../../models/attendance/attendance_session_model.dart';
 import '../../models/instructor/instructor_course_model.dart';
@@ -10,9 +12,25 @@ import '../../services/api/attendance_service.dart';
 import '../../services/api/enrollment_service.dart';
 import 'ta_attendance_state.dart';
 
-class TAAttendanceCubit extends Cubit<TAAttendanceState> {
+class TAAttendanceCubit extends Cubit<TAAttendanceState>
+    with SafeRouteCubitMixin<TAAttendanceState> {
   final AttendanceService _attendanceService;
   final EnrollmentService _enrollmentService;
+  late final RouteRequestController _labsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _processRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _historyRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _detailsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _saveRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   TAAttendanceCubit({
     required AttendanceService attendanceService,
@@ -22,11 +40,17 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
        super(const TAAttendanceState());
 
   Future<void> loadAvailableLabs() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
-    final result = await _enrollmentService.getTeachingCourses();
+    final requestId = _labsRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+    final result = await _enrollmentService.getTeachingCourses(
+      cancelToken: _labsRequest.token,
+    );
+    if (!isRequestCurrent(_labsRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to load labs',
@@ -38,7 +62,7 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
     final available = result.data!;
     final first = available.isNotEmpty ? available.first : null;
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         view: TAAttendanceView.upload,
@@ -54,7 +78,7 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
 
   void selectLab(TeachingCourseModel? section) {
     if (section == null) return;
-    emit(
+    emitIfOpen(
       state.copyWith(
         selectedSectionId: section.sectionId,
         selectedLab: section.section.sectionNumber,
@@ -64,18 +88,19 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
   }
 
   void selectFile(File file) {
-    emit(state.copyWith(selectedFile: file));
+    emitIfOpen(state.copyWith(selectedFile: file));
   }
 
   Future<void> processAttendance() async {
     final sectionId = state.selectedSectionId;
     final file = state.selectedFile;
     if (sectionId == null || file == null) {
-      emit(state.copyWith(error: 'Select lab and photo first'));
+      emitIfOpen(state.copyWith(error: 'Select lab and photo first'));
       return;
     }
 
-    emit(
+    final requestId = _processRequest.begin();
+    emitIfOpen(
       state.copyWith(
         view: TAAttendanceView.processing,
         isLoading: true,
@@ -88,9 +113,13 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
       sectionId: sectionId,
       sessionDate: _dateOnly(DateTime.now()),
       sessionType: 'lab',
+      cancelToken: _processRequest.token,
     );
+    if (!isRequestCurrent(_processRequest, requestId)) {
+      return;
+    }
     if (!session.isSuccess || session.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           view: TAAttendanceView.upload,
@@ -101,13 +130,17 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
       return;
     }
 
-    emit(state.copyWith(processingProgress: 0.35));
+    emitIfOpen(state.copyWith(processingProgress: 0.35));
     final upload = await _attendanceService.uploadAiPhoto(
       sessionId: session.data!.id,
       photo: file,
+      cancelToken: _processRequest.token,
     );
+    if (!isRequestCurrent(_processRequest, requestId)) {
+      return;
+    }
     if (!upload.isSuccess || upload.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           view: TAAttendanceView.upload,
@@ -117,12 +150,16 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
       return;
     }
 
-    emit(state.copyWith(processingProgress: 0.65));
+    emitIfOpen(state.copyWith(processingProgress: 0.65));
     final poll = await _attendanceService.pollAiResult(
       upload.data!.processingId,
+      cancelToken: _processRequest.token,
     );
+    if (!isRequestCurrent(_processRequest, requestId)) {
+      return;
+    }
     if (!poll.isSuccess || poll.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           view: TAAttendanceView.upload,
@@ -132,14 +169,24 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
       return;
     }
 
-    emit(state.copyWith(processingProgress: 0.85));
-    final detail = await _attendanceService.getSessionDetails(session.data!.id);
+    emitIfOpen(state.copyWith(processingProgress: 0.85));
+    final detail = await _attendanceService.getSessionDetails(
+      session.data!.id,
+      cancelToken: _processRequest.token,
+    );
+    if (!isRequestCurrent(_processRequest, requestId)) {
+      return;
+    }
     final rows = await _buildDetectedRows(
       sectionId: sectionId,
       detail: detail.data,
+      cancelToken: _processRequest.token,
     );
+    if (!isRequestCurrent(_processRequest, requestId)) {
+      return;
+    }
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         view: TAAttendanceView.results,
@@ -157,13 +204,17 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
   Future<List<DetectedStudentRow>> _buildDetectedRows({
     required int sectionId,
     AttendanceSessionModel? detail,
+    CancelToken? cancelToken,
   }) async {
     final recordMap = <int, AttendanceRecordModel>{
       for (final r in (detail?.records ?? <AttendanceRecordModel>[]))
         r.userId: r,
     };
 
-    final students = await _enrollmentService.getSectionStudentsLite(sectionId);
+    final students = await _enrollmentService.getSectionStudentsLite(
+      sectionId,
+      cancelToken: cancelToken,
+    );
     if (students.isSuccess &&
         students.data != null &&
         students.data!.isNotEmpty) {
@@ -198,17 +249,18 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
       if (s.userId != studentId) return s;
       return s.copyWith(status: normalized);
     }).toList();
-    emit(state.copyWith(detectedStudents: updated));
+    emitIfOpen(state.copyWith(detectedStudents: updated));
   }
 
   Future<void> saveResults() async {
     final session = state.activeSession;
     if (session == null) {
-      emit(state.copyWith(error: 'No active session to save'));
+      emitIfOpen(state.copyWith(error: 'No active session to save'));
       return;
     }
 
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _saveRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
     final records = state.detectedStudents
         .map(
@@ -222,10 +274,14 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
     final save = await _attendanceService.markBatchAttendance(
       sessionId: session.id,
       records: records,
+      cancelToken: _saveRequest.token,
     );
+    if (!isRequestCurrent(_saveRequest, requestId)) {
+      return;
+    }
 
     if (!save.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: save.error?.message ?? 'Failed to save attendance',
@@ -234,10 +290,19 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
       return;
     }
 
-    await _attendanceService.closeSession(session.id);
+    await _attendanceService.closeSession(
+      session.id,
+      cancelToken: _saveRequest.token,
+    );
+    if (!isRequestCurrent(_saveRequest, requestId)) {
+      return;
+    }
     await loadHistory();
+    if (!isRequestCurrent(_saveRequest, requestId)) {
+      return;
+    }
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         view: TAAttendanceView.history,
@@ -247,23 +312,35 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
   }
 
   Future<void> loadHistory() async {
+    final requestId = _historyRequest.begin();
     final result = await _attendanceService.getSessions(
       status: 'completed',
       sortBy: 'sessionDate',
       sortOrder: 'DESC',
       limit: 50,
+      cancelToken: _historyRequest.token,
     );
+    if (!isRequestCurrent(_historyRequest, requestId)) {
+      return;
+    }
 
     if (result.isSuccess && result.data != null) {
-      emit(state.copyWith(pastSessions: result.data!));
+      emitIfOpen(state.copyWith(pastSessions: result.data!));
     }
   }
 
   Future<void> viewHistoryDetails(AttendanceSessionModel session) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
-    final detail = await _attendanceService.getSessionDetails(session.id);
+    final requestId = _detailsRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+    final detail = await _attendanceService.getSessionDetails(
+      session.id,
+      cancelToken: _detailsRequest.token,
+    );
+    if (!isRequestCurrent(_detailsRequest, requestId)) {
+      return;
+    }
     if (!detail.isSuccess || detail.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: detail.error?.message ?? 'Failed to load session details',
@@ -284,7 +361,7 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
         )
         .toList();
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         view: TAAttendanceView.results,
@@ -308,7 +385,7 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
   }
 
   void resetToUpload() {
-    emit(
+    emitIfOpen(
       state.copyWith(
         view: TAAttendanceView.upload,
         clearSelectedFile: true,
@@ -324,11 +401,11 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
   }
 
   void showResults() {
-    emit(state.copyWith(view: TAAttendanceView.results));
+    emitIfOpen(state.copyWith(view: TAAttendanceView.results));
   }
 
   void showHistory() {
-    emit(state.copyWith(view: TAAttendanceView.history));
+    emitIfOpen(state.copyWith(view: TAAttendanceView.history));
   }
 
   static String _dateOnly(DateTime d) {

@@ -140,7 +140,7 @@ class _InstructorDrawerV9State extends State<InstructorDrawerV9> {
     final router = GoRouter.of(context);
     Navigator.of(context).pop();
     if (item.matches(currentPath)) return;
-    router.go(item.route);
+    router.push(item.route);
   }
 
   List<_DrawerSection> _buildSections(AppLocalizations l10n) {
@@ -359,7 +359,7 @@ class _InstructorDrawerHeader extends StatelessWidget {
             onTap: () {
               final router = GoRouter.of(context);
               Navigator.of(context).pop();
-              router.go('/instructor/profile');
+              router.push('/instructor/profile');
             },
             child: Stack(
               children: [
@@ -874,6 +874,14 @@ class _ThemeChoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeBackground = isDark
+        ? Color.lerp(_InstructorV9Colors.purple, Colors.white, 0.14)!
+        : Colors.white;
+    final activeForeground = isDark ? Colors.white : _InstructorV9Colors.purple;
+    final activeBorder = isDark
+        ? Color.lerp(_InstructorV9Colors.purple, Colors.white, 0.40)!
+        : _InstructorV9Colors.purple.withValues(alpha: 0.24);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -883,10 +891,23 @@ class _ThemeChoice extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isActive
-                ? (isDark ? _InstructorV9Colors.purple : Colors.white)
-                : Colors.transparent,
+            color: isActive ? activeBackground : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isActive ? activeBorder : Colors.transparent,
+              width: 1.1,
+            ),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: _InstructorV9Colors.purple.withValues(
+                        alpha: isDark ? 0.32 : 0.12,
+                      ),
+                      blurRadius: isDark ? 16 : 12,
+                      offset: const Offset(0, 5),
+                    ),
+                  ]
+                : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -895,7 +916,7 @@ class _ThemeChoice extends StatelessWidget {
                 icon,
                 size: 16,
                 color: isActive
-                    ? (isDark ? Colors.white : _InstructorV9Colors.purple)
+                    ? activeForeground
                     : _InstructorV9Colors.mutedText(isDark),
               ),
               const SizedBox(width: 6),
@@ -906,7 +927,7 @@ class _ThemeChoice extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: isActive
-                        ? (isDark ? Colors.white : _InstructorV9Colors.purple)
+                        ? activeForeground
                         : _InstructorV9Colors.mutedText(isDark),
                     fontSize: 12,
                     fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,

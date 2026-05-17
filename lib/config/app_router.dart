@@ -4,7 +4,6 @@ import 'package:edu_verse/screens/student/assignments_screen.dart';
 import 'package:edu_verse/screens/student/chat/chat_swipe_settings_screen.dart';
 import 'package:edu_verse/screens/student/profile/profile_screen.dart';
 import 'package:edu_verse/screens/student/profile/edit_profile_screen.dart';
-import 'package:edu_verse/screens/student/settings/settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/appearance_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/language_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/notifications_settings_screen.dart';
@@ -97,7 +96,6 @@ import 'package:edu_verse/screens/instructor/notifications/instructor_notificati
 import 'package:edu_verse/screens/instructor/roster/instructor_roster_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_edit_profile_screen.dart';
-import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_course_discussions_screen.dart';
 import 'package:edu_verse/screens/instructor/discussions/instructor_discussion_post_detail_screen.dart';
@@ -136,7 +134,9 @@ import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart'
 import 'package:edu_verse/screens/ta/sections/ta_section_materials_screen.dart';
 import 'package:edu_verse/screens/ta/grading/ta_grading_center_screen.dart';
 import 'package:edu_verse/screens/ta/analytics/ta_analytics_screen.dart';
-import 'package:edu_verse/screens/ta/settings/ta_settings_screen.dart';
+import 'package:edu_verse/features/shared_settings/settings_role_resolver.dart';
+import 'package:edu_verse/features/shared_settings/shared_settings_role.dart';
+import 'package:edu_verse/features/shared_settings/shared_settings_screen.dart';
 import 'package:edu_verse/screens/ta/profile/ta_profile_screen.dart';
 import 'package:edu_verse/screens/ta/profile/ta_edit_profile_screen.dart';
 import 'package:edu_verse/screens/ta/calendar/ta_calendar_screen.dart';
@@ -218,16 +218,17 @@ import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
 import 'package:edu_verse/screens/shared/chat/user_profile_screen.dart';
 import 'package:edu_verse/screens/shared/chat/group_profile_screen.dart';
 import 'package:edu_verse/bloc/chat/chat_models.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/config/auth_route_notifier.dart';
+import 'package:edu_verse/features/onboarding_v6/onboarding_v6_screen.dart';
+import 'package:edu_verse/features/splash_v8/splash_v8_screen.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
 import 'package:edu_verse/screens/auth/reset_password_screen.dart';
-import 'package:edu_verse/screens/onBoarding/onboarding_screen.dart';
 import 'package:edu_verse/services/auth_role_resolver.dart';
-import '../screens/splash/splash_screen.dart';
-import '../screens/auth/login_screen.dart';
+import '../screens/auth/login_v2_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../models/core/enrollment_model.dart';
@@ -262,6 +263,57 @@ class AppRouter {
     }
 
     return _parsePositiveInt(state.uri.queryParameters['courseId']);
+  }
+
+  static Widget _taRouteFallback(BuildContext context, String message) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/ta/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(message, textAlign: TextAlign.center),
+        ),
+      ),
+    );
+  }
+
+  static Widget _studentRouteFallback(BuildContext context, String message) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(message, textAlign: TextAlign.center),
+        ),
+      ),
+    );
+  }
+
+  static Widget _instructorRouteFallback(BuildContext context, String message) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/instructor/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(message, textAlign: TextAlign.center),
+        ),
+      ),
+    );
   }
 
   static String? _handleRedirect(GoRouterState state) {
@@ -301,12 +353,15 @@ class AppRouter {
     refreshListenable: authRouteNotifier,
     redirect: (context, state) => _handleRedirect(state),
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      GoRoute(path: '/', builder: (context, state) => const SplashV8Screen()),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        builder: (context, state) => const OnboardingV6Screen(),
       ),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginV2Screen(),
+      ),
       GoRoute(
         path: '/register',
         builder: (context, state) => const RegisterScreen(),
@@ -370,9 +425,7 @@ class AppRouter {
         builder: (context, state) {
           final quizSession = state.extra as QuizSession?;
           if (quizSession == null) {
-            return const Scaffold(
-              body: Center(child: Text('Course not found')),
-            );
+            return _studentRouteFallback(context, 'Course not found');
           }
           return QuizQuestionsScreen(quizSession: quizSession);
         }, // Placeholder
@@ -382,9 +435,7 @@ class AppRouter {
         builder: (context, state) {
           final quizSession = state.extra as QuizSession?;
           if (quizSession == null) {
-            return const Scaffold(
-              body: Center(child: Text('Course not found')),
-            );
+            return _studentRouteFallback(context, 'Course not found');
           }
           return QuizResultScreen(quizSession: quizSession);
         }, // Placeholder
@@ -431,7 +482,7 @@ class AppRouter {
             );
           }
 
-          return const Scaffold(body: Center(child: Text('Course not found')));
+          return _studentRouteFallback(context, 'Course not found');
         },
       ),
       GoRoute(
@@ -439,9 +490,7 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! Map<String, dynamic>) {
-            return const Scaffold(
-              body: Center(child: Text('Instructor not found')),
-            );
+            return _studentRouteFallback(context, 'Instructor not found');
           }
 
           final dynamic rawInstructorId = extra['instructorId'];
@@ -450,9 +499,7 @@ class AppRouter {
               : int.tryParse(rawInstructorId?.toString() ?? '');
 
           if (instructorId == null || instructorId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Instructor not found')),
-            );
+            return _studentRouteFallback(context, 'Instructor not found');
           }
 
           final dynamic rawCourseId = extra['courseId'];
@@ -552,6 +599,7 @@ class AppRouter {
         path: '/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF3B82F6), // Student blue
+          fallbackRoute: '/dashboard',
         ),
       ),
       GoRoute(
@@ -559,8 +607,9 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           if (courseId == null || courseId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid course discussions route')),
+            return _studentRouteFallback(
+              context,
+              'Invalid course discussions route',
             );
           }
 
@@ -592,8 +641,9 @@ class AppRouter {
               courseId <= 0 ||
               threadId == null ||
               threadId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid discussion post route')),
+            return _studentRouteFallback(
+              context,
+              'Invalid discussion post route',
             );
           }
 
@@ -632,8 +682,9 @@ class AppRouter {
         builder: (context, state) {
           final userId = int.tryParse(state.pathParameters['userId'] ?? '');
           if (userId == null || userId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid user profile request')),
+            return _studentRouteFallback(
+              context,
+              'Invalid user profile request',
             );
           }
           return UserProfileScreen(userId: userId);
@@ -646,8 +697,9 @@ class AppRouter {
             state.pathParameters['conversationId'] ?? '',
           );
           if (conversationId == null || conversationId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid group profile request')),
+            return _studentRouteFallback(
+              context,
+              'Invalid group profile request',
             );
           }
           return ChatGroupProfileScreen(conversationId: conversationId);
@@ -667,108 +719,151 @@ class AppRouter {
       ),
       GoRoute(
         path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
+        builder: (context, state) =>
+            const SharedSettingsScreen(role: SharedSettingsRole.student),
       ),
       GoRoute(
         path: '/settings/appearance',
-        builder: (context, state) => const AppearanceSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const AppearanceSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/language',
-        builder: (context, state) => const LanguageSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const LanguageSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/notifications',
-        builder: (context, state) => const NotificationsSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const NotificationsSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/email-notifications',
-        builder: (context, state) => const EmailNotificationsSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const EmailNotificationsSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/two-factor-auth',
-        builder: (context, state) => const TwoFactorAuthSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const TwoFactorAuthSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/connected-devices',
-        builder: (context, state) => const ConnectedDevicesSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const ConnectedDevicesSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/privacy',
-        builder: (context, state) => const PrivacySettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const PrivacySettingsScreen()),
       ),
       GoRoute(
         path: '/settings/login-history',
-        builder: (context, state) => const LoginHistoryScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const LoginHistoryScreen()),
       ),
       GoRoute(
         path: '/settings/ai',
-        builder: (context, state) => const AISettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const AISettingsScreen()),
       ),
       GoRoute(
         path: '/settings/storage',
-        builder: (context, state) => const StorageSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const StorageSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/help',
-        builder: (context, state) => const HelpCenterScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const HelpCenterScreen()),
       ),
       GoRoute(
         path: '/settings/about',
-        builder: (context, state) => const AboutScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const AboutScreen()),
       ),
       GoRoute(
         path: '/settings/email',
-        builder: (context, state) => const EmailPreferencesScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const EmailPreferencesScreen()),
       ),
       GoRoute(
         path: '/settings/dnd',
-        builder: (context, state) => const DoNotDisturbScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const DoNotDisturbScreen()),
       ),
       GoRoute(
         path: '/settings/terms',
-        builder: (context, state) => const TermsOfServiceScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const TermsOfServiceScreen()),
       ),
       GoRoute(
         path: '/settings/privacy-policy',
-        builder: (context, state) => const PrivacyPolicyScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const PrivacyPolicyScreen()),
       ),
       GoRoute(
         path: '/settings/blocked-users',
-        builder: (context, state) => const BlockedUsersScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const BlockedUsersScreen()),
       ),
       GoRoute(
         path: '/settings/swipe-actions',
-        builder: (context, state) => const SwipeActionsSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const SwipeActionsSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/swipe-actions/notifications',
-        builder: (context, state) => const NotificationSwipeSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const NotificationSwipeSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/swipe-actions/chats',
-        builder: (context, state) =>
-            const settings_chat.ChatSwipeSettingsScreen(),
+        builder: (context, state) => _settingsScoped(
+          context,
+          state,
+          const settings_chat.ChatSwipeSettingsScreen(),
+        ),
       ),
       GoRoute(
         path: '/settings/swipe-actions/files',
-        builder: (context, state) => const FileSwipeSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const FileSwipeSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/swipe-actions/notes',
-        builder: (context, state) => const NoteSwipeSettingsScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const NoteSwipeSettingsScreen()),
       ),
       GoRoute(
         path: '/settings/share-app',
-        builder: (context, state) => const ShareAppScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const ShareAppScreen()),
       ),
       GoRoute(
         path: '/settings/share-app/qr',
-        builder: (context, state) => const QrCodeShareScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const QrCodeShareScreen()),
       ),
       GoRoute(
         path: '/settings/share-app/apk',
-        builder: (context, state) => const ApkShareScreen(),
+        builder: (context, state) =>
+            _settingsScoped(context, state, const ApkShareScreen()),
       ),
 
       // ============ INSTRUCTOR ROUTES ============
@@ -822,8 +917,9 @@ class AppRouter {
         builder: (context, state) {
           final labId = state.pathParameters['labId'] ?? '';
           if (labId.trim().isEmpty) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid lab detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid lab detail route',
             );
           }
 
@@ -917,9 +1013,7 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid group id')),
-            );
+            return _instructorRouteFallback(context, 'Invalid group id');
           }
           return QuestionGroupEditScreen(groupId: groupId);
         },
@@ -929,8 +1023,9 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question group route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question group route',
             );
           }
           return QuestionGroupAddQuestionsScreen(groupId: groupId);
@@ -941,8 +1036,9 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question group route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question group route',
             );
           }
           return QuestionGroupLinkQuestionsScreen(groupId: groupId);
@@ -953,8 +1049,9 @@ class AppRouter {
         builder: (context, state) {
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
           if (groupId == null || groupId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question group route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question group route',
             );
           }
           final refreshToken = state.uri.queryParameters['refresh'];
@@ -971,8 +1068,9 @@ class AppRouter {
             state.pathParameters['questionId'] ?? '',
           );
           if (questionId == null || questionId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question edit route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question edit route',
             );
           }
           return QuestionBankEditScreen(
@@ -988,8 +1086,9 @@ class AppRouter {
             state.pathParameters['questionId'] ?? '',
           );
           if (questionId == null || questionId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid question detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid question detail route',
             );
           }
           return QuestionBankDetailScreen(questionId: questionId);
@@ -1012,8 +1111,9 @@ class AppRouter {
         builder: (context, state) {
           final draftId = int.tryParse(state.pathParameters['draftId'] ?? '');
           if (draftId == null || draftId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid draft detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid draft detail route',
             );
           }
           return ExamDraftDetailScreen(draftId: draftId);
@@ -1024,8 +1124,9 @@ class AppRouter {
         builder: (context, state) {
           final examId = int.tryParse(state.pathParameters['examId'] ?? '');
           if (examId == null || examId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid exam paper export route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid exam paper export route',
             );
           }
           return ExamPaperExportPreviewScreen(examId: examId);
@@ -1036,8 +1137,9 @@ class AppRouter {
         builder: (context, state) {
           final examId = int.tryParse(state.pathParameters['examId'] ?? '');
           if (examId == null || examId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid exam detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid exam detail route',
             );
           }
           return ExamSavedDetailScreen(examId: examId);
@@ -1076,8 +1178,9 @@ class AppRouter {
             state.pathParameters['assignmentId'] ?? '',
           );
           if (assignmentId == null || assignmentId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid assignment submissions route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid assignment submissions route',
             );
           }
           final extra = state.extra;
@@ -1110,9 +1213,7 @@ class AppRouter {
               assignmentId <= 0 ||
               submissionId == null ||
               submissionId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid grading route')),
-            );
+            return _instructorRouteFallback(context, 'Invalid grading route');
           }
 
           String? assignmentTitle;
@@ -1161,8 +1262,9 @@ class AppRouter {
             state.pathParameters['assignmentId'] ?? '',
           );
           if (assignmentId == null || assignmentId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid assignment detail route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid assignment detail route',
             );
           }
 
@@ -1288,12 +1390,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/instructor/settings',
-        builder: (context, state) => const InstructorSettingsScreen(),
+        builder: (context, state) =>
+            const SharedSettingsScreen(role: SharedSettingsRole.instructor),
       ),
       GoRoute(
         path: '/instructor/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF155CFB), // Instructor blue
+          fallbackRoute: '/instructor/dashboard',
         ),
       ),
       GoRoute(
@@ -1305,8 +1409,9 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           if (courseId == null || courseId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid instructor discussion route')),
+            return _instructorRouteFallback(
+              context,
+              'Invalid instructor discussion route',
             );
           }
           TeachingCourseModel? course;
@@ -1332,10 +1437,9 @@ class AppRouter {
               courseId <= 0 ||
               threadId == null ||
               threadId <= 0) {
-            return const Scaffold(
-              body: Center(
-                child: Text('Invalid instructor discussion post route'),
-              ),
+            return _instructorRouteFallback(
+              context,
+              'Invalid instructor discussion post route',
             );
           }
 
@@ -1376,7 +1480,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _instructorRouteFallback(context, 'Quiz not found');
           }
           return InstructorQuizEditScreen(quiz: quiz);
         },
@@ -1386,7 +1490,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _instructorRouteFallback(context, 'Quiz not found');
           }
           return InstructorQuizAttemptsScreen(quiz: quiz);
         },
@@ -1398,9 +1502,7 @@ class AppRouter {
           final quiz = extra?['quiz'] as quiz_models.QuizModel?;
           final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
           if (quiz == null || attempt == null) {
-            return const Scaffold(
-              body: Center(child: Text('Grading data not found')),
-            );
+            return _instructorRouteFallback(context, 'Grading data not found');
           }
           return InstructorQuizGradingScreen(quiz: quiz, attempt: attempt);
         },
@@ -1410,7 +1512,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _instructorRouteFallback(context, 'Quiz not found');
           }
           return InstructorQuizStatisticsScreen(quiz: quiz);
         },
@@ -1436,8 +1538,9 @@ class AppRouter {
             state.pathParameters['assignmentId'] ?? '',
           );
           if (assignmentId == null || assignmentId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid TA assignment detail route')),
+            return _taRouteFallback(
+              context,
+              'Invalid TA assignment detail route',
             );
           }
 
@@ -1487,7 +1590,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _taRouteFallback(context, 'Quiz not found');
           }
           return TAQuizEditScreen(quiz: quiz);
         },
@@ -1497,7 +1600,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _taRouteFallback(context, 'Quiz not found');
           }
           return TAQuizAttemptsScreen(quiz: quiz);
         },
@@ -1509,9 +1612,7 @@ class AppRouter {
           final quiz = extra?['quiz'] as quiz_models.QuizModel?;
           final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
           if (quiz == null || attempt == null) {
-            return const Scaffold(
-              body: Center(child: Text('Grading data not found')),
-            );
+            return _taRouteFallback(context, 'Grading data not found');
           }
           return TAQuizGradingScreen(quiz: quiz, attempt: attempt);
         },
@@ -1521,7 +1622,7 @@ class AppRouter {
         builder: (context, state) {
           final quiz = state.extra as quiz_models.QuizModel?;
           if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
+            return _taRouteFallback(context, 'Quiz not found');
           }
           return TAQuizStatisticsScreen(quiz: quiz);
         },
@@ -1543,9 +1644,7 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           if (courseId == null || courseId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid TA discussion route')),
-            );
+            return _taRouteFallback(context, 'Invalid TA discussion route');
           }
           TeachingCourseModel? course;
           final extra = state.extra;
@@ -1570,8 +1669,9 @@ class AppRouter {
               courseId <= 0 ||
               threadId == null ||
               threadId <= 0) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid TA discussion post route')),
+            return _taRouteFallback(
+              context,
+              'Invalid TA discussion post route',
             );
           }
 
@@ -1608,6 +1708,10 @@ class AppRouter {
           final courseId =
               int.tryParse(extra?['courseId']?.toString() ?? '') ?? 0;
 
+          if (sectionId <= 0 || courseId <= 0) {
+            return _taRouteFallback(context, 'Invalid TA section route');
+          }
+
           return TASectionMaterialsScreen(
             sectionId: sectionId,
             sectionName: sectionName,
@@ -1630,7 +1734,8 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ta/settings',
-        builder: (context, state) => const TASettingsScreen(),
+        builder: (context, state) =>
+            const SharedSettingsScreen(role: SharedSettingsRole.ta),
       ),
       GoRoute(
         path: '/ta/profile',
@@ -1667,6 +1772,7 @@ class AppRouter {
         path: '/ta/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF8B5CF6), // TA violet
+          fallbackRoute: '/ta/dashboard',
         ),
       ),
 
@@ -1781,6 +1887,7 @@ class AppRouter {
         path: '/admin/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF4F46E5), // Admin indigo
+          fallbackRoute: '/admin/dashboard',
         ),
       ),
       GoRoute(
@@ -1966,6 +2073,7 @@ class AppRouter {
         path: '/it-admin/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF3B82F6), // IT Admin blue
+          fallbackRoute: '/it-admin/dashboard',
         ),
       ),
       GoRoute(
@@ -1984,4 +2092,16 @@ class AppRouter {
     errorBuilder: (context, state) =>
         Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),
   );
+}
+
+Widget _settingsScoped(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+) {
+  final role = SettingsRoleResolver.fromQueryOrContext(
+    context,
+    state.uri.queryParameters['role'],
+  );
+  return SharedSettingsRoleScope(role: role, child: child);
 }

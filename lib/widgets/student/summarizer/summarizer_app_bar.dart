@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/language/language_cubit.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 class SummarizerAppBar extends StatelessWidget {
   final bool isDark;
@@ -82,7 +82,7 @@ class SummarizerAppBar extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => context.pop(),
+        onTap: () => safeBack(context, '/dashboard'),
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -90,7 +90,7 @@ class SummarizerAppBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.arrow_back_ios_rounded,
+                iosBackIcon(context),
                 size: 18,
                 color: isDark
                     ? const Color(0xFF99A1AF)

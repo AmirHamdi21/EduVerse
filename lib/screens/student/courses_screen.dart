@@ -8,6 +8,9 @@ import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/student_course_filters.dart';
 import '../../common/utils/student_courses_theme.dart';
+import '../../features/walkthrough/student_walkthrough_registry.dart';
+import '../../features/walkthrough/walkthrough_models.dart';
+import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../widgets/student/courses/course_search_bar.dart';
@@ -186,230 +189,254 @@ class _CoursesScreenState extends State<CoursesScreen> {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return Scaffold(
-          backgroundColor: StudentCoursesTheme.scaffoldBackground(isDark),
-          floatingActionButton: BlocBuilder<CoursesBloc, CoursesState>(
-            builder: (context, state) {
-              if (!_showInteractiveControls(state)) {
-                return const SizedBox.shrink();
-              }
-
-              return const JoinCourseButton(
-                showPulse: false,
-                useHeroGradient: true,
-              );
-            },
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          body: DecoratedBox(
-            decoration: StudentCoursesTheme.scaffoldDecoration(isDark),
-            child: BlocListener<CoursesBloc, CoursesState>(
-              listener: (context, state) {
-                if (state is CoursesError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
-                        children: [
-                          const Icon(
-                            Icons.wifi_off_rounded,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              state.message.isNotEmpty
-                                  ? state.message
-                                  : l10n.noInternetConnection,
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                      backgroundColor: StudentCoursesTheme.errorRed,
-                      behavior: SnackBarBehavior.floating,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: StudentCoursesTheme.controlRadius,
-                      ),
-                      action: SnackBarAction(
-                        label: l10n.refresh,
-                        textColor: Colors.white,
-                        onPressed: _retryStudentFetch,
-                      ),
-                    ),
-                  );
+        return StudentWalkthroughRouteMarker(
+          segmentId: StudentWalkthroughIds.courses,
+          child: Scaffold(
+            backgroundColor: StudentCoursesTheme.scaffoldBackground(isDark),
+            floatingActionButton: BlocBuilder<CoursesBloc, CoursesState>(
+              builder: (context, state) {
+                if (!_showInteractiveControls(state)) {
+                  return const SizedBox.shrink();
                 }
 
-                if (state is CoursesAuthSessionRequired) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        state.message,
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      backgroundColor: const Color(0xFFB45309),
-                      behavior: SnackBarBehavior.floating,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: StudentCoursesTheme.controlRadius,
-                      ),
-                    ),
-                  );
-                }
-
-                if (state is CoursesLoaded && state.isCachedFallback) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
-                        children: [
-                          const Icon(
-                            Icons.cloud_off_outlined,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              l10n.studentCourseOfflineCached,
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                      backgroundColor: StudentCoursesTheme.warningAmber,
-                      behavior: SnackBarBehavior.floating,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: StudentCoursesTheme.controlRadius,
-                      ),
-                    ),
-                  );
-                }
+                return const WalkthroughTarget(
+                  id: StudentWalkthroughIds.coursesJoin,
+                  shape: WalkthroughTargetShape.circle,
+                  child: JoinCourseButton(
+                    showPulse: false,
+                    useHeroGradient: true,
+                  ),
+                );
               },
-              child: BlocBuilder<CoursesBloc, CoursesState>(
-                builder: (context, state) {
-                  final rawEnrollments = _enrollmentsFromState(state);
-                  final semesterOptions =
-                      StudentCourseFilters.deriveSemesterOptions(
-                        rawEnrollments,
-                      );
-                  final showInteractiveControls = _showInteractiveControls(
-                    state,
-                  );
-                  final filteredEnrollments = _applyFiltersAndSort(
-                    rawEnrollments,
-                  );
-                  final overviewMetrics = _overviewMetrics(rawEnrollments);
-                  _ensureSemesterSelectionIsValid(semesterOptions);
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            body: DecoratedBox(
+              decoration: StudentCoursesTheme.scaffoldDecoration(isDark),
+              child: BlocListener<CoursesBloc, CoursesState>(
+                listener: (context, state) {
+                  if (state is CoursesError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            const Icon(
+                              Icons.wifi_off_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                state.message.isNotEmpty
+                                    ? state.message
+                                    : l10n.noInternetConnection,
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                        backgroundColor: StudentCoursesTheme.errorRed,
+                        behavior: SnackBarBehavior.floating,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: StudentCoursesTheme.controlRadius,
+                        ),
+                        action: SnackBarAction(
+                          label: l10n.refresh,
+                          textColor: Colors.white,
+                          onPressed: _retryStudentFetch,
+                        ),
+                      ),
+                    );
+                  }
 
-                  return SafeArea(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final maxWidth = StudentCoursesTheme.maxContentWidth(
-                          constraints.maxWidth,
-                        );
-                        final screenPadding = StudentCoursesTheme.screenPadding(
-                          constraints.maxWidth,
-                        );
+                  if (state is CoursesAuthSessionRequired) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          state.message,
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        backgroundColor: const Color(0xFFB45309),
+                        behavior: SnackBarBehavior.floating,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: StudentCoursesTheme.controlRadius,
+                        ),
+                      ),
+                    );
+                  }
 
-                        return CustomScrollView(
-                          slivers: [
-                            SliverToBoxAdapter(
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxWidth: maxWidth,
-                                  ),
-                                  child: Padding(
-                                    padding: screenPadding,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CoursesHeader(
-                                          title: l10n.myCoursesHeader,
-                                          subtitle:
-                                              l10n.studentCourseHeroSubtitle,
-                                          stats: showInteractiveControls
-                                              ? _buildHeroStats(
-                                                  isDark: isDark,
-                                                  metrics: overviewMetrics,
-                                                  maxWidth: maxWidth,
-                                                  l10n: l10n,
-                                                )
-                                              : null,
-                                          showSearch: showInteractiveControls,
-                                          searchBar: showInteractiveControls
-                                              ? CourseSearchBar(
-                                                  onSearchChanged: (query) {
-                                                    setState(() {
-                                                      _searchQuery = query;
-                                                    });
-                                                  },
-                                                )
-                                              : null,
-                                          trailingAction:
-                                              showInteractiveControls
-                                              ? FilterButton(
-                                                  iconOnly: true,
-                                                  selectedFilter:
-                                                      _selectedFilter,
-                                                  selectedSemesterId:
-                                                      _selectedSemesterId,
-                                                  semesterOptions:
-                                                      semesterOptions,
-                                                  onFilterChanged: (filter) {
-                                                    setState(() {
-                                                      _selectedFilter = filter;
-                                                    });
-                                                  },
-                                                  onSemesterChanged: (_) {},
-                                                )
-                                              : null,
-                                          tabBar: showInteractiveControls
-                                              ? _buildStatusTabs(l10n)
-                                              : _buildRestrictedTab(
-                                                  isDark,
-                                                  l10n,
-                                                ),
-                                        ),
-                                        const SizedBox(height: 18),
-                                        if (!showInteractiveControls)
-                                          _buildRestrictedControlsNotice(
-                                            isDark,
-                                            l10n,
+                  if (state is CoursesLoaded && state.isCachedFallback) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            const Icon(
+                              Icons.cloud_off_outlined,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                l10n.studentCourseOfflineCached,
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                        backgroundColor: StudentCoursesTheme.warningAmber,
+                        behavior: SnackBarBehavior.floating,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: StudentCoursesTheme.controlRadius,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: BlocBuilder<CoursesBloc, CoursesState>(
+                  builder: (context, state) {
+                    final rawEnrollments = _enrollmentsFromState(state);
+                    final semesterOptions =
+                        StudentCourseFilters.deriveSemesterOptions(
+                          rawEnrollments,
+                        );
+                    final showInteractiveControls = _showInteractiveControls(
+                      state,
+                    );
+                    final filteredEnrollments = _applyFiltersAndSort(
+                      rawEnrollments,
+                    );
+                    final overviewMetrics = _overviewMetrics(rawEnrollments);
+                    _ensureSemesterSelectionIsValid(semesterOptions);
+
+                    return SafeArea(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final maxWidth = StudentCoursesTheme.maxContentWidth(
+                            constraints.maxWidth,
+                          );
+                          final screenPadding =
+                              StudentCoursesTheme.screenPadding(
+                                constraints.maxWidth,
+                              );
+
+                          return CustomScrollView(
+                            slivers: [
+                              SliverToBoxAdapter(
+                                child: Center(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: maxWidth,
+                                    ),
+                                    child: Padding(
+                                      padding: screenPadding,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          WalkthroughTarget(
+                                            id: StudentWalkthroughIds
+                                                .coursesHeader,
+                                            child: CoursesHeader(
+                                              title: l10n.myCoursesHeader,
+                                              subtitle: l10n
+                                                  .studentCourseHeroSubtitle,
+                                              stats: showInteractiveControls
+                                                  ? _buildHeroStats(
+                                                      isDark: isDark,
+                                                      metrics: overviewMetrics,
+                                                      maxWidth: maxWidth,
+                                                      l10n: l10n,
+                                                    )
+                                                  : null,
+                                              showSearch:
+                                                  showInteractiveControls,
+                                              searchBar: showInteractiveControls
+                                                  ? CourseSearchBar(
+                                                      onSearchChanged: (query) {
+                                                        setState(() {
+                                                          _searchQuery = query;
+                                                        });
+                                                      },
+                                                    )
+                                                  : null,
+                                              trailingAction:
+                                                  showInteractiveControls
+                                                  ? FilterButton(
+                                                      iconOnly: true,
+                                                      selectedFilter:
+                                                          _selectedFilter,
+                                                      selectedSemesterId:
+                                                          _selectedSemesterId,
+                                                      semesterOptions:
+                                                          semesterOptions,
+                                                      onFilterChanged:
+                                                          (filter) {
+                                                            setState(() {
+                                                              _selectedFilter =
+                                                                  filter;
+                                                            });
+                                                          },
+                                                      onSemesterChanged: (_) {},
+                                                    )
+                                                  : null,
+                                              tabBar: showInteractiveControls
+                                                  ? _buildStatusTabs(l10n)
+                                                  : _buildRestrictedTab(
+                                                      isDark,
+                                                      l10n,
+                                                    ),
+                                            ),
                                           ),
-                                        if (showInteractiveControls) ...[
                                           const SizedBox(height: 18),
-                                          _buildToolbar(
-                                            isDark: isDark,
-                                            l10n: l10n,
-                                            filteredCount:
-                                                filteredEnrollments.length,
-                                            maxWidth: maxWidth,
-                                            semesterOptions: semesterOptions,
+                                          if (!showInteractiveControls)
+                                            _buildRestrictedControlsNotice(
+                                              isDark,
+                                              l10n,
+                                            ),
+                                          if (showInteractiveControls) ...[
+                                            const SizedBox(height: 18),
+                                            WalkthroughTarget(
+                                              id: StudentWalkthroughIds
+                                                  .coursesControls,
+                                              child: _buildToolbar(
+                                                isDark: isDark,
+                                                l10n: l10n,
+                                                filteredCount:
+                                                    filteredEnrollments.length,
+                                                maxWidth: maxWidth,
+                                                semesterOptions:
+                                                    semesterOptions,
+                                              ),
+                                            ),
+                                          ],
+                                          const SizedBox(height: 22),
+                                          WalkthroughTarget(
+                                            id: StudentWalkthroughIds
+                                                .coursesList,
+                                            child: _buildContent(
+                                              state: state,
+                                              isDark: isDark,
+                                              l10n: l10n,
+                                              filteredEnrollments:
+                                                  filteredEnrollments,
+                                              maxWidth: maxWidth,
+                                            ),
                                           ),
+                                          const SizedBox(height: 28),
                                         ],
-                                        const SizedBox(height: 22),
-                                        _buildContent(
-                                          state: state,
-                                          isDark: isDark,
-                                          l10n: l10n,
-                                          filteredEnrollments:
-                                              filteredEnrollments,
-                                          maxWidth: maxWidth,
-                                        ),
-                                        const SizedBox(height: 28),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  );
-                },
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),

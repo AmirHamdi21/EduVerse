@@ -7,6 +7,7 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/discussion_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,8 +42,7 @@ enum _PostFilter { all, open, pinned, locked, unanswered }
 
 enum _PostSort { latest, mostReplies, mostViews, title }
 
-class _TACourseDiscussionsScreenState
-    extends State<TACourseDiscussionsScreen> {
+class _TACourseDiscussionsScreenState extends State<TACourseDiscussionsScreen> {
   late final DiscussionService _discussionService;
   late final EnrollmentService _enrollmentService;
 
@@ -87,7 +87,8 @@ class _TACourseDiscussionsScreenState
           );
         }
 
-        for (final course in coursesResult.data ?? const <TeachingCourseModel>[]) {
+        for (final course
+            in coursesResult.data ?? const <TeachingCourseModel>[]) {
           if (course.courseId == widget.courseId) {
             _course = course;
             break;
@@ -138,34 +139,38 @@ class _TACourseDiscussionsScreenState
 
   List<DiscussionThread> _visibleThreads() {
     final normalizedSearch = _searchQuery.trim().toLowerCase();
-    final filtered = _threads.where((thread) {
-      final matchesSearch =
-          normalizedSearch.isEmpty ||
-          thread.title.toLowerCase().contains(normalizedSearch) ||
-          thread.description.toLowerCase().contains(normalizedSearch) ||
-          thread.createdByName.toLowerCase().contains(normalizedSearch);
-      if (!matchesSearch) {
-        return false;
-      }
+    final filtered = _threads
+        .where((thread) {
+          final matchesSearch =
+              normalizedSearch.isEmpty ||
+              thread.title.toLowerCase().contains(normalizedSearch) ||
+              thread.description.toLowerCase().contains(normalizedSearch) ||
+              thread.createdByName.toLowerCase().contains(normalizedSearch);
+          if (!matchesSearch) {
+            return false;
+          }
 
-      switch (_selectedFilter) {
-        case _PostFilter.all:
-          return true;
-        case _PostFilter.open:
-          return !thread.isLocked;
-        case _PostFilter.pinned:
-          return thread.isPinned;
-        case _PostFilter.locked:
-          return thread.isLocked;
-        case _PostFilter.unanswered:
-          return thread.replyCount == 0;
-      }
-    }).toList(growable: false);
+          switch (_selectedFilter) {
+            case _PostFilter.all:
+              return true;
+            case _PostFilter.open:
+              return !thread.isLocked;
+            case _PostFilter.pinned:
+              return thread.isPinned;
+            case _PostFilter.locked:
+              return thread.isLocked;
+            case _PostFilter.unanswered:
+              return thread.replyCount == 0;
+          }
+        })
+        .toList(growable: false);
 
     filtered.sort((a, b) {
       switch (_selectedSort) {
         case _PostSort.latest:
-          return (b.updatedAt ?? b.createdAt).compareTo(a.updatedAt ?? a.createdAt);
+          return (b.updatedAt ?? b.createdAt).compareTo(
+            a.updatedAt ?? a.createdAt,
+          );
         case _PostSort.mostReplies:
           return b.replyCount.compareTo(a.replyCount);
         case _PostSort.mostViews:
@@ -345,9 +350,7 @@ class _TACourseDiscussionsScreenState
             slivers: <Widget>[
               if (!widget.embedded) _buildAppBar(isDark, l10n),
               if (widget.embedded)
-                SliverToBoxAdapter(
-                  child: _buildEmbeddedHeader(isDark, l10n),
-                ),
+                SliverToBoxAdapter(child: _buildEmbeddedHeader(isDark, l10n)),
               if (_loading) ...<Widget>[
                 SliverToBoxAdapter(
                   child: TADiscussionSummaryHeader(
@@ -356,37 +359,40 @@ class _TACourseDiscussionsScreenState
                     title: l10n.instructorCourseDiscussionHeaderTitle,
                     subtitle: l10n.instructorCourseDiscussionHeaderSubtitle,
                     icon: Icons.groups_rounded,
-                    stats: <({
-                      IconData icon,
-                      String label,
-                      String value,
-                      Color color,
-                    })>[
-                      (
-                        icon: Icons.forum_rounded,
-                        label: l10n.instructorDiscussionPostsLabel,
-                        value: '—',
-                        color: TAColors.accent,
-                      ),
-                      (
-                        icon: Icons.reply_all_rounded,
-                        label: l10n.instructorDiscussionRepliesLabel,
-                        value: '—',
-                        color: TAColors.success,
-                      ),
-                      (
-                        icon: Icons.push_pin_rounded,
-                        label: l10n.instructorDiscussionPinnedLabel,
-                        value: '—',
-                        color: TAColors.warning,
-                      ),
-                      (
-                        icon: Icons.lock_rounded,
-                        label: l10n.instructorDiscussionLockedLabel,
-                        value: '—',
-                        color: TAColors.pink,
-                      ),
-                    ],
+                    stats:
+                        <
+                          ({
+                            IconData icon,
+                            String label,
+                            String value,
+                            Color color,
+                          })
+                        >[
+                          (
+                            icon: Icons.forum_rounded,
+                            label: l10n.instructorDiscussionPostsLabel,
+                            value: '—',
+                            color: TAColors.accent,
+                          ),
+                          (
+                            icon: Icons.reply_all_rounded,
+                            label: l10n.instructorDiscussionRepliesLabel,
+                            value: '—',
+                            color: TAColors.success,
+                          ),
+                          (
+                            icon: Icons.push_pin_rounded,
+                            label: l10n.instructorDiscussionPinnedLabel,
+                            value: '—',
+                            color: TAColors.warning,
+                          ),
+                          (
+                            icon: Icons.lock_rounded,
+                            label: l10n.instructorDiscussionLockedLabel,
+                            value: '—',
+                            color: TAColors.pink,
+                          ),
+                        ],
                   ),
                 ),
                 SliverPadding(
@@ -562,9 +568,9 @@ class _TACourseDiscussionsScreenState
       floating: true,
       snap: true,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: () => safeBack(context, '/ta/dashboard'),
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
       ),
@@ -598,7 +604,9 @@ class _TACourseDiscussionsScreenState
     );
     final pinnedCount = _threads.where((thread) => thread.isPinned).length;
     final lockedCount = _threads.where((thread) => thread.isLocked).length;
-    final unanswered = _threads.where((thread) => thread.replyCount == 0).length;
+    final unanswered = _threads
+        .where((thread) => thread.replyCount == 0)
+        .length;
 
     return <({IconData icon, String label, String value, Color color})>[
       (
@@ -912,9 +920,7 @@ class _TACourseDiscussionsScreenState
                 children: <Widget>[
                   CircleAvatar(
                     radius: 15,
-                    backgroundColor: TAColors.primary.withValues(
-                      alpha: 0.12,
-                    ),
+                    backgroundColor: TAColors.primary.withValues(alpha: 0.12),
                     child: Text(
                       taDiscussionInitials(thread.createdByName),
                       style: const TextStyle(
@@ -974,7 +980,10 @@ class _TACourseDiscussionsScreenState
     );
   }
 
-  Future<void> _openThread(BuildContext context, DiscussionThread thread) async {
+  Future<void> _openThread(
+    BuildContext context,
+    DiscussionThread thread,
+  ) async {
     await context.push(
       '/ta/course/${widget.courseId}/discussions/${thread.id}',
       extra: <String, dynamic>{'course': _course, 'thread': thread},
@@ -1013,8 +1022,3 @@ class _TACourseDiscussionsScreenState
     );
   }
 }
-
-
-
-
-

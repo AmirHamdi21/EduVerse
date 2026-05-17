@@ -13,6 +13,7 @@ class AdminProfileScreen extends StatelessWidget {
       roleFallbackLabel: 'Administrator',
       title: 'Admin Profile',
       theme: RoleProfileTheme.admin(),
+      fallbackRoute: '/admin/dashboard',
     );
   }
 }

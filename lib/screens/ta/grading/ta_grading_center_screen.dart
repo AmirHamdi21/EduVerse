@@ -1,9 +1,10 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
+import 'package:edu_verse/features/walkthrough/ta_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,11 +21,16 @@ import '../../../services/api/core_api_client.dart';
 import '../../../bloc/ta/ta_courses_cubit.dart';
 import '../../../bloc/ta/ta_courses_state.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/student/shared/drive_file_preview_screen.dart';
 import '../../../widgets/student/academic/academic_list_skeleton.dart';
 
 class TAGradingCenterScreen extends StatefulWidget {
-  const TAGradingCenterScreen({super.key, this.courseId, this.embedded = false});
+  const TAGradingCenterScreen({
+    super.key,
+    this.courseId,
+    this.embedded = false,
+  });
 
   final int? courseId;
   final bool embedded;
@@ -86,7 +92,8 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
 
       final coursesStatus = cubit.state.coursesStatus;
       if (coursesStatus is! TASubTabLoaded<List<TeachingCourseModel>>) {
-        final errorMessage = coursesStatus is TASubTabError<List<TeachingCourseModel>>
+        final errorMessage =
+            coursesStatus is TASubTabError<List<TeachingCourseModel>>
             ? coursesStatus.message
             : failureMessage;
         throw Exception(errorMessage);
@@ -272,15 +279,15 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
         );
 
         if (widget.embedded) {
-          return Container(
-            color: TAColors.background(isDark),
-            child: content,
-          );
+          return Container(color: TAColors.background(isDark), child: content);
         }
 
-        return Scaffold(
-          backgroundColor: TAColors.background(isDark),
-          body: SafeArea(child: content),
+        return TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.grading,
+          child: Scaffold(
+            backgroundColor: TAColors.background(isDark),
+            body: SafeArea(child: content),
+          ),
         );
       },
     );
@@ -291,9 +298,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
       backgroundColor: TAColors.background(isDark),
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: _handleBackPressed,
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: TAColors.textPrimaryColor(isDark),
         ),
       ),
@@ -381,8 +388,18 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
 
     return SliverMainAxisGroup(
       slivers: <Widget>[
-        SliverToBoxAdapter(child: _buildSummaryHeader(isDark, l10n)),
-        SliverToBoxAdapter(child: _buildFilterCard(isDark, l10n)),
+        SliverToBoxAdapter(
+          child: WalkthroughTarget(
+            id: TAWalkthroughIds.gradingHeader,
+            child: _buildSummaryHeader(isDark, l10n),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: WalkthroughTarget(
+            id: TAWalkthroughIds.gradingFilters,
+            child: _buildFilterCard(isDark, l10n),
+          ),
+        ),
         if (courseIds.isEmpty)
           SliverFillRemaining(
             hasScrollBody: false,
@@ -395,12 +412,19 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
               delegate: SliverChildBuilderDelegate((context, index) {
                 final courseId = courseIds[index];
                 final entries = grouped[courseId] ?? const <_SubmissionEntry>[];
-                return Padding(
+                final card = Padding(
                   padding: EdgeInsets.only(
                     bottom: index == courseIds.length - 1 ? 0 : 16,
                   ),
                   child: _buildCourseSubmissionCard(isDark, l10n, entries),
                 );
+                if (index == 0) {
+                  return WalkthroughTarget(
+                    id: TAWalkthroughIds.gradingList,
+                    child: card,
+                  );
+                }
+                return card;
               }, childCount: courseIds.length),
             ),
           ),
@@ -410,9 +434,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
               child: LinearProgressIndicator(
                 color: TAColors.primary,
-                backgroundColor: TAColors.primary.withValues(
-                  alpha: 0.12,
-                ),
+                backgroundColor: TAColors.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(999),
                 minHeight: 4,
               ),
@@ -420,6 +442,10 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
           ),
       ],
     );
+  }
+
+  void _handleBackPressed() {
+    safeBack(context, '/ta/dashboard');
   }
 
   Widget _buildSummaryHeader(bool isDark, AppLocalizations l10n) {
@@ -853,10 +879,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
             return Column(
               children: <Widget>[
                 if (index > 0)
-                  Divider(
-                    height: 1,
-                    color: TAColors.borderColor(isDark),
-                  ),
+                  Divider(height: 1, color: TAColors.borderColor(isDark)),
                 _buildSubmissionRow(isDark, l10n, item),
               ],
             );
@@ -1351,9 +1374,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: TAColors.textSecondaryColor(isDark),
-              ),
+              style: TextStyle(color: TAColors.textSecondaryColor(isDark)),
             ),
           ],
         ),
@@ -1409,9 +1430,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: TAColors.primary.withValues(
-                              alpha: 0.10,
-                            ),
+                            color: TAColors.primary.withValues(alpha: 0.10),
                             shape: BoxShape.circle,
                           ),
                           alignment: Alignment.center,
@@ -1434,9 +1453,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: TAColors.textPrimaryColor(
-                                    isDark,
-                                  ),
+                                  color: TAColors.textPrimaryColor(isDark),
                                   fontWeight: FontWeight.w800,
                                   fontSize: 20,
                                 ),
@@ -1447,9 +1464,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: TAColors.textSecondaryColor(
-                                    isDark,
-                                  ),
+                                  color: TAColors.textSecondaryColor(isDark),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13,
                                 ),
@@ -1524,9 +1539,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                             child: Text(
                               feedback,
                               style: TextStyle(
-                                color: TAColors.textPrimaryColor(
-                                  isDark,
-                                ),
+                                color: TAColors.textPrimaryColor(isDark),
                                 height: 1.45,
                               ),
                             ),
@@ -1541,9 +1554,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                             child: SelectableText(
                               submissionText,
                               style: TextStyle(
-                                color: TAColors.textPrimaryColor(
-                                  isDark,
-                                ),
+                                color: TAColors.textPrimaryColor(isDark),
                                 height: 1.45,
                               ),
                             ),
@@ -1579,9 +1590,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                 Text(
                                   fileName,
                                   style: TextStyle(
-                                    color: TAColors.textPrimaryColor(
-                                      isDark,
-                                    ),
+                                    color: TAColors.textPrimaryColor(isDark),
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -1595,11 +1604,12 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                             '')
                                         .isNotEmpty)
                                       OutlinedButton.icon(
-                                        onPressed: () => openDriveFilePreviewScreen(
-                                          sheetContext,
-                                          file: entry.submission.driveFile!,
-                                          isDark: isDark,
-                                        ),
+                                        onPressed: () =>
+                                            openDriveFilePreviewScreen(
+                                              sheetContext,
+                                              file: entry.submission.driveFile!,
+                                              isDark: isDark,
+                                            ),
                                         icon: const Icon(
                                           Icons.visibility_outlined,
                                         ),
@@ -1990,10 +2000,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color:
-                                                TAColors.textPrimaryColor(
-                                                  isDark,
-                                                ),
+                                            color: TAColors.textPrimaryColor(
+                                              isDark,
+                                            ),
                                             fontWeight: FontWeight.w800,
                                             fontSize: 15.5,
                                             height: 1.2,
@@ -2005,10 +2014,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color:
-                                                TAColors.textSecondaryColor(
-                                                  isDark,
-                                                ),
+                                            color: TAColors.textSecondaryColor(
+                                              isDark,
+                                            ),
                                             fontWeight: FontWeight.w600,
                                             fontSize: 11.5,
                                           ),
@@ -2025,12 +2033,8 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: <Color>[
-                                    TAColors.primary.withValues(
-                                      alpha: 0.06,
-                                    ),
-                                    TAColors.tealLight.withValues(
-                                      alpha: 0.18,
-                                    ),
+                                    TAColors.primary.withValues(alpha: 0.06),
+                                    TAColors.tealLight.withValues(alpha: 0.18),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -2049,10 +2053,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                         child: Text(
                                           l10n.grade,
                                           style: TextStyle(
-                                            color:
-                                                TAColors.textPrimaryColor(
-                                                  isDark,
-                                                ),
+                                            color: TAColors.textPrimaryColor(
+                                              isDark,
+                                            ),
                                             fontWeight: FontWeight.w800,
                                             fontSize: 16,
                                           ),
@@ -2080,9 +2083,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                             vertical: 10,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: TAColors.cardColor(
-                                              isDark,
-                                            ),
+                                            color: TAColors.cardColor(isDark),
                                             borderRadius: BorderRadius.circular(
                                               18,
                                             ),
@@ -2099,10 +2100,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                                 ),
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              color:
-                                                  TAColors.textPrimaryColor(
-                                                    isDark,
-                                                  ),
+                                              color: TAColors.textPrimaryColor(
+                                                isDark,
+                                              ),
                                               fontSize: r.isMobile ? 24 : 28,
                                               fontWeight: FontWeight.w800,
                                             ),
@@ -2130,10 +2130,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                         child: Text(
                                           '/ $maxGradeLabel',
                                           style: TextStyle(
-                                            color:
-                                                TAColors.textSecondaryColor(
-                                                  isDark,
-                                                ),
+                                            color: TAColors.textSecondaryColor(
+                                              isDark,
+                                            ),
                                             fontSize: 18,
                                             fontWeight: FontWeight.w800,
                                           ),
@@ -2168,9 +2167,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                       color: TAColors.cardColor(isDark),
                                       borderRadius: BorderRadius.circular(18),
                                       border: Border.all(
-                                        color: TAColors.borderColor(
-                                          isDark,
-                                        ),
+                                        color: TAColors.borderColor(isDark),
                                       ),
                                     ),
                                     child: Column(
@@ -2180,10 +2177,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                         Text(
                                           l10n.quickGrade,
                                           style: TextStyle(
-                                            color:
-                                                TAColors.textSecondaryColor(
-                                                  isDark,
-                                                ),
+                                            color: TAColors.textSecondaryColor(
+                                              isDark,
+                                            ),
                                             fontWeight: FontWeight.w700,
                                             fontSize: 12.5,
                                           ),
@@ -2259,9 +2255,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                             Text(
                               l10n.feedback,
                               style: TextStyle(
-                                color: TAColors.textPrimaryColor(
-                                  isDark,
-                                ),
+                                color: TAColors.textPrimaryColor(isDark),
                                 fontWeight: FontWeight.w800,
                                 fontSize: 16,
                               ),
@@ -2316,13 +2310,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
                                         Navigator.of(sheetContext).pop(),
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor:
-                                          TAColors.textPrimaryColor(
-                                            isDark,
-                                          ),
+                                          TAColors.textPrimaryColor(isDark),
                                       side: BorderSide(
-                                        color: TAColors.borderColor(
-                                          isDark,
-                                        ),
+                                        color: TAColors.borderColor(isDark),
                                       ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(18),
@@ -2616,25 +2606,18 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: BorderSide(
-                color: TAColors.borderColor(
-                  isDark,
-                ).withValues(alpha: 0.9),
+                color: TAColors.borderColor(isDark).withValues(alpha: 0.9),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: BorderSide(
-                color: TAColors.borderColor(
-                  isDark,
-                ).withValues(alpha: 0.9),
+                color: TAColors.borderColor(isDark).withValues(alpha: 0.9),
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(
-                color: TAColors.primary,
-                width: 1.4,
-              ),
+              borderSide: const BorderSide(color: TAColors.primary, width: 1.4),
             ),
           ),
           dropdownColor: TAColors.cardColor(isDark),
@@ -2738,4 +2721,3 @@ class _StatusBadge {
   final Color foreground;
   final Color background;
 }
-

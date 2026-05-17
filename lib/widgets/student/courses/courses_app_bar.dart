@@ -1,8 +1,8 @@
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_event.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
@@ -25,10 +25,10 @@ class CoursesAppBar extends StatelessWidget {
           leading: Builder(
             builder: (context) => IconButton(
               icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
+                iosBackIcon(context),
                 color: isDark ? Colors.white : const Color(0xFF101727),
               ),
-              onPressed: () => context.pop(),
+              onPressed: () => safeBack(context, '/dashboard'),
             ),
           ),
           title: Text(

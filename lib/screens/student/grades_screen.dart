@@ -8,8 +8,11 @@ import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/services/grade_pdf_service.dart';
 import '../../common/utils/responsive.dart';
+import '../../features/walkthrough/student_walkthrough_registry.dart';
+import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/grades/grade_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../services/api/core_api_client.dart';
 import '../../services/api/grades_service.dart';
 import '../../services/api/student_stats_service.dart';
@@ -83,25 +86,14 @@ class _GradesScreenState extends State<GradesScreen>
     );
   }
 
-  void _showSuccessSnackBar(BuildContext context, String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF10B981),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-  }
-
   Future<void> _generatePdfReport(GradesState state) async {
     final cubit = context.read<GradesCubit>();
     final l10n = AppLocalizations.of(context);
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     cubit.setGeneratingPdf(true);
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
 
     // Show loading dialog
     showDialog(
@@ -151,6 +143,8 @@ class _GradesScreenState extends State<GradesScreen>
         statistics: state.statistics,
       );
 
+      if (!mounted) return;
+      // ignore: use_build_context_synchronously
       await _pdfService.generateAndShareReport(
         context: context,
         data: reportData,
@@ -159,13 +153,33 @@ class _GradesScreenState extends State<GradesScreen>
       );
 
       if (mounted) {
-        Navigator.of(context).pop(); // Close dialog
-        _showSuccessSnackBar(context, l10n.reportGenerated);
+        navigator.pop(); // Close dialog
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.reportGenerated),
+            backgroundColor: const Color(0xFF10B981),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
-        Navigator.of(context).pop(); // Close dialog
-        _showErrorSnackBar(context, '${l10n.error}: $e');
+        navigator.pop(); // Close dialog
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('${l10n.error}: $e'),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -203,22 +217,44 @@ class _GradesScreenState extends State<GradesScreen>
               // Setup tab listener with the cubit
               _setupTabListener(context.read<GradesCubit>());
 
-              return Scaffold(
-                backgroundColor: isDark
-                    ? const Color(0xFF0F172A)
-                    : const Color(0xFFF8FAFC),
-                body: SafeArea(
-                  child: Column(
-                    children: [
-                      _buildHeader(context, state, isDark, l10n),
-                      if (_isSearching) _buildSearchBar(context, isDark, l10n),
-                      _buildGPACard(context, state, isDark, l10n),
-                      _buildSemesterSelector(context, state, isDark, l10n),
-                      _buildTabBar(context, state, isDark, l10n),
-                      Expanded(
-                        child: _buildContent(context, state, isDark, l10n),
-                      ),
-                    ],
+              return StudentWalkthroughRouteMarker(
+                segmentId: StudentWalkthroughIds.grades,
+                child: Scaffold(
+                  backgroundColor: isDark
+                      ? const Color(0xFF0F172A)
+                      : const Color(0xFFF8FAFC),
+                  body: SafeArea(
+                    child: Column(
+                      children: [
+                        _buildHeader(context, state, isDark, l10n),
+                        if (_isSearching)
+                          _buildSearchBar(context, isDark, l10n),
+                        WalkthroughTarget(
+                          id: StudentWalkthroughIds.gradesGpa,
+                          child: _buildGPACard(context, state, isDark, l10n),
+                        ),
+                        WalkthroughTarget(
+                          id: StudentWalkthroughIds.gradesTabs,
+                          child: Column(
+                            children: [
+                              _buildSemesterSelector(
+                                context,
+                                state,
+                                isDark,
+                                l10n,
+                              ),
+                              _buildTabBar(context, state, isDark, l10n),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: WalkthroughTarget(
+                            id: StudentWalkthroughIds.gradesList,
+                            child: _buildContent(context, state, isDark, l10n),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -274,7 +310,7 @@ class _GradesScreenState extends State<GradesScreen>
                 Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () => _leaveStudentGradesScreen(context),
                     borderRadius: BorderRadius.circular(responsive.radius12),
                     child: Container(
                       padding: EdgeInsets.all(responsive.p10),
@@ -287,7 +323,7 @@ class _GradesScreenState extends State<GradesScreen>
                         ),
                       ),
                       child: Icon(
-                        Icons.arrow_back_ios_rounded,
+                        iosBackIcon(context),
                         color: isDark ? Colors.white : const Color(0xFF1E293B),
                         size: 22,
                       ),
@@ -1051,4 +1087,8 @@ class _GradesScreenState extends State<GradesScreen>
       builder: (context) => GradeDetailsSheet(course: course, isDark: isDark),
     );
   }
+}
+
+void _leaveStudentGradesScreen(BuildContext context) {
+  safeBack(context, '/dashboard');
 }

@@ -91,7 +91,7 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: () =>
               safeFeatureBack(context, '/instructor/exam-generator'),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          icon: Icon(safeFeatureBackIcon(context)),
         ),
         title: Text(l10n.examDraftDetails),
         actions: [

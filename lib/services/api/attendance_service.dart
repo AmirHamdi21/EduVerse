@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../../common/retry_helper.dart';
 import '../../common/service_error.dart';
+import '../../config/ai_service_endpoints.dart';
 import '../../models/attendance/ai_processing_result_model.dart';
 import '../../models/attendance/attendance_session_model.dart';
 import '../../models/attendance/student_attendance_summary_model.dart';
@@ -279,6 +280,12 @@ class AttendanceService {
 
   // ── AI Attendance Endpoints ────────────────────────────────────────────
 
+  String get _aiAttendancePhotoUrl => AiServiceEndpoints.aiAttendancePhotoUrl;
+
+  String _aiProcessingResultUrl(int processingId) {
+    return '$_aiAttendancePhotoUrl/$processingId';
+  }
+
   Future<ServiceResult<AiProcessingResultModel>> uploadAiPhoto({
     required int sessionId,
     required File photo,
@@ -294,7 +301,7 @@ class AttendanceService {
       });
 
       final response = await _client.dio.post(
-        '$_base/attendance/ai-photo',
+        _aiAttendancePhotoUrl,
         data: formData,
         cancelToken: cancelToken,
       );
@@ -308,7 +315,7 @@ class AttendanceService {
   }) {
     return RetryHelper.execute<AiProcessingResultModel>(() async {
       final response = await _client.dio.get(
-        '$_base/attendance/ai-photo/$processingId',
+        _aiProcessingResultUrl(processingId),
         cancelToken: cancelToken,
       );
       return AiProcessingResultModel.fromJson(_extractMap(response.data));
@@ -326,7 +333,7 @@ class AttendanceService {
 
       while (DateTime.now().isBefore(deadline)) {
         final response = await _client.dio.get(
-          '$_base/attendance/ai-photo/$processingId',
+          _aiProcessingResultUrl(processingId),
           cancelToken: cancelToken,
         );
         final model = AiProcessingResultModel.fromJson(

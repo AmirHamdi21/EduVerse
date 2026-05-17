@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/shared/modern_action_sheet.dart';
 import '../data/ai_provider_defaults.dart';
 import '../domain/ai_assistant_models.dart';
@@ -648,8 +649,8 @@ class _AssistantHeader extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         _HeaderButton(
-                          icon: Icons.arrow_back_rounded,
-                          onPressed: () => Navigator.of(context).maybePop(),
+                          icon: iosBackIcon(context),
+                          onPressed: () => safeBack(context, _fallbackRoute),
                         ),
                         const SizedBox(width: 8),
                         Container(
@@ -1021,6 +1022,14 @@ class _AssistantHeader extends StatelessWidget {
       case AiResponseStyle.detailed:
         return l10n.aiAssistantStyleDetailed;
     }
+  }
+
+  String get _fallbackRoute {
+    return switch (roleTheme.role) {
+      AiAssistantRole.student => '/dashboard',
+      AiAssistantRole.instructor => '/instructor/dashboard',
+      AiAssistantRole.ta => '/ta/dashboard',
+    };
   }
 }
 

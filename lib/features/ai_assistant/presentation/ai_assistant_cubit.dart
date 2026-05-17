@@ -42,6 +42,13 @@ class AiAssistantCubit extends Cubit<AiAssistantState> {
   CancelToken? _cancelToken;
   int _requestEpoch = 0;
 
+  @override
+  void emit(AiAssistantState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   Future<void> initialize() async {
     emit(state.copyWith(isBootstrapping: true, clearErrorMessage: true));
     try {
@@ -1050,6 +1057,7 @@ class AiAssistantCubit extends Cubit<AiAssistantState> {
 
   @override
   Future<void> close() {
+    _requestEpoch += 1;
     _cancelToken?.cancel('cubit_closed');
     return super.close();
   }

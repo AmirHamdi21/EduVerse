@@ -31,6 +31,7 @@ import '../../../models/core/semester_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/lab_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/labs/grading_panel.dart';
 import '../../../widgets/instructor/labs/lab_create_form.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
@@ -202,10 +203,7 @@ class _LabDetailViewState extends State<_LabDetailView>
             ),
           ],
         ),
-        child: Icon(
-          icon,
-          color: InstructorColors.textPrimaryColor(isDark),
-        ),
+        child: Icon(icon, color: InstructorColors.textPrimaryColor(isDark)),
       ),
     );
   }
@@ -252,9 +250,7 @@ class _LabDetailViewState extends State<_LabDetailView>
             if (state is LabDetailInitial || state is LabDetailLoading) {
               return Scaffold(
                 backgroundColor: InstructorColors.background(isDark),
-                body: SafeArea(
-                  child: _LabDetailLoadingView(isDark: isDark),
-                ),
+                body: SafeArea(child: _LabDetailLoadingView(isDark: isDark)),
               );
             }
 
@@ -326,9 +322,8 @@ class _LabDetailViewState extends State<_LabDetailView>
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => context.read<LabDetailCubit>().initialize(
-                widget.labId,
-              ),
+              onPressed: () =>
+                  context.read<LabDetailCubit>().initialize(widget.labId),
               style: FilledButton.styleFrom(
                 backgroundColor: InstructorColors.primary,
                 foregroundColor: Colors.white,
@@ -463,20 +458,10 @@ class _LabDetailViewState extends State<_LabDetailView>
           state.submissions,
         );
       case 2:
-        return _buildAttendanceTab(
-          context,
-          isDark,
-          l10n,
-          state.attendance,
-        );
+        return _buildAttendanceTab(context, isDark, l10n, state.attendance);
       case 3:
       default:
-        return _buildInstructionsTab(
-          context,
-          isDark,
-          l10n,
-          state,
-        );
+        return _buildInstructionsTab(context, isDark, l10n, state);
     }
   }
 
@@ -489,9 +474,9 @@ class _LabDetailViewState extends State<_LabDetailView>
     return Row(
       children: <Widget>[
         _buildIconShell(
-          icon: Icons.arrow_back_ios_new_rounded,
+          icon: iosBackIcon(context),
           isDark: isDark,
-          onTap: () => context.pop(),
+          onTap: () => safeBack(context, '/instructor/dashboard'),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -512,8 +497,7 @@ class _LabDetailViewState extends State<_LabDetailView>
         _buildIconShell(
           icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
           isDark: isDark,
-          onTap: () =>
-              context.read<ThemeBloc>().add(const ToggleThemeEvent()),
+          onTap: () => context.read<ThemeBloc>().add(const ToggleThemeEvent()),
         ),
         const SizedBox(width: 10),
         if (_canManage)
@@ -1001,7 +985,8 @@ class _LabDetailViewState extends State<_LabDetailView>
                 final columns = constraints.maxWidth >= 720 ? 2 : 1;
                 const spacing = 12.0;
                 final itemWidth =
-                    (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+                    (constraints.maxWidth - (spacing * (columns - 1))) /
+                    columns;
                 return Wrap(
                   spacing: spacing,
                   runSpacing: spacing,
@@ -1171,9 +1156,11 @@ class _LabDetailViewState extends State<_LabDetailView>
                             isDark: isDark,
                             label: l10n.all,
                             count: allSubmissions.length,
-                            selected: _submissionFilter == _LabSubmissionFilter.all,
+                            selected:
+                                _submissionFilter == _LabSubmissionFilter.all,
                             onTap: () => setState(
-                              () => _submissionFilter = _LabSubmissionFilter.all,
+                              () =>
+                                  _submissionFilter = _LabSubmissionFilter.all,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -1182,10 +1169,11 @@ class _LabDetailViewState extends State<_LabDetailView>
                             label: l10n.pending,
                             count: pendingCount,
                             selected:
-                                _submissionFilter == _LabSubmissionFilter.pending,
+                                _submissionFilter ==
+                                _LabSubmissionFilter.pending,
                             onTap: () => setState(
-                              () =>
-                                  _submissionFilter = _LabSubmissionFilter.pending,
+                              () => _submissionFilter =
+                                  _LabSubmissionFilter.pending,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -1194,9 +1182,11 @@ class _LabDetailViewState extends State<_LabDetailView>
                             label: l10n.graded,
                             count: gradedCount,
                             selected:
-                                _submissionFilter == _LabSubmissionFilter.graded,
+                                _submissionFilter ==
+                                _LabSubmissionFilter.graded,
                             onTap: () => setState(
-                              () => _submissionFilter = _LabSubmissionFilter.graded,
+                              () => _submissionFilter =
+                                  _LabSubmissionFilter.graded,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -1207,7 +1197,8 @@ class _LabDetailViewState extends State<_LabDetailView>
                             selected:
                                 _submissionFilter == _LabSubmissionFilter.late,
                             onTap: () => setState(
-                              () => _submissionFilter = _LabSubmissionFilter.late,
+                              () =>
+                                  _submissionFilter = _LabSubmissionFilter.late,
                             ),
                           ),
                         ],
@@ -1301,235 +1292,265 @@ class _LabDetailViewState extends State<_LabDetailView>
                   ),
                 ),
               ),
-          Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
+              Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: InstructorColors.primary,
-                          width: 2,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        _initials(studentName),
-                        style: const TextStyle(
-                          color: InstructorColors.primary,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            studentName,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: InstructorColors.textPrimaryColor(isDark),
-                              fontSize: 16,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: InstructorColors.primary,
+                              width: 2,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            _initials(studentName),
+                            style: const TextStyle(
+                              color: InstructorColors.primary,
                               fontWeight: FontWeight.w800,
+                              fontSize: 20,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            submission.user?.email.trim().isNotEmpty == true
-                                ? submission.user!.email
-                                : (submission.submissionText?.trim().isNotEmpty ==
-                                          true
-                                      ? submission.submissionText!.trim()
-                                      : '${l10n.taLabOverview} #${submission.id}'),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: InstructorColors.textSecondaryColor(isDark),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    _buildStatusBadge(
-                      label: _submissionStatusLabel(l10n, submission),
-                      color: statusColor,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: <Widget>[
-                    _buildMetaChip(
-                      isDark: isDark,
-                      icon: Icons.calendar_today_rounded,
-                      label: _compactDateTime(context, submission.submittedAt),
-                    ),
-                    if (submission.driveFile != null)
-                      _buildMetaChip(
-                        isDark: isDark,
-                        icon: Icons.attach_file_rounded,
-                        label: _fileExtensionLabel(
-                          submission.driveFile!,
-                          l10n.assignmentSubmissionTypeFile,
                         ),
-                      ),
-                    _buildMetaChip(
-                      isDark: isDark,
-                      icon: Icons.flag_rounded,
-                      label: submission.isLate ? l10n.late : l10n.submitted,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: <Color>[
-                        InstructorColors.success.withValues(alpha: 0.16),
-                        InstructorColors.teal.withValues(alpha: 0.16),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                studentName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: InstructorColors.textPrimaryColor(
+                                    isDark,
+                                  ),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                submission.user?.email.trim().isNotEmpty == true
+                                    ? submission.user!.email
+                                    : (submission.submissionText
+                                                  ?.trim()
+                                                  .isNotEmpty ==
+                                              true
+                                          ? submission.submissionText!.trim()
+                                          : '${l10n.taLabOverview} #${submission.id}'),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: InstructorColors.textSecondaryColor(
+                                    isDark,
+                                  ),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        _buildStatusBadge(
+                          label: _submissionStatusLabel(l10n, submission),
+                          color: statusColor,
+                        ),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: InstructorColors.success.withValues(alpha: 0.22),
-                    ),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: InstructorColors.success,
-                          borderRadius: BorderRadius.circular(14),
+                    const SizedBox(height: 14),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: <Widget>[
+                        _buildMetaChip(
+                          isDark: isDark,
+                          icon: Icons.calendar_today_rounded,
+                          label: _compactDateTime(
+                            context,
+                            submission.submittedAt,
+                          ),
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          submission.score == null
-                              ? '--'
-                              : _formatScore(submission.score!),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                        if (submission.driveFile != null)
+                          _buildMetaChip(
+                            isDark: isDark,
+                            icon: Icons.attach_file_rounded,
+                            label: _fileExtensionLabel(
+                              submission.driveFile!,
+                              l10n.assignmentSubmissionTypeFile,
+                            ),
+                          ),
+                        _buildMetaChip(
+                          isDark: isDark,
+                          icon: Icons.flag_rounded,
+                          label: submission.isLate ? l10n.late : l10n.submitted,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: <Color>[
+                            InstructorColors.success.withValues(alpha: 0.16),
+                            InstructorColors.teal.withValues(alpha: 0.16),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: InstructorColors.success.withValues(
+                            alpha: 0.22,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              scoreText,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 46,
+                            height: 46,
+                            decoration: BoxDecoration(
+                              color: InstructorColors.success,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              submission.score == null
+                                  ? '--'
+                                  : _formatScore(submission.score!),
                               style: const TextStyle(
-                                color: InstructorColors.success,
-                                fontSize: 16,
+                                color: Colors.white,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(999),
-                              child: LinearProgressIndicator(
-                                value: submission.score == null || lab.maxScore <= 0
-                                    ? 0
-                                    : (submission.score! / lab.maxScore)
-                                          .clamp(0, 1)
-                                          .toDouble(),
-                                minHeight: 6,
-                                backgroundColor: Colors.white.withValues(
-                                  alpha: 0.55,
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  scoreText,
+                                  style: const TextStyle(
+                                    color: InstructorColors.success,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                  InstructorColors.success,
+                                const SizedBox(height: 6),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(999),
+                                  child: LinearProgressIndicator(
+                                    value:
+                                        submission.score == null ||
+                                            lab.maxScore <= 0
+                                        ? 0
+                                        : (submission.score! / lab.maxScore)
+                                              .clamp(0, 1)
+                                              .toDouble(),
+                                    minHeight: 6,
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: 0.55,
+                                    ),
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                          InstructorColors.success,
+                                        ),
+                                  ),
                                 ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final compact = constraints.maxWidth < 380;
+                        final viewButton = OutlinedButton.icon(
+                          onPressed: () => _showSubmissionDetails(
+                            context,
+                            l10n,
+                            lab,
+                            submission,
+                          ),
+                          icon: const Icon(Icons.visibility_outlined, size: 18),
+                          label: Text(l10n.view),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: InstructorColors.primary,
+                            side: BorderSide(
+                              color: InstructorColors.primary.withValues(
+                                alpha: 0.3,
                               ),
                             ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                        );
+                        final gradeButton = FilledButton.icon(
+                          onPressed: _canManage
+                              ? () => _openGradingPanel(lab, submission)
+                              : null,
+                          icon: Icon(
+                            isGraded
+                                ? Icons.edit_rounded
+                                : Icons.grading_rounded,
+                            size: 18,
+                          ),
+                          label: Text(
+                            isGraded ? l10n.taLabRegrade : l10n.grade,
+                          ),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: InstructorColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                        );
+
+                        if (compact) {
+                          return Column(
+                            children: <Widget>[
+                              SizedBox(
+                                width: double.infinity,
+                                child: viewButton,
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: gradeButton,
+                              ),
+                            ],
+                          );
+                        }
+
+                        return Row(
+                          children: <Widget>[
+                            Expanded(child: viewButton),
+                            const SizedBox(width: 12),
+                            Expanded(child: gradeButton),
                           ],
-                        ),
-                      ),
-                    ],
-                  ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final compact = constraints.maxWidth < 380;
-                    final viewButton = OutlinedButton.icon(
-                      onPressed: () =>
-                          _showSubmissionDetails(context, l10n, lab, submission),
-                      icon: const Icon(Icons.visibility_outlined, size: 18),
-                      label: Text(l10n.view),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: InstructorColors.primary,
-                        side: BorderSide(
-                          color: InstructorColors.primary.withValues(alpha: 0.3),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                    );
-                    final gradeButton = FilledButton.icon(
-                      onPressed: _canManage
-                          ? () => _openGradingPanel(lab, submission)
-                          : null,
-                      icon: Icon(
-                        isGraded ? Icons.edit_rounded : Icons.grading_rounded,
-                        size: 18,
-                      ),
-                      label: Text(isGraded ? l10n.taLabRegrade : l10n.grade),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: InstructorColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                    );
-
-                    if (compact) {
-                      return Column(
-                        children: <Widget>[
-                          SizedBox(width: double.infinity, child: viewButton),
-                          const SizedBox(height: 10),
-                          SizedBox(width: double.infinity, child: gradeButton),
-                        ],
-                      );
-                    }
-
-                    return Row(
-                      children: <Widget>[
-                        Expanded(child: viewButton),
-                        const SizedBox(width: 12),
-                        Expanded(child: gradeButton),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
+              ),
             ],
           ),
         ),
@@ -1546,16 +1567,22 @@ class _LabDetailViewState extends State<_LabDetailView>
     final items = attendance ?? const <LabAttendanceModel>[];
     final compactHeight = _isCompactHeight(context);
     final presentCount = items
-        .where((item) => item.attendanceStatus == api.LabAttendanceStatus.present)
+        .where(
+          (item) => item.attendanceStatus == api.LabAttendanceStatus.present,
+        )
         .length;
     final absentCount = items
-        .where((item) => item.attendanceStatus == api.LabAttendanceStatus.absent)
+        .where(
+          (item) => item.attendanceStatus == api.LabAttendanceStatus.absent,
+        )
         .length;
     final lateCount = items
         .where((item) => item.attendanceStatus == api.LabAttendanceStatus.late)
         .length;
     final excusedCount = items
-        .where((item) => item.attendanceStatus == api.LabAttendanceStatus.excused)
+        .where(
+          (item) => item.attendanceStatus == api.LabAttendanceStatus.excused,
+        )
         .length;
 
     return Padding(
@@ -1773,7 +1800,9 @@ class _LabDetailViewState extends State<_LabDetailView>
                     l10n.instructorLabDetailNoInstructionsSubtitle,
                   )
                 : Column(
-                    children: List<Widget>.generate(instructions.length, (index) {
+                    children: List<Widget>.generate(instructions.length, (
+                      index,
+                    ) {
                       final instruction = instructions[index];
                       return Padding(
                         padding: EdgeInsets.only(
@@ -2058,45 +2087,53 @@ class _LabDetailViewState extends State<_LabDetailView>
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: <api.LabAttendanceStatus>[
-              api.LabAttendanceStatus.present,
-              api.LabAttendanceStatus.absent,
-              api.LabAttendanceStatus.excused,
-              api.LabAttendanceStatus.late,
-            ].map((status) {
-              final selected = effectiveStatus == status;
-              return ChoiceChip(
-                avatar: selected && isPending
-                    ? SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            _attendanceStatusColor(status),
-                          ),
+            children:
+                <api.LabAttendanceStatus>[
+                      api.LabAttendanceStatus.present,
+                      api.LabAttendanceStatus.absent,
+                      api.LabAttendanceStatus.excused,
+                      api.LabAttendanceStatus.late,
+                    ]
+                    .map((status) {
+                      final selected = effectiveStatus == status;
+                      return ChoiceChip(
+                        avatar: selected && isPending
+                            ? SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    _attendanceStatusColor(status),
+                                  ),
+                                ),
+                              )
+                            : null,
+                        label: Text(_attendanceStatusLabel(l10n, status)),
+                        selected: selected,
+                        selectedColor: _attendanceStatusColor(
+                          status,
+                        ).withValues(alpha: 0.16),
+                        backgroundColor: isDark
+                            ? InstructorColors.surfaceColor(isDark)
+                            : const Color(0xFFF8FAFC),
+                        labelStyle: TextStyle(
+                          color: selected
+                              ? _attendanceStatusColor(status)
+                              : InstructorColors.textSecondaryColor(isDark),
+                          fontWeight: selected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                         ),
-                      )
-                    : null,
-                label: Text(_attendanceStatusLabel(l10n, status)),
-                selected: selected,
-                selectedColor: _attendanceStatusColor(
-                  status,
-                ).withValues(alpha: 0.16),
-                backgroundColor: isDark
-                    ? InstructorColors.surfaceColor(isDark)
-                    : const Color(0xFFF8FAFC),
-                labelStyle: TextStyle(
-                  color: selected
-                      ? _attendanceStatusColor(status)
-                      : InstructorColors.textSecondaryColor(isDark),
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                ),
-                onSelected: !_canManage
-                    ? null
-                    : (_) => _handleAttendanceSelection(record.userId, status),
-              );
-            }).toList(growable: false),
+                        onSelected: !_canManage
+                            ? null
+                            : (_) => _handleAttendanceSelection(
+                                record.userId,
+                                status,
+                              ),
+                      );
+                    })
+                    .toList(growable: false),
           ),
         ],
       ),
@@ -2485,11 +2522,7 @@ class _LabDetailViewState extends State<_LabDetailView>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(
-            icon,
-            size: 16,
-            color: InstructorColors.textSecondary,
-          ),
+          Icon(icon, size: 16, color: InstructorColors.textSecondary),
           const SizedBox(width: 6),
           Text(
             label,
@@ -2621,7 +2654,9 @@ class _LabDetailViewState extends State<_LabDetailView>
       subtitle: l10n.instructorLabMaterialSubtitle,
       icon: Icons.folder_shared_outlined,
       child: FilledButton.icon(
-        onPressed: _uploadingTaMaterial ? null : () => _pickAndUploadTaMaterial(context),
+        onPressed: _uploadingTaMaterial
+            ? null
+            : () => _pickAndUploadTaMaterial(context),
         style: FilledButton.styleFrom(
           backgroundColor: InstructorColors.primary,
           foregroundColor: Colors.white,
@@ -2641,7 +2676,9 @@ class _LabDetailViewState extends State<_LabDetailView>
               )
             : const Icon(Icons.upload_file_rounded),
         label: Text(
-          _uploadingTaMaterial ? l10n.uploading : l10n.instructorLabUploadMaterial,
+          _uploadingTaMaterial
+              ? l10n.uploading
+              : l10n.instructorLabUploadMaterial,
         ),
       ),
     );
@@ -2715,29 +2752,34 @@ class _LabDetailViewState extends State<_LabDetailView>
     );
   }
 
-  List<LabSubmissionModel> _filteredSubmissions(List<LabSubmissionModel> source) {
-    return source.where((submission) {
-      final query = _searchQuery.toLowerCase();
-      final studentName =
-          '${submission.user?.firstName ?? ''} ${submission.user?.lastName ?? ''}'
-              .trim()
-              .toLowerCase();
-      final email = submission.user?.email.toLowerCase() ?? '';
-      final matchesSearch =
-          query.isEmpty ||
-          studentName.contains(query) ||
-          email.contains(query) ||
-          (submission.submissionText?.toLowerCase().contains(query) ?? false);
+  List<LabSubmissionModel> _filteredSubmissions(
+    List<LabSubmissionModel> source,
+  ) {
+    return source
+        .where((submission) {
+          final query = _searchQuery.toLowerCase();
+          final studentName =
+              '${submission.user?.firstName ?? ''} ${submission.user?.lastName ?? ''}'
+                  .trim()
+                  .toLowerCase();
+          final email = submission.user?.email.toLowerCase() ?? '';
+          final matchesSearch =
+              query.isEmpty ||
+              studentName.contains(query) ||
+              email.contains(query) ||
+              (submission.submissionText?.toLowerCase().contains(query) ??
+                  false);
 
-      final matchesFilter = switch (_submissionFilter) {
-        _LabSubmissionFilter.all => true,
-        _LabSubmissionFilter.pending => _isPendingSubmission(submission),
-        _LabSubmissionFilter.graded => _isGradedSubmission(submission),
-        _LabSubmissionFilter.late => submission.isLate,
-      };
+          final matchesFilter = switch (_submissionFilter) {
+            _LabSubmissionFilter.all => true,
+            _LabSubmissionFilter.pending => _isPendingSubmission(submission),
+            _LabSubmissionFilter.graded => _isGradedSubmission(submission),
+            _LabSubmissionFilter.late => submission.isLate,
+          };
 
-      return matchesSearch && matchesFilter;
-    }).toList(growable: false);
+          return matchesSearch && matchesFilter;
+        })
+        .toList(growable: false);
   }
 
   bool _isPendingSubmission(LabSubmissionModel submission) {
@@ -2747,7 +2789,8 @@ class _LabDetailViewState extends State<_LabDetailView>
   }
 
   bool _isGradedSubmission(LabSubmissionModel submission) {
-    return submission.submissionStatus == assignment_api.SubmissionStatus.graded;
+    return submission.submissionStatus ==
+        assignment_api.SubmissionStatus.graded;
   }
 
   String _submissionStatusLabel(
@@ -2852,9 +2895,9 @@ class _LabDetailViewState extends State<_LabDetailView>
     if (value == null) {
       return AppLocalizations.of(context).assignmentNoDueDate;
     }
-    return DateFormat.MMMd(Localizations.localeOf(context).toString()).format(
-      value.toLocal(),
-    );
+    return DateFormat.MMMd(
+      Localizations.localeOf(context).toString(),
+    ).format(value.toLocal());
   }
 
   String _compactDateTime(BuildContext context, DateTime value) {
@@ -2925,10 +2968,7 @@ class _LabDetailViewState extends State<_LabDetailView>
     if (url == null || url.trim().isEmpty) {
       return;
     }
-    await launchUrl(
-      Uri.parse(url),
-      mode: LaunchMode.externalApplication,
-    );
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
 
   Future<void> _showSubmissionDetails(
@@ -2948,9 +2988,7 @@ class _LabDetailViewState extends State<_LabDetailView>
         return Container(
           decoration: BoxDecoration(
             color: InstructorColors.cardColor(isDark),
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           ),
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(sheetContext).size.height * 0.9,
@@ -3000,14 +3038,16 @@ class _LabDetailViewState extends State<_LabDetailView>
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         studentName,
                                         style: TextStyle(
-                                          color: InstructorColors.textPrimaryColor(
-                                            isDark,
-                                          ),
+                                          color:
+                                              InstructorColors.textPrimaryColor(
+                                                isDark,
+                                              ),
                                           fontSize: 18,
                                           fontWeight: FontWeight.w800,
                                         ),
@@ -3016,9 +3056,10 @@ class _LabDetailViewState extends State<_LabDetailView>
                                       Text(
                                         lab.title,
                                         style: TextStyle(
-                                          color: InstructorColors.textSecondaryColor(
-                                            isDark,
-                                          ),
+                                          color:
+                                              InstructorColors.textSecondaryColor(
+                                                isDark,
+                                              ),
                                           fontSize: 14,
                                         ),
                                       ),
@@ -3074,9 +3115,8 @@ class _LabDetailViewState extends State<_LabDetailView>
                           ],
                         ),
                       ),
-                      if (submission.submissionText?.trim().isNotEmpty == true) ...<
-                        Widget
-                      >[
+                      if (submission.submissionText?.trim().isNotEmpty ==
+                          true) ...<Widget>[
                         const SizedBox(height: 16),
                         _buildSectionCard(
                           context,
@@ -3107,7 +3147,8 @@ class _LabDetailViewState extends State<_LabDetailView>
                             runSpacing: 12,
                             children: <Widget>[
                               OutlinedButton.icon(
-                                onPressed: _canPreviewFile(submission.driveFile!)
+                                onPressed:
+                                    _canPreviewFile(submission.driveFile!)
                                     ? () => openDriveFilePreviewScreen(
                                         context,
                                         file: submission.driveFile!,
@@ -3132,9 +3173,8 @@ class _LabDetailViewState extends State<_LabDetailView>
                             ],
                           ),
                         ),
-                      ] else if (submission.submissionText?.trim().isNotEmpty != true) ...<
-                        Widget
-                      >[
+                      ] else if (submission.submissionText?.trim().isNotEmpty !=
+                          true) ...<Widget>[
                         const SizedBox(height: 16),
                         _buildInlineEmptyMessage(
                           isDark,
@@ -3323,11 +3363,7 @@ class _LabDetailViewState extends State<_LabDetailView>
     final nextOrder = loaded?.instructions?.length ?? 0;
 
     setState(() => _uploadingInstructionFile = true);
-    await cubit.uploadInstructionFile(
-      widget.labId,
-      File(filePath),
-      nextOrder,
-    );
+    await cubit.uploadInstructionFile(widget.labId, File(filePath), nextOrder);
     if (!mounted) {
       return;
     }
@@ -3353,7 +3389,9 @@ class _LabDetailViewState extends State<_LabDetailView>
     _newInstructionController.clear();
   }
 
-  TextEditingController _controllerForInstruction(LabInstructionModel instruction) {
+  TextEditingController _controllerForInstruction(
+    LabInstructionModel instruction,
+  ) {
     return _editControllers.putIfAbsent(
       instruction.id,
       () => TextEditingController(text: instruction.instructionText ?? ''),
@@ -3603,7 +3641,9 @@ class _LabDetailLoadingView extends StatelessWidget {
             color: InstructorColors.cardColor(isDark),
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: InstructorColors.borderColor(isDark).withValues(alpha: 0.68),
+              color: InstructorColors.borderColor(
+                isDark,
+              ).withValues(alpha: 0.68),
             ),
           ),
         ),

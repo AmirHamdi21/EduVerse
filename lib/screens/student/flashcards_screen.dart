@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../models/flashcard_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/flashcards/flashcards_barrel.dart';
 
 class FlashcardsScreen extends StatefulWidget {
@@ -315,7 +316,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => safeBack(context, '/dashboard'),
                   child: Container(
                     height: 40,
                     width: 40,
@@ -323,8 +324,8 @@ class _FlashcardsScreenState extends State<FlashcardsScreen>
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
+                    child: Icon(
+                      iosBackIcon(context),
                       color: Colors.white,
                       size: 18,
                     ),

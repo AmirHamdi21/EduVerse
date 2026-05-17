@@ -7,6 +7,7 @@ import '../../bloc/chat/chat_bloc.dart';
 import '../../bloc/chat/chat_event.dart';
 import '../../bloc/chat/chat_state.dart';
 import '../../generated_l10n/app_localizations.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/shared/chat/shared_chat_detail_view.dart';
 import '../../widgets/shared/chat/shared_conversation_list.dart';
 
@@ -80,6 +81,9 @@ class SharedChatScreen extends StatelessWidget {
   /// Callback when leading icon is pressed
   final VoidCallback? onLeadingPressed;
 
+  /// Route used when this screen is opened directly without a back stack.
+  final String fallbackRoute;
+
   const SharedChatScreen({
     super.key,
     required this.accentColor,
@@ -89,6 +93,7 @@ class SharedChatScreen extends StatelessWidget {
     this.title,
     this.leadingIcon,
     this.onLeadingPressed,
+    this.fallbackRoute = '/dashboard',
   });
 
   @override
@@ -125,6 +130,7 @@ class SharedChatScreen extends StatelessWidget {
                   title: title,
                   leadingIcon: leadingIcon,
                   onLeadingPressed: onLeadingPressed,
+                  fallbackRoute: fallbackRoute,
                 )
               : _TabletDesktopLayout(
                   key: const ValueKey('tabletDesktop'),
@@ -135,6 +141,7 @@ class SharedChatScreen extends StatelessWidget {
                   title: title,
                   leadingIcon: leadingIcon,
                   onLeadingPressed: onLeadingPressed,
+                  fallbackRoute: fallbackRoute,
                 ),
         );
       },
@@ -212,8 +219,8 @@ class SharedChatScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 FilledButton.icon(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  icon: const Icon(Icons.arrow_back_rounded),
+                  onPressed: () => safeBack(context, fallbackRoute),
+                  icon: Icon(iosBackIcon(context)),
                   label: Text(l10n.chatGoBack),
                 ),
               ],
@@ -234,6 +241,7 @@ class _MobileLayout extends StatelessWidget {
   final String? title;
   final IconData? leadingIcon;
   final VoidCallback? onLeadingPressed;
+  final String fallbackRoute;
 
   const _MobileLayout({
     super.key,
@@ -244,6 +252,7 @@ class _MobileLayout extends StatelessWidget {
     this.title,
     this.leadingIcon,
     this.onLeadingPressed,
+    required this.fallbackRoute,
   });
 
   @override
@@ -293,11 +302,11 @@ class _MobileLayout extends StatelessWidget {
               accentColor: accentColor,
               isDark: effectiveIsDark,
               title: title ?? l10n.messages,
-              leadingIcon: leadingIcon ?? Icons.arrow_back_ios_new_rounded,
+              leadingIcon: leadingIcon ?? iosBackIcon(context),
               onLeadingPressed:
                   onLeadingPressed ??
                   () {
-                    Navigator.of(context).maybePop();
+                    safeBack(context, fallbackRoute);
                   },
             ),
           ),
@@ -316,6 +325,7 @@ class _TabletDesktopLayout extends StatelessWidget {
   final String? title;
   final IconData? leadingIcon;
   final VoidCallback? onLeadingPressed;
+  final String fallbackRoute;
 
   const _TabletDesktopLayout({
     super.key,
@@ -326,6 +336,7 @@ class _TabletDesktopLayout extends StatelessWidget {
     this.title,
     this.leadingIcon,
     this.onLeadingPressed,
+    required this.fallbackRoute,
   });
 
   @override
@@ -348,12 +359,11 @@ class _TabletDesktopLayout extends StatelessWidget {
                       accentColor: accentColor,
                       isDark: effectiveIsDark,
                       title: title ?? l10n.messages,
-                      leadingIcon:
-                          leadingIcon ?? Icons.arrow_back_ios_new_rounded,
+                      leadingIcon: leadingIcon ?? iosBackIcon(context),
                       onLeadingPressed:
                           onLeadingPressed ??
                           () {
-                            Navigator.of(context).maybePop();
+                            safeBack(context, fallbackRoute);
                           },
                     ),
                   ),

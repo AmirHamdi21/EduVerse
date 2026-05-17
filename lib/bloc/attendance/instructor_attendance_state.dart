@@ -36,7 +36,7 @@ class RosterRow extends Equatable {
   double? get aiConfidencePercent {
     final confidence = aiConfidence;
     if (confidence == null) {
-      return null;
+      return isAiMarked && aiSuggestedStatus == 'present' ? 90 : null;
     }
     return confidence <= 1 ? confidence * 100 : confidence;
   }

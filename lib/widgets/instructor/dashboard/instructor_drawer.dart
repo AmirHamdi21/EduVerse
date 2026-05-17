@@ -737,23 +737,33 @@ class _InstructorDrawerState extends State<InstructorDrawer>
     required bool isActive,
     required VoidCallback onTap,
   }) {
+    const activeColor = Color(0xFF3B82F6);
+    final activeBackground = isDark
+        ? Color.lerp(activeColor, Colors.white, 0.14)!
+        : Colors.white;
+    final activeForeground = isDark ? Colors.white : activeColor;
+    final activeBorder = isDark
+        ? Color.lerp(activeColor, Colors.white, 0.38)!
+        : activeColor.withValues(alpha: 0.24);
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isActive
-              ? (isDark ? const Color(0xFF3B82F6) : Colors.white)
-              : Colors.transparent,
+          color: isActive ? activeBackground : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isActive ? activeBorder : Colors.transparent,
+            width: 1.1,
+          ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: (isDark ? const Color(0xFF3B82F6) : Colors.black)
-                        .withValues(alpha: 0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: activeColor.withValues(alpha: isDark ? 0.32 : 0.12),
+                    blurRadius: isDark ? 16 : 12,
+                    offset: const Offset(0, 5),
                   ),
                 ]
               : null,
@@ -765,7 +775,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
               icon,
               size: 16,
               color: isActive
-                  ? (isDark ? Colors.white : const Color(0xFF3B82F6))
+                  ? activeForeground
                   : (isDark
                         ? const Color(0xFF64748B)
                         : const Color(0xFF94A3B8)),
@@ -777,7 +787,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                 fontSize: 12,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 color: isActive
-                    ? (isDark ? Colors.white : const Color(0xFF3B82F6))
+                    ? activeForeground
                     : (isDark
                           ? const Color(0xFF64748B)
                           : const Color(0xFF94A3B8)),

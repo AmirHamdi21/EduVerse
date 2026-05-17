@@ -12,6 +12,7 @@ import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/assignments/submission_list_item.dart';
 
 class AssignmentSubmissionsScreen extends StatelessWidget {
@@ -132,6 +133,10 @@ class _AssignmentSubmissionsViewState
 
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              onPressed: () => safeBack(context, '/instructor/dashboard'),
+              icon: Icon(iosBackIcon(context)),
+            ),
             title: Text(widget.assignmentTitle ?? 'Assignment Submissions'),
           ),
           body: Column(

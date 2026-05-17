@@ -6,6 +6,8 @@ import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_state.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/services/api/assignment_service.dart';
@@ -15,10 +17,12 @@ import 'package:edu_verse/services/api/schedule_api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/widgets/instructor/dashboard/instructor_dashboard_v9_metrics.dart';
 import 'package:edu_verse/widgets/instructor/dashboard/instructor_drawer_v9.dart';
+import 'package:edu_verse/widgets/instructor/dashboard/instructor_liquid_glass_bottom_nav.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:edu_verse/widgets/shared/current_user_identity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -42,6 +46,11 @@ class _InstructorDashboardV9ScreenState
   String? _metricsError;
   String? _lastCourseKey;
   bool _showAiOverview = true;
+  final ValueNotifier<bool> _bottomNavVisibleNotifier = ValueNotifier<bool>(
+    true,
+  );
+  ScrollDirection _lastBottomNavScrollDirection = ScrollDirection.idle;
+  double _bottomNavDirectionalScroll = 0;
 
   @override
   void initState() {
@@ -55,6 +64,12 @@ class _InstructorDashboardV9ScreenState
       if (!mounted) return;
       _ensureDashboardDataLoaded();
     });
+  }
+
+  @override
+  void dispose() {
+    _bottomNavVisibleNotifier.dispose();
+    super.dispose();
   }
 
   void _ensureDashboardDataLoaded() {
@@ -130,6 +145,60 @@ class _InstructorDashboardV9ScreenState
     }
   }
 
+  bool _handleDashboardScroll(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) return false;
+
+    final pixels = notification.metrics.pixels;
+    if (pixels <= 16) {
+      _bottomNavDirectionalScroll = 0;
+      _lastBottomNavScrollDirection = ScrollDirection.idle;
+      _setBottomNavVisible(true);
+      return false;
+    }
+
+    if (notification is UserScrollNotification) {
+      if (notification.direction != _lastBottomNavScrollDirection) {
+        _bottomNavDirectionalScroll = 0;
+        _lastBottomNavScrollDirection = notification.direction;
+      }
+      if (notification.direction == ScrollDirection.idle && pixels <= 24) {
+        _setBottomNavVisible(true);
+      }
+    } else if (notification is ScrollUpdateNotification) {
+      final delta = notification.scrollDelta;
+      if (delta != null && delta.abs() > 3) {
+        final direction = delta > 0
+            ? ScrollDirection.reverse
+            : ScrollDirection.forward;
+        if (direction != _lastBottomNavScrollDirection) {
+          _bottomNavDirectionalScroll = 0;
+          _lastBottomNavScrollDirection = direction;
+        }
+        _bottomNavDirectionalScroll += delta.abs();
+
+        if (direction == ScrollDirection.reverse &&
+            pixels > 96 &&
+            _bottomNavDirectionalScroll > 46) {
+          _setBottomNavVisible(false);
+        } else if (direction == ScrollDirection.forward &&
+            _bottomNavDirectionalScroll > 18) {
+          _setBottomNavVisible(true);
+        }
+      }
+    } else if (notification is ScrollEndNotification && pixels <= 24) {
+      _bottomNavDirectionalScroll = 0;
+      _lastBottomNavScrollDirection = ScrollDirection.idle;
+      _setBottomNavVisible(true);
+    }
+
+    return false;
+  }
+
+  void _setBottomNavVisible(bool visible) {
+    if (_bottomNavVisibleNotifier.value == visible) return;
+    _bottomNavVisibleNotifier.value = visible;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -143,113 +212,145 @@ class _InstructorDashboardV9ScreenState
               _loadV9Data(state.courses);
             }
           },
-          child: Scaffold(
-            backgroundColor: _InstructorV9Colors.background(isDark),
-            drawer: InstructorDrawerV9(snapshot: _snapshot),
-            body: SafeArea(
-              bottom: false,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: _InstructorV9Colors.pageGradient(isDark),
+          child: InstructorWalkthroughRouteMarker(
+            segmentId: InstructorWalkthroughIds.dashboard,
+            child: Scaffold(
+              backgroundColor: _InstructorV9Colors.background(isDark),
+              drawer: InstructorDrawerV9(snapshot: _snapshot),
+              body: SafeArea(
+                bottom: false,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: _InstructorV9Colors.pageGradient(isDark),
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    RefreshIndicator(
-                      color: _InstructorV9Colors.purple,
-                      onRefresh: _refreshDashboard,
-                      child: ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.only(bottom: 92),
-                        children: [
-                          _CenteredInstructorContent(
-                            child: _InstructorV9TopBar(isDark: isDark),
-                          ),
-                          _CenteredInstructorContent(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                              child:
-                                  BlocBuilder<
-                                    InstructorCoursesBloc,
-                                    InstructorCoursesState
-                                  >(
-                                    builder: (context, coursesState) {
-                                      final teachingCourses =
-                                          InstructorDashboardV9Metrics.teachingCoursesFromState(
-                                            coursesState,
-                                          );
-
-                                      return Column(
-                                        children: [
-                                          _InstructorV9StatsCard(
-                                            isDark: isDark,
-                                            courses: teachingCourses,
-                                            snapshot: _snapshot,
-                                            isLoading: _isMetricsLoading,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          if (_showAiOverview) ...[
-                                            _InstructorV9AiOverviewCard(
-                                              isDark: isDark,
-                                              snapshot: _snapshot,
-                                              onReview: () => context.push(
-                                                '/instructor/reports',
-                                              ),
-                                              onDismiss: () => setState(() {
-                                                _showAiOverview = false;
-                                              }),
-                                            ),
-                                            const SizedBox(height: 12),
-                                          ],
-                                          _InstructorV9QuickActionsCard(
-                                            isDark: isDark,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          _InstructorV9CoursesCard(
-                                            isDark: isDark,
-                                            snapshot: _snapshot,
-                                            isLoading: _isMetricsLoading,
-                                            error: _metricsError,
-                                            onRetry: () => _loadV9Data(
-                                              teachingCourses,
-                                              force: true,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 12),
-                                          _InstructorV9PendingGradingCard(
-                                            isDark: isDark,
-                                            snapshot: _snapshot,
-                                            isLoading: _isMetricsLoading,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          _InstructorV9UpcomingEventsCard(
-                                            isDark: isDark,
-                                            events: _events,
-                                            isLoading: _isMetricsLoading,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          _InstructorV9AskAiButton(
-                                            isDark: isDark,
-                                          ),
-                                        ],
-                                      );
-                                    },
+                  child: Stack(
+                    children: [
+                      NotificationListener<ScrollNotification>(
+                        onNotification: _handleDashboardScroll,
+                        child: RefreshIndicator(
+                          color: _InstructorV9Colors.purple,
+                          onRefresh: _refreshDashboard,
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(bottom: 76),
+                            children: [
+                              _CenteredInstructorContent(
+                                child: WalkthroughTarget(
+                                  id: InstructorWalkthroughIds.dashboardTop,
+                                  child: _InstructorV9TopBar(isDark: isDark),
+                                ),
+                              ),
+                              _CenteredInstructorContent(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    0,
+                                    16,
+                                    16,
                                   ),
-                            ),
+                                  child:
+                                      BlocBuilder<
+                                        InstructorCoursesBloc,
+                                        InstructorCoursesState
+                                      >(
+                                        builder: (context, coursesState) {
+                                          final teachingCourses =
+                                              InstructorDashboardV9Metrics.teachingCoursesFromState(
+                                                coursesState,
+                                              );
+
+                                          return Column(
+                                            children: [
+                                              WalkthroughTarget(
+                                                id: InstructorWalkthroughIds
+                                                    .dashboardStats,
+                                                child: _InstructorV9StatsCard(
+                                                  isDark: isDark,
+                                                  courses: teachingCourses,
+                                                  snapshot: _snapshot,
+                                                  isLoading: _isMetricsLoading,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              if (_showAiOverview) ...[
+                                                _InstructorV9AiOverviewCard(
+                                                  isDark: isDark,
+                                                  snapshot: _snapshot,
+                                                  onReview: () => context.push(
+                                                    '/instructor/reports',
+                                                  ),
+                                                  onDismiss: () => setState(() {
+                                                    _showAiOverview = false;
+                                                  }),
+                                                ),
+                                                const SizedBox(height: 12),
+                                              ],
+                                              WalkthroughTarget(
+                                                id: InstructorWalkthroughIds
+                                                    .dashboardQuick,
+                                                child:
+                                                    _InstructorV9QuickActionsCard(
+                                                      isDark: isDark,
+                                                    ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _InstructorV9CoursesCard(
+                                                isDark: isDark,
+                                                snapshot: _snapshot,
+                                                isLoading: _isMetricsLoading,
+                                                error: _metricsError,
+                                                onRetry: () => _loadV9Data(
+                                                  teachingCourses,
+                                                  force: true,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              WalkthroughTarget(
+                                                id: InstructorWalkthroughIds
+                                                    .dashboardPending,
+                                                child:
+                                                    _InstructorV9PendingGradingCard(
+                                                      isDark: isDark,
+                                                      snapshot: _snapshot,
+                                                      isLoading:
+                                                          _isMetricsLoading,
+                                                    ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _InstructorV9UpcomingEventsCard(
+                                                isDark: isDark,
+                                                events: _events,
+                                                isLoading: _isMetricsLoading,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _InstructorV9AskAiButton(
+                                                isDark: isDark,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: _InstructorV9BottomNav(isDark: isDark),
-                    ),
-                  ],
+                      ValueListenableBuilder<bool>(
+                        valueListenable: _bottomNavVisibleNotifier,
+                        builder: (context, isBottomNavVisible, child) {
+                          return InstructorLiquidGlassBottomNav(
+                            isDark: isDark,
+                            isVisible: isBottomNavVisible,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -914,7 +1015,6 @@ class _InstructorCourseRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final course = metrics.course;
-    final avg = InstructorDashboardV9Metrics.courseAverage(course);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 9),
@@ -945,7 +1045,7 @@ class _InstructorCourseRow extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '${course.enrolledCount} · ${avg.round()}%',
+                '${course.enrolledCount} ${l10n.students}',
                 style: TextStyle(
                   color: _InstructorV9Colors.mutedText(isDark),
                   fontSize: 11,
@@ -953,20 +1053,6 @@ class _InstructorCourseRow extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 7),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: avg / 100,
-              minHeight: 5,
-              backgroundColor: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.white.withValues(alpha: 0.80),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                _InstructorV9Colors.purple,
-              ),
-            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -1228,65 +1314,6 @@ class _MoreCourseButton extends StatelessWidget {
             style: TextStyle(color: _InstructorV9Colors.primaryText(isDark)),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _InstructorV9BottomNav extends StatelessWidget {
-  final bool isDark;
-
-  const _InstructorV9BottomNav({required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final currentPath = GoRouterState.of(context).uri.path;
-    final items = [
-      _BottomNavItem(Icons.home_rounded, l10n.home, '/instructor/dashboard'),
-      _BottomNavItem(Icons.groups_rounded, l10n.students, '/instructor/roster'),
-      _BottomNavItem(
-        Icons.assignment_rounded,
-        l10n.assignments,
-        '/instructor/assignments',
-      ),
-      _BottomNavItem(
-        Icons.bar_chart_rounded,
-        l10n.analytics,
-        '/instructor/reports',
-      ),
-      _BottomNavItem(
-        Icons.auto_awesome_rounded,
-        l10n.ai,
-        '/instructor/ai-teaching',
-      ),
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: _InstructorV9Colors.bottomBar(isDark),
-        border: Border(
-          top: BorderSide(color: _InstructorV9Colors.hairline(isDark)),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(12, 6, 12, 10),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          children: items.map((item) {
-            final active =
-                currentPath == item.route ||
-                currentPath.startsWith('${item.route}/');
-            return _BottomNavButton(
-              item: item,
-              isDark: isDark,
-              isActive: active,
-              onTap: () {
-                if (!active) context.go(item.route);
-              },
-            );
-          }).toList(),
-        ),
       ),
     );
   }
@@ -1585,6 +1612,23 @@ class _TinyActionButton extends StatelessWidget {
                   ? _InstructorV9Colors.purple
                   : _InstructorV9Colors.secondaryButton(isDark),
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isPrimary
+                    ? _InstructorV9Colors.purple
+                    : _InstructorV9Colors.secondaryButtonBorder(isDark),
+                width: 1.1,
+              ),
+              boxShadow: isPrimary
+                  ? const <BoxShadow>[]
+                  : [
+                      BoxShadow(
+                        color:
+                            (isDark ? Colors.black : InstructorColors.primary)
+                                .withValues(alpha: isDark ? 0.12 : 0.06),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
             ),
             child: Center(
               child: Text(
@@ -1762,54 +1806,6 @@ class _LoadingRows extends StatelessWidget {
   }
 }
 
-class _BottomNavButton extends StatelessWidget {
-  final _BottomNavItem item;
-  final bool isDark;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _BottomNavButton({
-    required this.item,
-    required this.isDark,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isActive
-        ? _InstructorV9Colors.purple
-        : _InstructorV9Colors.mutedText(isDark);
-
-    return Expanded(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(item.icon, color: color, size: 21),
-              const SizedBox(height: 2),
-              Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _InstructorV9Colors {
   static const purple = InstructorColors.primary;
   static const pink = InstructorColors.primaryLight;
@@ -1840,8 +1836,12 @@ class _InstructorV9Colors {
       : InstructorColors.primarySurface.withValues(alpha: 0.72);
 
   static Color secondaryButton(bool isDark) => isDark
-      ? Colors.white.withValues(alpha: 0.14)
-      : Colors.white.withValues(alpha: 0.82);
+      ? Colors.white.withValues(alpha: 0.10)
+      : InstructorColors.primarySurface.withValues(alpha: 0.34);
+
+  static Color secondaryButtonBorder(bool isDark) => isDark
+      ? Colors.white.withValues(alpha: 0.22)
+      : InstructorColors.primary.withValues(alpha: 0.20);
 
   static Color hairline(bool isDark) => isDark
       ? InstructorColors.darkBorder.withValues(alpha: 0.55)
@@ -1863,10 +1863,6 @@ class _InstructorV9Colors {
   static Color skeleton(bool isDark) => isDark
       ? Colors.white.withValues(alpha: 0.08)
       : Colors.white.withValues(alpha: 0.60);
-
-  static Color bottomBar(bool isDark) => isDark
-      ? InstructorColors.darkBg.withValues(alpha: 0.96)
-      : Colors.white.withValues(alpha: 0.94);
 }
 
 class _QuickAction {
@@ -1881,12 +1877,4 @@ class _QuickAction {
     required this.route,
     required this.color,
   });
-}
-
-class _BottomNavItem {
-  final IconData icon;
-  final String label;
-  final String route;
-
-  const _BottomNavItem(this.icon, this.label, this.route);
 }

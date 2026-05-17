@@ -4,6 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/utils/responsive.dart';
 import '../../../models/core/drive_file_model.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 Future<void> openDriveFilePreviewScreen(
   BuildContext context, {
@@ -78,6 +79,10 @@ class _DriveFilePreviewScreenState extends State<DriveFilePreviewScreen> {
         backgroundColor: widget.isDark ? const Color(0xFF0F172A) : Colors.white,
         foregroundColor: widget.isDark ? Colors.white : const Color(0xFF1E293B),
         elevation: 0,
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
         title: Text(
           widget.file.fileName,
           maxLines: 1,

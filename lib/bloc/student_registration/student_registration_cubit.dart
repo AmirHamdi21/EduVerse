@@ -14,8 +14,13 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
 
   final EnrollmentService _enrollmentService;
 
+  void _safeEmit(StudentRegistrationState nextState) {
+    if (isClosed) return;
+    emit(nextState);
+  }
+
   Future<void> load() async {
-    emit(
+    _safeEmit(
       state.copyWith(
         isInitialLoading: true,
         isRefreshing: false,
@@ -27,7 +32,7 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
   }
 
   Future<void> refresh() async {
-    emit(
+    _safeEmit(
       state.copyWith(
         isRefreshing: true,
         clearErrorMessage: true,
@@ -38,31 +43,31 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
   }
 
   void setSearchQuery(String value) {
-    emit(state.copyWith(searchQuery: value));
+    _safeEmit(state.copyWith(searchQuery: value));
   }
 
   void setDepartment(String value) {
-    emit(state.copyWith(selectedDepartment: value));
+    _safeEmit(state.copyWith(selectedDepartment: value));
   }
 
   void setLevel(String value) {
-    emit(state.copyWith(selectedLevel: value));
+    _safeEmit(state.copyWith(selectedLevel: value));
   }
 
   void selectCourse(int? courseId) {
-    emit(
+    _safeEmit(
       state.copyWith(selectedCourseId: courseId, clearSelectedSectionId: true),
     );
   }
 
   void selectSection(int? sectionId) {
-    emit(state.copyWith(selectedSectionId: sectionId));
+    _safeEmit(state.copyWith(selectedSectionId: sectionId));
   }
 
   Future<bool> enrollSelectedSection() async {
     final int? sectionId = state.selectedSectionId;
     if (sectionId == null || sectionId <= 0) {
-      emit(
+      _safeEmit(
         state.copyWith(
           errorMessage: 'Please select a section first.',
           clearSuccessMessage: true,
@@ -71,7 +76,7 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
       return false;
     }
 
-    emit(
+    _safeEmit(
       state.copyWith(
         isEnrolling: true,
         clearErrorMessage: true,
@@ -82,9 +87,10 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
     final result = await _enrollmentService.registerForSection(
       sectionId: sectionId,
     );
+    if (isClosed) return false;
 
     if (!result.isSuccess) {
-      emit(
+      _safeEmit(
         state.copyWith(
           isEnrolling: false,
           errorMessage: result.error?.message ?? 'Failed to enroll in section.',
@@ -98,14 +104,14 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
       keepMutationLoading: true,
       clearSelectedSectionId: true,
     );
-    emit(state.copyWith(isEnrolling: false));
+    _safeEmit(state.copyWith(isEnrolling: false));
     return true;
   }
 
   Future<bool> dropEnrollment(dynamic enrollmentId) async {
     final String idValue = enrollmentId?.toString() ?? '';
     if (idValue.isEmpty) {
-      emit(
+      _safeEmit(
         state.copyWith(
           errorMessage: 'Invalid enrollment id.',
           clearSuccessMessage: true,
@@ -114,7 +120,7 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
       return false;
     }
 
-    emit(
+    _safeEmit(
       state.copyWith(
         isDropping: true,
         activeDropEnrollmentId: idValue,
@@ -124,8 +130,9 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
     );
 
     final result = await _enrollmentService.dropEnrollment(idValue);
+    if (isClosed) return false;
     if (!result.isSuccess) {
-      emit(
+      _safeEmit(
         state.copyWith(
           isDropping: false,
           clearDropId: true,
@@ -140,12 +147,14 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
       keepMutationLoading: true,
       clearSelectedSectionId: true,
     );
-    emit(state.copyWith(isDropping: false, clearDropId: true));
+    _safeEmit(state.copyWith(isDropping: false, clearDropId: true));
     return true;
   }
 
   void clearMessages() {
-    emit(state.copyWith(clearErrorMessage: true, clearSuccessMessage: true));
+    _safeEmit(
+      state.copyWith(clearErrorMessage: true, clearSuccessMessage: true),
+    );
   }
 
   Future<void> _fetchRegistrationData({
@@ -153,11 +162,31 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
     bool keepMutationLoading = false,
     bool clearSelectedSectionId = false,
   }) async {
-    final results = await Future.wait<dynamic>(<Future<dynamic>>[
-      _enrollmentService.getMyEnrollments(),
-      _enrollmentService.getAvailableCourses(),
-      _enrollmentService.getEnrollmentPeriods(),
-    ]);
+    late final List<dynamic> results;
+    try {
+      results = await Future.wait<dynamic>(<Future<dynamic>>[
+        _enrollmentService.getMyEnrollments(),
+        _enrollmentService.getAvailableCourses(),
+        _enrollmentService.getEnrollmentPeriods(),
+      ]);
+      if (isClosed) return;
+    } catch (error) {
+      if (isClosed) return;
+      _safeEmit(
+        state.copyWith(
+          isInitialLoading: false,
+          isRefreshing: false,
+          isEnrolling: keepMutationLoading ? state.isEnrolling : false,
+          isDropping: keepMutationLoading ? state.isDropping : false,
+          errorMessage: error.toString().replaceFirst('Exception: ', ''),
+          clearSuccessMessage: successMessage == null,
+          successMessage: successMessage,
+          clearSelectedSectionId: clearSelectedSectionId,
+          clearDropId: !keepMutationLoading,
+        ),
+      );
+      return;
+    }
 
     final ServiceResult<List<CourseEnrollmentModel>> enrolledResult =
         results[0] as ServiceResult<List<CourseEnrollmentModel>>;
@@ -180,7 +209,7 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
         periodsResult.error?.message;
 
     if (firstError != null && firstError.isNotEmpty) {
-      emit(
+      _safeEmit(
         state.copyWith(
           availableCourses: List.unmodifiable(availableCourses),
           enrolledCourses: List.unmodifiable(enrolledCourses),
@@ -196,7 +225,7 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
       return;
     }
 
-    emit(
+    _safeEmit(
       state.copyWith(
         availableCourses: List.unmodifiable(availableCourses),
         enrolledCourses: List.unmodifiable(enrolledCourses),
@@ -211,7 +240,7 @@ class StudentRegistrationCubit extends Cubit<StudentRegistrationState> {
     );
 
     if (!keepMutationLoading) {
-      emit(
+      _safeEmit(
         state.copyWith(
           isEnrolling: false,
           isDropping: false,

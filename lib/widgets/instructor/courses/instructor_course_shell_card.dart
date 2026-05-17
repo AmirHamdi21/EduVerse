@@ -113,7 +113,8 @@ class InstructorCourseShellCard extends StatelessWidget {
                         _buildMetaChip(
                           isDark: isDark,
                           icon: Icons.groups_rounded,
-                          label: '${course.course.totalStudents}/${course.course.capacity}',
+                          label:
+                              '${course.course.totalStudents}/${course.course.capacity}',
                         ),
                         _buildMetaChip(
                           isDark: isDark,
@@ -150,8 +151,7 @@ class InstructorCourseShellCard extends StatelessWidget {
                               ),
                             ),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Open workspace',
@@ -603,7 +603,10 @@ class InstructorCourseShellCard extends StatelessWidget {
             items.add(
               PopupMenuItem<String>(
                 value: 'delete',
-                child: _buildActionRow(Icons.delete_outline_rounded, l10n.delete),
+                child: _buildActionRow(
+                  Icons.delete_outline_rounded,
+                  l10n.delete,
+                ),
               ),
             );
           }
@@ -638,7 +641,8 @@ class InstructorCourseShellCard extends StatelessWidget {
   String _subtitle() {
     final details = <String>[
       course.course.semester,
-      if (course.course.description.trim().isNotEmpty) course.course.description,
+      if (course.course.description.trim().isNotEmpty)
+        course.course.description,
     ];
     return details.join(' • ');
   }
@@ -690,11 +694,7 @@ class _ActionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        Icon(icon, size: 18),
-        const SizedBox(width: 10),
-        Text(label),
-      ],
+      children: [Icon(icon, size: 18), const SizedBox(width: 10), Text(label)],
     );
   }
 }

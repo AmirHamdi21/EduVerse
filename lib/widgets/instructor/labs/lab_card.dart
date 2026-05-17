@@ -142,7 +142,9 @@ class LabCard extends StatelessWidget {
                         onPressed: onDelete,
                         icon: const Icon(Icons.delete_outline),
                       ),
-                    if (canManage && onStatusChange != null && nextStatus != null)
+                    if (canManage &&
+                        onStatusChange != null &&
+                        nextStatus != null)
                       _StatusActionButton(
                         nextStatus: nextStatus,
                         onSelected: onStatusChange!,

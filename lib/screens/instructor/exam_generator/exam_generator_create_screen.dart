@@ -14,6 +14,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/exam_generator_service.dart';
 import '../../../services/api/question_bank_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/question_bank/question_bank_mutation_overlay.dart';
 import '../../../widgets/instructor/question_bank/question_form_menu_field.dart';
 import '../../../widgets/instructor/exam_generator/exam_generator_barrel.dart';
@@ -50,6 +51,10 @@ class _ExamGeneratorCreateView extends StatelessWidget {
     return Scaffold(
       backgroundColor: InstructorColors.background(isDark),
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/instructor/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
         title: Text(l10n.examGeneratorCreateDraft),
         actions: [
           IconButton(

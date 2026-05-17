@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../config/app_theme.dart';
+import '../../../utils/navigation/safe_back.dart';
 
 class InstructorNotificationsHeader extends StatelessWidget {
   final bool isDarkMode;
@@ -62,7 +63,7 @@ class InstructorNotificationsHeader extends StatelessWidget {
                   ),
                 ),
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  iosBackIcon(context),
                   size: 18,
                   color: isDarkMode
                       ? AppTheme.darkTextPrimary

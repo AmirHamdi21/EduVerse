@@ -1,9 +1,11 @@
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -272,9 +274,12 @@ class _GradingCenterScreenState extends State<GradingCenterScreen> {
           );
         }
 
-        return Scaffold(
-          backgroundColor: InstructorColors.background(isDark),
-          body: SafeArea(child: content),
+        return InstructorWalkthroughRouteMarker(
+          segmentId: InstructorWalkthroughIds.grading,
+          child: Scaffold(
+            backgroundColor: InstructorColors.background(isDark),
+            body: SafeArea(child: content),
+          ),
         );
       },
     );
@@ -285,9 +290,9 @@ class _GradingCenterScreenState extends State<GradingCenterScreen> {
       backgroundColor: InstructorColors.background(isDark),
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: _safeBackToDashboard,
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: InstructorColors.textPrimaryColor(isDark),
         ),
       ),
@@ -313,6 +318,10 @@ class _GradingCenterScreenState extends State<GradingCenterScreen> {
       floating: true,
       snap: true,
     );
+  }
+
+  void _safeBackToDashboard() {
+    safeBack(context, '/instructor/dashboard');
   }
 
   SliverToBoxAdapter _buildLoadingHeader(bool isDark) {
@@ -383,8 +392,18 @@ class _GradingCenterScreenState extends State<GradingCenterScreen> {
 
     return SliverMainAxisGroup(
       slivers: <Widget>[
-        SliverToBoxAdapter(child: _buildSummaryHeader(isDark, l10n)),
-        SliverToBoxAdapter(child: _buildFilterCard(isDark, l10n)),
+        SliverToBoxAdapter(
+          child: WalkthroughTarget(
+            id: InstructorWalkthroughIds.gradingHeader,
+            child: _buildSummaryHeader(isDark, l10n),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: WalkthroughTarget(
+            id: InstructorWalkthroughIds.gradingFilters,
+            child: _buildFilterCard(isDark, l10n),
+          ),
+        ),
         if (courseIds.isEmpty)
           SliverFillRemaining(
             hasScrollBody: false,
@@ -397,12 +416,19 @@ class _GradingCenterScreenState extends State<GradingCenterScreen> {
               delegate: SliverChildBuilderDelegate((context, index) {
                 final courseId = courseIds[index];
                 final entries = grouped[courseId] ?? const <_SubmissionEntry>[];
-                return Padding(
+                final card = Padding(
                   padding: EdgeInsets.only(
                     bottom: index == courseIds.length - 1 ? 0 : 16,
                   ),
                   child: _buildCourseSubmissionCard(isDark, l10n, entries),
                 );
+                if (index == 0) {
+                  return WalkthroughTarget(
+                    id: InstructorWalkthroughIds.gradingList,
+                    child: card,
+                  );
+                }
+                return card;
               }, childCount: courseIds.length),
             ),
           ),
@@ -1605,11 +1631,12 @@ class _GradingCenterScreenState extends State<GradingCenterScreen> {
                                             '')
                                         .isNotEmpty)
                                       OutlinedButton.icon(
-                                        onPressed: () => openDriveFilePreviewScreen(
-                                          sheetContext,
-                                          file: entry.submission.driveFile!,
-                                          isDark: isDark,
-                                        ),
+                                        onPressed: () =>
+                                            openDriveFilePreviewScreen(
+                                              sheetContext,
+                                              file: entry.submission.driveFile!,
+                                              isDark: isDark,
+                                            ),
                                         icon: const Icon(
                                           Icons.visibility_outlined,
                                         ),

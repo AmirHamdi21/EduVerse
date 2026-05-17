@@ -9,8 +9,8 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/office_hours_service.dart';
 import 'package:edu_verse/services/api/schedule_api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/shared/loading/calendar_screen_skeleton.dart';
-import 'package:edu_verse/widgets/ta/dashboard/ta_drawer.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +51,6 @@ class InstructorColors {
 }
 
 class _TACalendarScreenState extends State<TACalendarScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late final TACalendarCubit _calendarCubit;
 
   @override
@@ -81,8 +80,6 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
     return BlocProvider.value(
       value: _calendarCubit,
       child: Scaffold(
-        key: _scaffoldKey,
-        drawer: const TADrawer(currentRoute: '/ta/calendar'),
         backgroundColor: InstructorColors.background(isDark),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => _showAddEventSheet(isDark, l10n),
@@ -203,10 +200,10 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
       child: Row(
         children: [
           _buildUtilityButton(
-            onTap: () => _scaffoldKey.currentState?.openDrawer(),
+            onTap: () => safeBack(context, '/ta/dashboard'),
             isDark: isDark,
             child: Icon(
-              Icons.menu_rounded,
+              iosBackIcon(context),
               size: 18,
               color: InstructorColors.textPrimaryColor(isDark),
             ),

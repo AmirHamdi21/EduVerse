@@ -1,4 +1,4 @@
-package com.example.edu_verse
+package com.eduverse.app
 
 import io.flutter.embedding.android.FlutterActivity
 

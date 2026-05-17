@@ -17,9 +17,6 @@ class AnnouncementsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnouncementManagerScreen(
-      embedded: true,
-      initialCourseId: courseId,
-    );
+    return AnnouncementManagerScreen(embedded: true, initialCourseId: courseId);
   }
 }

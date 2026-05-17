@@ -79,7 +79,9 @@ class LabEditorInstructionFileUploaderState
     }
   }
 
-  Future<PendingLabInstructionUploadResult> uploadPendingFiles(int labId) async {
+  Future<PendingLabInstructionUploadResult> uploadPendingFiles(
+    int labId,
+  ) async {
     final pendingIndexes = <int>[];
     for (var index = 0; index < _items.length; index++) {
       final item = _items[index];
@@ -103,8 +105,9 @@ class LabEditorInstructionFileUploaderState
             failedNames.add(name);
             _items[index] = _items[index].copyWith(
               isUploading: false,
-              errorMessage:
-                  AppLocalizations.of(context).labEditorInstructionSaveFirst,
+              errorMessage: AppLocalizations.of(
+                context,
+              ).labEditorInstructionSaveFirst,
               pendingUpload: true,
               progress: 0,
             );
@@ -138,8 +141,9 @@ class LabEditorInstructionFileUploaderState
           setState(() {
             _items[index] = _items[index].copyWith(
               isUploading: false,
-              errorMessage:
-                  AppLocalizations.of(context).labEditorInstructionMissingFile,
+              errorMessage: AppLocalizations.of(
+                context,
+              ).labEditorInstructionMissingFile,
               pendingUpload: true,
               progress: 0,
             );
@@ -207,8 +211,9 @@ class LabEditorInstructionFileUploaderState
                         onPressed: _pickAndUpload,
                         style: FilledButton.styleFrom(
                           foregroundColor: _primaryColor,
-                          backgroundColor:
-                              _primaryColor.withValues(alpha: 0.12),
+                          backgroundColor: _primaryColor.withValues(
+                            alpha: 0.12,
+                          ),
                         ),
                         icon: const Icon(Icons.add_rounded),
                         label: Text(l10n.addFiles),
@@ -259,7 +264,8 @@ class LabEditorInstructionFileUploaderState
             _LabUploadItemTile(
               item: _items[index],
               useTAColors: widget.useTAColors,
-              onRetry: _items[index].localPath == null ||
+              onRetry:
+                  _items[index].localPath == null ||
                       _items[index].errorMessage == null
                   ? null
                   : () => _retryUpload(index),
@@ -342,7 +348,9 @@ class LabEditorInstructionFileUploaderState
     var changed = false;
     for (final file in widget.initialFiles) {
       final uniqueKey = _buildFileKey(file);
-      final index = _items.indexWhere((item) => item.uniqueFileKey == uniqueKey);
+      final index = _items.indexWhere(
+        (item) => item.uniqueFileKey == uniqueKey,
+      );
       if (index == -1) {
         _items.add(
           _LabUploadItem(
@@ -464,8 +472,9 @@ class LabEditorInstructionFileUploaderState
       }
       setState(() {
         _items[index] = _items[index].copyWith(
-          errorMessage:
-              AppLocalizations.of(context).labEditorInstructionMissingFile,
+          errorMessage: AppLocalizations.of(
+            context,
+          ).labEditorInstructionMissingFile,
           isUploading: false,
         );
       });
@@ -581,9 +590,7 @@ class LabEditorInstructionFileUploaderState
       builder: (context) => AlertDialog(
         title: Text(l10n.labEditorInstructionDeleteTitle),
         content: Text(
-          l10n.labEditorInstructionDeleteMessage(
-            item.uploadedFile!.fileName,
-          ),
+          l10n.labEditorInstructionDeleteMessage(item.uploadedFile!.fileName),
         ),
         actions: <Widget>[
           TextButton(
@@ -694,7 +701,8 @@ class LabEditorInstructionFileUploaderState
       if (instructionFile == null) {
         continue;
       }
-      final sameDriveId = instructionFile.driveId.trim().isNotEmpty &&
+      final sameDriveId =
+          instructionFile.driveId.trim().isNotEmpty &&
           instructionFile.driveId == file.driveId;
       final sameFileId =
           instructionFile.fileId > 0 &&
@@ -763,15 +771,19 @@ class _LabUploadItemTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final title = item.uploadedFile?.fileName ?? item.displayName ?? 'File';
-    final primaryColor =
-        useTAColors ? TAColors.primary : InstructorColors.primary;
-    final warningColor =
-        useTAColors ? TAColors.warning : InstructorColors.warning;
+    final primaryColor = useTAColors
+        ? TAColors.primary
+        : InstructorColors.primary;
+    final warningColor = useTAColors
+        ? TAColors.warning
+        : InstructorColors.warning;
     final errorColor = useTAColors ? TAColors.error : InstructorColors.error;
-    final errorLightColor =
-        useTAColors ? TAColors.errorLight : InstructorColors.errorLight;
-    final darkCardColor =
-        useTAColors ? TAColors.darkCard : InstructorColors.darkCard;
+    final errorLightColor = useTAColors
+        ? TAColors.errorLight
+        : InstructorColors.errorLight;
+    final darkCardColor = useTAColors
+        ? TAColors.darkCard
+        : InstructorColors.darkCard;
     final textPrimaryColor = useTAColors
         ? TAColors.textPrimaryColor(isDark)
         : InstructorColors.textPrimaryColor(isDark);
@@ -784,8 +796,8 @@ class _LabUploadItemTile extends StatelessWidget {
     final backgroundColor = item.errorMessage != null
         ? errorLightColor.withValues(alpha: isDark ? 0.10 : 0.55)
         : (isDark
-            ? darkCardColor.withValues(alpha: 0.72)
-            : Colors.white.withValues(alpha: 0.96));
+              ? darkCardColor.withValues(alpha: 0.72)
+              : Colors.white.withValues(alpha: 0.96));
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -902,9 +914,7 @@ class _LabUploadItemTile extends StatelessWidget {
                 onPressed: onDelete,
                 icon: const Icon(Icons.delete_outline_rounded),
                 label: Text(l10n.delete),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: errorColor,
-                ),
+                style: OutlinedButton.styleFrom(foregroundColor: errorColor),
               ),
             ],
           ),
@@ -912,10 +922,7 @@ class _LabUploadItemTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               l10n.labEditorInstructionPendingCaption,
-              style: TextStyle(
-                color: textSecondaryColor,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: textSecondaryColor, fontSize: 12),
             ),
           ],
         ],
@@ -966,7 +973,9 @@ class _LabUploadItem {
       instructionId: instructionId ?? this.instructionId,
       isUploading: isUploading ?? this.isUploading,
       progress: progress ?? this.progress,
-      errorMessage: clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
       pendingUpload: pendingUpload ?? this.pendingUpload,
       uniqueFileKey: uniqueFileKey ?? this.uniqueFileKey,
     );

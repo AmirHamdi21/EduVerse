@@ -6,6 +6,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/reports_model.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/reports/reports_barrel.dart';
 
 class ReportsAnalyticsScreen extends StatefulWidget {
@@ -660,9 +661,9 @@ class _ReportsAnalyticsScreenState extends State<ReportsAnalyticsScreen>
           ? ReportsColors.darkBackground
           : ReportsColors.lightBackground,
       leading: IconButton(
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => safeBack(context, '/instructor/dashboard'),
         icon: Icon(
-          Icons.arrow_back_ios_rounded,
+          iosBackIcon(context),
           color: ReportsColors.textPrimaryColor(isDark),
         ),
       ),

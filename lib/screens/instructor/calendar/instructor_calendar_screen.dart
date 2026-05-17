@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../bloc/instructor/instructor_calendar_cubit.dart';
@@ -13,6 +12,7 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/office_hours_service.dart';
 import '../../../services/api/schedule_api_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/calendar/instructor_add_event_sheet.dart';
 import '../../../widgets/instructor/calendar/instructor_event_details_sheet.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
@@ -189,13 +189,13 @@ class _InstructorCalendarView extends StatelessWidget {
       child: Row(
         children: [
           _buildUtilityButton(
-            onTap: () => context.pop(),
+            onTap: () => safeBack(context, '/instructor/dashboard'),
             isDark: isDark,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  iosBackIcon(context),
                   size: 16,
                   color: InstructorColors.textPrimaryColor(isDark),
                 ),

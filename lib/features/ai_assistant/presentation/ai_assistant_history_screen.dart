@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../features/walkthrough/role_walkthrough_cubit.dart';
+import '../../../features/walkthrough/student_walkthrough_registry.dart';
+import '../../../features/walkthrough/ta_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_models.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/shared/loading/skeleton_box.dart';
 import '../domain/ai_assistant_models.dart';
 import 'ai_assistant_cubit.dart';
@@ -27,16 +33,27 @@ class AiAssistantEntryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final roleTheme = AiAssistantRoleTheme.fromRole(role);
+    final historyScreen = AiAssistantHistoryScreen(
+      roleTheme: roleTheme,
+      launchMode: AiAssistantHistoryLaunchMode.entry,
+    );
     return BlocProvider(
       create: (_) => AiAssistantCubit(
         role: role,
         userId: userId,
         userDisplayName: userDisplayName,
       )..initialize(),
-      child: AiAssistantHistoryScreen(
-        roleTheme: roleTheme,
-        launchMode: AiAssistantHistoryLaunchMode.entry,
-      ),
+      child: switch (role) {
+        AiAssistantRole.student => StudentWalkthroughRouteMarker(
+          segmentId: StudentWalkthroughIds.ai,
+          child: historyScreen,
+        ),
+        AiAssistantRole.ta => TAWalkthroughRouteMarker(
+          segmentId: TAWalkthroughIds.ai,
+          child: historyScreen,
+        ),
+        AiAssistantRole.instructor => historyScreen,
+      },
     );
   }
 }
@@ -64,6 +81,27 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final walkthroughState = context.watch<RoleWalkthroughCubit>().state;
+    final isStudentAiWalkthrough =
+        walkthroughState.isActive &&
+        walkthroughState.role == WalkthroughRole.student &&
+        walkthroughState.segment?.id == StudentWalkthroughIds.ai;
+    final isTaAiWalkthrough =
+        walkthroughState.isActive &&
+        walkthroughState.role == WalkthroughRole.ta &&
+        walkthroughState.segment?.id == TAWalkthroughIds.ai;
+    final composerTargetId = isStudentAiWalkthrough
+        ? StudentWalkthroughIds.aiComposer
+        : isTaAiWalkthrough
+        ? TAWalkthroughIds.aiComposer
+        : null;
+    final newChatButton = FloatingActionButton.extended(
+      onPressed: () => _showAgentPicker(context),
+      backgroundColor: widget.roleTheme.primary,
+      foregroundColor: Colors.white,
+      icon: const Icon(Icons.add_rounded),
+      label: Text(l10n.aiAssistantNewChat),
+    );
 
     return Scaffold(
       backgroundColor: isDark
@@ -72,21 +110,44 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          onPressed: () => safeBack(context, _fallbackRoute),
+          icon: Icon(iosBackIcon(context)),
+        ),
         title: Text(l10n.aiAssistantHistoryTitle),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAgentPicker(context),
-        backgroundColor: widget.roleTheme.primary,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add_rounded),
-        label: Text(l10n.aiAssistantNewChat),
-      ),
+      floatingActionButton: composerTargetId != null
+          ? WalkthroughTarget(
+              id: composerTargetId,
+              shape: WalkthroughTargetShape.roundedRect,
+              padding: const EdgeInsets.all(8),
+              child: newChatButton,
+            )
+          : newChatButton,
       body: BlocBuilder<AiAssistantCubit, AiAssistantState>(
         builder: (context, state) {
           if (state.isBootstrapping) {
             return _HistoryLoadingView(roleTheme: widget.roleTheme);
           }
-          final filteredEntries = _filteredEntries(state.history);
+          final showWalkthroughDemo =
+              (isStudentAiWalkthrough || isTaAiWalkthrough) &&
+              state.history.isEmpty;
+          final history = showWalkthroughDemo
+              ? _walkthroughDemoHistory(l10n, state)
+              : state.history;
+          final historyTargetId = isStudentAiWalkthrough
+              ? StudentWalkthroughIds.aiMessages
+              : isTaAiWalkthrough
+              ? TAWalkthroughIds.aiHistory
+              : null;
+          final quickTargetId = isStudentAiWalkthrough
+              ? StudentWalkthroughIds.aiQuick
+              : isTaAiWalkthrough
+              ? TAWalkthroughIds.aiStarters
+              : null;
+          final filteredEntries = showWalkthroughDemo
+              ? history
+              : _filteredEntries(history);
           final pinnedEntries = filteredEntries
               .where((entry) => entry.isPinned)
               .toList(growable: false);
@@ -97,22 +158,24 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 104),
             children: <Widget>[
-              _HistoryHeroHeader(
-                roleTheme: widget.roleTheme,
-                totalChats: state.history.length,
-                pinnedChats: state.history
-                    .where((entry) => entry.isPinned)
-                    .length,
-                providersUsed: state.history
-                    .map((entry) => entry.providerId)
-                    .toSet()
-                    .length,
-                updatedToday: state.history.where((entry) {
-                  final now = DateTime.now();
-                  return entry.updatedAt.year == now.year &&
-                      entry.updatedAt.month == now.month &&
-                      entry.updatedAt.day == now.day;
-                }).length,
+              _maybeStudentAiTarget(
+                isActive: isStudentAiWalkthrough,
+                targetId: StudentWalkthroughIds.aiHeader,
+                child: _HistoryHeroHeader(
+                  roleTheme: widget.roleTheme,
+                  totalChats: history.length,
+                  pinnedChats: history.where((entry) => entry.isPinned).length,
+                  providersUsed: history
+                      .map((entry) => entry.providerId)
+                      .toSet()
+                      .length,
+                  updatedToday: history.where((entry) {
+                    final now = DateTime.now();
+                    return entry.updatedAt.year == now.year &&
+                        entry.updatedAt.month == now.month &&
+                        entry.updatedAt.day == now.day;
+                  }).length,
+                ),
               ),
               const SizedBox(height: 16),
               _HistoryFilterCard(
@@ -126,7 +189,22 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
                     setState(() => _providerFilter = value),
               ),
               const SizedBox(height: 16),
-              if (state.history.isEmpty)
+              if (showWalkthroughDemo) ...<Widget>[
+                _SectionHeader(title: l10n.aiAssistantRecentChats),
+                const SizedBox(height: 12),
+                _buildEntryTile(
+                  filteredEntries.first,
+                  targetId: historyTargetId,
+                  disableActions: true,
+                ),
+                if (filteredEntries.length > 1)
+                  _buildEntryTile(filteredEntries[1], disableActions: true),
+                if (quickTargetId != null)
+                  _WalkthroughAiQuickPromptPreview(
+                    roleTheme: widget.roleTheme,
+                    targetId: quickTargetId,
+                  ),
+              ] else if (state.history.isEmpty)
                 _EmptyHistoryCard(roleTheme: widget.roleTheme)
               else if (filteredEntries.isEmpty)
                 _NoMatchesCard(roleTheme: widget.roleTheme)
@@ -135,17 +213,47 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
                     pinnedEntries.isNotEmpty) ...<Widget>[
                   _SectionHeader(title: l10n.aiAssistantPinnedChats),
                   const SizedBox(height: 12),
-                  ...pinnedEntries.map(_buildEntryTile),
+                  for (var index = 0; index < pinnedEntries.length; index++)
+                    _buildEntryTile(
+                      pinnedEntries[index],
+                      targetId:
+                          (isStudentAiWalkthrough || isTaAiWalkthrough) &&
+                              index == 0
+                          ? historyTargetId
+                          : null,
+                    ),
                   const SizedBox(height: 8),
                 ],
                 if (_bucketFilter == _HistoryBucketFilter.all &&
                     recentEntries.isNotEmpty) ...<Widget>[
                   _SectionHeader(title: l10n.aiAssistantRecentChats),
                   const SizedBox(height: 12),
-                  ...recentEntries.map(_buildEntryTile),
+                  for (var index = 0; index < recentEntries.length; index++)
+                    _buildEntryTile(
+                      recentEntries[index],
+                      targetId:
+                          (isStudentAiWalkthrough || isTaAiWalkthrough) &&
+                              pinnedEntries.isEmpty &&
+                              index == 0
+                          ? historyTargetId
+                          : null,
+                    ),
                 ],
                 if (_bucketFilter != _HistoryBucketFilter.all)
-                  ...filteredEntries.map(_buildEntryTile),
+                  for (var index = 0; index < filteredEntries.length; index++)
+                    _buildEntryTile(
+                      filteredEntries[index],
+                      targetId:
+                          (isStudentAiWalkthrough || isTaAiWalkthrough) &&
+                              index == 0
+                          ? historyTargetId
+                          : null,
+                    ),
+                if (quickTargetId != null)
+                  _WalkthroughAiQuickPromptPreview(
+                    roleTheme: widget.roleTheme,
+                    targetId: quickTargetId,
+                  ),
               ],
             ],
           );
@@ -154,15 +262,41 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
     );
   }
 
-  Widget _buildEntryTile(AiConversationIndexEntry entry) {
-    return Padding(
+  String get _fallbackRoute {
+    return switch (widget.roleTheme.role) {
+      AiAssistantRole.student => '/dashboard',
+      AiAssistantRole.instructor => '/instructor/dashboard',
+      AiAssistantRole.ta => '/ta/dashboard',
+    };
+  }
+
+  Widget _buildEntryTile(
+    AiConversationIndexEntry entry, {
+    String? targetId,
+    bool disableActions = false,
+  }) {
+    Widget tile = Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: _HistoryTile(
         entry: entry,
         roleTheme: widget.roleTheme,
-        onTap: () => _openConversation(context, entry.id),
-        onMore: () => _showActions(context, entry),
+        onTap: disableActions
+            ? () {}
+            : () => _openConversation(context, entry.id),
+        onMore: disableActions ? () {} : () => _showActions(context, entry),
       ),
+    );
+    if (disableActions) {
+      tile = IgnorePointer(child: tile);
+    }
+    if (targetId == null) {
+      return tile;
+    }
+    return WalkthroughTarget(
+      id: targetId,
+      shape: WalkthroughTargetShape.roundedRect,
+      padding: const EdgeInsets.all(8),
+      child: tile,
     );
   }
 
@@ -186,6 +320,77 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
     final sorted = providerFiltered.toList(growable: false)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return sorted;
+  }
+
+  List<AiConversationIndexEntry> _walkthroughDemoHistory(
+    AppLocalizations l10n,
+    AiAssistantState state,
+  ) {
+    final now = DateTime.now();
+    if (state.role == AiAssistantRole.ta) {
+      return <AiConversationIndexEntry>[
+        AiConversationIndexEntry(
+          id: 'walkthrough-ta-ai-feedback',
+          title: l10n.taWalkthroughAiDemoFeedbackTitle,
+          updatedAt: now.subtract(const Duration(minutes: 14)),
+          role: state.role,
+          userId: state.userId ?? 0,
+          providerId: AiProviderId.gemini,
+          modelId: 'gemini-1.5-flash',
+          preview: l10n.taWalkthroughAiDemoFeedbackPreview,
+          isPinned: true,
+        ),
+        AiConversationIndexEntry(
+          id: 'walkthrough-ta-ai-lab',
+          title: l10n.taWalkthroughAiDemoLabTitle,
+          updatedAt: now.subtract(const Duration(hours: 2)),
+          role: state.role,
+          userId: state.userId ?? 0,
+          providerId: AiProviderId.groq,
+          modelId: 'llama-3.1-8b-instant',
+          preview: l10n.taWalkthroughAiDemoLabPreview,
+        ),
+      ];
+    }
+    return <AiConversationIndexEntry>[
+      AiConversationIndexEntry(
+        id: 'walkthrough-student-ai-study-plan',
+        title: l10n.studentWalkthroughAiDemoStudyTitle,
+        updatedAt: now.subtract(const Duration(minutes: 18)),
+        role: state.role,
+        userId: state.userId ?? 0,
+        providerId: AiProviderId.gemini,
+        modelId: 'gemini-1.5-flash',
+        preview: l10n.studentWalkthroughAiDemoStudyPreview,
+        isPinned: true,
+      ),
+      AiConversationIndexEntry(
+        id: 'walkthrough-student-ai-lab-recap',
+        title: l10n.studentWalkthroughAiDemoLabTitle,
+        updatedAt: now.subtract(const Duration(hours: 3)),
+        role: state.role,
+        userId: state.userId ?? 0,
+        providerId: AiProviderId.groq,
+        modelId: 'llama-3.1-8b-instant',
+        preview: l10n.studentWalkthroughAiDemoLabPreview,
+      ),
+    ];
+  }
+
+  Widget _maybeStudentAiTarget({
+    required bool isActive,
+    required String targetId,
+    required Widget child,
+  }) {
+    if (!isActive) {
+      return child;
+    }
+    return WalkthroughTarget(
+      id: targetId,
+      shape: WalkthroughTargetShape.roundedRect,
+      padding: const EdgeInsets.all(8),
+      child: child,
+    );
   }
 
   Future<void> _openConversation(
@@ -944,6 +1149,144 @@ class _SectionHeader extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+    );
+  }
+}
+
+class _WalkthroughAiQuickPromptPreview extends StatelessWidget {
+  const _WalkthroughAiQuickPromptPreview({
+    required this.roleTheme,
+    required this.targetId,
+  });
+
+  final AiAssistantRoleTheme roleTheme;
+  final String targetId;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final prompts = <({IconData icon, String label, Color color})>[
+      (
+        icon: Icons.notes_rounded,
+        label: l10n.aiAssistantActionSummarize,
+        color: roleTheme.primary,
+      ),
+      (
+        icon: Icons.psychology_rounded,
+        label: l10n.aiAssistantActionExplain,
+        color: const Color(0xFF06B6D4),
+      ),
+      (
+        icon: Icons.quiz_rounded,
+        label: l10n.aiAssistantActionPractice,
+        color: const Color(0xFF8B5CF6),
+      ),
+    ];
+
+    return WalkthroughTarget(
+      id: targetId,
+      shape: WalkthroughTargetShape.roundedRect,
+      padding: const EdgeInsets.all(8),
+      child: IgnorePointer(
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF111827) : Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: roleTheme.primary.withValues(alpha: 0.12),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: roleTheme.primary.withValues(alpha: 0.06),
+                blurRadius: 20,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      gradient: roleTheme.headerGradient,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(Icons.bolt_rounded, color: Colors.white),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          l10n.aiAssistantToolsQuickPrompts,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.aiAssistantPromptShortcutsSubtitle,
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white70
+                                : const Color(0xFF64748B),
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: prompts
+                    .map(
+                      (prompt) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 9,
+                        ),
+                        decoration: BoxDecoration(
+                          color: prompt.color.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: prompt.color.withValues(alpha: 0.16),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(prompt.icon, size: 16, color: prompt.color),
+                            const SizedBox(width: 6),
+                            Text(
+                              prompt.label,
+                              style: TextStyle(
+                                color: prompt.color,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(growable: false),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

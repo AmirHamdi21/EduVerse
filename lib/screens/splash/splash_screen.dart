@@ -156,7 +156,7 @@ class _SplashScreenState extends State<SplashScreen>
           if (state is AuthAuthenticated) {
             context.go(AuthRoleResolver.dashboardRouteForUser(state.user));
           } else if (state is AuthUnauthenticated) {
-            context.go('/login');
+            context.go('/onboarding');
           }
         });
       },

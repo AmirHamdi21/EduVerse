@@ -4,10 +4,13 @@ import '../../models/notifications/notification_model.dart';
 
 enum NotificationLoadingStatus { initial, loading, loaded, error }
 
+const Object _unset = Object();
+
 class NotificationState extends Equatable {
   final NotificationLoadingStatus status;
   final List<NotificationModel> notifications;
   final int unreadCount;
+  final int? sessionUserId;
   final String? errorMessage;
   final NotificationCategory selectedCategory;
   final String searchQuery;
@@ -18,6 +21,7 @@ class NotificationState extends Equatable {
     this.status = NotificationLoadingStatus.initial,
     this.notifications = const [],
     this.unreadCount = 0,
+    this.sessionUserId,
     this.errorMessage,
     this.selectedCategory = NotificationCategory.all,
     this.searchQuery = '',
@@ -29,7 +33,8 @@ class NotificationState extends Equatable {
     NotificationLoadingStatus? status,
     List<NotificationModel>? notifications,
     int? unreadCount,
-    String? errorMessage,
+    Object? sessionUserId = _unset,
+    Object? errorMessage = _unset,
     NotificationCategory? selectedCategory,
     String? searchQuery,
     bool? isSearching,
@@ -39,7 +44,12 @@ class NotificationState extends Equatable {
       status: status ?? this.status,
       notifications: notifications ?? this.notifications,
       unreadCount: unreadCount ?? this.unreadCount,
-      errorMessage: errorMessage,
+      sessionUserId: sessionUserId == _unset
+          ? this.sessionUserId
+          : sessionUserId as int?,
+      errorMessage: errorMessage == _unset
+          ? this.errorMessage
+          : errorMessage as String?,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       searchQuery: searchQuery ?? this.searchQuery,
       isSearching: isSearching ?? this.isSearching,
@@ -102,6 +112,7 @@ class NotificationState extends Equatable {
     status,
     notifications,
     unreadCount,
+    sessionUserId,
     errorMessage,
     selectedCategory,
     searchQuery,

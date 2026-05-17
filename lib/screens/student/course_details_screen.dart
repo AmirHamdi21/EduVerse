@@ -9,12 +9,15 @@ import '../../features/courses/bloc/course_detail/course_detail_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/course_ui_utils.dart';
+import '../../features/walkthrough/student_walkthrough_registry.dart';
+import '../../features/walkthrough/walkthrough_target.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/core/course_structure_model.dart';
 import '../../models/courses/instructor_assignment_model.dart';
 import '../../models/materials/course_material_model.dart';
 import '../../models/ta/ta_assignment_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/course_details/announcements_tab_content.dart';
 import '../../widgets/student/course_details/assignments_tab_content.dart';
 import '../../widgets/student/course_details/course_tab_content.dart';
@@ -215,97 +218,119 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             ? const Color(0xFF1A1A2E)
             : const Color(0xFFF5F7FA);
 
-        return PopScope<Object?>(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (!didPop) {
-              _handleBackPressed();
-            }
-          },
-          child: Scaffold(
-            backgroundColor: bgColor,
-            body: BlocProvider.value(
-              value: _courseDetailBloc,
-              child: BlocConsumer<CourseDetailBloc, CourseDetailState>(
-                listenWhen: (previous, current) =>
-                    previous.error != current.error ||
-                    previous.bookingMessage != current.bookingMessage,
-                listener: (context, detailState) {
-                  if (detailState.error != null &&
-                      detailState.error!.isNotEmpty) {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        SnackBar(content: Text(detailState.error!)),
-                      );
-                  } else if (detailState.bookingMessage != null &&
-                      detailState.bookingMessage!.isNotEmpty) {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        SnackBar(content: Text(detailState.bookingMessage!)),
-                      );
-                  }
-                },
-                builder: (context, detailState) {
-                  final l10n = AppLocalizations.of(context);
-                  final selectedTabIndex = _normalizeTabIndex(
-                    detailState.selectedTabIndex,
-                  );
-                  final tabs = _buildTabs(l10n);
+        return StudentWalkthroughRouteMarker(
+          segmentId: StudentWalkthroughIds.courseDetails,
+          child: PopScope<Object?>(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                _handleBackPressed();
+              }
+            },
+            child: Scaffold(
+              backgroundColor: bgColor,
+              body: BlocProvider.value(
+                value: _courseDetailBloc,
+                child: BlocConsumer<CourseDetailBloc, CourseDetailState>(
+                  listenWhen: (previous, current) =>
+                      previous.error != current.error ||
+                      previous.bookingMessage != current.bookingMessage,
+                  listener: (context, detailState) {
+                    if (detailState.error != null &&
+                        detailState.error!.isNotEmpty) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(content: Text(detailState.error!)),
+                        );
+                    } else if (detailState.bookingMessage != null &&
+                        detailState.bookingMessage!.isNotEmpty) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(content: Text(detailState.bookingMessage!)),
+                        );
+                    }
+                  },
+                  builder: (context, detailState) {
+                    final l10n = AppLocalizations.of(context);
+                    final selectedTabIndex = _normalizeTabIndex(
+                      detailState.selectedTabIndex,
+                    );
+                    final tabs = _buildTabs(l10n);
 
-                  return IgnorePointer(
-                    ignoring: _isPreparingExit,
-                    child: CustomScrollView(
-                      controller: _scrollController,
-                      physics: _isPreparingExit
-                          ? const NeverScrollableScrollPhysics()
-                          : null,
-                      slivers: [
-                      SliverToBoxAdapter(
-                        child: _buildTopChrome(
-                          context,
-                          isDark,
-                          detailState,
-                          l10n,
-                        ),
-                      ),
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _CourseDetailTabsHeaderDelegate(
-                          height: 78,
-                          child: Container(
-                            color: bgColor,
-                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
-                            child: _CourseDetailTabStrip(
-                              tabs: tabs,
-                              selectedIndex: selectedTabIndex,
-                              isDark: isDark,
-                              onTap: (index) {
-                                context.read<CourseDetailBloc>().add(
-                                  SwitchTab(tabIndex: index),
-                                );
-                              },
+                    return IgnorePointer(
+                      ignoring: _isPreparingExit,
+                      child: CustomScrollView(
+                        controller: _scrollController,
+                        physics: _isPreparingExit
+                            ? const NeverScrollableScrollPhysics()
+                            : null,
+                        slivers: [
+                          SliverToBoxAdapter(
+                            child: WalkthroughTarget(
+                              id: StudentWalkthroughIds.courseDetailsHero,
+                              child: _buildTopChrome(
+                                context,
+                                isDark,
+                                detailState,
+                                l10n,
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-                          child: _buildSelectedTabContent(
-                            context,
-                            selectedTabIndex,
-                            isDark,
-                            detailState,
-                            l10n,
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: _CourseDetailTabsHeaderDelegate(
+                              height: 78,
+                              child: Container(
+                                color: bgColor,
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  12,
+                                  16,
+                                  10,
+                                ),
+                                child: WalkthroughTarget(
+                                  id: StudentWalkthroughIds.courseDetailsTabs,
+                                  child: _CourseDetailTabStrip(
+                                    tabs: tabs,
+                                    selectedIndex: selectedTabIndex,
+                                    isDark: isDark,
+                                    onTap: (index) {
+                                      context.read<CourseDetailBloc>().add(
+                                        SwitchTab(tabIndex: index),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                16,
+                                18,
+                                16,
+                                28,
+                              ),
+                              child: WalkthroughTarget(
+                                id: StudentWalkthroughIds.courseDetailsContent,
+                                child: _buildSelectedTabContent(
+                                  context,
+                                  selectedTabIndex,
+                                  isDark,
+                                  detailState,
+                                  l10n,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      ],
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -459,10 +484,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           courseId: _resolvedCourseId,
         );
       case _labsTabIndex:
-        return LabsTabContent(
-          isDark: isDark,
-          courseId: _resolvedCourseId,
-        );
+        return LabsTabContent(isDark: isDark, courseId: _resolvedCourseId);
       case _prerequisitesTabIndex:
         return PrerequisitesTabContent(isDark: isDark);
       default:
@@ -491,7 +513,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             child: Row(
               children: [
                 _buildTopIconButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
+                  icon: iosBackIcon(context),
                   isDark: isDark,
                   backgroundColor: themeButtonColor,
                   onTap: _handleBackPressed,
@@ -1273,7 +1295,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   mainAxisExtent: columns == 1 ? 64 : 72,
                 ),
                 itemBuilder: (context, index) {
-              final chip = infoChips[index];
+                  final chip = infoChips[index];
                   return Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -1461,11 +1483,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
       if (!mounted) {
         return;
       }
-      if (context.canPop()) {
-        context.pop();
-      } else {
-        context.go('/courses');
-      }
+      safeBack(context, '/dashboard');
     });
   }
 
@@ -1513,7 +1531,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 height: 56,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
-                  gradient: const LinearGradient(colors: _studentAccentGradient),
+                  gradient: const LinearGradient(
+                    colors: _studentAccentGradient,
+                  ),
                 ),
                 child: const Icon(
                   Icons.person_rounded,

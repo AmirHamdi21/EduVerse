@@ -7,8 +7,8 @@ import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
 import 'package:edu_verse/bloc/instructor/instructor_courses_state.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
-import 'package:go_router/go_router.dart';
 
 class InstructorQuizEditScreen extends StatefulWidget {
   final QuizModel quiz;
@@ -160,7 +160,9 @@ class _EditState extends State<InstructorQuizEditScreen>
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                       child: Row(
                         children: [
-                          _headerBtn(() => context.pop()),
+                          _headerBtn(
+                            () => safeBack(context, '/instructor/dashboard'),
+                          ),
                           const SizedBox(width: 14),
                           Expanded(
                             child: Column(
@@ -247,11 +249,7 @@ class _EditState extends State<InstructorQuizEditScreen>
     ),
     child: IconButton(
       onPressed: onTap,
-      icon: const Icon(
-        Icons.arrow_back_ios_rounded,
-        color: Colors.white,
-        size: 18,
-      ),
+      icon: Icon(iosBackIcon(context), color: Colors.white, size: 18),
     ),
   );
 
@@ -814,7 +812,7 @@ class _EditState extends State<InstructorQuizEditScreen>
           ),
         ),
       );
-      context.pop();
+      safeBack(context, '/instructor/dashboard');
     }
   }
 

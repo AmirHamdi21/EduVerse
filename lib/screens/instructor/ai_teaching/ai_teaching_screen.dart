@@ -6,6 +6,7 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../models/instructor/ai_teaching_model.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/ai_teaching/ai_teaching_barrel.dart';
 
 /// AI Teaching Assistant Screen
@@ -356,10 +357,10 @@ What specific assistance would you like me to provide?''';
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_rounded,
+          iosBackIcon(context),
           color: AITeachingColors.textPrimaryColor(isDark),
         ),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => safeBack(context, '/instructor/dashboard'),
       ),
       title: Row(
         children: [

@@ -6,6 +6,7 @@ import '../../../bloc/search/search_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/student/search/search_category_chips.dart';
 import '../../../widgets/student/search/search_recent_section.dart';
 import '../../../widgets/student/search/search_quick_actions.dart';
@@ -110,7 +111,7 @@ class _OverallSearchScreenState extends State<OverallSearchScreen>
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.pop(),
+            onTap: () => safeBack(context, '/dashboard'),
             child: Container(
               width: 40,
               height: 40,
@@ -121,7 +122,7 @@ class _OverallSearchScreenState extends State<OverallSearchScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                Icons.arrow_back_ios_new_rounded,
+                iosBackIcon(context),
                 color: isDark ? Colors.white : const Color(0xFF0F172A),
                 size: 20,
               ),

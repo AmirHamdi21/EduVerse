@@ -9,6 +9,7 @@ import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/responsive.dart';
 import '../../config/app_theme.dart';
 import '../../models/assignments/assignment_model.dart';
+import '../../utils/navigation/safe_back.dart';
 import '../../widgets/student/assignments/assignment_detail_body.dart';
 import '../../widgets/student/assignments/submission_form_sheet.dart';
 
@@ -51,6 +52,10 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: isDark ? Colors.white : const Color(0xFF1E293B),
+            leading: IconButton(
+              onPressed: () => safeBack(context, '/dashboard'),
+              icon: Icon(iosBackIcon(context)),
+            ),
             title: Text(
               'Assignment Details',
               style: TextStyle(

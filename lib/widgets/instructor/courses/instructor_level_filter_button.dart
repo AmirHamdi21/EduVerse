@@ -81,7 +81,10 @@ class InstructorLevelFilterButton extends StatelessWidget {
 
               return Container(
                 width: bounded ? double.infinity : null,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: InstructorCoursesTheme.cardBackground(isDark),
                   borderRadius: BorderRadius.circular(20),
@@ -93,7 +96,9 @@ class InstructorLevelFilterButton extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.18 : 0.04,
+                      ),
                       blurRadius: 14,
                       offset: const Offset(0, 4),
                     ),
@@ -140,7 +145,9 @@ class InstructorLevelFilterButton extends StatelessWidget {
                             style: TextStyle(
                               color: isActive
                                   ? InstructorCoursesTheme.accentPurple
-                                  : InstructorCoursesTheme.secondaryText(isDark),
+                                  : InstructorCoursesTheme.secondaryText(
+                                      isDark,
+                                    ),
                               fontSize: 11.5,
                               fontWeight: isActive
                                   ? FontWeight.w700

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../bloc/attendance/instructor_attendance_cubit.dart';
 import '../../../bloc/attendance/instructor_attendance_state.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/attendance/attendance_session_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
@@ -58,17 +59,33 @@ class SharedAttendanceTheme {
   });
 }
 
+class SharedAttendanceWalkthroughTargets {
+  const SharedAttendanceWalkthroughTargets({
+    required this.header,
+    required this.controls,
+    required this.roster,
+  });
+
+  final String header;
+  final String controls;
+  final String roster;
+}
+
 class SharedAttendanceManagerScreen extends StatelessWidget {
   const SharedAttendanceManagerScreen({
     super.key,
     required this.isDark,
     required this.theme,
     this.embedded = false,
+    this.fallbackRoute = '/dashboard',
+    this.walkthroughTargets,
   });
 
   final bool isDark;
   final SharedAttendanceTheme theme;
   final bool embedded;
+  final String fallbackRoute;
+  final SharedAttendanceWalkthroughTargets? walkthroughTargets;
 
   @override
   Widget build(BuildContext context) {
@@ -82,54 +99,51 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
                 InstructorAttendanceCubit,
                 InstructorAttendanceState
               >(
-                  listener: (context, state) {
-                    final message = (state.error ?? state.aiError ?? '').trim();
-                    if (message.isEmpty) {
-                      return;
-                    }
+                listener: (context, state) {
+                  final message = (state.error ?? state.aiError ?? '').trim();
+                  if (message.isEmpty) {
+                    return;
+                  }
 
-                    final backgroundColor =
-                        (state.aiError ?? '').trim().isNotEmpty
-                        ? theme.warning
-                        : theme.error;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(message),
-                        backgroundColor: backgroundColor,
-                      ),
+                  final backgroundColor =
+                      (state.aiError ?? '').trim().isNotEmpty
+                      ? theme.warning
+                      : theme.error;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                      backgroundColor: backgroundColor,
+                    ),
+                  );
+                },
+                builder: (context, state) {
+                  if (state.isLoading && state.teachingSections.isEmpty) {
+                    return _AttendanceLoadingState(
+                      isDark: isDark,
+                      theme: theme,
                     );
-                  },
-                  builder: (context, state) {
-                    if (state.isLoading && state.teachingSections.isEmpty) {
-                      return _AttendanceLoadingState(
-                        isDark: isDark,
-                        theme: theme,
-                      );
-                    }
+                  }
 
-                    return LayoutBuilder(
-                      builder: (context, constraints) {
-                        final wide = constraints.maxWidth >= 860;
-                        final l10n = AppLocalizations.of(context);
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final wide = constraints.maxWidth >= 860;
+                      final l10n = AppLocalizations.of(context);
 
-                        return Column(
-                          children: <Widget>[
-                            if (!embedded)
-                              _TopBar(
-                                isDark: isDark,
-                                theme: theme,
-                                title: theme.title,
-                                onBack: () => context.pop(),
-                              ),
-                            Expanded(
-                              child: ListView(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  8,
-                                  16,
-                                  32,
-                                ),
-                                children: <Widget>[
+                      return Column(
+                        children: <Widget>[
+                          if (!embedded)
+                            _TopBar(
+                              isDark: isDark,
+                              theme: theme,
+                              title: theme.title,
+                              onBack: () => _leaveAttendanceScreen(context),
+                            ),
+                          Expanded(
+                            child: ListView(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+                              children: <Widget>[
+                                _maybeTarget(
+                                  walkthroughTargets?.header,
                                   _HeroCard(
                                     isDark: isDark,
                                     theme: theme,
@@ -145,74 +159,89 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
                                       state,
                                     ),
                                   ),
-                                  if (state.view !=
-                                      InstructorAttendanceView
-                                          .roster) ...<Widget>[
-                                    const SizedBox(height: 12),
+                                ),
+                                if (state.view !=
+                                    InstructorAttendanceView
+                                        .roster) ...<Widget>[
+                                  const SizedBox(height: 12),
+                                  _maybeTarget(
+                                    walkthroughTargets?.controls,
                                     _AttendanceFilters(
                                       isDark: isDark,
                                       theme: theme,
                                       state: state,
                                     ),
-                                  ],
-                                  const SizedBox(height: 12),
-                                  if (state.view ==
-                                      InstructorAttendanceView.roster)
+                                  ),
+                                ],
+                                const SizedBox(height: 12),
+                                if (state.view ==
+                                    InstructorAttendanceView.roster)
+                                  _maybeTarget(
+                                    walkthroughTargets?.roster,
                                     _RosterView(
                                       isDark: isDark,
                                       theme: theme,
                                       state: state,
                                       wide: wide,
-                                    )
-                                  else if (state.uiMode ==
-                                          AttendanceUiMode.lecture &&
-                                      state.view ==
-                                          InstructorAttendanceView.section)
-                                    _LectureSectionView(
-                                      isDark: isDark,
-                                      theme: theme,
-                                      state: state,
-                                      wide: wide,
-                                    )
-                                  else if (state.uiMode ==
-                                      AttendanceUiMode.sessions)
-                                    _SessionsModeView(
-                                      isDark: isDark,
-                                      theme: theme,
-                                      state: state,
-                                      wide: wide,
-                                    )
-                                  else
-                                    _ClassesView(
-                                      isDark: isDark,
-                                      theme: theme,
-                                      state: state,
-                                      wide: wide,
                                     ),
-                                ],
-                              ),
+                                  )
+                                else if (state.uiMode ==
+                                        AttendanceUiMode.lecture &&
+                                    state.view ==
+                                        InstructorAttendanceView.section)
+                                  _LectureSectionView(
+                                    isDark: isDark,
+                                    theme: theme,
+                                    state: state,
+                                    wide: wide,
+                                  )
+                                else if (state.uiMode ==
+                                    AttendanceUiMode.sessions)
+                                  _SessionsModeView(
+                                    isDark: isDark,
+                                    theme: theme,
+                                    state: state,
+                                    wide: wide,
+                                  )
+                                else
+                                  _ClassesView(
+                                    isDark: isDark,
+                                    theme: theme,
+                                    state: state,
+                                    wide: wide,
+                                  ),
+                              ],
                             ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
         ),
       ],
     );
 
     if (embedded) {
-      return Container(
-        color: theme.background(isDark),
-        child: content,
-      );
+      return Container(color: theme.background(isDark), child: content);
     }
 
-    return Scaffold(
-      backgroundColor: theme.background(isDark),
-      body: content,
-    );
+    return Scaffold(backgroundColor: theme.background(isDark), body: content);
+  }
+
+  Widget _maybeTarget(String? id, Widget child) {
+    if (id == null || id.isEmpty) return child;
+    return WalkthroughTarget(id: id, child: child);
+  }
+
+  void _leaveAttendanceScreen(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
+    context.go(fallbackRoute);
   }
 
   String _heroTitle(AppLocalizations l10n, InstructorAttendanceState state) {
@@ -2932,7 +2961,7 @@ Future<void> _showEditSessionSheet(
                     children: <Widget>[
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () => context.pop(),
+                          onPressed: () => Navigator.of(context).maybePop(),
                           child: Text(l10n.cancel),
                         ),
                       ),
@@ -2946,7 +2975,7 @@ Future<void> _showEditSessionSheet(
                               sessionType: typeNotifier.value,
                             );
                             if (context.mounted) {
-                              context.pop();
+                              await Navigator.of(context).maybePop();
                             }
                           },
                           style: ElevatedButton.styleFrom(

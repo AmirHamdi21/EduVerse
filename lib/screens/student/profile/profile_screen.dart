@@ -13,6 +13,7 @@ class ProfileScreen extends StatelessWidget {
       roleFallbackLabel: 'Student',
       title: 'Student Profile',
       theme: RoleProfileTheme.student(),
+      fallbackRoute: '/dashboard',
     );
   }
 }

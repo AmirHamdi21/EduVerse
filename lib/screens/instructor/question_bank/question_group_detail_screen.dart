@@ -19,6 +19,7 @@ import '../../../services/api_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/question_bank/question_bank_barrel.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/instructor/shared/safe_feature_back.dart';
 import 'question_bank_create_screen.dart';
 
 class QuestionGroupDetailScreen extends StatelessWidget {
@@ -84,7 +85,7 @@ class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
             tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             onPressed: () => _goToQuestionBank(context),
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              safeFeatureBackIcon(context),
               color: InstructorColors.textPrimaryColor(isDark),
             ),
           ),
@@ -337,7 +338,7 @@ class _QuestionGroupDetailViewState extends State<_QuestionGroupDetailView> {
   }
 
   void _goToQuestionBank(BuildContext context) {
-    context.go('/instructor/question-bank/groups');
+    safeFeatureBack(context, '/instructor/question-bank/groups');
   }
 
   void _ensureBankFeedLoaded(

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_verse/bloc/ai_chat/ai_chat_cubit.dart';
 import 'package:edu_verse/bloc/ai_chat/ai_chat_state.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
+import 'package:edu_verse/features/walkthrough/student_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/widgets/student/ai_chat/ai_chat_app_bar.dart';
 import 'package:edu_verse/widgets/student/ai_chat/ai_chat_header.dart';
@@ -69,97 +71,112 @@ class _AiChatViewState extends State<_AiChatView> {
     final themeState = context.watch<ThemeBloc>().state;
     final isDark = themeState.isDark;
 
-    return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF030712)
-          : const Color(0xFFF9FAFB),
-      body: BlocConsumer<AiChatCubit, AiChatState>(
-        listener: (context, state) {
-          if (state.successMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.successMessage!),
-                backgroundColor: const Color(0xFF10B981),
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+    return StudentWalkthroughRouteMarker(
+      segmentId: StudentWalkthroughIds.ai,
+      child: Scaffold(
+        backgroundColor: isDark
+            ? const Color(0xFF030712)
+            : const Color(0xFFF9FAFB),
+        body: BlocConsumer<AiChatCubit, AiChatState>(
+          listener: (context, state) {
+            if (state.successMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.successMessage!),
+                  backgroundColor: const Color(0xFF10B981),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-            );
-          }
-          if (state.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error!),
-                backgroundColor: const Color(0xFFEF4444),
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              );
+            }
+            if (state.error != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error!),
+                  backgroundColor: const Color(0xFFEF4444),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-            );
-          }
-          // Scroll to bottom when new messages arrive
-          if (state.messages.isNotEmpty) {
-            _scrollToBottom();
-          }
-        },
-        builder: (context, state) {
-          return Stack(
-            children: [
-              // Background decorations
-              _buildBackgroundDecorations(isDark),
+              );
+            }
+            // Scroll to bottom when new messages arrive
+            if (state.messages.isNotEmpty) {
+              _scrollToBottom();
+            }
+          },
+          builder: (context, state) {
+            return Stack(
+              children: [
+                // Background decorations
+                _buildBackgroundDecorations(isDark),
 
-              // Main content
-              SafeArea(
-                child: Column(
-                  children: [
-                    AiChatAppBar(
-                      onClearChat: () =>
-                          _showClearChatDialog(context, l10n, isDark),
-                    ),
-                    AiChatHeader(
-                      chatMode: state.chatMode,
-                      selectedCourse: state.selectedCourse,
-                      availableCourses: state.availableCourses,
-                      onModeChanged: (mode) {
-                        context.read<AiChatCubit>().setChatMode(mode);
-                      },
-                      onCourseSelected: (course) {
-                        context.read<AiChatCubit>().selectCourse(course);
-                      },
-                    ),
-                    Expanded(
-                      child: ChatMessageList(
-                        messages: state.messages,
-                        scrollController: _scrollController,
-                        isTyping: state.isAiTyping,
+                // Main content
+                SafeArea(
+                  child: Column(
+                    children: [
+                      WalkthroughTarget(
+                        id: StudentWalkthroughIds.aiHeader,
+                        child: AiChatAppBar(
+                          onClearChat: () =>
+                              _showClearChatDialog(context, l10n, isDark),
+                        ),
                       ),
-                    ),
-                    QuickActionsBar(
-                      quickActions: state.quickActions,
-                      onActionTap: (prompt) {
-                        context.read<AiChatCubit>().sendMessage(prompt);
-                        _scrollToBottom();
-                      },
-                    ),
-                    ChatInputBar(
-                      controller: _messageController,
-                      focusNode: _focusNode,
-                      isRecording: state.isRecording,
-                      isSending: state.isAiTyping,
-                      onSend: _handleSend,
-                      onAttachment: () =>
-                          _showAttachmentOptions(context, isDark),
-                      onVoiceToggle: () =>
-                          context.read<AiChatCubit>().toggleRecording(),
-                    ),
-                  ],
+                      WalkthroughTarget(
+                        id: StudentWalkthroughIds.aiMessages,
+                        child: AiChatHeader(
+                          chatMode: state.chatMode,
+                          selectedCourse: state.selectedCourse,
+                          availableCourses: state.availableCourses,
+                          onModeChanged: (mode) {
+                            context.read<AiChatCubit>().setChatMode(mode);
+                          },
+                          onCourseSelected: (course) {
+                            context.read<AiChatCubit>().selectCourse(course);
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: ChatMessageList(
+                          messages: state.messages,
+                          scrollController: _scrollController,
+                          isTyping: state.isAiTyping,
+                        ),
+                      ),
+                      WalkthroughTarget(
+                        id: StudentWalkthroughIds.aiQuick,
+                        child: QuickActionsBar(
+                          quickActions: state.quickActions,
+                          onActionTap: (prompt) {
+                            context.read<AiChatCubit>().sendMessage(prompt);
+                            _scrollToBottom();
+                          },
+                        ),
+                      ),
+                      WalkthroughTarget(
+                        id: StudentWalkthroughIds.aiComposer,
+                        child: ChatInputBar(
+                          controller: _messageController,
+                          focusNode: _focusNode,
+                          isRecording: state.isRecording,
+                          isSending: state.isAiTyping,
+                          onSend: _handleSend,
+                          onAttachment: () =>
+                              _showAttachmentOptions(context, isDark),
+                          onVoiceToggle: () =>
+                              context.read<AiChatCubit>().toggleRecording(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

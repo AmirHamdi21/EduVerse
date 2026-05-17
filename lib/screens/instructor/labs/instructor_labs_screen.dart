@@ -1,4 +1,7 @@
 import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/features/walkthrough/instructor_walkthrough_registry.dart';
+import 'package:edu_verse/features/walkthrough/walkthrough_target.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -167,7 +170,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: FilledButton.icon(
-                                onPressed: () => _openCreateOrEditSheet(context, state),
+                                onPressed: () =>
+                                    _openCreateOrEditSheet(context, state),
                                 style: FilledButton.styleFrom(
                                   backgroundColor: InstructorColors.primary,
                                   foregroundColor: Colors.white,
@@ -201,43 +205,50 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
               );
             }
 
-            return Scaffold(
-              backgroundColor: InstructorColors.background(isDark),
-              floatingActionButton:
-                  _resolvedCanManage && state is InstructorLabsLoaded
-                  ? FloatingActionButton.extended(
-                      onPressed: () => _openCreateOrEditSheet(context, state),
-                      backgroundColor: InstructorColors.primary,
-                      foregroundColor: Colors.white,
-                      icon: const Icon(Icons.add_rounded),
-                      label: Text(l10n.taLabsCreateLab),
-                    )
-                  : null,
-              body: SafeArea(
-                child: RefreshIndicator(
-                  onRefresh: () => cubit.loadLabs(),
-                  color: InstructorColors.primary,
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      _buildAppBar(isDark, l10n),
-                      if (state is InstructorLabsLoading ||
-                          state is InstructorLabsInitial) ...[
-                        _buildLoadingHeader(isDark, l10n),
-                        _buildLoadingSkeleton(isDark),
-                      ] else if (state is InstructorLabsError) ...[
-                        SliverFillRemaining(
-                          child: _buildErrorState(isDark, l10n, state.message),
-                        ),
-                      ] else ...[
-                        _buildLoadedContent(
-                          context,
-                          isDark,
-                          l10n,
-                          state as InstructorLabsLoaded,
-                        ),
+            return InstructorWalkthroughRouteMarker(
+              segmentId: InstructorWalkthroughIds.labs,
+              child: Scaffold(
+                backgroundColor: InstructorColors.background(isDark),
+                floatingActionButton:
+                    _resolvedCanManage && state is InstructorLabsLoaded
+                    ? FloatingActionButton.extended(
+                        onPressed: () => _openCreateOrEditSheet(context, state),
+                        backgroundColor: InstructorColors.primary,
+                        foregroundColor: Colors.white,
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text(l10n.taLabsCreateLab),
+                      )
+                    : null,
+                body: SafeArea(
+                  child: RefreshIndicator(
+                    onRefresh: () => cubit.loadLabs(),
+                    color: InstructorColors.primary,
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        _buildAppBar(isDark, l10n),
+                        if (state is InstructorLabsLoading ||
+                            state is InstructorLabsInitial) ...[
+                          _buildLoadingHeader(isDark, l10n),
+                          _buildLoadingSkeleton(isDark),
+                        ] else if (state is InstructorLabsError) ...[
+                          SliverFillRemaining(
+                            child: _buildErrorState(
+                              isDark,
+                              l10n,
+                              state.message,
+                            ),
+                          ),
+                        ] else ...[
+                          _buildLoadedContent(
+                            context,
+                            isDark,
+                            l10n,
+                            state as InstructorLabsLoaded,
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -253,9 +264,9 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
       backgroundColor: InstructorColors.background(isDark),
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: _safeBackToDashboard,
         icon: Icon(
-          Icons.arrow_back_rounded,
+          iosBackIcon(context),
           color: InstructorColors.textPrimaryColor(isDark),
         ),
       ),
@@ -282,6 +293,10 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
       floating: true,
       snap: true,
     );
+  }
+
+  void _safeBackToDashboard() {
+    safeBack(context, '/instructor/dashboard');
   }
 
   SliverMainAxisGroup _buildLoadedContent(
@@ -311,8 +326,18 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
 
     return SliverMainAxisGroup(
       slivers: [
-        SliverToBoxAdapter(child: _buildSummaryHeader(isDark, l10n, r, state)),
-        SliverToBoxAdapter(child: _buildFilterMenus(isDark, l10n, r, state)),
+        SliverToBoxAdapter(
+          child: WalkthroughTarget(
+            id: InstructorWalkthroughIds.labsHeader,
+            child: _buildSummaryHeader(isDark, l10n, r, state),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: WalkthroughTarget(
+            id: InstructorWalkthroughIds.labsFilters,
+            child: _buildFilterMenus(isDark, l10n, r, state),
+          ),
+        ),
         if (courseIds.isEmpty)
           SliverFillRemaining(
             child: _buildEmptyState(
@@ -330,7 +355,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final courseId = courseIds[index];
-                return _buildCourseLabsCard(
+                final card = _buildCourseLabsCard(
                   context,
                   courseId,
                   groupedLabs[courseId] ?? const <LabModel>[],
@@ -338,6 +363,13 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                   l10n,
                   state.teachingCourses,
                 );
+                if (index == 0) {
+                  return WalkthroughTarget(
+                    id: InstructorWalkthroughIds.labsList,
+                    child: card,
+                  );
+                }
+                return card;
               }, childCount: courseIds.length),
             ),
           ),

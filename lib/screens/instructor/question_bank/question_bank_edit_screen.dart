@@ -112,7 +112,7 @@ class _QuestionBankEditCourseLoaderState
         leading: IconButton(
           onPressed: () => safeFeatureBack(context, _resolvedReturnPath()),
           icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
+            safeFeatureBackIcon(context),
             color: InstructorColors.textPrimaryColor(isDark),
           ),
         ),

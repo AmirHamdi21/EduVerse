@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/gamification/gamification_state.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GamificationAppBar extends StatelessWidget {
@@ -36,7 +37,7 @@ class GamificationAppBar extends StatelessWidget {
 
   Widget _buildBackButton(BuildContext context, bool isDark) {
     return GestureDetector(
-      onTap: () => Navigator.pop(context),
+      onTap: () => safeBack(context, '/dashboard'),
       child: Container(
         width: 40,
         height: 40,
@@ -48,7 +49,7 @@ class GamificationAppBar extends StatelessWidget {
           ),
         ),
         child: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          iosBackIcon(context),
           size: 18,
           color: isDark ? Colors.white : const Color(0xFF374151),
         ),

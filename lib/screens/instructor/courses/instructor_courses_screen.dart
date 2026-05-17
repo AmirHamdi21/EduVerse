@@ -9,11 +9,14 @@ import '../../../bloc/instructor/instructor_courses_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/instructor_courses_theme.dart';
+import '../../../features/walkthrough/instructor_walkthrough_registry.dart';
+import '../../../features/walkthrough/walkthrough_target.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/extended_course_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../services/storage_service.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/courses/course_preview_modal.dart';
 import '../../../widgets/instructor/courses/course_skeleton_card.dart';
 import '../../../widgets/instructor/courses/empty_courses_message.dart';
@@ -194,45 +197,52 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       0xFF00C853,
     ];
 
-    return models.asMap().entries.map((entry) {
-      final idx = entry.key;
-      final tc = entry.value;
-      final colorValue = colorPalette[idx % colorPalette.length];
-      final fillRatio = tc.capacity > 0 ? tc.enrolledCount / tc.capacity : 0.0;
-      final sectionLabel = tc.section.sectionNumber.trim().isEmpty
-          ? ''
-          : 'Section ${tc.section.sectionNumber.trim()}';
-      final description = (tc.course.description ?? '').trim().isNotEmpty
-          ? tc.course.description!.trim()
-          : sectionLabel;
+    return models
+        .asMap()
+        .entries
+        .map((entry) {
+          final idx = entry.key;
+          final tc = entry.value;
+          final colorValue = colorPalette[idx % colorPalette.length];
+          final fillRatio = tc.capacity > 0
+              ? tc.enrolledCount / tc.capacity
+              : 0.0;
+          final sectionLabel = tc.section.sectionNumber.trim().isEmpty
+              ? ''
+              : 'Section ${tc.section.sectionNumber.trim()}';
+          final description = (tc.course.description ?? '').trim().isNotEmpty
+              ? tc.course.description!.trim()
+              : sectionLabel;
 
-      return ExtendedCourse(
-        course: InstructorCourseModel(
-          id: tc.courseId.toString(),
-          code: tc.course.courseCode,
-          name: tc.course.courseName,
-          description: description,
-          totalStudents: tc.enrolledCount,
-          capacity: tc.capacity,
-          colorValue: colorValue,
-          isActive: tc.course.status != 'archived',
-          semester: tc.semester.name,
-          assignments: const <AssignmentModel>[],
-          materials: const <MaterialModel>[],
-          announcements: const <AnnouncementModel>[],
-        ),
-        completionRate: fillRatio.clamp(0.0, 1.0),
-        engagementScore: ((tc.attendanceRate ?? fillRatio) * 100)
-            .round()
-            .clamp(0, 100),
-        status: _normalizeCourseStatus(tc.course.status),
-        category: _normalizeCourseLevel(tc.course.level),
-        createdAt: tc.course.createdAt ?? tc.semester.startDate ?? DateTime.now(),
-        enrollmentTrend: List<double>.filled(7, fillRatio.clamp(0.0, 1.0)),
-        hasMilestone: (tc.averageGrade ?? 0) >= 85,
-        milestoneText: (tc.averageGrade ?? 0) >= 85 ? 'High average' : null,
-      );
-    }).toList(growable: false);
+          return ExtendedCourse(
+            course: InstructorCourseModel(
+              id: tc.courseId.toString(),
+              code: tc.course.courseCode,
+              name: tc.course.courseName,
+              description: description,
+              totalStudents: tc.enrolledCount,
+              capacity: tc.capacity,
+              colorValue: colorValue,
+              isActive: tc.course.status != 'archived',
+              semester: tc.semester.name,
+              assignments: const <AssignmentModel>[],
+              materials: const <MaterialModel>[],
+              announcements: const <AnnouncementModel>[],
+            ),
+            completionRate: fillRatio.clamp(0.0, 1.0),
+            engagementScore: ((tc.attendanceRate ?? fillRatio) * 100)
+                .round()
+                .clamp(0, 100),
+            status: _normalizeCourseStatus(tc.course.status),
+            category: _normalizeCourseLevel(tc.course.level),
+            createdAt:
+                tc.course.createdAt ?? tc.semester.startDate ?? DateTime.now(),
+            enrollmentTrend: List<double>.filled(7, fillRatio.clamp(0.0, 1.0)),
+            hasMilestone: (tc.averageGrade ?? 0) >= 85,
+            milestoneText: (tc.averageGrade ?? 0) >= 85 ? 'High average' : null,
+          );
+        })
+        .toList(growable: false);
   }
 
   String _normalizeCourseStatus(String? value) {
@@ -320,7 +330,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       );
     }
 
-    final published = _courses.where((course) => course.status == 'published').length;
+    final published = _courses
+        .where((course) => course.status == 'published')
+        .length;
     final totalFill = _courses.fold<double>(
       0,
       (sum, course) => sum + course.completionRate.clamp(0.0, 1.0),
@@ -367,103 +379,130 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             final metrics = _overviewMetrics();
             final filteredCourses = _filteredCourses;
 
-            return Scaffold(
-              backgroundColor: InstructorCoursesTheme.scaffoldBackground(
-                isDark,
-              ),
-              floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-              floatingActionButton: _buildFAB(l10n),
-              body: DecoratedBox(
-                decoration: InstructorCoursesTheme.scaffoldDecoration(isDark),
-                child: SafeArea(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final maxWidth = InstructorCoursesTheme.maxContentWidth(
-                        constraints.maxWidth,
-                      );
-                      final screenPadding = InstructorCoursesTheme.screenPadding(
-                        constraints.maxWidth,
-                      );
+            return InstructorWalkthroughRouteMarker(
+              segmentId: InstructorWalkthroughIds.courses,
+              child: Scaffold(
+                backgroundColor: InstructorCoursesTheme.scaffoldBackground(
+                  isDark,
+                ),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.endFloat,
+                floatingActionButton: WalkthroughTarget(
+                  id: InstructorWalkthroughIds.coursesCreate,
+                  shape: WalkthroughTargetShape.circle,
+                  child: _buildFAB(l10n),
+                ),
+                body: DecoratedBox(
+                  decoration: InstructorCoursesTheme.scaffoldDecoration(isDark),
+                  child: SafeArea(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final maxWidth = InstructorCoursesTheme.maxContentWidth(
+                          constraints.maxWidth,
+                        );
+                        final screenPadding =
+                            InstructorCoursesTheme.screenPadding(
+                              constraints.maxWidth,
+                            );
 
-                      return RefreshIndicator(
-                        onRefresh: () async => _refreshCourses(),
-                        color: InstructorColors.primary,
-                        backgroundColor: InstructorCoursesTheme.cardBackground(
-                          isDark,
-                        ),
-                        child: CustomScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(
-                            parent: ClampingScrollPhysics(),
-                          ),
-                          slivers: [
-                            SliverToBoxAdapter(
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: maxWidth),
-                                  child: Padding(
-                                    padding: screenPadding,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        InstructorCoursesHeader(
-                                          title: l10n.myCoursesHeader,
-                                          subtitle:
-                                              'Manage every teaching section, update course spaces, and keep student activity on track.',
-                                          searchBar: InstructorCourseSearchBar(
-                                            controller: _searchController,
-                                            onSearchChanged: (query) {
-                                              setState(() {
-                                                _searchQuery = query;
-                                              });
-                                            },
-                                            hintText: l10n.searchCourses,
-                                            clearTooltip: l10n.clearSearch,
+                        return RefreshIndicator(
+                          onRefresh: () async => _refreshCourses(),
+                          color: InstructorColors.primary,
+                          backgroundColor:
+                              InstructorCoursesTheme.cardBackground(isDark),
+                          child: CustomScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(
+                              parent: ClampingScrollPhysics(),
+                            ),
+                            slivers: [
+                              SliverToBoxAdapter(
+                                child: Center(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: maxWidth,
+                                    ),
+                                    child: Padding(
+                                      padding: screenPadding,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          WalkthroughTarget(
+                                            id: InstructorWalkthroughIds
+                                                .coursesHeader,
+                                            child: InstructorCoursesHeader(
+                                              title: l10n.myCoursesHeader,
+                                              subtitle:
+                                                  'Manage every teaching section, update course spaces, and keep student activity on track.',
+                                              searchBar:
+                                                  InstructorCourseSearchBar(
+                                                    controller:
+                                                        _searchController,
+                                                    onSearchChanged: (query) {
+                                                      setState(() {
+                                                        _searchQuery = query;
+                                                      });
+                                                    },
+                                                    hintText:
+                                                        l10n.searchCourses,
+                                                    clearTooltip:
+                                                        l10n.clearSearch,
+                                                  ),
+                                              trailingAction:
+                                                  _buildHeaderActions(isDark),
+                                              stats: AnimatedBuilder(
+                                                animation: _statsAnimation,
+                                                builder: (context, _) =>
+                                                    _buildHeroStats(
+                                                      isDark: isDark,
+                                                      l10n: l10n,
+                                                      metrics: metrics,
+                                                      maxWidth: maxWidth,
+                                                    ),
+                                              ),
+                                              tabBar: _buildStatusTabs(l10n),
+                                            ),
                                           ),
-                                          trailingAction: _buildHeaderActions(
-                                            isDark,
-                                          ),
-                                          stats: AnimatedBuilder(
-                                            animation: _statsAnimation,
-                                            builder: (context, _) => _buildHeroStats(
+                                          const SizedBox(height: 18),
+                                          if (_isSelectionMode) ...[
+                                            _buildBulkActionsBar(isDark, l10n),
+                                            const SizedBox(height: 18),
+                                          ],
+                                          WalkthroughTarget(
+                                            id: InstructorWalkthroughIds
+                                                .coursesToolbar,
+                                            child: _buildToolbar(
                                               isDark: isDark,
                                               l10n: l10n,
-                                              metrics: metrics,
+                                              filteredCount:
+                                                  filteredCourses.length,
                                               maxWidth: maxWidth,
                                             ),
                                           ),
-                                          tabBar: _buildStatusTabs(l10n),
-                                        ),
-                                        const SizedBox(height: 18),
-                                        if (_isSelectionMode) ...[
-                                          _buildBulkActionsBar(isDark, l10n),
-                                          const SizedBox(height: 18),
+                                          const SizedBox(height: 22),
+                                          WalkthroughTarget(
+                                            id: InstructorWalkthroughIds
+                                                .coursesList,
+                                            child: _buildContent(
+                                              state: state,
+                                              isDark: isDark,
+                                              l10n: l10n,
+                                              filteredCourses: filteredCourses,
+                                              maxWidth: maxWidth,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 28),
                                         ],
-                                        _buildToolbar(
-                                          isDark: isDark,
-                                          l10n: l10n,
-                                          filteredCount: filteredCourses.length,
-                                          maxWidth: maxWidth,
-                                        ),
-                                        const SizedBox(height: 22),
-                                        _buildContent(
-                                          state: state,
-                                          isDark: isDark,
-                                          l10n: l10n,
-                                          filteredCourses: filteredCourses,
-                                          maxWidth: maxWidth,
-                                        ),
-                                        const SizedBox(height: 28),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -511,7 +550,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
               ),
               const SizedBox(height: 16),
               OutlinedButton(
-                onPressed: () => context.pop(),
+                onPressed: _safeBackToDashboard,
                 child: Text(l10n.back),
               ),
             ],
@@ -519,6 +558,10 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         ),
       ),
     );
+  }
+
+  void _safeBackToDashboard() {
+    safeBack(context, '/instructor/dashboard');
   }
 
   Widget _buildHeaderActions(bool isDark) {
@@ -532,7 +575,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 ? InstructorCoursesTheme.darkSurfaceRaised
                 : Colors.white.withValues(alpha: 0.96),
             borderRadius: InstructorCoursesTheme.pillRadius,
-            border: Border.all(color: InstructorCoursesTheme.borderColor(isDark)),
+            border: Border.all(
+              color: InstructorCoursesTheme.borderColor(isDark),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.08),
@@ -1107,14 +1152,22 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           ),
           const Spacer(),
           IconButton(
-            icon: const Icon(Icons.archive_rounded, color: Colors.white, size: 20),
+            icon: const Icon(
+              Icons.archive_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             onPressed: _selectedCourses.isEmpty
                 ? null
                 : () => _handleBulkAction('archive'),
             tooltip: l10n.archived,
           ),
           IconButton(
-            icon: const Icon(Icons.publish_rounded, color: Colors.white, size: 20),
+            icon: const Icon(
+              Icons.publish_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             onPressed: _selectedCourses.isEmpty
                 ? null
                 : () => _handleBulkAction('publish'),
@@ -1439,18 +1492,25 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: isDark ? InstructorColors.darkBorder : InstructorColors.border,
+            color: isDark
+                ? InstructorColors.darkBorder
+                : InstructorColors.border,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: isDark ? InstructorColors.darkBorder : InstructorColors.border,
+            color: isDark
+                ? InstructorColors.darkBorder
+                : InstructorColors.border,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: InstructorColors.primary, width: 2),
+          borderSide: const BorderSide(
+            color: InstructorColors.primary,
+            width: 2,
+          ),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:edu_verse/widgets/student/shared/drive_file_preview_screen.dart';
 import 'package:flutter/material.dart';
@@ -169,18 +170,14 @@ class _InstructorAssignmentDetailScreenState
         if (_loadingAssignment && _assignment == null) {
           return Scaffold(
             backgroundColor: InstructorColors.background(isDark),
-            body: SafeArea(
-              child: _AssignmentDetailLoadingView(isDark: isDark),
-            ),
+            body: SafeArea(child: _AssignmentDetailLoadingView(isDark: isDark)),
           );
         }
 
         if (_assignment == null) {
           return Scaffold(
             backgroundColor: InstructorColors.background(isDark),
-            body: SafeArea(
-              child: _buildErrorState(context, isDark, l10n),
-            ),
+            body: SafeArea(child: _buildErrorState(context, isDark, l10n)),
           );
         }
 
@@ -233,9 +230,7 @@ class _InstructorAssignmentDetailScreenState
                       ),
                     ),
                   ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 24),
-                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
                 ],
               ),
             ),
@@ -285,9 +280,9 @@ class _InstructorAssignmentDetailScreenState
     return Row(
       children: <Widget>[
         _buildIconShell(
-          icon: Icons.arrow_back_ios_new_rounded,
+          icon: iosBackIcon(context),
           isDark: isDark,
-          onTap: () => context.pop(),
+          onTap: () => safeBack(context, '/instructor/dashboard'),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -427,7 +422,9 @@ class _InstructorAssignmentDetailScreenState
             color: InstructorColors.cardColor(isDark),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: InstructorColors.borderColor(isDark).withValues(alpha: 0.74),
+              color: InstructorColors.borderColor(
+                isDark,
+              ).withValues(alpha: 0.74),
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
@@ -486,7 +483,9 @@ class _InstructorAssignmentDetailScreenState
         borderRadius: BorderRadius.circular(28),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: InstructorColors.primary.withValues(alpha: isDark ? 0.26 : 0.18),
+            color: InstructorColors.primary.withValues(
+              alpha: isDark ? 0.26 : 0.18,
+            ),
             blurRadius: 28,
             offset: const Offset(0, 14),
           ),
@@ -552,7 +551,9 @@ class _InstructorAssignmentDetailScreenState
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? r.fontSize20 : r.fontSize24,
+                                fontSize: r.isMobile
+                                    ? r.fontSize20
+                                    : r.fontSize24,
                                 fontWeight: FontWeight.w800,
                                 height: 1.12,
                               ),
@@ -586,7 +587,10 @@ class _InstructorAssignmentDetailScreenState
                       ),
                       _buildHeroChip(
                         icon: Icons.people_alt_rounded,
-                        label: _submissionTypeLabel(l10n, assignment.submissionType),
+                        label: _submissionTypeLabel(
+                          l10n,
+                          assignment.submissionType,
+                        ),
                       ),
                     ],
                   ),
@@ -748,7 +752,10 @@ class _InstructorAssignmentDetailScreenState
           fontWeight: FontWeight.w600,
         ),
         tabs: <Widget>[
-          _buildTab(icon: Icons.dashboard_customize_rounded, text: l10n.overview),
+          _buildTab(
+            icon: Icons.dashboard_customize_rounded,
+            text: l10n.overview,
+          ),
           _buildTab(
             icon: Icons.assignment_turned_in_rounded,
             text: l10n.assignmentSubmissionsTab,
@@ -783,7 +790,8 @@ class _InstructorAssignmentDetailScreenState
       (
         icon: Icons.school_rounded,
         title: l10n.course,
-        value: '${assignment.course?.name ?? assignment.courseName} (${assignment.course?.code.isNotEmpty == true ? assignment.course!.code : assignment.courseCode})',
+        value:
+            '${assignment.course?.name ?? assignment.courseName} (${assignment.course?.code.isNotEmpty == true ? assignment.course!.code : assignment.courseCode})',
         color: InstructorColors.primary,
       ),
       (
@@ -823,7 +831,8 @@ class _InstructorAssignmentDetailScreenState
                 final columns = constraints.maxWidth >= 720 ? 2 : 1;
                 const spacing = 12.0;
                 final itemWidth =
-                    (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+                    (constraints.maxWidth - (spacing * (columns - 1))) /
+                    columns;
 
                 return Wrap(
                   spacing: spacing,
@@ -968,8 +977,9 @@ class _InstructorAssignmentDetailScreenState
                         label: l10n.all,
                         count: _submissions.length,
                         selected: _submissionFilter == _SubmissionFilter.all,
-                        onTap: () =>
-                            setState(() => _submissionFilter = _SubmissionFilter.all),
+                        onTap: () => setState(
+                          () => _submissionFilter = _SubmissionFilter.all,
+                        ),
                       ),
                       _buildFilterChip(
                         isDark: isDark,
@@ -977,7 +987,8 @@ class _InstructorAssignmentDetailScreenState
                         count: _submissions
                             .where((item) => _isPendingSubmission(item))
                             .length,
-                        selected: _submissionFilter == _SubmissionFilter.pending,
+                        selected:
+                            _submissionFilter == _SubmissionFilter.pending,
                         onTap: () => setState(
                           () => _submissionFilter = _SubmissionFilter.pending,
                         ),
@@ -998,8 +1009,9 @@ class _InstructorAssignmentDetailScreenState
                         label: l10n.late,
                         count: _submissions.where((item) => item.isLate).length,
                         selected: _submissionFilter == _SubmissionFilter.late,
-                        onTap: () =>
-                            setState(() => _submissionFilter = _SubmissionFilter.late),
+                        onTap: () => setState(
+                          () => _submissionFilter = _SubmissionFilter.late,
+                        ),
                       ),
                     ],
                   ),
@@ -1048,7 +1060,8 @@ class _InstructorAssignmentDetailScreenState
     AssignmentModel assignment,
   ) {
     final files = assignment.instructionFiles ?? const <DriveFileModel>[];
-    final hasInstructions = assignment.instructionsText?.trim().isNotEmpty == true;
+    final hasInstructions =
+        assignment.instructionsText?.trim().isNotEmpty == true;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -1062,7 +1075,10 @@ class _InstructorAssignmentDetailScreenState
             icon: Icons.menu_book_rounded,
             child: hasInstructions
                 ? MarkdownBody(data: assignment.instructionsText!.trim())
-                : _buildInlineEmptyMessage(isDark, l10n.assignmentNoInstructions),
+                : _buildInlineEmptyMessage(
+                    isDark,
+                    l10n.assignmentNoInstructions,
+                  ),
           ),
           const SizedBox(height: 16),
           _buildSectionCard(
@@ -1072,7 +1088,10 @@ class _InstructorAssignmentDetailScreenState
             subtitle: l10n.instructorAssignmentResourcesHint,
             icon: Icons.attach_file_rounded,
             child: files.isEmpty
-                ? _buildInlineEmptyMessage(isDark, l10n.assignmentNoInstructionFiles)
+                ? _buildInlineEmptyMessage(
+                    isDark,
+                    l10n.assignmentNoInstructionFiles,
+                  )
                 : Column(
                     children: files
                         .map(
@@ -1126,7 +1145,8 @@ class _InstructorAssignmentDetailScreenState
       (
         icon: Icons.file_copy_rounded,
         title: l10n.assignmentAllowedFileTypes,
-        value: (assignment.allowedFileTypes == null ||
+        value:
+            (assignment.allowedFileTypes == null ||
                 assignment.allowedFileTypes!.isEmpty)
             ? l10n.assignmentNotConfigured
             : assignment.allowedFileTypes!.join(', '),
@@ -1149,7 +1169,8 @@ class _InstructorAssignmentDetailScreenState
                 final columns = constraints.maxWidth >= 720 ? 2 : 1;
                 const spacing = 12.0;
                 final itemWidth =
-                    (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+                    (constraints.maxWidth - (spacing * (columns - 1))) /
+                    columns;
 
                 return Wrap(
                   spacing: spacing,
@@ -1505,7 +1526,9 @@ class _InstructorAssignmentDetailScreenState
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: cardGradient,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
             ),
             child: Row(
               children: <Widget>[
@@ -1601,7 +1624,9 @@ class _InstructorAssignmentDetailScreenState
                       ],
                     ),
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: statusColor.withValues(alpha: 0.18)),
+                    border: Border.all(
+                      color: statusColor.withValues(alpha: 0.18),
+                    ),
                   ),
                   child: Row(
                     children: <Widget>[
@@ -1634,7 +1659,9 @@ class _InstructorAssignmentDetailScreenState
                                   ? '${_formatScore(submission.score!)} / ${_formatScore(assignment.maxGrade)}'
                                   : l10n.pending,
                               style: TextStyle(
-                                color: InstructorColors.textPrimaryColor(isDark),
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -1645,7 +1672,9 @@ class _InstructorAssignmentDetailScreenState
                                   ? l10n.graded
                                   : _submissionStatusLabel(l10n, submission),
                               style: TextStyle(
-                                color: InstructorColors.textSecondaryColor(isDark),
+                                color: InstructorColors.textSecondaryColor(
+                                  isDark,
+                                ),
                                 fontSize: 13,
                               ),
                             ),
@@ -1687,7 +1716,9 @@ class _InstructorAssignmentDetailScreenState
                       style: OutlinedButton.styleFrom(
                         foregroundColor: InstructorColors.primary,
                         side: BorderSide(
-                          color: InstructorColors.primary.withValues(alpha: 0.28),
+                          color: InstructorColors.primary.withValues(
+                            alpha: 0.28,
+                          ),
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -1698,7 +1729,8 @@ class _InstructorAssignmentDetailScreenState
                       label: Text(l10n.view),
                     );
                     final gradeButton = FilledButton.icon(
-                      onPressed: () => _openGradingScreen(assignment, submission),
+                      onPressed: () =>
+                          _openGradingScreen(assignment, submission),
                       style: FilledButton.styleFrom(
                         backgroundColor: InstructorColors.primary,
                         foregroundColor: Colors.white,
@@ -2081,24 +2113,24 @@ class _InstructorAssignmentDetailScreenState
     );
   }
 
-  List<AssignmentSubmissionModel> _filteredSubmissions(
-    AppLocalizations l10n,
-  ) {
+  List<AssignmentSubmissionModel> _filteredSubmissions(AppLocalizations l10n) {
     final query = _searchQuery.trim().toLowerCase();
 
-    return _submissions.where((submission) {
-      final name = _studentName(l10n, submission).toLowerCase();
-      final matchesSearch = query.isEmpty || name.contains(query);
+    return _submissions
+        .where((submission) {
+          final name = _studentName(l10n, submission).toLowerCase();
+          final matchesSearch = query.isEmpty || name.contains(query);
 
-      final matchesFilter = switch (_submissionFilter) {
-        _SubmissionFilter.all => true,
-        _SubmissionFilter.pending => _isPendingSubmission(submission),
-        _SubmissionFilter.graded => _isGradedSubmission(submission),
-        _SubmissionFilter.late => submission.isLate,
-      };
+          final matchesFilter = switch (_submissionFilter) {
+            _SubmissionFilter.all => true,
+            _SubmissionFilter.pending => _isPendingSubmission(submission),
+            _SubmissionFilter.graded => _isGradedSubmission(submission),
+            _SubmissionFilter.late => submission.isLate,
+          };
 
-      return matchesSearch && matchesFilter;
-    }).toList(growable: false);
+          return matchesSearch && matchesFilter;
+        })
+        .toList(growable: false);
   }
 
   bool _isPendingSubmission(AssignmentSubmissionModel submission) {
@@ -2207,7 +2239,9 @@ class _InstructorAssignmentDetailScreenState
       return 'ST';
     }
     if (parts.length == 1) {
-      return parts.first.substring(0, parts.first.length.clamp(0, 2)).toUpperCase();
+      return parts.first
+          .substring(0, parts.first.length.clamp(0, 2))
+          .toUpperCase();
     }
     return '${parts.first[0]}${parts[1][0]}'.toUpperCase();
   }
@@ -2256,7 +2290,9 @@ class _InstructorAssignmentDetailScreenState
                         width: 54,
                         height: 54,
                         decoration: BoxDecoration(
-                          color: InstructorColors.primary.withValues(alpha: 0.1),
+                          color: InstructorColors.primary.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(18),
                         ),
                         alignment: Alignment.center,
@@ -2277,7 +2313,9 @@ class _InstructorAssignmentDetailScreenState
                             Text(
                               studentName,
                               style: TextStyle(
-                                color: InstructorColors.textPrimaryColor(isDark),
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -2286,7 +2324,9 @@ class _InstructorAssignmentDetailScreenState
                             Text(
                               l10n.instructorAssignmentDetailSubmissionDetailsTitle,
                               style: TextStyle(
-                                color: InstructorColors.textSecondaryColor(isDark),
+                                color: InstructorColors.textSecondaryColor(
+                                  isDark,
+                                ),
                                 fontSize: 13,
                               ),
                             ),
@@ -2307,7 +2347,8 @@ class _InstructorAssignmentDetailScreenState
                       _buildSectionCard(
                         sheetContext,
                         isDark,
-                        title: l10n.instructorAssignmentDetailSubmissionSnapshot,
+                        title:
+                            l10n.instructorAssignmentDetailSubmissionSnapshot,
                         subtitle:
                             '${l10n.assignmentDetails} • ${assignment.title}',
                         icon: Icons.grid_view_rounded,
@@ -2325,7 +2366,10 @@ class _InstructorAssignmentDetailScreenState
                               isDark: isDark,
                               icon: Icons.event_rounded,
                               label: l10n.instructorAssignmentDetailSubmittedAt,
-                              value: _formatDateTime(context, submission.submittedAt),
+                              value: _formatDateTime(
+                                context,
+                                submission.submittedAt,
+                              ),
                               color: InstructorColors.teal,
                             ),
                             const SizedBox(height: 12),
@@ -2340,7 +2384,8 @@ class _InstructorAssignmentDetailScreenState
                             _buildPillRow(
                               isDark: isDark,
                               icon: Icons.grade_rounded,
-                              label: l10n.instructorAssignmentDetailCurrentScore,
+                              label:
+                                  l10n.instructorAssignmentDetailCurrentScore,
                               value: submission.score == null
                                   ? l10n.pending
                                   : '${_formatScore(submission.score!)} / ${_formatScore(assignment.maxGrade)}',
@@ -2355,9 +2400,12 @@ class _InstructorAssignmentDetailScreenState
                           sheetContext,
                           isDark,
                           title: l10n.instructorAssignmentDetailSubmissionText,
-                          subtitle: l10n.instructorAssignmentDetailBriefSubtitle,
+                          subtitle:
+                              l10n.instructorAssignmentDetailBriefSubtitle,
                           icon: Icons.notes_rounded,
-                          child: MarkdownBody(data: submission.submissionText!.trim()),
+                          child: MarkdownBody(
+                            data: submission.submissionText!.trim(),
+                          ),
                         ),
                       if (submission.submissionText?.trim().isNotEmpty == true)
                         const SizedBox(height: 16),
@@ -2366,7 +2414,8 @@ class _InstructorAssignmentDetailScreenState
                           sheetContext,
                           isDark,
                           title: l10n.instructorAssignmentDetailSubmissionLink,
-                          subtitle: l10n.instructorAssignmentDetailWorkflowSubtitle,
+                          subtitle:
+                              l10n.instructorAssignmentDetailWorkflowSubtitle,
                           icon: Icons.link_rounded,
                           child: LayoutBuilder(
                             builder: (context, constraints) {
@@ -2378,7 +2427,9 @@ class _InstructorAssignmentDetailScreenState
                                   foregroundColor: Colors.white,
                                 ),
                                 icon: const Icon(Icons.open_in_new_rounded),
-                                label: Text(l10n.instructorAssignmentDetailOpenLink),
+                                label: Text(
+                                  l10n.instructorAssignmentDetailOpenLink,
+                                ),
                               );
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2414,8 +2465,10 @@ class _InstructorAssignmentDetailScreenState
                             submission.driveFile!,
                           ),
                         ),
-                      if (submission.submissionText?.trim().isNotEmpty != true &&
-                          submission.submissionLink?.trim().isNotEmpty != true &&
+                      if (submission.submissionText?.trim().isNotEmpty !=
+                              true &&
+                          submission.submissionLink?.trim().isNotEmpty !=
+                              true &&
                           submission.driveFile == null)
                         _buildInlineEmptyMessage(
                           isDark,
@@ -2486,12 +2539,15 @@ class _InstructorAssignmentDetailScreenState
     }
 
     _showSnack(l10n.assignmentDeletedSuccess);
-    context.pop(true);
+    safeBack(context, '/instructor/dashboard', true);
   }
 
   Future<void> _updateStatus(api.AssignmentStatus status) async {
     setState(() => _updatingStatus = true);
-    final result = await _assignmentService.updateStatus(widget.assignmentId, status);
+    final result = await _assignmentService.updateStatus(
+      widget.assignmentId,
+      status,
+    );
     if (!mounted) {
       return;
     }
@@ -2566,7 +2622,9 @@ class _InstructorAssignmentDetailScreenState
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
-  static List<api.AssignmentStatus> _nextStatuses(api.AssignmentStatus current) {
+  static List<api.AssignmentStatus> _nextStatuses(
+    api.AssignmentStatus current,
+  ) {
     switch (current) {
       case api.AssignmentStatus.draft:
         return const <api.AssignmentStatus>[api.AssignmentStatus.published];
@@ -2753,7 +2811,9 @@ class _AssignmentDetailLoadingView extends StatelessWidget {
               color: InstructorColors.cardColor(isDark),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: InstructorColors.borderColor(isDark).withValues(alpha: 0.68),
+                color: InstructorColors.borderColor(
+                  isDark,
+                ).withValues(alpha: 0.68),
               ),
             ),
             child: Column(
@@ -2801,7 +2861,9 @@ class _AssignmentDetailTabsHeaderDelegate
   }
 
   @override
-  bool shouldRebuild(covariant _AssignmentDetailTabsHeaderDelegate oldDelegate) {
+  bool shouldRebuild(
+    covariant _AssignmentDetailTabsHeaderDelegate oldDelegate,
+  ) {
     return height != oldDelegate.height || child != oldDelegate.child;
   }
 }

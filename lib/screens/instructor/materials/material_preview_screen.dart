@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../models/instructor/instructor_course_model.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/course_management/course_management_colors.dart';
 
 class MaterialPreviewScreen extends StatelessWidget {
@@ -28,6 +29,10 @@ class MaterialPreviewScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: CMColors.bg(isDark),
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => safeBack(context, '/instructor/dashboard'),
+          icon: Icon(iosBackIcon(context)),
+        ),
         title: Text(
           material.title,
           maxLines: 1,

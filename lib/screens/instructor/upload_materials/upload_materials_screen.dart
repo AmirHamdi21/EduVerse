@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../../bloc/instructor/instructor_courses_bloc.dart';
 import '../../../bloc/instructor/instructor_courses_event.dart';
@@ -21,6 +20,7 @@ import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/materials/course_material_model.dart' as materials_api;
 import '../../../services/storage_service.dart';
 import '../../../utils/file_validator.dart';
+import '../../../utils/navigation/safe_back.dart';
 import '../../../widgets/instructor/upload_materials/upload_materials_barrel.dart';
 
 /// Upload Materials Screen for instructors
@@ -158,7 +158,7 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
               ),
               const SizedBox(height: 16),
               OutlinedButton(
-                onPressed: () => context.pop(),
+                onPressed: () => safeBack(context, '/instructor/dashboard'),
                 child: Text(l10n.back),
               ),
             ],
@@ -968,10 +968,10 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_rounded,
+          iosBackIcon(context),
           color: UploadMaterialsColors.textPrimaryColor(isDark),
         ),
-        onPressed: () => context.pop(),
+        onPressed: () => safeBack(context, '/instructor/dashboard'),
       ),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,

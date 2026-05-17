@@ -1,9 +1,9 @@
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/common/utils/student_courses_theme.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class CoursesHeader extends StatelessWidget {
   final String title;
@@ -122,11 +122,6 @@ class _HeaderChrome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textDirection = Directionality.of(context);
-    final backIcon = textDirection == TextDirection.rtl
-        ? Icons.arrow_forward_ios_rounded
-        : Icons.arrow_back_ios_new_rounded;
-
     final menuButton = Builder(
       builder: (context) => Container(
         width: 52,
@@ -146,9 +141,9 @@ class _HeaderChrome extends StatelessWidget {
           ],
         ),
         child: IconButton(
-          onPressed: () => _goToDashboard(context),
+          onPressed: () => safeBack(context, '/dashboard'),
           icon: Icon(
-            backIcon,
+            iosBackIcon(context),
             color: isDark ? Colors.white : const Color(0xFF0F172A),
             size: 20,
           ),
@@ -208,21 +203,5 @@ class _HeaderChrome extends StatelessWidget {
         ],
       ],
     );
-  }
-
-  void _goToDashboard(BuildContext context) {
-    final GoRouter? router = GoRouter.maybeOf(context);
-    if (router != null) {
-      context.go('/dashboard');
-      return;
-    }
-
-    final navigator = Navigator.of(context);
-    if (navigator.canPop()) {
-      navigator.pop();
-      return;
-    }
-
-    navigator.pushReplacementNamed('/dashboard');
   }
 }

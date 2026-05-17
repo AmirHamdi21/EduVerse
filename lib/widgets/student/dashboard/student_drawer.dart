@@ -143,7 +143,7 @@ class _StudentDrawerState extends State<StudentDrawer> {
     final router = GoRouter.of(context);
     Navigator.of(context).pop();
     if (item.matches(currentPath)) return;
-    router.go(item.route);
+    router.push(item.route);
   }
 
   List<_DrawerSection> _buildSections(AppLocalizations l10n) {
@@ -349,7 +349,7 @@ class _DrawerProfileHeader extends StatelessWidget {
             onTap: () {
               final router = GoRouter.of(context);
               Navigator.of(context).pop();
-              router.go('/profile');
+              router.push('/profile');
             },
             child: Stack(
               children: [
@@ -929,6 +929,14 @@ class _ThemeChoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeBackground = isDark
+        ? Color.lerp(_DrawerColors.primaryBlue, Colors.white, 0.12)!
+        : Colors.white;
+    final activeForeground = isDark ? Colors.white : _DrawerColors.primaryBlue;
+    final activeBorder = isDark
+        ? Color.lerp(_DrawerColors.primaryBlueLight, Colors.white, 0.36)!
+        : _DrawerColors.primaryBlue.withValues(alpha: 0.24);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -938,15 +946,19 @@ class _ThemeChoice extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isActive
-                ? (isDark ? _DrawerColors.primaryBlue : Colors.white)
-                : Colors.transparent,
+            color: isActive ? activeBackground : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: isActive && !isDark
+            border: Border.all(
+              color: isActive ? activeBorder : Colors.transparent,
+              width: 1.1,
+            ),
+            boxShadow: isActive
                 ? [
                     BoxShadow(
-                      color: _DrawerColors.primaryBlue.withValues(alpha: 0.12),
-                      blurRadius: 12,
+                      color: _DrawerColors.primaryBlue.withValues(
+                        alpha: isDark ? 0.32 : 0.12,
+                      ),
+                      blurRadius: isDark ? 16 : 12,
                       offset: const Offset(0, 5),
                     ),
                   ]
@@ -959,7 +971,7 @@ class _ThemeChoice extends StatelessWidget {
                 icon,
                 size: 16,
                 color: isActive
-                    ? (isDark ? Colors.white : _DrawerColors.primaryBlue)
+                    ? activeForeground
                     : _DrawerColors.mutedText(isDark),
               ),
               const SizedBox(width: 6),
@@ -970,7 +982,7 @@ class _ThemeChoice extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: isActive
-                        ? (isDark ? Colors.white : _DrawerColors.primaryBlue)
+                        ? activeForeground
                         : _DrawerColors.mutedText(isDark),
                     fontSize: 12,
                     fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,

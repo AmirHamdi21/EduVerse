@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../bloc/theme/theme_bloc.dart';
 import '../../../../generated_l10n/app_localizations.dart';
+import '../../../../utils/navigation/safe_back.dart';
 import '../../../../widgets/student/settings/share_app widgets/share_app_header.dart';
 import '../../../../widgets/student/settings/share_app widgets/share_option_card.dart';
 
@@ -107,10 +108,10 @@ class _ShareAppScreenState extends State<ShareAppScreen>
       leading: IconButton(
         onPressed: () {
           HapticFeedback.lightImpact();
-          context.pop();
+          safeBack(context, '/dashboard');
         },
         icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          iosBackIcon(context),
           color: isDark ? Colors.white : Colors.black87,
         ),
       ),

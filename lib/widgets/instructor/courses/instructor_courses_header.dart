@@ -1,9 +1,9 @@
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/common/utils/instructor_courses_theme.dart';
+import 'package:edu_verse/utils/navigation/safe_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class InstructorCoursesHeader extends StatelessWidget {
   final String title;
@@ -209,18 +209,6 @@ class _HeaderChrome extends StatelessWidget {
   }
 
   void _goToDashboard(BuildContext context) {
-    final GoRouter? router = GoRouter.maybeOf(context);
-    if (router != null) {
-      context.go('/instructor/dashboard');
-      return;
-    }
-
-    final navigator = Navigator.of(context);
-    if (navigator.canPop()) {
-      navigator.pop();
-      return;
-    }
-
-    navigator.pushReplacementNamed('/instructor/dashboard');
+    safeBack(context, '/instructor/dashboard');
   }
 }
