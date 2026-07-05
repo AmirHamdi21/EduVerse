@@ -1,0 +1,110 @@
+name: Build Flutter APK Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to publish. Leave empty to use pubspec.yaml version."
+        required: false
+        default: ""
+      prerelease:
+        description: "Mark this GitHub Release as a pre-release."
+        required: true
+        type: boolean
+        default: false
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.35.6"
+  JAVA_VERSION: "17"
+
+jobs:
+  build:
+    name: Build and publish Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Read project version
+        id: version
+        shell: bash
+        env:
+          MANUAL_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          APP_VERSION="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
+          RELEASE_VERSION="${APP_VERSION%%+*}"
+
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            if [[ -n "$MANUAL_RELEASE_TAG" ]]; then
+              RELEASE_TAG="$MANUAL_RELEASE_TAG"
+            else
+              RELEASE_TAG="v$RELEASE_VERSION"
+            fi
+          else
+            RELEASE_TAG="$GITHUB_REF_NAME"
+          fi
+
+          ASSET_TAG="${RELEASE_TAG//\//-}"
+          ASSET_TAG="${ASSET_TAG//\\/-}"
+
+          echo "app_version=$APP_VERSION" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "apk_name=edu_verse-$ASSET_TAG.apk" >> "$GITHUB_OUTPUT"
+
+      - name: Show tool versions
+        run: |
+          java -version
+          flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release --no-tree-shake-icons
+
+      - name: Prepare release asset
+        run: |
+          mkdir -p release
+          cp build/app/outputs/flutter-apk/app-release.apk "release/${{ steps.version.outputs.apk_name }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.version.outputs.release_tag }}
+          target_commitish: ${{ github.sha }}
+          name: EduVerse ${{ steps.version.outputs.release_tag }}
+          prerelease: ${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || false }}
+          generate_release_notes: true
+          body: |
+            EduVerse Android APK.
+
+            Project details from this repository:
+            - App package: edu_verse
+            - App version: ${{ steps.version.outputs.app_version }}
+            - Flutter: ${{ env.FLUTTER_VERSION }} stable
+            - Java: Temurin ${{ env.JAVA_VERSION }}
+            - APK: ${{ steps.version.outputs.apk_name }}
+          files: release/${{ steps.version.outputs.apk_name }}
