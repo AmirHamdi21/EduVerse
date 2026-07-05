@@ -129,79 +129,87 @@ class _ExamSavedDetailScreenState extends State<ExamSavedDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final detail = _detail;
     final exam = detail?.exam;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          onPressed: () =>
-              safeFeatureBack(context, '/instructor/exam-generator'),
-          icon: Icon(safeFeatureBackIcon(context)),
-        ),
-        title: Text(l10n.examSavedDetails),
-        actions: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: 8),
-            child: IconButton.filledTonal(
-              tooltip: l10n.examExport,
-              onPressed: _loading ? null : _export,
-              icon: const Icon(Icons.download_rounded),
-            ),
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          safeFeatureBack(context, '/instructor/exam-generator');
+        }
+      },
+      child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () =>
+                safeFeatureBack(context, '/instructor/exam-generator'),
+            icon: Icon(safeFeatureBackIcon(context)),
           ),
-        ],
-      ),
-      body: _loading
-          ? const Padding(
-              padding: EdgeInsets.all(20),
-              child: ExamGeneratorSkeletons(itemCount: 4),
-            )
-          : _error != null || detail == null || exam == null
-          ? Center(
-              child: FilledButton.icon(
-                onPressed: _load,
-                icon: const Icon(Icons.refresh_rounded),
-                label: Text(l10n.retry),
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: _load,
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
-                children: [
-                  ExamGeneratorHeroHeader(
-                    title: exam.title,
-                    subtitle: l10n.examSnapshotHelp,
-                    stats: {
-                      l10n.status: localizedExamStatus(l10n, exam.status),
-                      l10n.totalMarks: exam.totalMarks?.toString() ?? '-',
-                      l10n.questions: exam.itemCount?.toString() ?? '-',
-                      l10n.sections: exam.sectionCount?.toString() ?? '-',
-                    },
-                    isDark: isDark,
-                  ),
-                  const SizedBox(height: 16),
-                  _SnapshotNotice(detail: detail),
-                  const SizedBox(height: 16),
-                  _SavedOverview(detail: detail),
-                  if ((detail.seed ?? '').trim().isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    _SavedGenerationInfo(detail: detail),
-                  ],
-                  const SizedBox(height: 16),
-                  _SavedPaperText(detail: detail),
-                  const SizedBox(height: 16),
-                  _SavedSections(detail: detail),
-                  const SizedBox(height: 16),
-                  _LifecyclePanel(
-                    isBusy: _actionInProgress,
-                    onPublish: () => _action('publish'),
-                    onUnpublish: () => _action('unpublish'),
-                    onArchive: () => _action('archive'),
-                    onExport: _export,
-                  ),
-                ],
+          title: Text(l10n.examSavedDetails),
+          actions: [
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: IconButton.filledTonal(
+                tooltip: l10n.examExport,
+                onPressed: _loading ? null : _export,
+                icon: const Icon(Icons.download_rounded),
               ),
             ),
+          ],
+        ),
+        body: _loading
+            ? const Padding(
+                padding: EdgeInsets.all(20),
+                child: ExamGeneratorSkeletons(itemCount: 4),
+              )
+            : _error != null || detail == null || exam == null
+            ? Center(
+                child: FilledButton.icon(
+                  onPressed: _load,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: Text(l10n.retry),
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: _load,
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
+                  children: [
+                    ExamGeneratorHeroHeader(
+                      title: exam.title,
+                      subtitle: l10n.examSnapshotHelp,
+                      stats: {
+                        l10n.status: localizedExamStatus(l10n, exam.status),
+                        l10n.totalMarks: exam.totalMarks?.toString() ?? '-',
+                        l10n.questions: exam.itemCount?.toString() ?? '-',
+                        l10n.sections: exam.sectionCount?.toString() ?? '-',
+                      },
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 16),
+                    _SnapshotNotice(detail: detail),
+                    const SizedBox(height: 16),
+                    _SavedOverview(detail: detail),
+                    if ((detail.seed ?? '').trim().isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      _SavedGenerationInfo(detail: detail),
+                    ],
+                    const SizedBox(height: 16),
+                    _SavedPaperText(detail: detail),
+                    const SizedBox(height: 16),
+                    _SavedSections(detail: detail),
+                    const SizedBox(height: 16),
+                    _LifecyclePanel(
+                      isBusy: _actionInProgress,
+                      onPublish: () => _action('publish'),
+                      onUnpublish: () => _action('unpublish'),
+                      onArchive: () => _action('archive'),
+                      onExport: _export,
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 }

@@ -50,165 +50,177 @@ class _QuestionBankDetailViewState extends State<_QuestionBankDetailView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          safeFeatureBack(context, '/instructor/question-bank');
+        }
+      },
+      child: Scaffold(
         backgroundColor: InstructorColors.background(isDark),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          icon: Icon(
-            safeFeatureBackIcon(context),
-            color: InstructorColors.textPrimaryColor(isDark),
+        appBar: AppBar(
+          backgroundColor: InstructorColors.background(isDark),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            icon: Icon(
+              safeFeatureBackIcon(context),
+              color: InstructorColors.textPrimaryColor(isDark),
+            ),
+            onPressed: () =>
+                safeFeatureBack(context, '/instructor/question-bank'),
           ),
-          onPressed: () =>
-              safeFeatureBack(context, '/instructor/question-bank'),
-        ),
-        title: Text(
-          l10n.questionBankQuestionDetails,
-          style: TextStyle(
-            color: InstructorColors.textPrimaryColor(isDark),
-            fontWeight: FontWeight.w900,
+          title: Text(
+            l10n.questionBankQuestionDetails,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w900,
+            ),
           ),
-        ),
-        actions: [
-          BlocBuilder<QuestionDetailCubit, QuestionDetailState>(
-            builder: (context, state) {
-              final question = state.question;
-              return Row(
-                children: [
-                  IconButton(
-                    tooltip: l10n.edit,
-                    onPressed: question == null
-                        ? null
-                        : () => context.push(
-                            '/instructor/question-bank/${question.id}/edit',
-                          ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: InstructorColors.primary.withValues(
-                        alpha: isDark ? 0.18 : 0.1,
-                      ),
-                      foregroundColor: InstructorColors.primary,
-                    ),
-                    icon: const Icon(Icons.edit_outlined),
-                  ),
-                  const SizedBox(width: 8),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 10),
-                    child: IconButton(
-                      tooltip: l10n.qbDeleteQuestion,
+          actions: [
+            BlocBuilder<QuestionDetailCubit, QuestionDetailState>(
+              builder: (context, state) {
+                final question = state.question;
+                return Row(
+                  children: [
+                    IconButton(
+                      tooltip: l10n.edit,
                       onPressed: question == null
                           ? null
-                          : () => _deleteQuestion(context),
+                          : () => context.push(
+                              '/instructor/question-bank/${question.id}/edit',
+                            ),
                       style: IconButton.styleFrom(
-                        backgroundColor: InstructorColors.error.withValues(
+                        backgroundColor: InstructorColors.primary.withValues(
                           alpha: isDark ? 0.18 : 0.1,
                         ),
-                        foregroundColor: InstructorColors.error,
+                        foregroundColor: InstructorColors.primary,
                       ),
-                      icon: const Icon(Icons.delete_outline),
+                      icon: const Icon(Icons.edit_outlined),
                     ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-      body: BlocConsumer<QuestionDetailCubit, QuestionDetailState>(
-        listenWhen: (previous, current) {
-          final previousMessage =
-              previous.errorMessage ?? previous.actionMessage;
-          final currentMessage = current.errorMessage ?? current.actionMessage;
-          return currentMessage != null && currentMessage != previousMessage;
-        },
-        listener: (context, state) {
-          final message = state.errorMessage ?? state.actionMessage;
-          if (message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(localizedQuestionBankMessage(l10n, message)),
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          final question = state.question;
-          if (state.isLoading || question == null) {
-            return const SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 32),
-              child: QuestionBankSkeletons(itemCount: 4),
-            );
-          }
-          final content = RefreshIndicator(
-            onRefresh: () =>
-                context.read<QuestionDetailCubit>().load(question.id),
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 40),
-              children: [
-                QuestionBankHeroHeader(
-                  title: questionTextForDisplay(
-                    question.questionText,
-                    fallback: l10n.questionBankImageQuestion,
-                  ),
-                  subtitle: l10n.qbQuestionReviewWorkspace,
-                  stats: {
-                    l10n.type: localizedQuestionType(
-                      l10n,
-                      question.questionType,
-                    ),
-                    l10n.difficulty: localizedDifficulty(
-                      l10n,
-                      question.difficulty,
-                    ),
-                    l10n.status: localizedQuestionStatus(l10n, question.status),
-                    l10n.attachments: question.attachments.length.toString(),
-                    l10n.qbGroups: question.groups.length.toString(),
-                  },
-                  isDark: isDark,
-                ),
-                const SizedBox(height: 16),
-                InstructorModernTabStrip(
-                  selectedIndex: _tab,
-                  onChanged: (value) => setState(() => _tab = value),
-                  tabs: [
-                    InstructorModernTabItem(
-                      icon: Icons.dashboard_outlined,
-                      label: l10n.qbOverview,
-                    ),
-                    InstructorModernTabItem(
-                      icon: Icons.attach_file_rounded,
-                      label: l10n.attachments,
-                    ),
-                    InstructorModernTabItem(
-                      icon: Icons.folder_copy_outlined,
-                      label: l10n.qbGroups,
-                    ),
-                    InstructorModernTabItem(
-                      icon: Icons.tune_rounded,
-                      label: l10n.qbStatus,
+                    const SizedBox(width: 8),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 10),
+                      child: IconButton(
+                        tooltip: l10n.qbDeleteQuestion,
+                        onPressed: question == null
+                            ? null
+                            : () => _deleteQuestion(context),
+                        style: IconButton.styleFrom(
+                          backgroundColor: InstructorColors.error.withValues(
+                            alpha: isDark ? 0.18 : 0.1,
+                          ),
+                          foregroundColor: InstructorColors.error,
+                        ),
+                        icon: const Icon(Icons.delete_outline),
+                      ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 16),
-                _tabContent(context, question, state),
-              ],
+                );
+              },
             ),
-          );
-          return Stack(
-            children: [
-              content,
-              if (state.activeMutationAction != null)
-                Positioned.fill(
-                  child: _QuestionDetailMutationOverlay(
-                    action: state.activeMutationAction!,
+          ],
+        ),
+        body: BlocConsumer<QuestionDetailCubit, QuestionDetailState>(
+          listenWhen: (previous, current) {
+            final previousMessage =
+                previous.errorMessage ?? previous.actionMessage;
+            final currentMessage =
+                current.errorMessage ?? current.actionMessage;
+            return currentMessage != null && currentMessage != previousMessage;
+          },
+          listener: (context, state) {
+            final message = state.errorMessage ?? state.actionMessage;
+            if (message != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(localizedQuestionBankMessage(l10n, message)),
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            final question = state.question;
+            if (state.isLoading || question == null) {
+              return const SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16, 12, 16, 32),
+                child: QuestionBankSkeletons(itemCount: 4),
+              );
+            }
+            final content = RefreshIndicator(
+              onRefresh: () =>
+                  context.read<QuestionDetailCubit>().load(question.id),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 40),
+                children: [
+                  QuestionBankHeroHeader(
+                    title: questionTextForDisplay(
+                      question.questionText,
+                      fallback: l10n.questionBankImageQuestion,
+                    ),
+                    subtitle: l10n.qbQuestionReviewWorkspace,
+                    stats: {
+                      l10n.type: localizedQuestionType(
+                        l10n,
+                        question.questionType,
+                      ),
+                      l10n.difficulty: localizedDifficulty(
+                        l10n,
+                        question.difficulty,
+                      ),
+                      l10n.status: localizedQuestionStatus(
+                        l10n,
+                        question.status,
+                      ),
+                      l10n.attachments: question.attachments.length.toString(),
+                      l10n.qbGroups: question.groups.length.toString(),
+                    },
                     isDark: isDark,
                   ),
-                ),
-            ],
-          );
-        },
+                  const SizedBox(height: 16),
+                  InstructorModernTabStrip(
+                    selectedIndex: _tab,
+                    onChanged: (value) => setState(() => _tab = value),
+                    tabs: [
+                      InstructorModernTabItem(
+                        icon: Icons.dashboard_outlined,
+                        label: l10n.qbOverview,
+                      ),
+                      InstructorModernTabItem(
+                        icon: Icons.attach_file_rounded,
+                        label: l10n.attachments,
+                      ),
+                      InstructorModernTabItem(
+                        icon: Icons.folder_copy_outlined,
+                        label: l10n.qbGroups,
+                      ),
+                      InstructorModernTabItem(
+                        icon: Icons.tune_rounded,
+                        label: l10n.qbStatus,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _tabContent(context, question, state),
+                ],
+              ),
+            );
+            return Stack(
+              children: [
+                content,
+                if (state.activeMutationAction != null)
+                  Positioned.fill(
+                    child: _QuestionDetailMutationOverlay(
+                      action: state.activeMutationAction!,
+                      isDark: isDark,
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

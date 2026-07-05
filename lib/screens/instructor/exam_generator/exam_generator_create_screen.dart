@@ -48,212 +48,222 @@ class _ExamGeneratorCreateView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => safeBack(context, '/instructor/dashboard'),
-          icon: Icon(iosBackIcon(context)),
-        ),
-        title: Text(l10n.examGeneratorCreateDraft),
-        actions: [
-          IconButton(
-            tooltip: l10n.examGeneratorInfoTitle,
-            onPressed: () => showExamGeneratorInfoSheet(context),
-            icon: const Icon(Icons.info_outline_rounded),
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) safeBack(context, '/instructor/exam-generator');
+      },
+      child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => safeBack(context, '/instructor/exam-generator'),
+            icon: Icon(iosBackIcon(context)),
           ),
-        ],
-      ),
-      bottomNavigationBar:
-          BlocBuilder<ExamGeneratorFormCubit, ExamGeneratorFormState>(
-            builder: (context, state) => _StickyGenerateBar(
-              state: state,
-              questionCount: _questionCount(state),
-              onGenerate:
-                  state.isSubmitting ||
-                      state.isCheckingAvailability ||
-                      state.isLoadingCourseData ||
-                      state.availability?.canGenerate != true
-                  ? null
-                  : () async {
-                      final draftId = await context
-                          .read<ExamGeneratorFormCubit>()
-                          .submit();
-                      if (draftId != null && context.mounted) {
-                        context.go(
-                          '/instructor/exam-generator/drafts/$draftId',
-                        );
-                      }
-                    },
+          title: Text(l10n.examGeneratorCreateDraft),
+          actions: [
+            IconButton(
+              tooltip: l10n.examGeneratorInfoTitle,
+              onPressed: () => showExamGeneratorInfoSheet(context),
+              icon: const Icon(Icons.info_outline_rounded),
             ),
-          ),
-      body: BlocConsumer<ExamGeneratorFormCubit, ExamGeneratorFormState>(
-        listenWhen: (previous, current) =>
-            current.errorMessage != null &&
-            current.errorMessage != previous.errorMessage,
-        listener: (context, state) {
-          if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(localizedExamMessage(l10n, state.errorMessage!)),
+          ],
+        ),
+        bottomNavigationBar:
+            BlocBuilder<ExamGeneratorFormCubit, ExamGeneratorFormState>(
+              builder: (context, state) => _StickyGenerateBar(
+                state: state,
+                questionCount: _questionCount(state),
+                onGenerate:
+                    state.isSubmitting ||
+                        state.isCheckingAvailability ||
+                        state.isLoadingCourseData ||
+                        state.availability?.canGenerate != true
+                    ? null
+                    : () async {
+                        final draftId = await context
+                            .read<ExamGeneratorFormCubit>()
+                            .submit();
+                        if (draftId != null && context.mounted) {
+                          context.pushReplacement(
+                            '/instructor/exam-generator/drafts/$draftId',
+                          );
+                        }
+                      },
               ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Padding(
-              padding: EdgeInsets.all(20),
-              child: ExamGeneratorSkeletons(itemCount: 4),
-            );
-          }
-          return Stack(
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return ListView(
-                    padding: EdgeInsets.fromLTRB(
-                      constraints.maxWidth >= 900 ? 28 : 20,
-                      12,
-                      constraints.maxWidth >= 900 ? 28 : 20,
-                      108,
-                    ),
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 980),
-                          child: Column(
-                            children: [
-                              ExamGeneratorHeroHeader(
-                                title: l10n.examGeneratorStudioTitle,
-                                subtitle: l10n.examGeneratorStudioSubtitle,
-                                isDark: isDark,
-                                stats: {
-                                  l10n.course: _courseLabel(state),
-                                  l10n.examQuestionCount: _questionCount(
-                                    state,
-                                  ).toString(),
-                                  l10n.totalMarks:
-                                      state.totalMarks?.toString() ?? '-',
-                                },
-                              ),
-                              const SizedBox(height: 14),
-                              _Basics(state: state),
-                              if (state.isLoadingCourseData) ...[
-                                const SizedBox(height: 12),
-                                const _CourseDataStrip(),
-                              ],
-                              const SizedBox(height: 14),
-                              ExamShortagePanel(
-                                shortages: state.shortages,
-                                chapters: state.chapters,
-                              ),
-                              ExamGenerationValidationPanel(
-                                message: state.errorMessage,
-                              ),
-                              ExamAvailabilityPanel(
-                                availability: state.availability,
-                                isLoading: state.isCheckingAvailability,
-                                onViewMatchingQuestions: (bucket) =>
-                                    context.push(
-                                      _questionBankUrl(
-                                        bucket,
-                                        approvedOnly: true,
-                                      ),
-                                    ),
-                                onApproveMoreQuestions: (bucket) =>
-                                    context.push(
-                                      _questionBankUrl(
-                                        bucket,
-                                        approvedOnly: false,
-                                      ),
-                                    ),
-                              ),
-                              const SizedBox(height: 14),
-                              ExamGenerationModeToggle(
-                                value: state.mode,
-                                onChanged: (mode) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(mode: mode),
-                              ),
-                              const SizedBox(height: 14),
-                              ExamGenerationSettingsCard(
-                                totalMarks: state.totalMarks,
-                                markMode: state.markDistributionMode,
-                                rounding: state.roundingPolicy,
-                                groupSelectionMode: state.groupSelectionMode,
-                                seed: state.seed,
-                                durationMinutes: state.durationMinutes,
-                                instructions: state.instructions,
-                                headerText: state.headerText,
-                                footerText: state.footerText,
-                                onTotalMarksChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(
-                                      totalMarks: value,
-                                      clearTotalMarks: value == null,
-                                    ),
-                                onMarkModeChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(markDistributionMode: value),
-                                onRoundingChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(roundingPolicy: value),
-                                onGroupModeChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(groupSelectionMode: value),
-                                onSeedChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(seed: value),
-                                onRandomSeed: () => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .randomizeSeed(),
-                                onClearSeed: () => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .clearSeed(),
-                                onDurationChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(
-                                      durationMinutes: value,
-                                      clearDuration: value == null,
-                                    ),
-                                onInstructionsChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(instructions: value),
-                                onHeaderChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(headerText: value),
-                                onFooterChanged: (value) => context
-                                    .read<ExamGeneratorFormCubit>()
-                                    .updateBasics(footerText: value),
-                              ),
-                              const SizedBox(height: 14),
-                              if (state.mode == ExamGenerationMode.flat)
-                                _FlatRules(state: state)
-                              else
-                                _SectionedRules(state: state),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              if (state.isSubmitting)
-                Positioned.fill(
-                  child: QuestionBankMutationOverlay(
-                    title: 'Generating draft',
-                    message:
-                        'Please wait while the exam draft is created and prepared.',
-                    isDark: isDark,
-                    color: InstructorColors.primary,
+            ),
+        body: BlocConsumer<ExamGeneratorFormCubit, ExamGeneratorFormState>(
+          listenWhen: (previous, current) =>
+              current.errorMessage != null &&
+              current.errorMessage != previous.errorMessage,
+          listener: (context, state) {
+            if (state.errorMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    localizedExamMessage(l10n, state.errorMessage!),
                   ),
                 ),
-            ],
-          );
-        },
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const Padding(
+                padding: EdgeInsets.all(20),
+                child: ExamGeneratorSkeletons(itemCount: 4),
+              );
+            }
+            return Stack(
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return ListView(
+                      padding: EdgeInsets.fromLTRB(
+                        constraints.maxWidth >= 900 ? 28 : 20,
+                        12,
+                        constraints.maxWidth >= 900 ? 28 : 20,
+                        108,
+                      ),
+                      children: [
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 980),
+                            child: Column(
+                              children: [
+                                ExamGeneratorHeroHeader(
+                                  title: l10n.examGeneratorStudioTitle,
+                                  subtitle: l10n.examGeneratorStudioSubtitle,
+                                  isDark: isDark,
+                                  stats: {
+                                    l10n.course: _courseLabel(state),
+                                    l10n.examQuestionCount: _questionCount(
+                                      state,
+                                    ).toString(),
+                                    l10n.totalMarks:
+                                        state.totalMarks?.toString() ?? '-',
+                                  },
+                                ),
+                                const SizedBox(height: 14),
+                                _Basics(state: state),
+                                if (state.isLoadingCourseData) ...[
+                                  const SizedBox(height: 12),
+                                  const _CourseDataStrip(),
+                                ],
+                                const SizedBox(height: 14),
+                                ExamShortagePanel(
+                                  shortages: state.shortages,
+                                  chapters: state.chapters,
+                                ),
+                                ExamGenerationValidationPanel(
+                                  message: state.errorMessage,
+                                ),
+                                ExamAvailabilityPanel(
+                                  availability: state.availability,
+                                  isLoading: state.isCheckingAvailability,
+                                  onViewMatchingQuestions: (bucket) =>
+                                      context.push(
+                                        _questionBankUrl(
+                                          bucket,
+                                          approvedOnly: true,
+                                        ),
+                                      ),
+                                  onApproveMoreQuestions: (bucket) =>
+                                      context.push(
+                                        _questionBankUrl(
+                                          bucket,
+                                          approvedOnly: false,
+                                        ),
+                                      ),
+                                ),
+                                const SizedBox(height: 14),
+                                ExamGenerationModeToggle(
+                                  value: state.mode,
+                                  onChanged: (mode) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(mode: mode),
+                                ),
+                                const SizedBox(height: 14),
+                                ExamGenerationSettingsCard(
+                                  totalMarks: state.totalMarks,
+                                  markMode: state.markDistributionMode,
+                                  rounding: state.roundingPolicy,
+                                  groupSelectionMode: state.groupSelectionMode,
+                                  seed: state.seed,
+                                  durationMinutes: state.durationMinutes,
+                                  instructions: state.instructions,
+                                  headerText: state.headerText,
+                                  footerText: state.footerText,
+                                  onTotalMarksChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(
+                                        totalMarks: value,
+                                        clearTotalMarks: value == null,
+                                      ),
+                                  onMarkModeChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(
+                                        markDistributionMode: value,
+                                      ),
+                                  onRoundingChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(roundingPolicy: value),
+                                  onGroupModeChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(groupSelectionMode: value),
+                                  onSeedChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(seed: value),
+                                  onRandomSeed: () => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .randomizeSeed(),
+                                  onClearSeed: () => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .clearSeed(),
+                                  onDurationChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(
+                                        durationMinutes: value,
+                                        clearDuration: value == null,
+                                      ),
+                                  onInstructionsChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(instructions: value),
+                                  onHeaderChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(headerText: value),
+                                  onFooterChanged: (value) => context
+                                      .read<ExamGeneratorFormCubit>()
+                                      .updateBasics(footerText: value),
+                                ),
+                                const SizedBox(height: 14),
+                                if (state.mode == ExamGenerationMode.flat)
+                                  _FlatRules(state: state)
+                                else
+                                  _SectionedRules(state: state),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                if (state.isSubmitting)
+                  Positioned.fill(
+                    child: QuestionBankMutationOverlay(
+                      title: 'Generating draft',
+                      message:
+                          'Please wait while the exam draft is created and prepared.',
+                      isDark: isDark,
+                      color: InstructorColors.primary,
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

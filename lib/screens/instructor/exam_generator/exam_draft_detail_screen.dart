@@ -84,141 +84,150 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          onPressed: () =>
-              safeFeatureBack(context, '/instructor/exam-generator'),
-          icon: Icon(safeFeatureBackIcon(context)),
-        ),
-        title: Text(l10n.examDraftDetails),
-        actions: [
-          BlocBuilder<ExamDraftEditorCubit, ExamDraftEditorState>(
-            builder: (context, state) {
-              final draft = state.draft;
-              if (_hasSavedExam(draft)) {
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          safeFeatureBack(context, '/instructor/exam-generator');
+        }
+      },
+      child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () =>
+                safeFeatureBack(context, '/instructor/exam-generator'),
+            icon: Icon(safeFeatureBackIcon(context)),
+          ),
+          title: Text(l10n.examDraftDetails),
+          actions: [
+            BlocBuilder<ExamDraftEditorCubit, ExamDraftEditorState>(
+              builder: (context, state) {
+                final draft = state.draft;
+                if (_hasSavedExam(draft)) {
+                  return Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 8),
+                    child: IconButton.filledTonal(
+                      tooltip: l10n.examOpenSavedExam,
+                      onPressed: () => context.pushReplacement(
+                        '/instructor/exam-generator/exams/${draft!.finalizedExamId}',
+                      ),
+                      icon: const Icon(Icons.fact_check_outlined),
+                    ),
+                  );
+                }
+                if (draft?.status == ExamDraftStatus.finalized) {
+                  return const SizedBox.shrink();
+                }
+                final canSave =
+                    draft != null && draft.isEditable && !state.isMutating;
                 return Padding(
                   padding: const EdgeInsetsDirectional.only(end: 8),
                   child: IconButton.filledTonal(
-                    tooltip: l10n.examOpenSavedExam,
-                    onPressed: () => context.go(
-                      '/instructor/exam-generator/exams/${draft!.finalizedExamId}',
-                    ),
-                    icon: const Icon(Icons.fact_check_outlined),
+                    tooltip: l10n.save,
+                    onPressed: canSave ? () => _save(context) : null,
+                    icon: const Icon(Icons.save_outlined),
                   ),
                 );
-              }
-              if (draft?.status == ExamDraftStatus.finalized) {
-                return const SizedBox.shrink();
-              }
-              final canSave =
-                  draft != null && draft.isEditable && !state.isMutating;
-              return Padding(
-                padding: const EdgeInsetsDirectional.only(end: 8),
-                child: IconButton.filledTonal(
-                  tooltip: l10n.save,
-                  onPressed: canSave ? () => _save(context) : null,
-                  icon: const Icon(Icons.save_outlined),
+              },
+            ),
+          ],
+        ),
+        body: BlocConsumer<ExamDraftEditorCubit, ExamDraftEditorState>(
+          listenWhen: (previous, current) {
+            final previousMessage =
+                previous.errorMessage ?? previous.actionMessage;
+            final currentMessage =
+                current.errorMessage ?? current.actionMessage;
+            return currentMessage != null && currentMessage != previousMessage;
+          },
+          listener: (context, state) {
+            final message = state.errorMessage ?? state.actionMessage;
+            if (message != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(localizedExamMessage(l10n, message))),
+              );
+            }
+          },
+          builder: (context, state) {
+            final draft = state.draft;
+            if (state.isLoading || draft == null) {
+              return const Padding(
+                padding: EdgeInsets.all(20),
+                child: ExamGeneratorSkeletons(itemCount: 4),
+              );
+            }
+            if (draft.status == ExamDraftStatus.finalized) {
+              return _withMutationOverlay(
+                context,
+                state,
+                _FinalizedDraftHandoff(
+                  draft: draft,
+                  isMutating: state.isMutating,
+                  onOpenSavedExam: draft.finalizedExamId == null
+                      ? null
+                      : () => context.pushReplacement(
+                          '/instructor/exam-generator/exams/${draft.finalizedExamId}',
+                        ),
+                  onCreateEditableCopy: () => _duplicateFinalizedDraft(context),
                 ),
               );
-            },
-          ),
-        ],
-      ),
-      body: BlocConsumer<ExamDraftEditorCubit, ExamDraftEditorState>(
-        listenWhen: (previous, current) {
-          final previousMessage =
-              previous.errorMessage ?? previous.actionMessage;
-          final currentMessage = current.errorMessage ?? current.actionMessage;
-          return currentMessage != null && currentMessage != previousMessage;
-        },
-        listener: (context, state) {
-          final message = state.errorMessage ?? state.actionMessage;
-          if (message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(localizedExamMessage(l10n, message))),
-            );
-          }
-        },
-        builder: (context, state) {
-          final draft = state.draft;
-          if (state.isLoading || draft == null) {
-            return const Padding(
-              padding: EdgeInsets.all(20),
-              child: ExamGeneratorSkeletons(itemCount: 4),
-            );
-          }
-          if (draft.status == ExamDraftStatus.finalized) {
+            }
             return _withMutationOverlay(
               context,
               state,
-              _FinalizedDraftHandoff(
-                draft: draft,
-                isMutating: state.isMutating,
-                onOpenSavedExam: draft.finalizedExamId == null
-                    ? null
-                    : () => context.go(
-                        '/instructor/exam-generator/exams/${draft.finalizedExamId}',
+              ListView(
+                controller: _scrollController,
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
+                children: [
+                  ExamGeneratorHeroHeader(
+                    title: draft.title,
+                    subtitle: draft.isEditable
+                        ? l10n.examDraftEditable
+                        : l10n.examDraftNotEditable,
+                    stats: {
+                      l10n.status: localizedDraftStatus(l10n, draft.status),
+                      l10n.questions: draft.items.length.toString(),
+                      l10n.sections: draft.sections.length.toString(),
+                      l10n.totalMarks: draft.totalMarks?.toString() ?? '-',
+                    },
+                    isDark: isDark,
+                  ),
+                  if (draft.isEditable) ...[
+                    const SizedBox(height: 16),
+                    _ExpiryBanner(expiresAt: draft.expiresAt),
+                  ],
+                  const SizedBox(height: 16),
+                  InstructorModernTabStrip(
+                    selectedIndex: _tab,
+                    onChanged: _changeTab,
+                    tabs: [
+                      InstructorModernTabItem(
+                        icon: Icons.dashboard_outlined,
+                        label: l10n.examDraftOverview,
                       ),
-                onCreateEditableCopy: () => _duplicateFinalizedDraft(context),
+                      InstructorModernTabItem(
+                        icon: Icons.construction_rounded,
+                        label: l10n.examDraftBuild,
+                      ),
+                      InstructorModernTabItem(
+                        icon: Icons.swap_vert_rounded,
+                        label: l10n.examDraftReorder,
+                      ),
+                      InstructorModernTabItem(
+                        icon: Icons.checklist_rounded,
+                        label: l10n.examDraftReview,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _tabContent(context, state),
+                ],
               ),
             );
-          }
-          return _withMutationOverlay(
-            context,
-            state,
-            ListView(
-              controller: _scrollController,
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
-              children: [
-                ExamGeneratorHeroHeader(
-                  title: draft.title,
-                  subtitle: draft.isEditable
-                      ? l10n.examDraftEditable
-                      : l10n.examDraftNotEditable,
-                  stats: {
-                    l10n.status: localizedDraftStatus(l10n, draft.status),
-                    l10n.questions: draft.items.length.toString(),
-                    l10n.sections: draft.sections.length.toString(),
-                    l10n.totalMarks: draft.totalMarks?.toString() ?? '-',
-                  },
-                  isDark: isDark,
-                ),
-                if (draft.isEditable) ...[
-                  const SizedBox(height: 16),
-                  _ExpiryBanner(expiresAt: draft.expiresAt),
-                ],
-                const SizedBox(height: 16),
-                InstructorModernTabStrip(
-                  selectedIndex: _tab,
-                  onChanged: _changeTab,
-                  tabs: [
-                    InstructorModernTabItem(
-                      icon: Icons.dashboard_outlined,
-                      label: l10n.examDraftOverview,
-                    ),
-                    InstructorModernTabItem(
-                      icon: Icons.construction_rounded,
-                      label: l10n.examDraftBuild,
-                    ),
-                    InstructorModernTabItem(
-                      icon: Icons.swap_vert_rounded,
-                      label: l10n.examDraftReorder,
-                    ),
-                    InstructorModernTabItem(
-                      icon: Icons.checklist_rounded,
-                      label: l10n.examDraftReview,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _tabContent(context, state),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -465,7 +474,9 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
                 .read<ExamDraftEditorCubit>()
                 .regenerateDraft();
             if (draftId != null && context.mounted) {
-              context.go('/instructor/exam-generator/drafts/$draftId');
+              context.pushReplacement(
+                '/instructor/exam-generator/drafts/$draftId',
+              );
             }
           },
         );
@@ -1030,7 +1041,7 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
   Future<void> _save(BuildContext context) async {
     final id = await context.read<ExamDraftEditorCubit>().saveDraft();
     if (id != null && context.mounted) {
-      context.go('/instructor/exam-generator/exams/$id');
+      context.pushReplacement('/instructor/exam-generator/exams/$id');
     }
   }
 
@@ -1052,7 +1063,7 @@ class _ExamDraftDetailViewState extends State<_ExamDraftDetailView> {
   Future<void> _duplicateFinalizedDraft(BuildContext context) async {
     final id = await context.read<ExamDraftEditorCubit>().duplicateDraft();
     if (id != null && context.mounted) {
-      context.go('/instructor/exam-generator/drafts/$id');
+      context.pushReplacement('/instructor/exam-generator/drafts/$id');
     }
   }
 

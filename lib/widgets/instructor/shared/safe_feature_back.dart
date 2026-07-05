@@ -6,10 +6,7 @@ void safeFeatureBack<T>(
   String fallbackRoute, [
   T? result,
 ]) {
-  final resolvedFallback = fallbackRoute.startsWith('/instructor/')
-      ? '/instructor/dashboard'
-      : fallbackRoute;
-  safeBack(context, resolvedFallback, result);
+  safeBack(context, fallbackRoute, result);
 }
 
 IconData safeFeatureBackIcon(BuildContext context) => iosBackIcon(context);

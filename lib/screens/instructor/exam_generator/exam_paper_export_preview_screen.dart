@@ -837,58 +837,69 @@ class _ExamPaperExportPreviewScreenState
     final activeConfig = _activeAction == null
         ? null
         : _paperActionConfig(_activeAction!);
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          onPressed: _working
-              ? null
-              : () => safeFeatureBack(
-                  context,
-                  '/instructor/exam-generator/exams/${widget.examId}',
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && !_working) {
+          safeFeatureBack(
+            context,
+            '/instructor/exam-generator/exams/${widget.examId}',
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: _working
+                ? null
+                : () => safeFeatureBack(
+                    context,
+                    '/instructor/exam-generator/exams/${widget.examId}',
+                  ),
+            icon: Icon(safeFeatureBackIcon(context)),
+          ),
+          title: Text(l10n.examPaperDesignerTitle),
+          actions: [
+            if (canShowActions)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 8),
+                child: IconButton.filledTonal(
+                  tooltip: l10n.examPaperApplyToExam,
+                  onPressed: _working ? null : _confirmAndApplyTemplate,
+                  icon: const Icon(Icons.check_circle_outline_rounded),
                 ),
-          icon: Icon(safeFeatureBackIcon(context)),
-        ),
-        title: Text(l10n.examPaperDesignerTitle),
-        actions: [
-          if (canShowActions)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(end: 8),
-              child: IconButton.filledTonal(
-                tooltip: l10n.examPaperApplyToExam,
-                onPressed: _working ? null : _confirmAndApplyTemplate,
-                icon: const Icon(Icons.check_circle_outline_rounded),
               ),
-            ),
-        ],
-      ),
-      bottomNavigationBar: canShowActions
-          ? SafeArea(
-              minimum: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: _bottomBar(context),
-            )
-          : null,
-      body: Stack(
-        children: [
-          _buildContent(context),
-          if (_working &&
-              _activeAction == _PaperDesignerAction.export &&
-              activeConfig != null)
-            _PaperExportProgressOverlay(
-              title: activeConfig.loadingTitle,
-              message: _exportProgressMessage,
-              progress: _exportProgress,
-              isDark: isDark,
-            )
-          else if (_working && activeConfig != null)
-            QuestionBankMutationOverlay(
-              title: activeConfig.loadingTitle,
-              message: activeConfig.loadingMessage,
-              color: activeConfig.color,
-              isDark: isDark,
-            ),
-        ],
+          ],
+        ),
+        bottomNavigationBar: canShowActions
+            ? SafeArea(
+                minimum: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: _bottomBar(context),
+              )
+            : null,
+        body: Stack(
+          children: [
+            _buildContent(context),
+            if (_working &&
+                _activeAction == _PaperDesignerAction.export &&
+                activeConfig != null)
+              _PaperExportProgressOverlay(
+                title: activeConfig.loadingTitle,
+                message: _exportProgressMessage,
+                progress: _exportProgress,
+                isDark: isDark,
+              )
+            else if (_working && activeConfig != null)
+              QuestionBankMutationOverlay(
+                title: activeConfig.loadingTitle,
+                message: activeConfig.loadingMessage,
+                color: activeConfig.color,
+                isDark: isDark,
+              ),
+          ],
+        ),
       ),
     );
   }

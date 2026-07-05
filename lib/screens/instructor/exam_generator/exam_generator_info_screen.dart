@@ -94,107 +94,113 @@ class ExamGeneratorInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => safeBack(context, '/instructor/dashboard'),
-          icon: Icon(iosBackIcon(context)),
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) safeBack(context, '/instructor/exam-generator');
+      },
+      child: Scaffold(
+        backgroundColor: InstructorColors.background(isDark),
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => safeBack(context, '/instructor/exam-generator'),
+            icon: Icon(iosBackIcon(context)),
+          ),
+          title: Text(l10n.examGeneratorInfoTitle),
         ),
-        title: Text(l10n.examGeneratorInfoTitle),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [InstructorColors.primary, InstructorColors.teal],
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [InstructorColors.primary, InstructorColors.teal],
+                ),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: InstructorColors.primary.withValues(alpha: 0.16),
+                    blurRadius: 22,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
               ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: InstructorColors.primary.withValues(alpha: 0.16),
-                  blurRadius: 22,
-                  offset: const Offset(0, 12),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(18),
+              child: Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: const Icon(
+                      Icons.auto_awesome_rounded,
+                      color: Colors.white,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.auto_awesome_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.examGeneratorInfoTitle,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 23,
-                          fontWeight: FontWeight.w900,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.examGeneratorInfoTitle,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 23,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.examGeneratorInfoIntro,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontWeight: FontWeight.w700,
-                          height: 1.25,
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.examGeneratorInfoIntro,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontWeight: FontWeight.w700,
+                            height: 1.25,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 14),
-          _GuideCard(
-            icon: Icons.inventory_2_outlined,
-            color: InstructorColors.success,
-            title: l10n.examGeneratorGuidePoolTitle,
-            body: l10n.examGeneratorGuidePoolBody,
-          ),
-          _GuideCard(
-            icon: Icons.rule_folder_outlined,
-            color: InstructorColors.primary,
-            title: l10n.examGeneratorGuideRulesTitle,
-            body: l10n.examGeneratorGuideRulesBody,
-          ),
-          _GuideCard(
-            icon: Icons.account_tree_outlined,
-            color: InstructorColors.accent,
-            title: l10n.examGeneratorGuideModesTitle,
-            body: l10n.examGeneratorGuideModesBody,
-          ),
-          _GuideCard(
-            icon: Icons.edit_note_rounded,
-            color: InstructorColors.orange,
-            title: l10n.examGeneratorGuideLifecycleTitle,
-            body: l10n.examGeneratorGuideLifecycleBody,
-          ),
-          _GuideCard(
-            icon: Icons.tips_and_updates_outlined,
-            color: InstructorColors.teal,
-            title: l10n.examGeneratorGuideTipsTitle,
-            body: l10n.examGeneratorGuideTipsBody,
-          ),
-        ],
+            const SizedBox(height: 14),
+            _GuideCard(
+              icon: Icons.inventory_2_outlined,
+              color: InstructorColors.success,
+              title: l10n.examGeneratorGuidePoolTitle,
+              body: l10n.examGeneratorGuidePoolBody,
+            ),
+            _GuideCard(
+              icon: Icons.rule_folder_outlined,
+              color: InstructorColors.primary,
+              title: l10n.examGeneratorGuideRulesTitle,
+              body: l10n.examGeneratorGuideRulesBody,
+            ),
+            _GuideCard(
+              icon: Icons.account_tree_outlined,
+              color: InstructorColors.accent,
+              title: l10n.examGeneratorGuideModesTitle,
+              body: l10n.examGeneratorGuideModesBody,
+            ),
+            _GuideCard(
+              icon: Icons.edit_note_rounded,
+              color: InstructorColors.orange,
+              title: l10n.examGeneratorGuideLifecycleTitle,
+              body: l10n.examGeneratorGuideLifecycleBody,
+            ),
+            _GuideCard(
+              icon: Icons.tips_and_updates_outlined,
+              color: InstructorColors.teal,
+              title: l10n.examGeneratorGuideTipsTitle,
+              body: l10n.examGeneratorGuideTipsBody,
+            ),
+          ],
+        ),
       ),
     );
   }

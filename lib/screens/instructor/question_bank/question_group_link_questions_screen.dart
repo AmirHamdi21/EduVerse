@@ -93,210 +93,221 @@ class _QuestionGroupLinkQuestionsViewState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _handleBack(context);
+      },
+      child: Scaffold(
         backgroundColor: InstructorColors.background(isDark),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            final groupId = context.read<QuestionGroupCubit>().state.group?.id;
-            safeFeatureBack(
-              context,
-              groupId == null
-                  ? '/instructor/question-bank/groups'
-                  : '/instructor/question-bank/groups/$groupId',
-            );
+        appBar: AppBar(
+          backgroundColor: InstructorColors.background(isDark),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () => _handleBack(context),
+            icon: Icon(
+              safeFeatureBackIcon(context),
+              color: InstructorColors.textPrimaryColor(isDark),
+            ),
+          ),
+          title: Text(
+            l10n.qbAddExistingQuestions,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        body: BlocConsumer<QuestionGroupCubit, QuestionGroupState>(
+          listenWhen: (previous, current) {
+            final previousMessage =
+                previous.errorMessage ?? previous.actionMessage;
+            final currentMessage =
+                current.errorMessage ?? current.actionMessage;
+            return currentMessage != null && currentMessage != previousMessage;
           },
-          icon: Icon(
-            safeFeatureBackIcon(context),
-            color: InstructorColors.textPrimaryColor(isDark),
-          ),
-        ),
-        title: Text(
-          l10n.qbAddExistingQuestions,
-          style: TextStyle(
-            color: InstructorColors.textPrimaryColor(isDark),
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ),
-      body: BlocConsumer<QuestionGroupCubit, QuestionGroupState>(
-        listenWhen: (previous, current) {
-          final previousMessage =
-              previous.errorMessage ?? previous.actionMessage;
-          final currentMessage = current.errorMessage ?? current.actionMessage;
-          return currentMessage != null && currentMessage != previousMessage;
-        },
-        listener: (context, state) {
-          final message = state.errorMessage ?? state.actionMessage;
-          if (message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(localizedQuestionBankMessage(l10n, message)),
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          final group = state.group;
-          final bankState = context.watch<QuestionBankCubit>().state;
-          if (group != null && !_courseInitialized) {
-            _courseId = group.courseId;
-            _filterChapters = state.chapters;
-            _courseInitialized = true;
-          }
-          if (group != null && !_loadedOnce && !_loadingCandidates) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) _loadCandidates(context, state);
-            });
-          }
-          if (state.isLoading || group == null || !_loadedOnce) {
-            return ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-              children: const [QuestionBankSkeletons(itemCount: 3)],
-            );
-          }
-          final visibleIds = _candidates.map((question) => question.id).toSet();
-          final visibleSelectedCount = _selected
-              .intersection(visibleIds)
-              .length;
-          final allVisibleSelected =
-              _candidates.isNotEmpty &&
-              visibleSelectedCount == _candidates.length;
+          listener: (context, state) {
+            final message = state.errorMessage ?? state.actionMessage;
+            if (message != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(localizedQuestionBankMessage(l10n, message)),
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            final group = state.group;
+            final bankState = context.watch<QuestionBankCubit>().state;
+            if (group != null && !_courseInitialized) {
+              _courseId = group.courseId;
+              _filterChapters = state.chapters;
+              _courseInitialized = true;
+            }
+            if (group != null && !_loadedOnce && !_loadingCandidates) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _loadCandidates(context, state);
+              });
+            }
+            if (state.isLoading || group == null || !_loadedOnce) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                children: const [QuestionBankSkeletons(itemCount: 3)],
+              );
+            }
+            final visibleIds = _candidates
+                .map((question) => question.id)
+                .toSet();
+            final visibleSelectedCount = _selected
+                .intersection(visibleIds)
+                .length;
+            final allVisibleSelected =
+                _candidates.isNotEmpty &&
+                visibleSelectedCount == _candidates.length;
 
-          final content = ListView(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
-            children: [
-              QuestionFormHero(
-                title: l10n.qbAddExistingQuestions,
-                subtitle: group.title ?? l10n.questionBankGroupDetails,
-                tiles: {
-                  l10n.course: _selectedCourseLabel(group, bankState),
-                  l10n.questions: _candidates.length.toString(),
-                  l10n.selected: _selected.length.toString(),
-                },
-              ),
-              const SizedBox(height: 18),
-              _FilterPanel(
-                bankState: bankState,
-                selectedCourseId: _courseId,
-                chapterId: _chapterId,
-                status: _status,
-                type: _type,
-                difficulty: _difficulty,
-                bloomLevel: _bloomLevel,
-                search: _search,
-                isLoading: _loadingCandidates,
-                isLoadingChapters: _loadingFilterChapters,
-                chapters: _filterChapters,
-                onCourseChanged: (value) =>
-                    _setCourseFilter(context, state, value),
-                onChapterChanged: (value) =>
-                    _setFilter(context, state, () => _chapterId = value),
-                onStatusChanged: (value) =>
-                    _setFilter(context, state, () => _status = value),
-                onTypeChanged: (value) =>
-                    _setFilter(context, state, () => _type = value),
-                onDifficultyChanged: (value) =>
-                    _setFilter(context, state, () => _difficulty = value),
-                onBloomChanged: (value) =>
-                    _setFilter(context, state, () => _bloomLevel = value),
-                onSearchChanged: (value) => _onSearchChanged(context, state),
-                onQuestionFiltersCleared: () {
-                  setState(() {
-                    _status = null;
-                    _type = null;
-                    _difficulty = null;
-                    _bloomLevel = null;
-                  });
-                  _loadCandidates(context, state);
-                },
-                onClear: () {
-                  _searchDebounce?.cancel();
-                  setState(() {
-                    _courseId = group.courseId;
-                    _filterChapters = state.chapters;
-                    _chapterId = null;
-                    _status = null;
-                    _type = null;
-                    _difficulty = null;
-                    _bloomLevel = null;
-                    _search.clear();
-                  });
-                  _loadCandidates(context, state);
-                },
-              ),
-              const SizedBox(height: 16),
-              _SelectionPanel(
-                candidateCount: _candidates.length,
-                selectedCount: _selected.length,
-                allVisibleSelected: allVisibleSelected,
-                isBusy: state.isMutating,
-                onSelectAllVisible: _candidates.isEmpty
-                    ? null
-                    : () {
-                        setState(() {
-                          if (allVisibleSelected) {
-                            _selected.removeAll(visibleIds);
-                          } else {
-                            _selected.addAll(visibleIds);
-                          }
-                        });
-                      },
-                onClearSelection: _selected.isEmpty
-                    ? null
-                    : () => setState(_selected.clear),
-                onSubmit: _selected.isEmpty
-                    ? null
-                    : () => _submitLink(context, state),
-              ),
-              const SizedBox(height: 16),
-              if (_candidates.isEmpty)
-                QuestionBankEmptyState(
-                  title: l10n.questionBankEmptyTitle,
-                  message: l10n.questionBankEmptyMessage,
-                )
-              else
-                QuestionSectionCard(
-                  title: l10n.qbAvailableQuestions,
-                  icon: Icons.library_add_check_outlined,
-                  color: InstructorColors.primary,
-                  children: [
-                    for (final question in _candidates)
-                      _CandidateQuestionCard(
-                        question: question,
-                        selected: _selected.contains(question.id),
-                        onToggle: () {
+            final content = ListView(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 34),
+              children: [
+                QuestionFormHero(
+                  title: l10n.qbAddExistingQuestions,
+                  subtitle: group.title ?? l10n.questionBankGroupDetails,
+                  tiles: {
+                    l10n.course: _selectedCourseLabel(group, bankState),
+                    l10n.questions: _candidates.length.toString(),
+                    l10n.selected: _selected.length.toString(),
+                  },
+                ),
+                const SizedBox(height: 18),
+                _FilterPanel(
+                  bankState: bankState,
+                  selectedCourseId: _courseId,
+                  chapterId: _chapterId,
+                  status: _status,
+                  type: _type,
+                  difficulty: _difficulty,
+                  bloomLevel: _bloomLevel,
+                  search: _search,
+                  isLoading: _loadingCandidates,
+                  isLoadingChapters: _loadingFilterChapters,
+                  chapters: _filterChapters,
+                  onCourseChanged: (value) =>
+                      _setCourseFilter(context, state, value),
+                  onChapterChanged: (value) =>
+                      _setFilter(context, state, () => _chapterId = value),
+                  onStatusChanged: (value) =>
+                      _setFilter(context, state, () => _status = value),
+                  onTypeChanged: (value) =>
+                      _setFilter(context, state, () => _type = value),
+                  onDifficultyChanged: (value) =>
+                      _setFilter(context, state, () => _difficulty = value),
+                  onBloomChanged: (value) =>
+                      _setFilter(context, state, () => _bloomLevel = value),
+                  onSearchChanged: (value) => _onSearchChanged(context, state),
+                  onQuestionFiltersCleared: () {
+                    setState(() {
+                      _status = null;
+                      _type = null;
+                      _difficulty = null;
+                      _bloomLevel = null;
+                    });
+                    _loadCandidates(context, state);
+                  },
+                  onClear: () {
+                    _searchDebounce?.cancel();
+                    setState(() {
+                      _courseId = group.courseId;
+                      _filterChapters = state.chapters;
+                      _chapterId = null;
+                      _status = null;
+                      _type = null;
+                      _difficulty = null;
+                      _bloomLevel = null;
+                      _search.clear();
+                    });
+                    _loadCandidates(context, state);
+                  },
+                ),
+                const SizedBox(height: 16),
+                _SelectionPanel(
+                  candidateCount: _candidates.length,
+                  selectedCount: _selected.length,
+                  allVisibleSelected: allVisibleSelected,
+                  isBusy: state.isMutating,
+                  onSelectAllVisible: _candidates.isEmpty
+                      ? null
+                      : () {
                           setState(() {
-                            if (_selected.contains(question.id)) {
-                              _selected.remove(question.id);
+                            if (allVisibleSelected) {
+                              _selected.removeAll(visibleIds);
                             } else {
-                              _selected.add(question.id);
+                              _selected.addAll(visibleIds);
                             }
                           });
                         },
-                      ),
-                  ],
+                  onClearSelection: _selected.isEmpty
+                      ? null
+                      : () => setState(_selected.clear),
+                  onSubmit: _selected.isEmpty
+                      ? null
+                      : () => _submitLink(context, state),
                 ),
-            ],
-          );
-          return Stack(
-            children: [
-              content,
-              if (state.isMutating)
-                Positioned.fill(
-                  child: _LinkMutationOverlay(
-                    selectedCount: _selected.length,
-                    isDark: isDark,
+                const SizedBox(height: 16),
+                if (_candidates.isEmpty)
+                  QuestionBankEmptyState(
+                    title: l10n.questionBankEmptyTitle,
+                    message: l10n.questionBankEmptyMessage,
+                  )
+                else
+                  QuestionSectionCard(
+                    title: l10n.qbAvailableQuestions,
+                    icon: Icons.library_add_check_outlined,
+                    color: InstructorColors.primary,
+                    children: [
+                      for (final question in _candidates)
+                        _CandidateQuestionCard(
+                          question: question,
+                          selected: _selected.contains(question.id),
+                          onToggle: () {
+                            setState(() {
+                              if (_selected.contains(question.id)) {
+                                _selected.remove(question.id);
+                              } else {
+                                _selected.add(question.id);
+                              }
+                            });
+                          },
+                        ),
+                    ],
                   ),
-                ),
-            ],
-          );
-        },
+              ],
+            );
+            return Stack(
+              children: [
+                content,
+                if (state.isMutating)
+                  Positioned.fill(
+                    child: _LinkMutationOverlay(
+                      selectedCount: _selected.length,
+                      isDark: isDark,
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
+    );
+  }
+
+  void _handleBack(BuildContext context) {
+    final groupId = context.read<QuestionGroupCubit>().state.group?.id;
+    safeFeatureBack(
+      context,
+      groupId == null
+          ? '/instructor/question-bank/groups'
+          : '/instructor/question-bank/groups/$groupId',
     );
   }
 

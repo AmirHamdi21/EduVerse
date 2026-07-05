@@ -57,204 +57,216 @@ class _QuestionGroupsViewState extends State<_QuestionGroupsView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          safeFeatureBack(context, '/instructor/question-bank');
+        }
+      },
+      child: Scaffold(
         backgroundColor: InstructorColors.background(isDark),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          icon: Icon(
-            safeFeatureBackIcon(context),
-            color: InstructorColors.textPrimaryColor(isDark),
+        appBar: AppBar(
+          backgroundColor: InstructorColors.background(isDark),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            icon: Icon(
+              safeFeatureBackIcon(context),
+              color: InstructorColors.textPrimaryColor(isDark),
+            ),
+            onPressed: () =>
+                safeFeatureBack(context, '/instructor/question-bank'),
           ),
+          title: Text(
+            l10n.qbGroups,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          // actions: [
+          //   Padding(
+          //     padding: const EdgeInsetsDirectional.only(end: 10),
+          //     child: IconButton(
+          //       tooltip: l10n.qbCreateGroup,
+          //       onPressed: () =>
+          //           context.push('/instructor/question-bank/groups/create'),
+          //       style: IconButton.styleFrom(
+          //         backgroundColor: InstructorColors.primary.withValues(
+          //           alpha: isDark ? 0.18 : 0.1,
+          //         ),
+          //         foregroundColor: InstructorColors.primary,
+          //       ),
+          //       icon: const Icon(Icons.create_new_folder_outlined),
+          //     ),
+          //   ),
+          // ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
           onPressed: () =>
-              safeFeatureBack(context, '/instructor/question-bank'),
-        ),
-        title: Text(
-          l10n.qbGroups,
-          style: TextStyle(
-            color: InstructorColors.textPrimaryColor(isDark),
-            fontWeight: FontWeight.w900,
+              context.push('/instructor/question-bank/groups/create'),
+          backgroundColor: InstructorColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          icon: const Icon(Icons.add_rounded),
+          label: Text(
+            l10n.qbCreateGroup,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.w800),
           ),
         ),
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsetsDirectional.only(end: 10),
-        //     child: IconButton(
-        //       tooltip: l10n.qbCreateGroup,
-        //       onPressed: () =>
-        //           context.push('/instructor/question-bank/groups/create'),
-        //       style: IconButton.styleFrom(
-        //         backgroundColor: InstructorColors.primary.withValues(
-        //           alpha: isDark ? 0.18 : 0.1,
-        //         ),
-        //         foregroundColor: InstructorColors.primary,
-        //       ),
-        //       icon: const Icon(Icons.create_new_folder_outlined),
-        //     ),
-        //   ),
-        // ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () =>
-            context.push('/instructor/question-bank/groups/create'),
-        backgroundColor: InstructorColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        icon: const Icon(Icons.add_rounded),
-        label: Text(
-          l10n.qbCreateGroup,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w800),
-        ),
-      ),
-      body: BlocConsumer<QuestionBankCubit, QuestionBankState>(
-        listenWhen: (previous, current) {
-          final previousMessage =
-              previous.errorMessage ?? previous.actionMessage;
-          final currentMessage = current.errorMessage ?? current.actionMessage;
-          return currentMessage != null && currentMessage != previousMessage;
-        },
-        listener: (context, state) {
-          final message = state.errorMessage ?? state.actionMessage;
-          if (message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(localizedQuestionBankMessage(l10n, message)),
+        body: BlocConsumer<QuestionBankCubit, QuestionBankState>(
+          listenWhen: (previous, current) {
+            final previousMessage =
+                previous.errorMessage ?? previous.actionMessage;
+            final currentMessage =
+                current.errorMessage ?? current.actionMessage;
+            return currentMessage != null && currentMessage != previousMessage;
+          },
+          listener: (context, state) {
+            final message = state.errorMessage ?? state.actionMessage;
+            if (message != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(localizedQuestionBankMessage(l10n, message)),
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            final showInitialSkeleton =
+                state.isLoading &&
+                state.groups.isEmpty &&
+                !_hasCompletedInitialLoad;
+            if (!state.isLoading) _hasCompletedInitialLoad = true;
+            if (showInitialSkeleton) {
+              return const SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16, 12, 16, 32),
+                child: QuestionBankSkeletons(itemCount: 4),
+              );
+            }
+
+            final visibleGroups = _visibleGroups(state);
+            final totalQuestions = visibleGroups.fold<int>(
+              0,
+              (sum, group) => sum + group.totalQuestions,
+            );
+            final approvedQuestions = visibleGroups.fold<int>(
+              0,
+              (sum, group) => sum + group.approvedQuestions,
+            );
+
+            final content = RefreshIndicator(
+              onRefresh: () => context.read<QuestionBankCubit>().refresh(),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 110),
+                children: [
+                  QuestionBankHeroHeader(
+                    title: l10n.qbGroups,
+                    subtitle: l10n.questionBankHeroSubtitle,
+                    stats: {
+                      l10n.course: _selectedCourseShortLabel(state),
+                      l10n.qbGroups: visibleGroups.length.toString(),
+                      l10n.questions: totalQuestions.toString(),
+                      l10n.approved: approvedQuestions.toString(),
+                    },
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 16),
+                  _GroupFilterPanel(
+                    state: state,
+                    search: _search,
+                    chapterId: _chapterId,
+                    groupType: _groupType,
+                    isLoading: state.isLoading && _hasCompletedInitialLoad,
+                    onSearchChanged: (_) => setState(() {}),
+                    onCourseChanged: (courseId) {
+                      setState(() => _chapterId = null);
+                      context.read<QuestionBankCubit>().selectCourse(courseId);
+                    },
+                    onChapterChanged: (chapterId) =>
+                        setState(() => _chapterId = chapterId),
+                    onGroupTypeChanged: (type) =>
+                        setState(() => _groupType = type),
+                    onClear: () {
+                      _search.clear();
+                      setState(() {
+                        _chapterId = null;
+                        _groupType = null;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  if (state.errorMessage != null)
+                    _GroupsErrorRetry(
+                      message: localizedQuestionBankMessage(
+                        l10n,
+                        state.errorMessage!,
+                      ),
+                      onRetry: () =>
+                          context.read<QuestionBankCubit>().refresh(),
+                    )
+                  else if (visibleGroups.isEmpty)
+                    QuestionBankEmptyState(
+                      title: l10n.qbGroups,
+                      message: l10n.searchTryDifferent,
+                      action: FilledButton.icon(
+                        onPressed: () => context.push(
+                          '/instructor/question-bank/groups/create',
+                        ),
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text(l10n.qbCreateGroup),
+                      ),
+                    )
+                  else
+                    ...visibleGroups.map(
+                      (group) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _ModernGroupCard(
+                          group: group,
+                          courseLabel: _courseLabelForGroup(state, group),
+                          isBusy: _deletingGroupId == group.id,
+                          onTap: () => context.push(
+                            '/instructor/question-bank/groups/${group.id}',
+                          ),
+                          onEdit: () => context.push(
+                            '/instructor/question-bank/groups/${group.id}/edit',
+                          ),
+                          onDelete: () => _deleteGroup(context, group.id),
+                          onAddGrouped: () => context.push(
+                            '/instructor/question-bank/groups/${group.id}/add-questions',
+                          ),
+                          onAddExisting: () => context.push(
+                            '/instructor/question-bank/groups/${group.id}/link-questions',
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             );
-          }
-        },
-        builder: (context, state) {
-          final showInitialSkeleton =
-              state.isLoading &&
-              state.groups.isEmpty &&
-              !_hasCompletedInitialLoad;
-          if (!state.isLoading) _hasCompletedInitialLoad = true;
-          if (showInitialSkeleton) {
-            return const SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 32),
-              child: QuestionBankSkeletons(itemCount: 4),
-            );
-          }
-
-          final visibleGroups = _visibleGroups(state);
-          final totalQuestions = visibleGroups.fold<int>(
-            0,
-            (sum, group) => sum + group.totalQuestions,
-          );
-          final approvedQuestions = visibleGroups.fold<int>(
-            0,
-            (sum, group) => sum + group.approvedQuestions,
-          );
-
-          final content = RefreshIndicator(
-            onRefresh: () => context.read<QuestionBankCubit>().refresh(),
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 110),
+            return Stack(
               children: [
-                QuestionBankHeroHeader(
-                  title: l10n.qbGroups,
-                  subtitle: l10n.questionBankHeroSubtitle,
-                  stats: {
-                    l10n.course: _selectedCourseShortLabel(state),
-                    l10n.qbGroups: visibleGroups.length.toString(),
-                    l10n.questions: totalQuestions.toString(),
-                    l10n.approved: approvedQuestions.toString(),
-                  },
-                  isDark: isDark,
-                ),
-                const SizedBox(height: 16),
-                _GroupFilterPanel(
-                  state: state,
-                  search: _search,
-                  chapterId: _chapterId,
-                  groupType: _groupType,
-                  isLoading: state.isLoading && _hasCompletedInitialLoad,
-                  onSearchChanged: (_) => setState(() {}),
-                  onCourseChanged: (courseId) {
-                    setState(() => _chapterId = null);
-                    context.read<QuestionBankCubit>().selectCourse(courseId);
-                  },
-                  onChapterChanged: (chapterId) =>
-                      setState(() => _chapterId = chapterId),
-                  onGroupTypeChanged: (type) =>
-                      setState(() => _groupType = type),
-                  onClear: () {
-                    _search.clear();
-                    setState(() {
-                      _chapterId = null;
-                      _groupType = null;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                if (state.errorMessage != null)
-                  _GroupsErrorRetry(
-                    message: localizedQuestionBankMessage(
-                      l10n,
-                      state.errorMessage!,
-                    ),
-                    onRetry: () => context.read<QuestionBankCubit>().refresh(),
-                  )
-                else if (visibleGroups.isEmpty)
-                  QuestionBankEmptyState(
-                    title: l10n.qbGroups,
-                    message: l10n.searchTryDifferent,
-                    action: FilledButton.icon(
-                      onPressed: () => context.push(
-                        '/instructor/question-bank/groups/create',
-                      ),
-                      icon: const Icon(Icons.add_rounded),
-                      label: Text(l10n.qbCreateGroup),
-                    ),
-                  )
-                else
-                  ...visibleGroups.map(
-                    (group) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _ModernGroupCard(
-                        group: group,
-                        courseLabel: _courseLabelForGroup(state, group),
-                        isBusy: _deletingGroupId == group.id,
-                        onTap: () => context.push(
-                          '/instructor/question-bank/groups/${group.id}',
-                        ),
-                        onEdit: () => context.push(
-                          '/instructor/question-bank/groups/${group.id}/edit',
-                        ),
-                        onDelete: () => _deleteGroup(context, group.id),
-                        onAddGrouped: () => context.push(
-                          '/instructor/question-bank/groups/${group.id}/add-questions',
-                        ),
-                        onAddExisting: () => context.push(
-                          '/instructor/question-bank/groups/${group.id}/link-questions',
-                        ),
-                      ),
+                content,
+                if (_deletingGroupId != null)
+                  Positioned.fill(
+                    child: QuestionBankMutationOverlay(
+                      title: 'Deleting group',
+                      message: 'Please wait until the group is deleted.',
+                      isDark: isDark,
+                      color: InstructorColors.error,
                     ),
                   ),
               ],
-            ),
-          );
-          return Stack(
-            children: [
-              content,
-              if (_deletingGroupId != null)
-                Positioned.fill(
-                  child: QuestionBankMutationOverlay(
-                    title: 'Deleting group',
-                    message: 'Please wait until the group is deleted.',
-                    isDark: isDark,
-                    color: InstructorColors.error,
-                  ),
-                ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

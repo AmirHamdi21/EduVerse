@@ -96,94 +96,102 @@ class _QuestionBankEditCourseLoaderState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: InstructorColors.background(isDark),
-      appBar: AppBar(
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          safeFeatureBack(context, _resolvedReturnPath());
+        }
+      },
+      child: Scaffold(
         backgroundColor: InstructorColors.background(isDark),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          l10n.questionBankEditQuestion,
-          style: TextStyle(
-            color: InstructorColors.textPrimaryColor(isDark),
-            fontWeight: FontWeight.w900,
+        appBar: AppBar(
+          backgroundColor: InstructorColors.background(isDark),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            l10n.questionBankEditQuestion,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(isDark),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          leading: IconButton(
+            onPressed: () => safeFeatureBack(context, _resolvedReturnPath()),
+            icon: Icon(
+              safeFeatureBackIcon(context),
+              color: InstructorColors.textPrimaryColor(isDark),
+            ),
           ),
         ),
-        leading: IconButton(
-          onPressed: () => safeFeatureBack(context, _resolvedReturnPath()),
-          icon: Icon(
-            safeFeatureBackIcon(context),
-            color: InstructorColors.textPrimaryColor(isDark),
-          ),
-        ),
-      ),
-      body: BlocConsumer<QuestionFormCubit, QuestionFormState>(
-        listenWhen: (previous, current) {
-          final previousMessage =
-              previous.validationError ??
-              previous.errorMessage ??
-              previous.successMessage;
-          final currentMessage =
-              current.validationError ??
-              current.errorMessage ??
-              current.successMessage;
-          return currentMessage != null && currentMessage != previousMessage;
-        },
-        listener: (context, state) {
-          final message =
-              state.validationError ??
-              state.errorMessage ??
-              state.successMessage;
-          if (message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(localizedQuestionBankMessage(l10n, message)),
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (_loadingCourses || state.isLoading) {
-            return ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-              children: const [QuestionBankSkeletons(itemCount: 3)],
-            );
-          }
-          final content = QuestionFormBody(
-            courses: _courses,
-            state: state,
-            heroTitle: l10n.questionBankEditQuestion,
-            heroSubtitle: l10n.questionBankStudioSubtitle,
-            submitLabel: l10n.save,
-            lockCourse: true,
-            onSubmit: () async {
-              if (state.originalQuestion?.status ==
-                  QuestionBankStatus.approved) {
-                final ok = await _confirmApprovedEdit(context);
-                if (!ok) return;
-                if (!context.mounted) return;
-              }
-              final ok = await context.read<QuestionFormCubit>().submit();
-              if (ok && context.mounted) {
-                context.go(_resolvedReturnPath());
-              }
-            },
-          );
-          return Stack(
-            children: [
-              content,
-              if (state.isSaving)
-                Positioned.fill(
-                  child: QuestionBankMutationOverlay(
-                    title: 'Saving question',
-                    message: 'Please wait until the question is saved.',
-                    isDark: isDark,
-                  ),
+        body: BlocConsumer<QuestionFormCubit, QuestionFormState>(
+          listenWhen: (previous, current) {
+            final previousMessage =
+                previous.validationError ??
+                previous.errorMessage ??
+                previous.successMessage;
+            final currentMessage =
+                current.validationError ??
+                current.errorMessage ??
+                current.successMessage;
+            return currentMessage != null && currentMessage != previousMessage;
+          },
+          listener: (context, state) {
+            final message =
+                state.validationError ??
+                state.errorMessage ??
+                state.successMessage;
+            if (message != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(localizedQuestionBankMessage(l10n, message)),
                 ),
-            ],
-          );
-        },
+              );
+            }
+          },
+          builder: (context, state) {
+            if (_loadingCourses || state.isLoading) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                children: const [QuestionBankSkeletons(itemCount: 3)],
+              );
+            }
+            final content = QuestionFormBody(
+              courses: _courses,
+              state: state,
+              heroTitle: l10n.questionBankEditQuestion,
+              heroSubtitle: l10n.questionBankStudioSubtitle,
+              submitLabel: l10n.save,
+              lockCourse: true,
+              onSubmit: () async {
+                if (state.originalQuestion?.status ==
+                    QuestionBankStatus.approved) {
+                  final ok = await _confirmApprovedEdit(context);
+                  if (!ok) return;
+                  if (!context.mounted) return;
+                }
+                final ok = await context.read<QuestionFormCubit>().submit();
+                if (ok && context.mounted) {
+                  context.go(_resolvedReturnPath());
+                }
+              },
+            );
+            return Stack(
+              children: [
+                content,
+                if (state.isSaving)
+                  Positioned.fill(
+                    child: QuestionBankMutationOverlay(
+                      title: 'Saving question',
+                      message: 'Please wait until the question is saved.',
+                      isDark: isDark,
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
